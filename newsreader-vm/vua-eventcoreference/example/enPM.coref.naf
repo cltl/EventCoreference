@@ -1,0 +1,2171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<NAF version="v1" xml:lang="en">
+  <nafHeader>
+    <linguisticProcessors layer="srl">
+      <lp name="ixa-pipe-srl-en" timestamp="2013-10-16 20:59:29" version="1.0"/>
+    </linguisticProcessors>
+    <linguisticProcessors layer="terms">
+      <lp name="ixa-pipe-pos-en" timestamp="2013-05-143T13:25:11+0200" version="1.0"/>
+    </linguisticProcessors>
+    <linguisticProcessors layer="tokens">
+      <lp name="ixa-pipe-tok-en" timestamp="2013-05-143T13:25:10+0200" version="1.0"/>
+    </linguisticProcessors>
+    <linguisticProcessors layer="deps">
+      <lp name="ixa-pipe-srl-en" timestamp="2013-10-16 20:59:29" version="1.0"/>
+    </linguisticProcessors>
+    <linguisticProcessors layer="entities">
+      <lp name="ixa-pipe-nerc-en" timestamp="2013-05-143T13:25:11+0200" version="1.0"/>
+    </linguisticProcessors>
+  </nafHeader>
+  <text>
+    <wf id="w1" length="5" offset="0" sent="1">After</wf>
+    <wf id="w2" length="5" offset="6" sent="1">three</wf>
+    <wf id="w3" length="6" offset="12" sent="1">failed</wf>
+    <wf id="w4" length="8" offset="19" sent="1">attempts</wf>
+    <wf id="w5" length="1" offset="27" sent="1">,</wf>
+    <wf id="w6" length="5" offset="29" sent="1">North</wf>
+    <wf id="w7" length="5" offset="35" sent="1">Korea</wf>
+    <wf id="w8" length="1" offset="40" sent="1">,</wf>
+    <wf id="w9" length="6" offset="42" sent="1">though</wf>
+    <wf id="w10" length="10" offset="49" sent="1">struggling</wf>
+    <wf id="w11" length="2" offset="60" sent="1">to</wf>
+    <wf id="w12" length="4" offset="63" sent="1">feed</wf>
+    <wf id="w13" length="3" offset="68" sent="1">its</wf>
+    <wf id="w14" length="6" offset="72" sent="1">people</wf>
+    <wf id="w15" length="1" offset="78" sent="1">,</wf>
+    <wf id="w16" length="2" offset="80" sent="1">is</wf>
+    <wf id="w17" length="3" offset="83" sent="1">now</wf>
+    <wf id="w18" length="3" offset="87" sent="1">one</wf>
+    <wf id="w19" length="2" offset="91" sent="1">of</wf>
+    <wf id="w20" length="3" offset="94" sent="1">the</wf>
+    <wf id="w21" length="3" offset="98" sent="1">few</wf>
+    <wf id="w22" length="9" offset="102" sent="1">countries</wf>
+    <wf id="w23" length="2" offset="112" sent="1">to</wf>
+    <wf id="w24" length="4" offset="115" sent="1">have</wf>
+    <wf id="w25" length="12" offset="120" sent="1">successfully</wf>
+    <wf id="w26" length="8" offset="133" sent="1">launched</wf>
+    <wf id="w27" length="1" offset="142" sent="1">a</wf>
+    <wf id="w28" length="9" offset="144" sent="1">satellite</wf>
+    <wf id="w29" length="4" offset="154" sent="1">into</wf>
+    <wf id="w30" length="5" offset="159" sent="1">space</wf>
+    <wf id="w31" length="4" offset="165" sent="1">from</wf>
+    <wf id="w32" length="3" offset="170" sent="1">its</wf>
+    <wf id="w33" length="3" offset="174" sent="1">own</wf>
+    <wf id="w34" length="4" offset="178" sent="1">soil</wf>
+    <wf id="w35" length="1" offset="182" sent="1">.</wf>
+    <wf id="w36" length="6" offset="183" sent="2">Bitter</wf>
+    <wf id="w37" length="5" offset="190" sent="2">rival</wf>
+    <wf id="w38" length="5" offset="196" sent="2">South</wf>
+    <wf id="w39" length="5" offset="202" sent="2">Korea</wf>
+    <wf id="w40" length="2" offset="208" sent="2">is</wf>
+    <wf id="w41" length="3" offset="211" sent="2">not</wf>
+    <wf id="w42" length="2" offset="215" sent="2">on</wf>
+    <wf id="w43" length="3" offset="218" sent="2">the</wf>
+    <wf id="w44" length="4" offset="222" sent="2">list</wf>
+    <wf id="w45" length="1" offset="226" sent="2">,</wf>
+    <wf id="w46" length="8" offset="228" sent="2">although</wf>
+    <wf id="w47" length="2" offset="237" sent="2">it</wf>
+    <wf id="w48" length="3" offset="240" sent="2">has</wf>
+    <wf id="w49" length="5" offset="244" sent="2">tried</wf>
+    <wf id="w50" length="1" offset="249" sent="2">.</wf>
+    <wf id="w51" length="5" offset="251" sent="3">North</wf>
+    <wf id="w52" length="6" offset="257" sent="3">Korean</wf>
+    <wf id="w53" length="5" offset="264" sent="3">space</wf>
+    <wf id="w54" length="9" offset="270" sent="3">officials</wf>
+    <wf id="w55" length="6" offset="280" sent="3">insist</wf>
+    <wf id="w56" length="3" offset="287" sent="3">the</wf>
+    <wf id="w57" length="6" offset="291" sent="3">rocket</wf>
+    <wf id="w58" length="2" offset="298" sent="3">is</wf>
+    <wf id="w59" length="5" offset="301" sent="3">meant</wf>
+    <wf id="w60" length="2" offset="307" sent="3">to</wf>
+    <wf id="w61" length="4" offset="310" sent="3">send</wf>
+    <wf id="w62" length="1" offset="315" sent="3">a</wf>
+    <wf id="w63" length="9" offset="317" sent="3">satellite</wf>
+    <wf id="w64" length="4" offset="327" sent="3">into</wf>
+    <wf id="w65" length="5" offset="332" sent="3">orbit</wf>
+    <wf id="w66" length="4" offset="338" sent="3">that</wf>
+    <wf id="w67" length="3" offset="343" sent="3">can</wf>
+    <wf id="w68" length="5" offset="347" sent="3">study</wf>
+    <wf id="w69" length="5" offset="353" sent="3">crops</wf>
+    <wf id="w70" length="3" offset="359" sent="3">and</wf>
+    <wf id="w71" length="7" offset="363" sent="3">weather</wf>
+    <wf id="w72" length="8" offset="371" sent="3">patterns</wf>
+    <wf id="w73" length="1" offset="379" sent="3">.</wf>
+    <wf id="w74" length="3" offset="380" sent="4">But</wf>
+    <wf id="w75" length="7" offset="384" sent="4">Western</wf>
+    <wf id="w76" length="7" offset="392" sent="4">experts</wf>
+    <wf id="w77" length="4" offset="400" sent="4">note</wf>
+    <wf id="w78" length="4" offset="405" sent="4">that</wf>
+    <wf id="w79" length="3" offset="410" sent="4">the</wf>
+    <wf id="w80" length="10" offset="414" sent="4">technology</wf>
+    <wf id="w81" length="8" offset="425" sent="4">involved</wf>
+    <wf id="w82" length="2" offset="434" sent="4">in</wf>
+    <wf id="w83" length="1" offset="437" sent="4">a</wf>
+    <wf id="w84" length="9" offset="439" sent="4">satellite</wf>
+    <wf id="w85" length="6" offset="449" sent="4">launch</wf>
+    <wf id="w86" length="2" offset="456" sent="4">is</wf>
+    <wf id="w87" length="7" offset="459" sent="4">similar</wf>
+    <wf id="w88" length="2" offset="467" sent="4">to</wf>
+    <wf id="w89" length="4" offset="470" sent="4">that</wf>
+    <wf id="w90" length="6" offset="475" sent="4">needed</wf>
+    <wf id="w91" length="2" offset="482" sent="4">to</wf>
+    <wf id="w92" length="7" offset="485" sent="4">develop</wf>
+    <wf id="w93" length="1" offset="493" sent="4">a</wf>
+    <wf id="w94" length="4" offset="495" sent="4">very</wf>
+    <wf id="w95" length="10" offset="500" sent="4">long-range</wf>
+    <wf id="w96" length="7" offset="511" sent="4">missile</wf>
+    <wf id="w97" length="1" offset="518" sent="4">.</wf>
+    <wf id="w98" length="3" offset="519" sent="5">The</wf>
+    <wf id="w99" length="6" offset="523" sent="5">launch</wf>
+    <wf id="w100" length="2" offset="530" sent="5">of</wf>
+    <wf id="w101" length="1" offset="533" sent="5">a</wf>
+    <wf id="w102" length="6" offset="535" sent="5">rocket</wf>
+    <wf id="w103" length="7" offset="542" sent="5">similar</wf>
+    <wf id="w104" length="2" offset="550" sent="5">in</wf>
+    <wf id="w105" length="6" offset="553" sent="5">design</wf>
+    <wf id="w106" length="2" offset="560" sent="5">to</wf>
+    <wf id="w107" length="3" offset="563" sent="5">one</wf>
+    <wf id="w108" length="7" offset="567" sent="5">capable</wf>
+    <wf id="w109" length="2" offset="575" sent="5">of</wf>
+    <wf id="w110" length="8" offset="578" sent="5">carrying</wf>
+    <wf id="w111" length="2" offset="587" sent="5">an</wf>
+    <wf id="w112" length="13" offset="590" sent="5">atomic-tipped</wf>
+    <wf id="w113" length="7" offset="604" sent="5">warhead</wf>
+    <wf id="w114" length="2" offset="612" sent="5">as</wf>
+    <wf id="w115" length="3" offset="615" sent="5">far</wf>
+    <wf id="w116" length="2" offset="619" sent="5">as</wf>
+    <wf id="w117" length="10" offset="622" sent="5">California</wf>
+    <wf id="w118" length="6" offset="633" sent="5">raises</wf>
+    <wf id="w119" length="3" offset="640" sent="5">the</wf>
+    <wf id="w120" length="6" offset="644" sent="5">stakes</wf>
+    <wf id="w121" length="2" offset="651" sent="5">in</wf>
+    <wf id="w122" length="3" offset="654" sent="5">the</wf>
+    <wf id="w123" length="13" offset="658" sent="5">international</wf>
+    <wf id="w124" length="8" offset="672" sent="5">standoff</wf>
+    <wf id="w125" length="4" offset="681" sent="5">over</wf>
+    <wf id="w126" length="5" offset="686" sent="5">North</wf>
+    <wf id="w127" length="5" offset="692" sent="5">Korea</wf>
+    <wf id="w128" length="2" offset="697" sent="5">'s</wf>
+    <wf id="w129" length="9" offset="700" sent="5">expanding</wf>
+    <wf id="w130" length="6" offset="710" sent="5">atomic</wf>
+    <wf id="w131" length="7" offset="717" sent="5">arsenal</wf>
+    <wf id="w132" length="1" offset="724" sent="5">.</wf>
+  </text>
+  <terms>
+    <term id="t1" lemma="after" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w1"/>
+      </span>
+    </term>
+    <term id="t2" lemma="three" morphofeat="CD" pos="O" type="close">
+      <span>
+        <target id="w2"/>
+      </span>
+    </term>
+    <term id="t3" lemma="fail" morphofeat="VBD" pos="V" type="open">
+      <span>
+        <target id="w3"/>
+      </span>
+    </term>
+    <term id="t4" lemma="attempt" morphofeat="NNS" pos="N" type="open">
+      <span>
+        <target id="w4"/>
+      </span>
+    </term>
+    <term id="t5" lemma="," morphofeat="," pos="O" type="close">
+      <span>
+        <target id="w5"/>
+      </span>
+    </term>
+    <term id="t6" lemma="North" morphofeat="NNP" pos="R" type="close">
+      <span>
+        <target id="w6"/>
+      </span>
+    </term>
+    <term id="t7" lemma="Korea" morphofeat="NNP" pos="R" type="close">
+      <span>
+        <target id="w7"/>
+      </span>
+    </term>
+    <term id="t8" lemma="," morphofeat="," pos="O" type="close">
+      <span>
+        <target id="w8"/>
+      </span>
+    </term>
+    <term id="t9" lemma="though" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w9"/>
+      </span>
+    </term>
+    <term id="t10" lemma="struggle" morphofeat="VBG" pos="V" type="open">
+      <span>
+        <target id="w10"/>
+      </span>
+    </term>
+    <term id="t11" lemma="to" morphofeat="TO" pos="P" type="close">
+      <span>
+        <target id="w11"/>
+      </span>
+    </term>
+    <term id="t12" lemma="fee" morphofeat="VB" pos="V" type="open">
+      <span>
+        <target id="w12"/>
+      </span>
+    </term>
+    <term id="t13" lemma="its" morphofeat="PRP$" pos="Q" type="close">
+      <span>
+        <target id="w13"/>
+      </span>
+    </term>
+    <term id="t14" lemma="person" morphofeat="NNS" pos="N" type="open">
+      <span>
+        <target id="w14"/>
+      </span>
+    </term>
+    <term id="t15" lemma="," morphofeat="," pos="O" type="close">
+      <span>
+        <target id="w15"/>
+      </span>
+    </term>
+    <term id="t16" lemma="be" morphofeat="VBZ" pos="V" type="open">
+      <span>
+        <target id="w16"/>
+      </span>
+    </term>
+    <term id="t17" lemma="now" morphofeat="RB" pos="A" type="open">
+      <span>
+        <target id="w17"/>
+      </span>
+    </term>
+    <term id="t18" lemma="one" morphofeat="CD" pos="O" type="close">
+      <span>
+        <target id="w18"/>
+      </span>
+    </term>
+    <term id="t19" lemma="of" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w19"/>
+      </span>
+    </term>
+    <term id="t20" lemma="the" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w20"/>
+      </span>
+    </term>
+    <term id="t21" lemma="few" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w21"/>
+      </span>
+    </term>
+    <term id="t22" lemma="country" morphofeat="NNS" pos="N" type="open">
+      <span>
+        <target id="w22"/>
+      </span>
+    </term>
+    <term id="t23" lemma="to" morphofeat="TO" pos="P" type="close">
+      <span>
+        <target id="w23"/>
+      </span>
+    </term>
+    <term id="t24" lemma="have" morphofeat="VB" pos="V" type="open">
+      <span>
+        <target id="w24"/>
+      </span>
+    </term>
+    <term id="t25" lemma="successfully" morphofeat="RB" pos="A" type="open">
+      <span>
+        <target id="w25"/>
+      </span>
+    </term>
+    <term id="t26" lemma="launch" morphofeat="VBN" pos="V" type="open">
+      <span>
+        <target id="w26"/>
+      </span>
+    </term>
+    <term id="t27" lemma="a" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w27"/>
+      </span>
+    </term>
+    <term id="t28" lemma="satellite" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w28"/>
+      </span>
+    </term>
+    <term id="t29" lemma="into" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w29"/>
+      </span>
+    </term>
+    <term id="t30" lemma="space" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w30"/>
+      </span>
+    </term>
+    <term id="t31" lemma="from" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w31"/>
+      </span>
+    </term>
+    <term id="t32" lemma="its" morphofeat="PRP$" pos="Q" type="close">
+      <span>
+        <target id="w32"/>
+      </span>
+    </term>
+    <term id="t33" lemma="own" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w33"/>
+      </span>
+    </term>
+    <term id="t34" lemma="soil" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w34"/>
+      </span>
+    </term>
+    <term id="t35" lemma="." morphofeat="." pos="O" type="close">
+      <span>
+        <target id="w35"/>
+      </span>
+    </term>
+    <term id="t36" lemma="Bitter" morphofeat="NNP" pos="R" type="close">
+      <span>
+        <target id="w36"/>
+      </span>
+    </term>
+    <term id="t37" lemma="rival" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w37"/>
+      </span>
+    </term>
+    <term id="t38" lemma="South" morphofeat="NNP" pos="R" type="close">
+      <span>
+        <target id="w38"/>
+      </span>
+    </term>
+    <term id="t39" lemma="Korea" morphofeat="NNP" pos="R" type="close">
+      <span>
+        <target id="w39"/>
+      </span>
+    </term>
+    <term id="t40" lemma="be" morphofeat="VBZ" pos="V" type="open">
+      <span>
+        <target id="w40"/>
+      </span>
+    </term>
+    <term id="t41" lemma="not" morphofeat="RB" pos="A" type="open">
+      <span>
+        <target id="w41"/>
+      </span>
+    </term>
+    <term id="t42" lemma="on" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w42"/>
+      </span>
+    </term>
+    <term id="t43" lemma="the" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w43"/>
+      </span>
+    </term>
+    <term id="t44" lemma="list" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w44"/>
+      </span>
+    </term>
+    <term id="t45" lemma="," morphofeat="," pos="O" type="close">
+      <span>
+        <target id="w45"/>
+      </span>
+    </term>
+    <term id="t46" lemma="although" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w46"/>
+      </span>
+    </term>
+    <term id="t47" lemma="it" morphofeat="PRP" pos="Q" type="close">
+      <span>
+        <target id="w47"/>
+      </span>
+    </term>
+    <term id="t48" lemma="have" morphofeat="VBZ" pos="V" type="open">
+      <span>
+        <target id="w48"/>
+      </span>
+    </term>
+    <term id="t49" lemma="try" morphofeat="VBN" pos="V" type="open">
+      <span>
+        <target id="w49"/>
+      </span>
+    </term>
+    <term id="t50" lemma="." morphofeat="." pos="O" type="close">
+      <span>
+        <target id="w50"/>
+      </span>
+    </term>
+    <term id="t51" lemma="north" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w51"/>
+      </span>
+    </term>
+    <term id="t52" lemma="korean" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w52"/>
+      </span>
+    </term>
+    <term id="t53" lemma="space" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w53"/>
+      </span>
+    </term>
+    <term id="t54" lemma="official" morphofeat="NNS" pos="N" type="open">
+      <span>
+        <target id="w54"/>
+      </span>
+    </term>
+    <term id="t55" lemma="insist" morphofeat="VBP" pos="V" type="open">
+      <span>
+        <target id="w55"/>
+      </span>
+    </term>
+    <term id="t56" lemma="the" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w56"/>
+      </span>
+    </term>
+    <term id="t57" lemma="rocket" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w57"/>
+      </span>
+    </term>
+    <term id="t58" lemma="be" morphofeat="VBZ" pos="V" type="open">
+      <span>
+        <target id="w58"/>
+      </span>
+    </term>
+    <term id="t59" lemma="mean" morphofeat="VBN" pos="V" type="open">
+      <span>
+        <target id="w59"/>
+      </span>
+    </term>
+    <term id="t60" lemma="to" morphofeat="TO" pos="P" type="close">
+      <span>
+        <target id="w60"/>
+      </span>
+    </term>
+    <term id="t61" lemma="send" morphofeat="VB" pos="V" type="open">
+      <span>
+        <target id="w61"/>
+      </span>
+    </term>
+    <term id="t62" lemma="a" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w62"/>
+      </span>
+    </term>
+    <term id="t63" lemma="satellite" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w63"/>
+      </span>
+    </term>
+    <term id="t64" lemma="into" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w64"/>
+      </span>
+    </term>
+    <term id="t65" lemma="orbit" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w65"/>
+      </span>
+    </term>
+    <term id="t66" lemma="that" morphofeat="WDT" pos="O" type="close">
+      <span>
+        <target id="w66"/>
+      </span>
+    </term>
+    <term id="t67" lemma="can" morphofeat="MD" pos="O" type="close">
+      <span>
+        <target id="w67"/>
+      </span>
+    </term>
+    <term id="t68" lemma="study" morphofeat="VB" pos="V" type="open">
+      <span>
+        <target id="w68"/>
+      </span>
+    </term>
+    <term id="t69" lemma="crop" morphofeat="NNS" pos="N" type="open">
+      <span>
+        <target id="w69"/>
+      </span>
+    </term>
+    <term id="t70" lemma="and" morphofeat="CC" pos="C" type="close">
+      <span>
+        <target id="w70"/>
+      </span>
+    </term>
+    <term id="t71" lemma="weather" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w71"/>
+      </span>
+    </term>
+    <term id="t72" lemma="pattern" morphofeat="NNS" pos="N" type="open">
+      <span>
+        <target id="w72"/>
+      </span>
+    </term>
+    <term id="t73" lemma="." morphofeat="." pos="O" type="close">
+      <span>
+        <target id="w73"/>
+      </span>
+    </term>
+    <term id="t74" lemma="but" morphofeat="CC" pos="C" type="close">
+      <span>
+        <target id="w74"/>
+      </span>
+    </term>
+    <term id="t75" lemma="western" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w75"/>
+      </span>
+    </term>
+    <term id="t76" lemma="expert" morphofeat="NNS" pos="N" type="open">
+      <span>
+        <target id="w76"/>
+      </span>
+    </term>
+    <term id="t77" lemma="note" morphofeat="VBP" pos="V" type="open">
+      <span>
+        <target id="w77"/>
+      </span>
+    </term>
+    <term id="t78" lemma="that" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w78"/>
+      </span>
+    </term>
+    <term id="t79" lemma="the" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w79"/>
+      </span>
+    </term>
+    <term id="t80" lemma="technology" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w80"/>
+      </span>
+    </term>
+    <term id="t81" lemma="involve" morphofeat="VBN" pos="V" type="open">
+      <span>
+        <target id="w81"/>
+      </span>
+    </term>
+    <term id="t82" lemma="in" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w82"/>
+      </span>
+    </term>
+    <term id="t83" lemma="a" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w83"/>
+      </span>
+    </term>
+    <term id="t84" lemma="satellite" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w84"/>
+      </span>
+    </term>
+    <term id="t85" lemma="launch" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w85"/>
+      </span>
+    </term>
+    <term id="t86" lemma="be" morphofeat="VBZ" pos="V" type="open">
+      <span>
+        <target id="w86"/>
+      </span>
+    </term>
+    <term id="t87" lemma="similar" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w87"/>
+      </span>
+    </term>
+    <term id="t88" lemma="to" morphofeat="TO" pos="P" type="close">
+      <span>
+        <target id="w88"/>
+      </span>
+    </term>
+    <term id="t89" lemma="that" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w89"/>
+      </span>
+    </term>
+    <term id="t90" lemma="need" morphofeat="VBD" pos="V" type="open">
+      <span>
+        <target id="w90"/>
+      </span>
+    </term>
+    <term id="t91" lemma="to" morphofeat="TO" pos="P" type="close">
+      <span>
+        <target id="w91"/>
+      </span>
+    </term>
+    <term id="t92" lemma="develop" morphofeat="VB" pos="V" type="open">
+      <span>
+        <target id="w92"/>
+      </span>
+    </term>
+    <term id="t93" lemma="a" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w93"/>
+      </span>
+    </term>
+    <term id="t94" lemma="very" morphofeat="RB" pos="A" type="open">
+      <span>
+        <target id="w94"/>
+      </span>
+    </term>
+    <term id="t95" lemma="long-range" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w95"/>
+      </span>
+    </term>
+    <term id="t96" lemma="missile" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w96"/>
+      </span>
+    </term>
+    <term id="t97" lemma="." morphofeat="." pos="O" type="close">
+      <span>
+        <target id="w97"/>
+      </span>
+    </term>
+    <term id="t98" lemma="the" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w98"/>
+      </span>
+    </term>
+    <term id="t99" lemma="launch" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w99"/>
+      </span>
+    </term>
+    <term id="t100" lemma="of" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w100"/>
+      </span>
+    </term>
+    <term id="t101" lemma="a" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w101"/>
+      </span>
+    </term>
+    <term id="t102" lemma="rocket" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w102"/>
+      </span>
+    </term>
+    <term id="t103" lemma="similar" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w103"/>
+      </span>
+    </term>
+    <term id="t104" lemma="in" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w104"/>
+      </span>
+    </term>
+    <term id="t105" lemma="design" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w105"/>
+      </span>
+    </term>
+    <term id="t106" lemma="to" morphofeat="TO" pos="P" type="close">
+      <span>
+        <target id="w106"/>
+      </span>
+    </term>
+    <term id="t107" lemma="one" morphofeat="CD" pos="O" type="close">
+      <span>
+        <target id="w107"/>
+      </span>
+    </term>
+    <term id="t108" lemma="capable" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w108"/>
+      </span>
+    </term>
+    <term id="t109" lemma="of" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w109"/>
+      </span>
+    </term>
+    <term id="t110" lemma="carry" morphofeat="VBG" pos="V" type="open">
+      <span>
+        <target id="w110"/>
+      </span>
+    </term>
+    <term id="t111" lemma="a" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w111"/>
+      </span>
+    </term>
+    <term id="t112" lemma="atomic-tipped" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w112"/>
+      </span>
+    </term>
+    <term id="t113" lemma="warhead" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w113"/>
+      </span>
+    </term>
+    <term id="t114" lemma="as" morphofeat="RB" pos="A" type="open">
+      <span>
+        <target id="w114"/>
+      </span>
+    </term>
+    <term id="t115" lemma="far" morphofeat="RB" pos="A" type="open">
+      <span>
+        <target id="w115"/>
+      </span>
+    </term>
+    <term id="t116" lemma="as" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w116"/>
+      </span>
+    </term>
+    <term id="t117" lemma="California" morphofeat="NNP" pos="R" type="close">
+      <span>
+        <target id="w117"/>
+      </span>
+    </term>
+    <term id="t118" lemma="raise" morphofeat="VBZ" pos="V" type="open">
+      <span>
+        <target id="w118"/>
+      </span>
+    </term>
+    <term id="t119" lemma="the" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w119"/>
+      </span>
+    </term>
+    <term id="t120" lemma="stake" morphofeat="NNS" pos="N" type="open">
+      <span>
+        <target id="w120"/>
+      </span>
+    </term>
+    <term id="t121" lemma="in" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w121"/>
+      </span>
+    </term>
+    <term id="t122" lemma="the" morphofeat="DT" pos="D" type="close">
+      <span>
+        <target id="w122"/>
+      </span>
+    </term>
+    <term id="t123" lemma="international" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w123"/>
+      </span>
+    </term>
+    <term id="t124" lemma="standoff" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w124"/>
+      </span>
+    </term>
+    <term id="t125" lemma="over" morphofeat="IN" pos="P" type="close">
+      <span>
+        <target id="w125"/>
+      </span>
+    </term>
+    <term id="t126" lemma="North" morphofeat="NNP" pos="R" type="close">
+      <span>
+        <target id="w126"/>
+      </span>
+    </term>
+    <term id="t127" lemma="Korea" morphofeat="NNP" pos="R" type="close">
+      <span>
+        <target id="w127"/>
+      </span>
+    </term>
+    <term id="t128" lemma="'s" morphofeat="POS" pos="O" type="close">
+      <span>
+        <target id="w128"/>
+      </span>
+    </term>
+    <term id="t129" lemma="expand" morphofeat="VBG" pos="V" type="open">
+      <span>
+        <target id="w129"/>
+      </span>
+    </term>
+    <term id="t130" lemma="atomic" morphofeat="JJ" pos="G" type="open">
+      <span>
+        <target id="w130"/>
+      </span>
+    </term>
+    <term id="t131" lemma="arsenal" morphofeat="NN" pos="N" type="open">
+      <span>
+        <target id="w131"/>
+      </span>
+    </term>
+    <term id="t132" lemma="." morphofeat="." pos="O" type="close">
+      <span>
+        <target id="w132"/>
+      </span>
+    </term>
+  </terms>
+  <deps>
+    <dep from="t16" rfunc="TMP" to="t1"/>
+    <dep from="t4" rfunc="NMOD" to="t2"/>
+    <dep from="t4" rfunc="NMOD" to="t3"/>
+    <dep from="t1" rfunc="PMOD" to="t4"/>
+    <dep from="t16" rfunc="P" to="t5"/>
+    <dep from="t7" rfunc="NAME" to="t6"/>
+    <dep from="t16" rfunc="SBJ" to="t7"/>
+    <dep from="t16" rfunc="P" to="t8"/>
+    <dep from="t16" rfunc="ADV" to="t9"/>
+    <dep from="t9" rfunc="SUB" to="t10"/>
+    <dep from="t10" rfunc="OPRD" to="t11"/>
+    <dep from="t11" rfunc="IM" to="t12"/>
+    <dep from="t14" rfunc="NMOD" to="t13"/>
+    <dep from="t12" rfunc="OBJ" to="t14"/>
+    <dep from="t16" rfunc="P" to="t15"/>
+    <dep from="t16" rfunc="TMP" to="t17"/>
+    <dep from="t16" rfunc="PRD" to="t18"/>
+    <dep from="t18" rfunc="NMOD" to="t19"/>
+    <dep from="t22" rfunc="NMOD" to="t20"/>
+    <dep from="t22" rfunc="NMOD" to="t21"/>
+    <dep from="t19" rfunc="PMOD" to="t22"/>
+    <dep from="t12" rfunc="OPRD" to="t23"/>
+    <dep from="t23" rfunc="IM" to="t24"/>
+    <dep from="t26" rfunc="MNR" to="t25"/>
+    <dep from="t24" rfunc="VC" to="t26"/>
+    <dep from="t28" rfunc="NMOD" to="t27"/>
+    <dep from="t26" rfunc="OBJ" to="t28"/>
+    <dep from="t26" rfunc="DIR" to="t29"/>
+    <dep from="t29" rfunc="PMOD" to="t30"/>
+    <dep from="t30" rfunc="NMOD" to="t31"/>
+    <dep from="t34" rfunc="NMOD" to="t32"/>
+    <dep from="t34" rfunc="NMOD" to="t33"/>
+    <dep from="t31" rfunc="PMOD" to="t34"/>
+    <dep from="t16" rfunc="P" to="t35"/>
+    <dep from="t39" rfunc="NMOD" to="t36"/>
+    <dep from="t39" rfunc="NMOD" to="t37"/>
+    <dep from="t39" rfunc="NAME" to="t38"/>
+    <dep from="t40" rfunc="SBJ" to="t39"/>
+    <dep from="t40" rfunc="ADV" to="t41"/>
+    <dep from="t40" rfunc="LOC-PRD" to="t42"/>
+    <dep from="t44" rfunc="NMOD" to="t43"/>
+    <dep from="t42" rfunc="PMOD" to="t44"/>
+    <dep from="t40" rfunc="P" to="t45"/>
+    <dep from="t40" rfunc="ADV" to="t46"/>
+    <dep from="t48" rfunc="SBJ" to="t47"/>
+    <dep from="t46" rfunc="SUB" to="t48"/>
+    <dep from="t48" rfunc="VC" to="t49"/>
+    <dep from="t40" rfunc="P" to="t50"/>
+    <dep from="t52" rfunc="AMOD" to="t51"/>
+    <dep from="t54" rfunc="NMOD" to="t52"/>
+    <dep from="t54" rfunc="NMOD" to="t53"/>
+    <dep from="t55" rfunc="SBJ" to="t54"/>
+    <dep from="t57" rfunc="NMOD" to="t56"/>
+    <dep from="t58" rfunc="SBJ" to="t57"/>
+    <dep from="t55" rfunc="OBJ" to="t58"/>
+    <dep from="t58" rfunc="VC" to="t59"/>
+    <dep from="t59" rfunc="OPRD" to="t60"/>
+    <dep from="t60" rfunc="IM" to="t61"/>
+    <dep from="t63" rfunc="NMOD" to="t62"/>
+    <dep from="t61" rfunc="OBJ" to="t63"/>
+    <dep from="t61" rfunc="DIR" to="t64"/>
+    <dep from="t64" rfunc="PMOD" to="t65"/>
+    <dep from="t67" rfunc="SBJ" to="t66"/>
+    <dep from="t63" rfunc="NMOD" to="t67"/>
+    <dep from="t67" rfunc="VC" to="t68"/>
+    <dep from="t68" rfunc="OBJ" to="t69"/>
+    <dep from="t69" rfunc="COORD" to="t70"/>
+    <dep from="t72" rfunc="NMOD" to="t71"/>
+    <dep from="t70" rfunc="CONJ" to="t72"/>
+    <dep from="t55" rfunc="P" to="t73"/>
+    <dep from="t77" rfunc="DEP" to="t74"/>
+    <dep from="t76" rfunc="NMOD" to="t75"/>
+    <dep from="t77" rfunc="SBJ" to="t76"/>
+    <dep from="t77" rfunc="OBJ" to="t78"/>
+    <dep from="t80" rfunc="NMOD" to="t79"/>
+    <dep from="t86" rfunc="SBJ" to="t80"/>
+    <dep from="t80" rfunc="APPO" to="t81"/>
+    <dep from="t81" rfunc="ADV" to="t82"/>
+    <dep from="t85" rfunc="NMOD" to="t83"/>
+    <dep from="t85" rfunc="NMOD" to="t84"/>
+    <dep from="t82" rfunc="PMOD" to="t85"/>
+    <dep from="t78" rfunc="SUB" to="t86"/>
+    <dep from="t86" rfunc="PRD" to="t87"/>
+    <dep from="t87" rfunc="AMOD" to="t88"/>
+    <dep from="t90" rfunc="SBJ" to="t89"/>
+    <dep from="t88" rfunc="PMOD" to="t90"/>
+    <dep from="t90" rfunc="OPRD" to="t91"/>
+    <dep from="t91" rfunc="IM" to="t92"/>
+    <dep from="t96" rfunc="NMOD" to="t93"/>
+    <dep from="t95" rfunc="AMOD" to="t94"/>
+    <dep from="t96" rfunc="NMOD" to="t95"/>
+    <dep from="t92" rfunc="OBJ" to="t96"/>
+    <dep from="t77" rfunc="P" to="t97"/>
+    <dep from="t99" rfunc="NMOD" to="t98"/>
+    <dep from="t118" rfunc="SBJ" to="t99"/>
+    <dep from="t99" rfunc="NMOD" to="t100"/>
+    <dep from="t102" rfunc="NMOD" to="t101"/>
+    <dep from="t100" rfunc="PMOD" to="t102"/>
+    <dep from="t102" rfunc="APPO" to="t103"/>
+    <dep from="t103" rfunc="AMOD" to="t104"/>
+    <dep from="t104" rfunc="PMOD" to="t105"/>
+    <dep from="t103" rfunc="AMOD" to="t106"/>
+    <dep from="t108" rfunc="NMOD" to="t107"/>
+    <dep from="t106" rfunc="PMOD" to="t108"/>
+    <dep from="t108" rfunc="NMOD" to="t109"/>
+    <dep from="t109" rfunc="PMOD" to="t110"/>
+    <dep from="t113" rfunc="NMOD" to="t111"/>
+    <dep from="t113" rfunc="NMOD" to="t112"/>
+    <dep from="t110" rfunc="OBJ" to="t113"/>
+    <dep from="t115" rfunc="AMOD" to="t114"/>
+    <dep from="t110" rfunc="LOC" to="t115"/>
+    <dep from="t115" rfunc="AMOD" to="t116"/>
+    <dep from="t116" rfunc="PMOD" to="t117"/>
+    <dep from="t120" rfunc="NMOD" to="t119"/>
+    <dep from="t118" rfunc="OBJ" to="t120"/>
+    <dep from="t120" rfunc="LOC" to="t121"/>
+    <dep from="t124" rfunc="NMOD" to="t122"/>
+    <dep from="t124" rfunc="NMOD" to="t123"/>
+    <dep from="t121" rfunc="PMOD" to="t124"/>
+    <dep from="t124" rfunc="NMOD" to="t125"/>
+    <dep from="t127" rfunc="NAME" to="t126"/>
+    <dep from="t131" rfunc="NMOD" to="t127"/>
+    <dep from="t127" rfunc="SUFFIX" to="t128"/>
+    <dep from="t131" rfunc="NMOD" to="t129"/>
+    <dep from="t131" rfunc="NMOD" to="t130"/>
+    <dep from="t125" rfunc="PMOD" to="t131"/>
+    <dep from="t118" rfunc="P" to="t132"/>
+  </deps>
+  <entities>
+    <entity id="e1" type="location">
+      <references>
+        <span>
+          <target id="t6"/>
+          <target id="t7"/>
+        </span>
+      </references>
+    </entity>
+    <entity id="e2" type="location">
+      <references>
+        <span>
+          <target id="t38"/>
+          <target id="t39"/>
+        </span>
+      </references>
+    </entity>
+    <entity id="e3" type="organization">
+      <references>
+        <span>
+          <target id="t51"/>
+          <target id="t52"/>
+        </span>
+      </references>
+    </entity>
+    <entity id="e4" type="misc">
+      <references>
+        <span>
+          <target id="t75"/>
+        </span>
+      </references>
+    </entity>
+    <entity id="e5" type="location">
+      <references>
+        <span>
+          <target id="t117"/>
+        </span>
+      </references>
+    </entity>
+    <entity id="e6" type="location">
+      <references>
+        <span>
+          <target id="t126"/>
+          <target id="t127"/>
+        </span>
+      </references>
+    </entity>
+  </entities>
+  <coreferences>
+    <coref id="coe1" type="event">
+      <span>
+        <target id="t4">
+          <!--attempt-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe17" type="event">
+      <span>
+        <target id="t90">
+          <!--need-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe12" type="event">
+      <span>
+        <target id="t61">
+          <!--send-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe19" type="event">
+      <span>
+        <target id="t118">
+          <!--raise-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe24" type="event">
+      <span>
+        <target id="t131">
+          <!--arsenal-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe10" type="event">
+      <span>
+        <target id="t55">
+          <!--insist-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe5" type="event">
+      <span>
+        <target id="t26">
+          <!--launch-->
+        </target>
+      </span>
+      <span>
+        <target id="t85">
+          <!--launch-->
+        </target>
+      </span>
+      <span>
+        <target id="t99">
+          <!--launch-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe16" type="event">
+      <span>
+        <target id="t81">
+          <!--involve-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe13" type="event">
+      <span>
+        <target id="t68">
+          <!--study-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe6" type="event">
+      <span>
+        <target id="t30">
+          <!--space-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe22" type="event">
+      <span>
+        <target id="t120">
+          <!--stake-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe2" type="event">
+      <span>
+        <target id="t3">
+          <!--fail-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe11" type="event">
+      <span>
+        <target id="t59">
+          <!--mean-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe9" type="event">
+      <span>
+        <target id="t54">
+          <!--official-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe25" type="event">
+      <span>
+        <target id="t129">
+          <!--expand-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe18" type="event">
+      <span>
+        <target id="t92">
+          <!--develop-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe21" type="event">
+      <span>
+        <target id="t110">
+          <!--carry-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe15" type="event">
+      <span>
+        <target id="t77">
+          <!--note-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe7" type="event">
+      <span>
+        <target id="t44">
+          <!--list-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe20" type="event">
+      <span>
+        <target id="t108">
+          <!--capable-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe23" type="event">
+      <span>
+        <target id="t124">
+          <!--standoff-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe4" type="event">
+      <span>
+        <target id="t12">
+          <!--fee-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe14" type="event">
+      <span>
+        <target id="t72">
+          <!--pattern-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe3" type="event">
+      <span>
+        <target id="t10">
+          <!--struggle-->
+        </target>
+      </span>
+    </coref>
+    <coref id="coe8" type="event">
+      <span>
+        <target id="t49">
+          <!--try-->
+        </target>
+      </span>
+    </coref>
+  </coreferences>
+  <srl>
+    <predicate id="pr1">
+      <!--attempts-->
+      <externalReferences>
+        <externalRef reference="attempt.01" resource="NomBank"/>
+        <externalRef reference="try-61" resource="VerbNet"/>
+        <externalRef reference="Attempt" resource="FrameNet"/>
+        <externalRef reference="contextual" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t4"/>
+      </span>
+      <role id="pr1r1" semRole="A1">
+        <!--failed-->
+        <externalReferences>
+          <externalRef reference="try-61#Theme" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t3"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr2">
+      <!--failed-->
+      <externalReferences>
+        <externalRef reference="fail.01" resource="PropBank"/>
+      </externalReferences>
+      <span>
+        <target id="t3"/>
+      </span>
+      <role id="pr2r1" semRole="A1">
+        <!--three failed attempts-->
+        <span>
+          <target id="t2"/>
+          <target id="t3"/>
+          <target id="t4"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr3">
+      <!--struggling-->
+      <externalReferences>
+        <externalRef reference="struggle.02" resource="PropBank"/>
+      </externalReferences>
+      <span>
+        <target id="t10"/>
+      </span>
+      <role id="pr3r1" semRole="A1">
+        <!--to feed its people to have successfully launched a satellite into space from its own soil-->
+        <span>
+          <target id="t11"/>
+          <target id="yes"/>
+          <target id="t12"/>
+          <target id="t13"/>
+          <target id="t14"/>
+          <target id="t23"/>
+          <target id="t24"/>
+          <target id="t25"/>
+          <target id="t26"/>
+          <target id="t27"/>
+          <target id="t28"/>
+          <target id="t29"/>
+          <target id="t30"/>
+          <target id="t31"/>
+          <target id="t32"/>
+          <target id="t33"/>
+          <target id="t34"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr4">
+      <!--feed-->
+      <externalReferences>
+        <externalRef reference="fee.01" resource="PropBank"/>
+      </externalReferences>
+      <span>
+        <target id="t12"/>
+      </span>
+      <role id="pr4r1" semRole="A1">
+        <!--its people-->
+        <span>
+          <target id="t13"/>
+          <target id="t14"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr4r2" semRole="A2">
+        <!--to have successfully launched a satellite into space from its own soil-->
+        <span>
+          <target id="t23"/>
+          <target id="yes"/>
+          <target id="t24"/>
+          <target id="t25"/>
+          <target id="t26"/>
+          <target id="t27"/>
+          <target id="t28"/>
+          <target id="t29"/>
+          <target id="t30"/>
+          <target id="t31"/>
+          <target id="t32"/>
+          <target id="t33"/>
+          <target id="t34"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr5">
+      <!--launched-->
+      <externalReferences>
+        <externalRef reference="launch.01" resource="PropBank"/>
+        <externalRef reference="establish-55.5" resource="VerbNet"/>
+        <externalRef reference="establish-55.5-1" resource="VerbNet"/>
+        <externalRef reference="Activity_start" resource="FrameNet"/>
+        <externalRef reference="Launch_process" resource="FrameNet"/>
+        <externalRef reference="grammatical" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t26"/>
+      </span>
+      <role id="pr5r1" semRole="AM-MNR">
+        <!--successfully-->
+        <span>
+          <target id="t25"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr5r2" semRole="A1">
+        <!--a satellite-->
+        <externalReferences>
+          <externalRef reference="establish-55.5#Theme" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t27"/>
+          <target id="t28"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr5r3" semRole="AM-DIR">
+        <!--into space from its own soil-->
+        <span>
+          <target id="t29"/>
+          <target id="yes"/>
+          <target id="t30"/>
+          <target id="t31"/>
+          <target id="t32"/>
+          <target id="t33"/>
+          <target id="t34"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr6">
+      <!--space-->
+      <externalReferences>
+        <externalRef reference="space.01" resource="NomBank"/>
+      </externalReferences>
+      <span>
+        <target id="t30"/>
+      </span>
+      <role id="pr6r1" semRole="A2">
+        <!--space from its own soil-->
+        <span>
+          <target id="t30"/>
+          <target id="yes"/>
+          <target id="t31"/>
+          <target id="t32"/>
+          <target id="t33"/>
+          <target id="t34"/>
+        </span>
+      </role>
+      <role id="pr6r2" semRole="A3">
+        <!--from its own soil-->
+        <span>
+          <target id="t31"/>
+          <target id="yes"/>
+          <target id="t32"/>
+          <target id="t33"/>
+          <target id="t34"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr7">
+      <!--list-->
+      <externalReferences>
+        <externalRef reference="list.01" resource="NomBank"/>
+      </externalReferences>
+      <span>
+        <target id="t44"/>
+      </span>
+      <role id="pr7r1" semRole="A1">
+        <!--Bitter rival South Korea-->
+        <span>
+          <target id="t36"/>
+          <target id="t37"/>
+          <target id="t38"/>
+          <target id="t39"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr8">
+      <!--tried-->
+      <externalReferences>
+        <externalRef reference="try.01" resource="PropBank"/>
+        <externalRef reference="try-61" resource="VerbNet"/>
+        <externalRef reference="Attempt" resource="FrameNet"/>
+        <externalRef reference="grammatical" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t49"/>
+      </span>
+      <role id="pr8r1" semRole="A0">
+        <!--it-->
+        <externalReferences>
+          <externalRef reference="try-61#Agent" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t47"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr9">
+      <!--officials-->
+      <externalReferences>
+        <externalRef reference="official.01" resource="NomBank"/>
+      </externalReferences>
+      <span>
+        <target id="t54"/>
+      </span>
+      <role id="pr9r1" semRole="A2">
+        <!--North Korean-->
+        <span>
+          <target id="t51"/>
+          <target id="t52"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr9r2" semRole="A1">
+        <!--space-->
+        <span>
+          <target id="t53"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr9r3" semRole="A0">
+        <!--North Korean space officials-->
+        <span>
+          <target id="t51"/>
+          <target id="t52"/>
+          <target id="t53"/>
+          <target id="t54"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr10">
+      <!--insist-->
+      <externalReferences>
+        <externalRef reference="insist.01" resource="PropBank"/>
+        <externalRef reference="say-37.7" resource="VerbNet"/>
+        <externalRef reference="Statement" resource="FrameNet"/>
+        <externalRef reference="contextual" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t55"/>
+      </span>
+      <role id="pr10r1" semRole="A0">
+        <!--North Korean space officials-->
+        <span>
+          <target id="t51"/>
+          <target id="t52"/>
+          <target id="t53"/>
+          <target id="t54"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr10r2" semRole="A1">
+        <!--the rocket is meant to send a satellite into orbit that can study crops and weather patterns-->
+        <span>
+          <target id="t56"/>
+          <target id="t57"/>
+          <target id="t58"/>
+          <target id="yes"/>
+          <target id="t59"/>
+          <target id="t60"/>
+          <target id="t61"/>
+          <target id="t62"/>
+          <target id="t63"/>
+          <target id="t64"/>
+          <target id="t65"/>
+          <target id="t66"/>
+          <target id="t67"/>
+          <target id="t68"/>
+          <target id="t69"/>
+          <target id="t70"/>
+          <target id="t71"/>
+          <target id="t72"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr11">
+      <!--meant-->
+      <externalReferences>
+        <externalRef reference="mean.01" resource="PropBank"/>
+        <externalRef reference="conjecture-29.5" resource="VerbNet"/>
+        <externalRef reference="conjecture-29.5-1" resource="VerbNet"/>
+        <externalRef reference="cognition" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t59"/>
+      </span>
+      <role id="pr11r1" semRole="A1">
+        <!--the rocket-->
+        <externalReferences>
+          <externalRef reference="conjecture-29.5#Theme" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t56"/>
+          <target id="t57"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr11r2" semRole="C-A1">
+        <!--to send a satellite into orbit that can study crops and weather patterns-->
+        <span>
+          <target id="t60"/>
+          <target id="yes"/>
+          <target id="t61"/>
+          <target id="t62"/>
+          <target id="t63"/>
+          <target id="t64"/>
+          <target id="t65"/>
+          <target id="t66"/>
+          <target id="t67"/>
+          <target id="t68"/>
+          <target id="t69"/>
+          <target id="t70"/>
+          <target id="t71"/>
+          <target id="t72"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr12">
+      <!--send-->
+      <externalReferences>
+        <externalRef reference="send.01" resource="PropBank"/>
+        <externalRef reference="send-11.1" resource="VerbNet"/>
+        <externalRef reference="confine-92" resource="VerbNet"/>
+        <externalRef reference="send-11.1-1" resource="VerbNet"/>
+        <externalRef reference="confine-92-1" resource="VerbNet"/>
+        <externalRef reference="Sending" resource="FrameNet"/>
+        <externalRef reference="communication" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t61"/>
+      </span>
+      <role id="pr12r1" semRole="A0">
+        <!--the rocket-->
+        <externalReferences>
+          <externalRef reference="send-11.1#Agent" resource="VerbNet"/>
+          <externalRef reference="confine-92#Agent" resource="VerbNet"/>
+          <externalRef reference="Sending#Sender" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t56"/>
+          <target id="t57"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr12r2" semRole="A1">
+        <!--a satellite that can study crops and weather patterns-->
+        <externalReferences>
+          <externalRef reference="send-11.1#Theme" resource="VerbNet"/>
+          <externalRef reference="confine-92#Theme" resource="VerbNet"/>
+          <externalRef reference="Sending#Theme" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t62"/>
+          <target id="t63"/>
+          <target id="yes"/>
+          <target id="t66"/>
+          <target id="t67"/>
+          <target id="t68"/>
+          <target id="t69"/>
+          <target id="t70"/>
+          <target id="t71"/>
+          <target id="t72"/>
+        </span>
+      </role>
+      <role id="pr12r3" semRole="A2">
+        <!--into orbit-->
+        <externalReferences>
+          <externalRef reference="send-11.1#Destination" resource="VerbNet"/>
+          <externalRef reference="confine-92#Destination" resource="VerbNet"/>
+          <externalRef reference="Sending#Goal" resource="FrameNet"/>
+          <externalRef reference="Sending#Recipient" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t64"/>
+          <target id="yes"/>
+          <target id="t65"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr13">
+      <!--study-->
+      <externalReferences>
+        <externalRef reference="study.01" resource="PropBank"/>
+        <externalRef reference="assessment-34.1" resource="VerbNet"/>
+        <externalRef reference="learn-14" resource="VerbNet"/>
+        <externalRef reference="sight-30.2" resource="VerbNet"/>
+        <externalRef reference="learn-14-1" resource="VerbNet"/>
+        <externalRef reference="Scrutiny" resource="FrameNet"/>
+        <externalRef reference="Education_teaching" resource="FrameNet"/>
+        <externalRef reference="cognition" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t68"/>
+      </span>
+      <role id="pr13r1" semRole="A0">
+        <!--a satellite that can study crops and weather patterns-->
+        <externalReferences>
+          <externalRef reference="assessment-34.1#Agent" resource="VerbNet"/>
+          <externalRef reference="learn-14#Agent" resource="VerbNet"/>
+          <externalRef reference="sight-30.2#Experiencer" resource="VerbNet"/>
+          <externalRef reference="Scrutiny#Cognizer" resource="FrameNet"/>
+          <externalRef reference="Education_teaching#Student" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t62"/>
+          <target id="t63"/>
+          <target id="yes"/>
+          <target id="t66"/>
+          <target id="t67"/>
+          <target id="t68"/>
+          <target id="t69"/>
+          <target id="t70"/>
+          <target id="t71"/>
+          <target id="t72"/>
+        </span>
+      </role>
+      <role id="pr13r2" semRole="R-A0">
+        <!--that-->
+        <span>
+          <target id="t66"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr13r3" semRole="AM-MOD">
+        <!--that can study crops and weather patterns-->
+        <span>
+          <target id="t66"/>
+          <target id="t67"/>
+          <target id="yes"/>
+          <target id="t68"/>
+          <target id="t69"/>
+          <target id="t70"/>
+          <target id="t71"/>
+          <target id="t72"/>
+        </span>
+      </role>
+      <role id="pr13r4" semRole="A1">
+        <!--crops and weather patterns-->
+        <externalReferences>
+          <externalRef reference="assessment-34.1#Theme" resource="VerbNet"/>
+          <externalRef reference="learn-14#Topic" resource="VerbNet"/>
+          <externalRef reference="sight-30.2#Stimulus" resource="VerbNet"/>
+          <externalRef reference="Scrutiny#Ground" resource="FrameNet"/>
+          <externalRef reference="Education_teaching#Subject" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t69"/>
+          <target id="yes"/>
+          <target id="t70"/>
+          <target id="t71"/>
+          <target id="t72"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr14">
+      <!--patterns-->
+      <externalReferences>
+        <externalRef reference="pattern.01" resource="NomBank"/>
+      </externalReferences>
+      <span>
+        <target id="t72"/>
+      </span>
+      <role id="pr14r1" semRole="A1">
+        <!--weather-->
+        <span>
+          <target id="t71"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr14r2" semRole="A2">
+        <!--weather patterns-->
+        <span>
+          <target id="t71"/>
+          <target id="t72"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr15">
+      <!--note-->
+      <externalReferences>
+        <externalRef reference="note.01" resource="PropBank"/>
+        <externalRef reference="sight-30.2" resource="VerbNet"/>
+        <externalRef reference="say-37.7" resource="VerbNet"/>
+        <externalRef reference="say-37.7-1" resource="VerbNet"/>
+        <externalRef reference="Becoming_aware" resource="FrameNet"/>
+        <externalRef reference="Statement" resource="FrameNet"/>
+        <externalRef reference="communication" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t77"/>
+      </span>
+      <role id="pr15r1" semRole="AM-DIS">
+        <!--But-->
+        <span>
+          <target id="t74"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr15r2" semRole="A0">
+        <!--Western experts-->
+        <externalReferences>
+          <externalRef reference="sight-30.2#Experiencer" resource="VerbNet"/>
+          <externalRef reference="say-37.7#Agent" resource="VerbNet"/>
+          <externalRef reference="Becoming_aware#Cognizer" resource="FrameNet"/>
+          <externalRef reference="Statement#Speaker" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t75"/>
+          <target id="t76"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr15r3" semRole="A1">
+        <!--that the technology involved in a satellite launch is similar to that needed to develop a very long-range missile-->
+        <externalReferences>
+          <externalRef reference="sight-30.2#Stimulus" resource="VerbNet"/>
+          <externalRef reference="say-37.7#Topic" resource="VerbNet"/>
+          <externalRef reference="Becoming_aware#Phenomenon" resource="FrameNet"/>
+          <externalRef reference="Statement#Message" resource="FrameNet"/>
+          <externalRef reference="Statement#Topic" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t78"/>
+          <target id="yes"/>
+          <target id="t79"/>
+          <target id="t80"/>
+          <target id="t81"/>
+          <target id="t82"/>
+          <target id="t83"/>
+          <target id="t84"/>
+          <target id="t85"/>
+          <target id="t86"/>
+          <target id="t87"/>
+          <target id="t88"/>
+          <target id="t89"/>
+          <target id="t90"/>
+          <target id="t91"/>
+          <target id="t92"/>
+          <target id="t93"/>
+          <target id="t94"/>
+          <target id="t95"/>
+          <target id="t96"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr16">
+      <!--involved-->
+      <externalReferences>
+        <externalRef reference="involve.01" resource="PropBank"/>
+        <externalRef reference="require-103" resource="VerbNet"/>
+        <externalRef reference="relate-86.2" resource="VerbNet"/>
+        <externalRef reference="involve-107" resource="VerbNet"/>
+        <externalRef reference="relate-86.2-1" resource="VerbNet"/>
+        <externalRef reference="contextual" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t81"/>
+      </span>
+      <role id="pr16r1" semRole="A1">
+        <!--the technology involved in a satellite launch-->
+        <externalReferences>
+          <externalRef reference="require-103#Theme" resource="VerbNet"/>
+          <externalRef reference="relate-86.2#Co-Theme" resource="VerbNet"/>
+          <externalRef reference="involve-107#Theme" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t79"/>
+          <target id="t80"/>
+          <target id="yes"/>
+          <target id="t81"/>
+          <target id="t82"/>
+          <target id="t83"/>
+          <target id="t84"/>
+          <target id="t85"/>
+        </span>
+      </role>
+      <role id="pr16r2" semRole="A2">
+        <!--in a satellite launch-->
+        <externalReferences>
+          <externalRef reference="require-103#Pivot" resource="VerbNet"/>
+          <externalRef reference="relate-86.2#Theme" resource="VerbNet"/>
+          <externalRef reference="involve-107#Goal" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t82"/>
+          <target id="yes"/>
+          <target id="t83"/>
+          <target id="t84"/>
+          <target id="t85"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr17">
+      <!--launch-->
+      <externalReferences>
+        <externalRef reference="launch.01" resource="NomBank"/>
+        <externalRef reference="establish-55.5" resource="VerbNet"/>
+        <externalRef reference="establish-55.5-1" resource="VerbNet"/>
+        <externalRef reference="Activity_start" resource="FrameNet"/>
+        <externalRef reference="Launch_process" resource="FrameNet"/>
+        <externalRef reference="grammatical" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t85"/>
+      </span>
+      <role id="pr17r1" semRole="A1">
+        <!--satellite-->
+        <externalReferences>
+          <externalRef reference="establish-55.5#Theme" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t84"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr18">
+      <!--needed-->
+      <externalReferences>
+        <externalRef reference="need.01" resource="PropBank"/>
+        <externalRef reference="require-103" resource="VerbNet"/>
+        <externalRef reference="grammatical" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t90"/>
+      </span>
+      <role id="pr18r1" semRole="R-A1">
+        <!--that-->
+        <span>
+          <target id="t89"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr18r2" semRole="A1">
+        <!--to develop a very long-range missile-->
+        <externalReferences>
+          <externalRef reference="require-103#Theme" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t91"/>
+          <target id="yes"/>
+          <target id="t92"/>
+          <target id="t93"/>
+          <target id="t94"/>
+          <target id="t95"/>
+          <target id="t96"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr19">
+      <!--develop-->
+      <externalReferences>
+        <externalRef reference="develop.02" resource="PropBank"/>
+        <externalRef reference="build-26.1" resource="VerbNet"/>
+        <externalRef reference="grow-26.2" resource="VerbNet"/>
+        <externalRef reference="Cause_to_make_progress" resource="FrameNet"/>
+        <externalRef reference="Coming_to_be" resource="FrameNet"/>
+        <externalRef reference="contextual" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t92"/>
+      </span>
+      <role id="pr19r1" semRole="A1">
+        <!--a very long-range missile-->
+        <externalReferences>
+          <externalRef reference="build-26.1#Product" resource="VerbNet"/>
+          <externalRef reference="grow-26.2#Product" resource="VerbNet"/>
+          <externalRef reference="Coming_to_be#Entity" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t93"/>
+          <target id="t94"/>
+          <target id="t95"/>
+          <target id="t96"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr20">
+      <!--raises-->
+      <externalReferences>
+        <externalRef reference="raise.01" resource="PropBank"/>
+        <externalRef reference="crane-40.3.2" resource="VerbNet"/>
+        <externalRef reference="put_direction-9.4" resource="VerbNet"/>
+        <externalRef reference="contextual" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t118"/>
+      </span>
+      <role id="pr20r1" semRole="A0">
+        <!--The launch of a rocket similar in design to one capable of carrying an atomic-tipped warhead as far as California-->
+        <externalReferences>
+          <externalRef reference="crane-40.3.2#Agent" resource="VerbNet"/>
+          <externalRef reference="put_direction-9.4#Agent" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t98"/>
+          <target id="t99"/>
+          <target id="yes"/>
+          <target id="t100"/>
+          <target id="t101"/>
+          <target id="t102"/>
+          <target id="t103"/>
+          <target id="t104"/>
+          <target id="t105"/>
+          <target id="t106"/>
+          <target id="t107"/>
+          <target id="t108"/>
+          <target id="t109"/>
+          <target id="t110"/>
+          <target id="t111"/>
+          <target id="t112"/>
+          <target id="t113"/>
+          <target id="t114"/>
+          <target id="t115"/>
+          <target id="t116"/>
+          <target id="t117"/>
+        </span>
+      </role>
+      <role id="pr20r2" semRole="A1">
+        <!--the stakes in the international standoff over North Korea 's expanding atomic arsenal-->
+        <externalReferences>
+          <externalRef reference="crane-40.3.2#Patient" resource="VerbNet"/>
+          <externalRef reference="put_direction-9.4#Theme" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t119"/>
+          <target id="t120"/>
+          <target id="yes"/>
+          <target id="t121"/>
+          <target id="t122"/>
+          <target id="t123"/>
+          <target id="t124"/>
+          <target id="t125"/>
+          <target id="t126"/>
+          <target id="t127"/>
+          <target id="t128"/>
+          <target id="t129"/>
+          <target id="t130"/>
+          <target id="t131"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr21">
+      <!--launch-->
+      <externalReferences>
+        <externalRef reference="launch.01" resource="NomBank"/>
+        <externalRef reference="establish-55.5" resource="VerbNet"/>
+        <externalRef reference="establish-55.5-1" resource="VerbNet"/>
+        <externalRef reference="Activity_start" resource="FrameNet"/>
+        <externalRef reference="Launch_process" resource="FrameNet"/>
+        <externalRef reference="grammatical" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t99"/>
+      </span>
+      <role id="pr21r1" semRole="A1">
+        <!--of a rocket similar in design to one capable of carrying an atomic-tipped warhead as far as California-->
+        <externalReferences>
+          <externalRef reference="establish-55.5#Theme" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t100"/>
+          <target id="yes"/>
+          <target id="t101"/>
+          <target id="t102"/>
+          <target id="t103"/>
+          <target id="t104"/>
+          <target id="t105"/>
+          <target id="t106"/>
+          <target id="t107"/>
+          <target id="t108"/>
+          <target id="t109"/>
+          <target id="t110"/>
+          <target id="t111"/>
+          <target id="t112"/>
+          <target id="t113"/>
+          <target id="t114"/>
+          <target id="t115"/>
+          <target id="t116"/>
+          <target id="t117"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr22">
+      <!--capable-->
+      <externalReferences>
+        <externalRef reference="capable.01" resource="NomBank"/>
+      </externalReferences>
+      <span>
+        <target id="t108"/>
+      </span>
+      <role id="pr22r1" semRole="A1">
+        <!--of carrying an atomic-tipped warhead as far as California-->
+        <span>
+          <target id="t109"/>
+          <target id="yes"/>
+          <target id="t110"/>
+          <target id="t111"/>
+          <target id="t112"/>
+          <target id="t113"/>
+          <target id="t114"/>
+          <target id="t115"/>
+          <target id="t116"/>
+          <target id="t117"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr23">
+      <!--carrying-->
+      <externalReferences>
+        <externalRef reference="carry.01" resource="PropBank"/>
+        <externalRef reference="carry-11.4" resource="VerbNet"/>
+        <externalRef reference="cost-54.2" resource="VerbNet"/>
+        <externalRef reference="fit-54.3" resource="VerbNet"/>
+        <externalRef reference="Bringing" resource="FrameNet"/>
+        <externalRef reference="cognition" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t110"/>
+      </span>
+      <role id="pr23r1" semRole="A1">
+        <!--an atomic-tipped warhead-->
+        <externalReferences>
+          <externalRef reference="carry-11.4#Theme" resource="VerbNet"/>
+          <externalRef reference="cost-54.2#Value" resource="VerbNet"/>
+          <externalRef reference="fit-54.3#Value" resource="VerbNet"/>
+        </externalReferences>
+        <span>
+          <target id="t111"/>
+          <target id="t112"/>
+          <target id="t113"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr23r2" semRole="AM-LOC">
+        <!--as far as California-->
+        <span>
+          <target id="t114"/>
+          <target id="t115"/>
+          <target id="yes"/>
+          <target id="t116"/>
+          <target id="t117"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr24">
+      <!--stakes-->
+      <externalReferences>
+        <externalRef reference="stake.01" resource="NomBank"/>
+      </externalReferences>
+      <span>
+        <target id="t120"/>
+      </span>
+      <role id="pr24r1" semRole="A1">
+        <!--in the international standoff over North Korea 's expanding atomic arsenal-->
+        <span>
+          <target id="t121"/>
+          <target id="yes"/>
+          <target id="t122"/>
+          <target id="t123"/>
+          <target id="t124"/>
+          <target id="t125"/>
+          <target id="t126"/>
+          <target id="t127"/>
+          <target id="t128"/>
+          <target id="t129"/>
+          <target id="t130"/>
+          <target id="t131"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr25">
+      <!--standoff-->
+      <externalReferences>
+        <externalRef reference="standoff.01" resource="NomBank"/>
+      </externalReferences>
+      <span>
+        <target id="t124"/>
+      </span>
+      <role id="pr25r1" semRole="AM-LOC">
+        <!--international-->
+        <span>
+          <target id="t123"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr25r2" semRole="A2">
+        <!--over North Korea 's expanding atomic arsenal-->
+        <span>
+          <target id="t125"/>
+          <target id="yes"/>
+          <target id="t126"/>
+          <target id="t127"/>
+          <target id="t128"/>
+          <target id="t129"/>
+          <target id="t130"/>
+          <target id="t131"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr26">
+      <!--arsenal-->
+      <externalReferences>
+        <externalRef reference="arsenal.01" resource="NomBank"/>
+      </externalReferences>
+      <span>
+        <target id="t131"/>
+      </span>
+      <role id="pr26r1" semRole="A0">
+        <!--North Korea 's-->
+        <span>
+          <target id="t126"/>
+          <target id="t127"/>
+          <target id="yes"/>
+          <target id="t128"/>
+        </span>
+      </role>
+      <role id="pr26r2" semRole="A1">
+        <!--expanding-->
+        <span>
+          <target id="t129"/>
+          <target id="yes"/>
+        </span>
+      </role>
+      <role id="pr26r3" semRole="AM-MNR">
+        <!--atomic-->
+        <span>
+          <target id="t130"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+    <predicate id="pr27">
+      <!--expanding-->
+      <externalReferences>
+        <externalRef reference="expand.01" resource="PropBank"/>
+        <externalRef reference="other_cos-45.4" resource="VerbNet"/>
+        <externalRef reference="Cause_expansion" resource="FrameNet"/>
+        <externalRef reference="Expansion" resource="FrameNet"/>
+        <externalRef reference="contextual" resource="EventType"/>
+      </externalReferences>
+      <span>
+        <target id="t129"/>
+      </span>
+      <role id="pr27r1" semRole="A1">
+        <!--North Korea 's expanding atomic arsenal-->
+        <externalReferences>
+          <externalRef reference="other_cos-45.4#Patient" resource="VerbNet"/>
+          <externalRef reference="Cause_expansion#Item" resource="FrameNet"/>
+          <externalRef reference="Expansion#Item" resource="FrameNet"/>
+        </externalReferences>
+        <span>
+          <target id="t126"/>
+          <target id="t127"/>
+          <target id="t128"/>
+          <target id="t129"/>
+          <target id="t130"/>
+          <target id="t131"/>
+          <target id="yes"/>
+        </span>
+      </role>
+    </predicate>
+  </srl>
+</NAF>

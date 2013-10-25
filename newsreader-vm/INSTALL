@@ -1,0 +1,8 @@
+--- INSTALLING EVentCoreference ---
+
+
+$ mkdir components/VUA-eventcoref
+$ cd components/VUA-eventcoref
+$ wget http://let.vupr.nl/releases/vua-eventcoreference/VUA-eventcoreference.tar
+$ tar xf VUA-eventcoreference.tar
+

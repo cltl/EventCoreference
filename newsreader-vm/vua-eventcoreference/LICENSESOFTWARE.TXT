@@ -1,0 +1,30 @@
+Software: VUA-EventCoreference
+Project: NewsReader
+URL: www.newsreader.eu
+
+This <VUA-EventCoreference> is free software; you can redistribute it and/or modify it
+under the terms of version 3 of the GNU General Public License as published
+by the Free Software Foundation. It should be shipped in the top
+level directory as the file COPYING-GPL.TXT.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.
+
+You should have received a copy of the GNU General Public License, version
+3, along with this program in the file COPYING-GPL.TXT; if not, write to the Free
+Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+02110-1301, USA.
+                                    -*-
+If you use <VUA-EventCoreference> in your scientific research, please cite it
+appropriately as you would cite a journal or a book. This includes papers
+published in regular or electronic journals, usage of <VUA-EventCoreference> as a back-end to a
+database that is accessible via a web interface, or inclusion of <VUA-EventCoreference> in a
+larger framework of software that is distributed for other people for
+scientific use.  Include the following reference: www.newsreaderproject.eu
+
+
+
+<VUA-EventCoreference> is held copyright by VU University Amsterdam and Piek Vossen.
+
