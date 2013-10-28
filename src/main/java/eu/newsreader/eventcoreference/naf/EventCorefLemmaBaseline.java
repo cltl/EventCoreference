@@ -42,7 +42,7 @@ public class EventCorefLemmaBaseline {
               for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
                   KafEvent kafEvent = kafSaxParser.kafEventArrayList.get(i);
                   CorefTarget corefTarget = new CorefTarget();
-                  KafTerm kafTerm = kafSaxParser.getTerm(kafEvent.getSpans().get(0));  /// first span reference
+                  KafTerm kafTerm = kafSaxParser.getTerm(kafEvent.getSpanIds().get(0));  /// first span reference
                   corefTarget.setId(kafTerm.getTid());
                   corefTarget.setTokenString(kafTerm.getLemma());
                   ArrayList<CorefTarget> corefTargetArrayList = new ArrayList<CorefTarget>();
@@ -90,7 +90,7 @@ public class EventCorefLemmaBaseline {
               for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
                   KafEvent kafEvent = kafSaxParser.kafEventArrayList.get(i);
                   CorefTarget corefTarget = new CorefTarget();
-                  KafTerm kafTerm = kafSaxParser.getTerm(kafEvent.getSpans().get(0));  /// first span reference
+                  KafTerm kafTerm = kafSaxParser.getTerm(kafEvent.getSpanIds().get(0));  /// first span reference
                   corefTarget.setId(kafTerm.getTid());
                   corefTarget.setTokenString(kafTerm.getLemma());
                   ArrayList<CorefTarget> corefTargetArrayList = new ArrayList<CorefTarget>();
