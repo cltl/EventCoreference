@@ -7,7 +7,7 @@ package eu.newsreader.eventcoreference.objects;
  * Time: 4:19 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CorefTarget {
+public class CorefTargetAgata {
     
     private String termId;
     private String docId;
@@ -24,7 +24,7 @@ public class CorefTarget {
     private String granularityType;
     private String pos;
 
-    public CorefTarget() {
+    public CorefTargetAgata() {
         this.pos = "";
         this.domain = "";
         this.granularityNumber = "";
@@ -41,7 +41,7 @@ public class CorefTarget {
         this.domScore = 0;
     }
 
-    public CorefTarget(String termId) {
+    public CorefTargetAgata(String termId) {
         this.termId = termId;
         this.pos = "";
         this.domain = "";

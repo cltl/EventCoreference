@@ -1,8 +1,8 @@
 package eu.newsreader.eventcoreference.coref;
 
 import eu.newsreader.eventcoreference.input.CorefSaxParser;
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,20 +52,20 @@ public class ChainCorefSets {
 
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                ArrayList<CoRefSet> coRefSets = corefSaxParser.corefMap.get(key);
-                ArrayList<CoRefSet> condensedSets = ChainCorefSets.chainSets(coRefSets);
-                while (condensedSets.size()<coRefSets.size()) {
-                    coRefSets = condensedSets;
-                    condensedSets = ChainCorefSets.chainSets(coRefSets);
+                ArrayList<CoRefSetAgata> coRefSetAgatas = corefSaxParser.corefMap.get(key);
+                ArrayList<CoRefSetAgata> condensedSets = ChainCorefSets.chainSets(coRefSetAgatas);
+                while (condensedSets.size()< coRefSetAgatas.size()) {
+                    coRefSetAgatas = condensedSets;
+                    condensedSets = ChainCorefSets.chainSets(coRefSetAgatas);
                 }
                 str = "<co-ref-sets file=\""+key+"\">\n";
                 coreferenceOutputStream.write(str.getBytes());
 
                 //  System.out.println("condensedSets.size() = " + condensedSets.size());
                 for (int j = 0; j < condensedSets.size(); j++) {
-                    CoRefSet coRefSet = condensedSets.get(j);
-                    coRefSet.setScore(coRefSet.getAverageCoref()); /// recalculate the score for the set as a whole
-                    str = coRefSet.toString();
+                    CoRefSetAgata coRefSetAgata = condensedSets.get(j);
+                    coRefSetAgata.setScore(coRefSetAgata.getAverageCoref()); /// recalculate the score for the set as a whole
+                    str = coRefSetAgata.toString();
                     coreferenceOutputStream.write(str.getBytes());
                 }
                 str = "</co-ref-sets>\n";
@@ -95,40 +95,40 @@ public class ChainCorefSets {
         return acceptedFileList;
     }
 
-    static public ArrayList<CoRefSet> chainSets(ArrayList<CoRefSet> coRefSets) {
-        ArrayList<CoRefSet> condensedSets = new ArrayList<CoRefSet>();
-        for (int j = 0; j < coRefSets.size(); j++) {
-            CoRefSet coRefSet1 = coRefSets.get(j);
-            if (coRefSet1.getTargets().size()>0) {
-                for (int k = j+1; k < coRefSets.size(); k++) {
-                        CoRefSet coRefSet2 = coRefSets.get(k);
-                        int overlap = coRefSet1.sizeOverlap((coRefSet2));
+    static public ArrayList<CoRefSetAgata> chainSets(ArrayList<CoRefSetAgata> coRefSetAgatas) {
+        ArrayList<CoRefSetAgata> condensedSets = new ArrayList<CoRefSetAgata>();
+        for (int j = 0; j < coRefSetAgatas.size(); j++) {
+            CoRefSetAgata coRefSetAgata1 = coRefSetAgatas.get(j);
+            if (coRefSetAgata1.getTargets().size()>0) {
+                for (int k = j+1; k < coRefSetAgatas.size(); k++) {
+                        CoRefSetAgata coRefSetAgata2 = coRefSetAgatas.get(k);
+                        int overlap = coRefSetAgata1.sizeOverlap((coRefSetAgata2));
                         if (overlap>0) {
                            // System.out.println("coRefSet1 = " + coRefSet1);
                            // System.out.println("coRefSet2 = " + coRefSet2);
                             //// There is an overlap in targets between the coref sets
                             //// Now coRefSet1 will swallow coRefSet2, coRefSet2 will be destroyed
-                            for (int l = 0; l < coRefSet2.getTargets().size(); l++) {
-                                CorefTarget corefTarget2 = coRefSet2.getTargets().get(l);
-                                CorefTarget corefTarget1 = coRefSet1.getTargetForTermId(corefTarget2.getTermId());
-                                if (corefTarget1==null) {
+                            for (int l = 0; l < coRefSetAgata2.getTargets().size(); l++) {
+                                CorefTargetAgata corefTargetAgata2 = coRefSetAgata2.getTargets().get(l);
+                                CorefTargetAgata corefTargetAgata1 = coRefSetAgata1.getTargetForTermId(corefTargetAgata2.getTermId());
+                                if (corefTargetAgata1 ==null) {
                                     ///// chaining effect of overlap: coRefSet1 does not have coreftarget2 so we add it
-                                    coRefSet1.addTarget(corefTarget2);
+                                    coRefSetAgata1.addTarget(corefTargetAgata2);
                                 }
                                 else {
                                     //// Here we have overlapping targets, we only need one and therefore copy the highest score.
                                     //// we take the highest score for overlapping sets
-                                    if (corefTarget2.getCorefScore()>corefTarget1.getCorefScore()) {
-                                        corefTarget1.setCorefScore(corefTarget2.getCorefScore());
+                                    if (corefTargetAgata2.getCorefScore()> corefTargetAgata1.getCorefScore()) {
+                                        corefTargetAgata1.setCorefScore(corefTargetAgata2.getCorefScore());
                                     }
                                 }
                             }
                             //// since the targets of coRefSet2 are absorbed by coRefSet1, we can destroy coRefSet2
-                            coRefSet2.setTargets(new ArrayList<CorefTarget>()); // we empty the targets
+                            coRefSetAgata2.setTargets(new ArrayList<CorefTargetAgata>()); // we empty the targets
                             /// we take the highest score for the whole set
-                            if (coRefSet2.getScore()>coRefSet1.getScore()) {
-                                coRefSet1.setScore(coRefSet2.getScore());
-                                coRefSet1.setLcs(coRefSet2.getLcs());
+                            if (coRefSetAgata2.getScore()> coRefSetAgata1.getScore()) {
+                                coRefSetAgata1.setScore(coRefSetAgata2.getScore());
+                                coRefSetAgata1.setLcs(coRefSetAgata2.getLcs());
                             }
                         }
                         else {
@@ -138,7 +138,7 @@ public class ChainCorefSets {
                 }
                 //// At the end of te process coRefSet1 may have changed (either the same or bigger by swallowing
                 //// We now added to the condensed set
-                condensedSets.add(coRefSet1);
+                condensedSets.add(coRefSetAgata1);
             }
             else {
                 //// was emptied before......

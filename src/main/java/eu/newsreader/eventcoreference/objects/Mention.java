@@ -7,7 +7,7 @@ package eu.newsreader.eventcoreference.objects;
  * Time: 3:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public class EventMention {
+public class Mention {
   /*
   <semEvent id="e30" lcs="raid" score="2.4849066497880004" synset="eng-30-02020027-v" label="raid" mentions="2">
 	<mentions>
@@ -47,12 +47,12 @@ public class EventMention {
    private int nL;
    
    private double score;
-   private CorefTarget event;
-   private CoRefSet participants;
-   private CoRefSet times;
-   private CoRefSet locations;
+   private CorefTargetAgata event;
+   private CoRefSetAgata participants;
+   private CoRefSetAgata times;
+   private CoRefSetAgata locations;
 
-    public EventMention() {
+    public Mention() {
         this.nL = 0;
         this.nP = 0;
         this.nT = 0;
@@ -60,10 +60,10 @@ public class EventMention {
         this.tScore = 0;
         this.lScore = 0;
         this.score = 0;
-        this.event = new CorefTarget();;
-        this.locations = new CoRefSet();;
-        this.participants = new CoRefSet();;
-        this.times = new CoRefSet();
+        this.event = new CorefTargetAgata();;
+        this.locations = new CoRefSetAgata();;
+        this.participants = new CoRefSetAgata();;
+        this.times = new CoRefSetAgata();
     }
 
 
@@ -158,47 +158,47 @@ public class EventMention {
         this.tScore = tScore;
     }
 
-    public CorefTarget getEvent() {
+    public CorefTargetAgata getEvent() {
         return event;
     }
 
-    public void setEvent(CorefTarget event) {
+    public void setEvent(CorefTargetAgata event) {
         this.event = event;
     }
 
-    public CoRefSet getLocations() {
+    public CoRefSetAgata getLocations() {
         return locations;
     }
 
-    public void setLocations(CoRefSet locations) {
+    public void setLocations(CoRefSetAgata locations) {
         this.locations = locations;
     }
 
-    public void addLocationTarget(CorefTarget location) {
+    public void addLocationTarget(CorefTargetAgata location) {
         this.locations.addTarget(location);
     }
 
-    public CoRefSet getParticipants() {
+    public CoRefSetAgata getParticipants() {
         return participants;
     }
 
-    public void setParticipants(CoRefSet participants) {
+    public void setParticipants(CoRefSetAgata participants) {
         this.participants = participants;
     }
 
-    public void addParticipantTarget(CorefTarget participant) {
+    public void addParticipantTarget(CorefTargetAgata participant) {
         this.participants.addTarget(participant);
     }
 
-    public CoRefSet getTimes() {
+    public CoRefSetAgata getTimes() {
         return times;
     }
 
-    public void setTimes(CoRefSet times) {
+    public void setTimes(CoRefSetAgata times) {
         this.times = times;
     }
     
-    public void addTimeTarget(CorefTarget time) {
+    public void addTimeTarget(CorefTargetAgata time) {
         this.times.addTarget(time);
     }
     

@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.coref;
 
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class NormalizeScores {
 
 
-    static public void normalize (ArrayList<CoRefSet> coRefSets) {
+    static public void normalize (ArrayList<CoRefSetAgata> coRefSetAgatas) {
         double maxSim = 0;
         double maxGran = 0;
         double maxDom = 0;
@@ -26,40 +26,40 @@ public class NormalizeScores {
         double minDom = 0;
         double minSetScore = 0;
         double minScore = 0;
-        for (int c = 0; c < coRefSets.size(); c++) {
-            CoRefSet coRefSet = coRefSets.get(c);
-            double corefScore = coRefSet.getScore();
+        for (int c = 0; c < coRefSetAgatas.size(); c++) {
+            CoRefSetAgata coRefSetAgata = coRefSetAgatas.get(c);
+            double corefScore = coRefSetAgata.getScore();
             if (corefScore>maxSetScore) {
                 maxSetScore = corefScore;
             }
             else if (corefScore<minSetScore) {
                 minSetScore = corefScore;
             }
-            ArrayList<CorefTarget> targets = coRefSet.getTargets();
+            ArrayList<CorefTargetAgata> targets = coRefSetAgata.getTargets();
             for (int i = 0; i < targets.size(); i++) {
-                CorefTarget corefTarget = targets.get(i);
-                double simScore= corefTarget.getSimScore();
+                CorefTargetAgata corefTargetAgata = targets.get(i);
+                double simScore= corefTargetAgata.getSimScore();
                 if (simScore>maxSim) {
                     maxSim = simScore;
                 }
                 else if (simScore<minSim) {
                     minSim = simScore;
                 }
-                double granScore= corefTarget.getGranScore();
+                double granScore= corefTargetAgata.getGranScore();
                 if (granScore>maxGran) {
                     maxGran = granScore;
                 }
                 else if (granScore<minGran) {
                     minScore = granScore;
                 }
-                double domScore= corefTarget.getDomScore();
+                double domScore= corefTargetAgata.getDomScore();
                 if (domScore>maxDom) {
                     maxDom = domScore;
                 }
                 else if (domScore<minDom) {
                     minDom = domScore;
                 }
-                double targetCorefScore= corefTarget.getCorefScore();
+                double targetCorefScore= corefTargetAgata.getCorefScore();
                 if (targetCorefScore>maxScore) {
                     maxScore = targetCorefScore;
                 }
@@ -68,26 +68,26 @@ public class NormalizeScores {
                 }
             }
         }
-        for (int c = 0; c < coRefSets.size(); c++) {
-            CoRefSet coRefSet = coRefSets.get(c);
-            double corefScore = coRefSet.getScore();
+        for (int c = 0; c < coRefSetAgatas.size(); c++) {
+            CoRefSetAgata coRefSetAgata = coRefSetAgatas.get(c);
+            double corefScore = coRefSetAgata.getScore();
             corefScore = corefScore/maxScore;
-            coRefSet.setScore(corefScore);
-            ArrayList<CorefTarget> targets = coRefSet.getTargets();
+            coRefSetAgata.setScore(corefScore);
+            ArrayList<CorefTargetAgata> targets = coRefSetAgata.getTargets();
             for (int i = 0; i < targets.size(); i++) {
-                CorefTarget corefTarget = targets.get(i);
-                double simScore= corefTarget.getSimScore();
+                CorefTargetAgata corefTargetAgata = targets.get(i);
+                double simScore= corefTargetAgata.getSimScore();
                 simScore = simScore/maxSim;
-                corefTarget.setSimScore(simScore);
-                double granScore= corefTarget.getGranScore();
+                corefTargetAgata.setSimScore(simScore);
+                double granScore= corefTargetAgata.getGranScore();
                 granScore = granScore/maxGran;
-                corefTarget.setGranScore(granScore);
-                double domScore= corefTarget.getDomScore();
+                corefTargetAgata.setGranScore(granScore);
+                double domScore= corefTargetAgata.getDomScore();
                 domScore = domScore/maxDom;
-                corefTarget.setDomScore(domScore);
-                double targetCorefScore= corefTarget.getCorefScore();
+                corefTargetAgata.setDomScore(domScore);
+                double targetCorefScore= corefTargetAgata.getCorefScore();
                 targetCorefScore= targetCorefScore/maxScore;
-                corefTarget.setCorefScore(targetCorefScore);
+                corefTargetAgata.setCorefScore(targetCorefScore);
             }
         }
     }

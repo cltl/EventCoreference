@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.input.CorefSaxParser;
-import eu.newsreader.eventcoreference.objects.CoRefSet;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,14 +52,14 @@ public class DocumentToCorpusCoreferences {
                     String key = (String) keys.next();
                     /// keys are file identifiers
                     // We now get the components for the key (= particular file identifier), so just for one file
-                    ArrayList<CoRefSet> coRefSets = corefSaxParser.corefMap.get(key);
-                    for (int i = 0; i < coRefSets.size(); i++) {
-                        CoRefSet coRefSet = coRefSets.get(i);
-                        String newId = coRefSet.getId();
+                    ArrayList<CoRefSetAgata> coRefSetAgatas = corefSaxParser.corefMap.get(key);
+                    for (int i = 0; i < coRefSetAgatas.size(); i++) {
+                        CoRefSetAgata coRefSetAgata = coRefSetAgatas.get(i);
+                        String newId = coRefSetAgata.getId();
                         if (addCorpusToId) {
                             newId = corpus+"/"+newId;
                         }
-                        coRefSet.setId(newId);
+                        coRefSetAgata.setId(newId);
                     }
                 }
                 String outputFilePath = corefFilePath+"."+"cross-corpus.xml";

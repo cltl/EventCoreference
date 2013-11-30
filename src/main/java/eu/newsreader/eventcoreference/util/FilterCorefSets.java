@@ -1,8 +1,8 @@
 package eu.newsreader.eventcoreference.util;
 
 import eu.newsreader.eventcoreference.input.CorefSaxParser;
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -52,15 +52,15 @@ public class FilterCorefSets {
                         while (keys.hasNext()) {
                             String key = (String) keys.next();
                             if (key.startsWith(fileName)) {
-                                ArrayList<CoRefSet> coRefSet = corefSaxParser.corefMap.get(key);
+                                ArrayList<CoRefSetAgata> coRefSetAgata = corefSaxParser.corefMap.get(key);
                                 boolean match = false;
-                                for (int j = 0; j < coRefSet.size(); j++) {
-                                    CoRefSet set = coRefSet.get(j);
+                                for (int j = 0; j < coRefSetAgata.size(); j++) {
+                                    CoRefSetAgata set = coRefSetAgata.get(j);
                                     for (int k = 0; k < set.getTargets().size(); k++) {
-                                        CorefTarget corefTarget = set.getTargets().get(k);
+                                        CorefTargetAgata corefTargetAgata = set.getTargets().get(k);
                                         // System.out.println("corefTarget.getTermId() = " + corefTarget.getTermId());
-                                        if (corefTarget.getTermId().equals(tid)) {
-                                            System.out.println("BAD corefTarget.getTermId() = " + corefTarget.getTermId());
+                                        if (corefTargetAgata.getTermId().equals(tid)) {
+                                            System.out.println("BAD corefTarget.getTermId() = " + corefTargetAgata.getTermId());
                                             System.out.println("fileName = " + fileName);
                                             set.getTargets().remove(k);
                                             match = true;

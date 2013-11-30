@@ -12,16 +12,16 @@ import java.util.Set;
  * Time: 3:14 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CoRefSet {
+public class CoRefSetAgata {
     
     private String id;
     private double score;
     private String lowestCommonSubsumer;
-    private ArrayList<CorefTarget> targets;
+    private ArrayList<CorefTargetAgata> targets;
 
-    public CoRefSet() {
+    public CoRefSetAgata() {
         this.id = "";
-        this.targets = new ArrayList<CorefTarget>();
+        this.targets = new ArrayList<CorefTargetAgata>();
         this.lowestCommonSubsumer = "";
         this.score = 0;
     }
@@ -80,18 +80,18 @@ public class CoRefSet {
         this.lowestCommonSubsumer = lcs;
     }
 
-    public ArrayList<CorefTarget> getTargets() {
+    public ArrayList<CorefTargetAgata> getTargets() {
         return targets;
     }
 
-    public void setTargets(ArrayList<CorefTarget> targets) {
+    public void setTargets(ArrayList<CorefTargetAgata> targets) {
         this.targets = targets;
     }
 
-    public boolean containsTarget (CorefTarget target) {
+    public boolean containsTarget (CorefTargetAgata target) {
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            if (corefTarget.getTermId().equals(target.getTermId())) {
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            if (corefTargetAgata.getTermId().equals(target.getTermId())) {
               //  System.out.println("corefTarget.getTermId() = " + corefTarget.getTermId());
               //  System.out.println("target.getTermId() = " + target.getTermId());
                 return true;
@@ -100,10 +100,10 @@ public class CoRefSet {
         return false;
     }
 
-    public boolean hasOverlap (CoRefSet otherSet) {
+    public boolean hasOverlap (CoRefSetAgata otherSet) {
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            if (otherSet.containsTarget(corefTarget)) {
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            if (otherSet.containsTarget(corefTargetAgata)) {
               //  System.out.println("corefTarget.getTermId() = " + corefTarget.getTermId());
                 return true;
             }
@@ -111,11 +111,11 @@ public class CoRefSet {
         return false;
     }
 
-    public int sizeOverlap (CoRefSet otherSet) {
+    public int sizeOverlap (CoRefSetAgata otherSet) {
         int overlap = 0;
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            if (otherSet.containsTarget(corefTarget)) {
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            if (otherSet.containsTarget(corefTargetAgata)) {
               //  System.out.println("corefTarget.getTermId() = " + corefTarget.getTermId());
                 overlap++;
             }
@@ -125,19 +125,19 @@ public class CoRefSet {
 
     public boolean containsTargetTermId(String id) {
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            if (corefTarget.getTermId().equals(id)) {
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            if (corefTargetAgata.getTermId().equals(id)) {
                 return true;
             }
         }
         return false;
     }
 
-    public CorefTarget getTargetForTermId(String id) {
+    public CorefTargetAgata getTargetForTermId(String id) {
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            if (corefTarget.getTermId().equals(id)) {
-                return corefTarget;
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            if (corefTargetAgata.getTermId().equals(id)) {
+                return corefTargetAgata;
             }
         }
         return null;
@@ -145,15 +145,15 @@ public class CoRefSet {
 
     public boolean containsTargetSentenceId(String id) {
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            if (corefTarget.getSentenceId().equals(id)) {
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            if (corefTargetAgata.getSentenceId().equals(id)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void addTarget(CorefTarget target) {
+    public void addTarget(CorefTargetAgata target) {
         this.targets.add(target);
     }
     
@@ -163,7 +163,7 @@ public class CoRefSet {
         if (score>0) str +=" score=\""+score+"\"";
         str += ">\n";
         for (int k = 0; k < targets.size(); k++) {
-            CorefTarget target= targets.get(k);
+            CorefTargetAgata target= targets.get(k);
             str += target.toString();
         }
         str += "\t</co-refs>\n";
@@ -174,7 +174,7 @@ public class CoRefSet {
         String bestLemma = "";
         HashMap<String, Integer> cnts = new HashMap<String, Integer>();
         for (int k = 0; k < targets.size(); k++) {
-            CorefTarget target= targets.get(k);
+            CorefTargetAgata target= targets.get(k);
             if (cnts.containsKey(target.getWord())) {
                 Integer cnt = cnts.get(target.getWord());
                 cnt++;
@@ -202,7 +202,7 @@ public class CoRefSet {
         String bestLemma = "";
         HashMap<String, Integer> cnts = new HashMap<String, Integer>();
         for (int k = 0; k < targets.size(); k++) {
-            CorefTarget target= targets.get(k);
+            CorefTargetAgata target= targets.get(k);
             if (cnts.containsKey(target.getSynset())) {
                 Integer cnt = cnts.get(target.getSynset());
                 cnt++;
@@ -230,8 +230,8 @@ public class CoRefSet {
         String str = "{";
         for (int i = 0; i < targets.size(); i++) {
             if (i>0) str+= ",";
-            CorefTarget corefTarget = targets.get(i);
-            str+=corefTarget.getTermId();
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            str+= corefTargetAgata.getTermId();
         }
         str += "}";
         return str;
@@ -241,8 +241,8 @@ public class CoRefSet {
     public double getAverageCoref () {
         double score = 0;
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            score+= corefTarget.getCorefScore();
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            score+= corefTargetAgata.getCorefScore();
         }
         score = score/targets.size();
         return score;
@@ -251,8 +251,8 @@ public class CoRefSet {
     public double getAverageSimScore () {
         double score = 0;
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            score+= corefTarget.getSimScore();
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            score+= corefTargetAgata.getSimScore();
         }
         score = score/targets.size();
         return score;
@@ -261,8 +261,8 @@ public class CoRefSet {
     public double getAverageGranScore () {
         double score = 0;
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            score+= corefTarget.getGranScore();
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            score+= corefTargetAgata.getGranScore();
         }
         score = score/targets.size();
         return score;
@@ -271,8 +271,8 @@ public class CoRefSet {
     public double getAverageDomScore () {
         double score = 0;
         for (int i = 0; i < targets.size(); i++) {
-            CorefTarget corefTarget = targets.get(i);
-            score+= corefTarget.getDomScore();
+            CorefTargetAgata corefTargetAgata = targets.get(i);
+            score+= corefTargetAgata.getDomScore();
         }
         score = score/targets.size();
         return score;

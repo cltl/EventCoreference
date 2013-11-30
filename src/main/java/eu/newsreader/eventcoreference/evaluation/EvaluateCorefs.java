@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.evaluation;
 
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 import eu.newsreader.eventcoreference.input.CorefSaxParser;
 
 import java.io.File;
@@ -32,15 +32,15 @@ public class EvaluateCorefs {
         totalGoldIds = new ArrayList<String>();
     }
 
-    public void init(ArrayList<CoRefSet> corefGoldSets, ArrayList<CoRefSet> corefSysSets) {
+    public void init(ArrayList<CoRefSetAgata> corefGoldSets, ArrayList<CoRefSetAgata> corefSysSets) {
         totalIds = new ArrayList<String>();
         totalSysIds = new ArrayList<String>();
         totalGoldIds = new ArrayList<String>();
         /// add all the system event ids to the totalIds set and the totalSysIds set
         for (int i = 0; i < corefSysSets.size(); i++) {
-            CoRefSet strings = corefSysSets.get(i);
+            CoRefSetAgata strings = corefSysSets.get(i);
             for (int j = 0; j < strings.getTargets().size(); j++) {
-                CorefTarget s = strings.getTargets().get(j);
+                CorefTargetAgata s = strings.getTargets().get(j);
                 if (!totalSysIds.contains(s.getTermId()))  {
                     totalSysIds.add(s.getTermId());
                 }
@@ -52,9 +52,9 @@ public class EvaluateCorefs {
 
         //// add all the gold ids to the totalIds set and the totalGoldIds set
         for (int i = 0; i < corefGoldSets.size(); i++) {
-            CoRefSet strings = corefGoldSets.get(i);
+            CoRefSetAgata strings = corefGoldSets.get(i);
             for (int j = 0; j < strings.getTargets().size(); j++) {
-                CorefTarget s = strings.getTargets().get(j);
+                CorefTargetAgata s = strings.getTargets().get(j);
                 if (!totalGoldIds.contains(s.getTermId()))  {
                     totalGoldIds.add(s.getTermId());
                 }
@@ -150,19 +150,19 @@ public class EvaluateCorefs {
                 String key = (String) keys.next();
                 if (evaluateCorefs.DEBUG) System.out.println("key = " + key);
                 header += "\t"+key;
-                ArrayList<CoRefSet> corefSysSets = sysParser.corefMap.get(key);
+                ArrayList<CoRefSetAgata> corefSysSets = sysParser.corefMap.get(key);
                 responseCoRefTotal += corefSysSets.size();
                 responseCoRefSingletons += nrOfSingletons(corefSysSets);
                 row1 += "\t"+ corefSysSets.size();
                 if (goldParser.corefMap.containsKey(key)) {
                     nEvaluations++;
-                    ArrayList<CoRefSet> corefGoldSets = goldParser.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> corefGoldSets = goldParser.corefMap.get(key);
                     keyCoRefTotal += corefGoldSets.size();
                     keyCoRefSingletons += nrOfSingletons(corefGoldSets);
                     evaluateCorefs.init(corefGoldSets, corefSysSets);
                     row2 += "\t"+ corefGoldSets.size();
                     /// next step will modify the corefSysSets
-                    ArrayList<CoRefSet> adaptedSysSets = evaluateCorefs.CaiStrubePrepareSets(corefSysSets);
+                    ArrayList<CoRefSetAgata> adaptedSysSets = evaluateCorefs.CaiStrubePrepareSets(corefSysSets);
                     double precision = evaluateCorefs.CorefB3Precision(adaptedSysSets, corefGoldSets);
                     double recall = evaluateCorefs.CorefB3Recall(adaptedSysSets, corefGoldSets);
                     double  f = 2*(precision*recall)/(precision+recall);
@@ -205,11 +205,11 @@ public class EvaluateCorefs {
 
     }
 
-    static public int nrOfSingletons (ArrayList<CoRefSet> set) {
+    static public int nrOfSingletons (ArrayList<CoRefSetAgata> set) {
         int s = 0;
         for (int i = 0; i < set.size(); i++) {
-            CoRefSet coRefSet = set.get(i);
-            if (coRefSet.getTargets().size()==1) {
+            CoRefSetAgata coRefSetAgata = set.get(i);
+            if (coRefSetAgata.getTargets().size()==1) {
                 s++;
             }
         }
@@ -236,20 +236,20 @@ public class EvaluateCorefs {
    15. Calculate F-score F
     */
 
-    public ArrayList<CoRefSet> CaiStrubePrepareSets (ArrayList<CoRefSet> corefSysSets) {
+    public ArrayList<CoRefSetAgata> CaiStrubePrepareSets (ArrayList<CoRefSetAgata> corefSysSets) {
         if (DEBUG) {
             System.out.println("PREPARING SYSTEM SET ACCORDING TO CAI AND STRUBE");
         }
-        ArrayList<CoRefSet> adaptedCorefSysSets  = new ArrayList<CoRefSet>();
+        ArrayList<CoRefSetAgata> adaptedCorefSysSets  = new ArrayList<CoRefSetAgata>();
 
         /// 1. Discard all the singletons twinless system mention in response;
         //     we discard all twinless singletons in system set (response)
         for (int i = 0; i < corefSysSets.size(); i++) {
-            CoRefSet coRefSet = corefSysSets.get(i);
-            if (coRefSet.getTargets().size()==1) {
+            CoRefSetAgata coRefSetAgata = corefSysSets.get(i);
+            if (coRefSetAgata.getTargets().size()==1) {
                 /// this is a singleton
-                if (totalGoldIds.contains(coRefSet.getTargets().get(0).getTermId())) {
-                    adaptedCorefSysSets.add(coRefSet);
+                if (totalGoldIds.contains(coRefSetAgata.getTargets().get(0).getTermId())) {
+                    adaptedCorefSysSets.add(coRefSetAgata);
                 }
                 else {
                     /// this singleton is not in the gold standard set so we ignore it
@@ -257,18 +257,18 @@ public class EvaluateCorefs {
             }
             else {
                 /// multisets are all added
-                    adaptedCorefSysSets.add(coRefSet);
+                    adaptedCorefSysSets.add(coRefSetAgata);
             }
         }
         if (DEBUG) {
             System.out.println("Original system sets:"+corefSysSets.size());
             for (int i = 0; i < corefSysSets.size(); i++) {
-                CoRefSet set = corefSysSets.get(i);
+                CoRefSetAgata set = corefSysSets.get(i);
                 System.out.println(set.printTargetSet());
             }
             System.out.println("Adapted system sets, discarding singleton twins:"+adaptedCorefSysSets.size());
             for (int i = 0; i < adaptedCorefSysSets.size(); i++) {
-                CoRefSet set = adaptedCorefSysSets.get(i);
+                CoRefSetAgata set = adaptedCorefSysSets.get(i);
                 System.out.println(set.printTargetSet());
             }
         }
@@ -277,17 +277,17 @@ public class EvaluateCorefs {
         for (int i = 0; i < totalGoldIds.size(); i++) {
             String mention = totalGoldIds.get(i);
             if (!totalSysIds.contains(mention)) {
-                CoRefSet coRefSet = new CoRefSet();
-                CorefTarget t = new CorefTarget(mention);
-                coRefSet.addTarget(t);
-                adaptedCorefSysSets.add(coRefSet);
+                CoRefSetAgata coRefSetAgata = new CoRefSetAgata();
+                CorefTargetAgata t = new CorefTargetAgata(mention);
+                coRefSetAgata.addTarget(t);
+                adaptedCorefSysSets.add(coRefSetAgata);
             }
         }
 
         if (DEBUG) {
             System.out.println("Adapted system sets, adding twinless gold mentions:"+adaptedCorefSysSets.size());
             for (int i = 0; i < adaptedCorefSysSets.size(); i++) {
-                CoRefSet set = adaptedCorefSysSets.get(i);
+                CoRefSetAgata set = adaptedCorefSysSets.get(i);
                 System.out.println(set.printTargetSet());
             }
         }
@@ -295,7 +295,7 @@ public class EvaluateCorefs {
     }
 
 
-    public double CorefB3Recall (ArrayList<CoRefSet> corefSysSets, ArrayList<CoRefSet> corefGoldSets) {
+    public double CorefB3Recall (ArrayList<CoRefSetAgata> corefSysSets, ArrayList<CoRefSetAgata> corefGoldSets) {
         /*
            9.  if calculating recall then
            10.   Discard all the remaining twinless system mentions in response to from response-r;
@@ -309,16 +309,16 @@ public class EvaluateCorefs {
         /// 10.   Discard all the remaining twinless system mentions in response to from response-r;
         ///
 
-        ArrayList<CoRefSet> adaptedCorefSysSets  = new ArrayList<CoRefSet>();
+        ArrayList<CoRefSetAgata> adaptedCorefSysSets  = new ArrayList<CoRefSetAgata>();
 
         for (int i = 0; i < corefSysSets.size(); i++) {
-            CoRefSet coRefSet = corefSysSets.get(i);
-            CoRefSet adaptedCoRefSysSet = new CoRefSet();
-            for (int j = 0; j < coRefSet.getTargets().size(); j++) {
-                CorefTarget corefTarget = coRefSet.getTargets().get(j);
-                if (totalGoldIds.contains(corefTarget.getTermId())) {
+            CoRefSetAgata coRefSetAgata = corefSysSets.get(i);
+            CoRefSetAgata adaptedCoRefSysSet = new CoRefSetAgata();
+            for (int j = 0; j < coRefSetAgata.getTargets().size(); j++) {
+                CorefTargetAgata corefTargetAgata = coRefSetAgata.getTargets().get(j);
+                if (totalGoldIds.contains(corefTargetAgata.getTermId())) {
                     //// target is covered by some gold standard set (key set)
-                    adaptedCoRefSysSet.addTarget(corefTarget);
+                    adaptedCoRefSysSet.addTarget(corefTargetAgata);
                 }
             }
             if (adaptedCoRefSysSet.getTargets().size()>0) {
@@ -332,12 +332,12 @@ public class EvaluateCorefs {
         if (DEBUG) {
             System.out.println("System sets for recall after preparation:"+corefSysSets.size());
             for (int i = 0; i < corefSysSets.size(); i++) {
-                CoRefSet set = corefSysSets.get(i);
+                CoRefSetAgata set = corefSysSets.get(i);
                 System.out.println(set.printTargetSet());
             }
             System.out.println("Adapted system sets for recall, discarding remaining twinless system mentions:"+adaptedCorefSysSets.size());
             for (int i = 0; i < adaptedCorefSysSets.size(); i++) {
-                CoRefSet set = adaptedCorefSysSets.get(i);
+                CoRefSetAgata set = adaptedCorefSysSets.get(i);
                 System.out.println(set.printTargetSet());
             }
         }
@@ -359,11 +359,11 @@ public class EvaluateCorefs {
             String id = totalGoldIds.get(t);
             if (DEBUG) System.out.println("key mention id = " + id);
             for (int i = 0; i < adaptedCorefSysSets.size(); i++) {
-                CoRefSet sysSet = adaptedCorefSysSets.get(i);
+                CoRefSetAgata sysSet = adaptedCorefSysSets.get(i);
                 if (sysSet.containsTargetTermId(id)) {
                     if (DEBUG) System.out.println("sysSet.printTargetSet() = " + sysSet.printTargetSet());
                     for (int j = 0; j < corefGoldSets.size(); j++) {
-                        CoRefSet goldSet = corefGoldSets.get(j);
+                        CoRefSetAgata goldSet = corefGoldSets.get(j);
                         if (goldSet.containsTargetTermId(id)) {
                             if (DEBUG) System.out.println("goldSet.getTargets() = " + goldSet.printTargetSet());
                             double score = setRecallScore(sysSet, goldSet);
@@ -386,8 +386,8 @@ public class EvaluateCorefs {
         return recall;
     }
 
-    public double CorefB3Precision (ArrayList<CoRefSet> corefSysSets,
-                                           ArrayList<CoRefSet> corefGoldSets) {
+    public double CorefB3Precision (ArrayList<CoRefSetAgata> corefSysSets,
+                                           ArrayList<CoRefSetAgata> corefGoldSets) {
 
     /*
 
@@ -402,17 +402,17 @@ public class EvaluateCorefs {
 
         /// 4.    Merge all the remaining twinless system mentions with key to form key-p;
         /// we add ids that are unique in system as singleton sets to the gold sets
-        ArrayList<CoRefSet> adaptedGoldSets = new ArrayList<CoRefSet>();
+        ArrayList<CoRefSetAgata> adaptedGoldSets = new ArrayList<CoRefSetAgata>();
         for (int i = 0; i < corefGoldSets.size(); i++) {
-            CoRefSet coRefSet = corefGoldSets.get(i);
-            adaptedGoldSets.add(coRefSet);
+            CoRefSetAgata coRefSetAgata = corefGoldSets.get(i);
+            adaptedGoldSets.add(coRefSetAgata);
         }
         for (int i = 0; i < totalSysIds.size(); i++) {
             String sysId = totalSysIds.get(i);
             if (!totalGoldIds.contains(sysId)) {
                 /// add to corefSysSets as singleton
-                CoRefSet singleton = new CoRefSet();
-                CorefTarget t = new CorefTarget(sysId);
+                CoRefSetAgata singleton = new CoRefSetAgata();
+                CorefTargetAgata t = new CorefTargetAgata(sysId);
                 singleton.addTarget(t);
                 adaptedGoldSets.add(singleton);
             }
@@ -421,12 +421,12 @@ public class EvaluateCorefs {
         if (DEBUG) {
             System.out.println("Original gold sets for precision:"+corefGoldSets.size());
             for (int i = 0; i < corefGoldSets.size(); i++) {
-                CoRefSet set = corefGoldSets.get(i);
+                CoRefSetAgata set = corefGoldSets.get(i);
                 System.out.println(set.printTargetSet());
             }
             System.out.println("Adapted gold sets for precision, adding remaing twinless system mentions:"+adaptedGoldSets.size());
             for (int i = 0; i < adaptedGoldSets.size(); i++) {
-                CoRefSet set = adaptedGoldSets.get(i);
+                CoRefSetAgata set = adaptedGoldSets.get(i);
                 System.out.println(set.printTargetSet());
             }
         }
@@ -456,11 +456,11 @@ public class EvaluateCorefs {
             String id = totalIds.get(t);
             if (DEBUG) System.out.println("id = " + id);
             for (int i = 0; i < corefSysSets.size(); i++) {
-                CoRefSet sysSet = corefSysSets.get(i);
+                CoRefSetAgata sysSet = corefSysSets.get(i);
                 if (sysSet.containsTargetTermId(id)) {
                     if (DEBUG) System.out.println("sysSet.printTargetSet() = " + sysSet.printTargetSet());
                     for (int j = 0; j < adaptedGoldSets.size(); j++) {
-                        CoRefSet goldSet = adaptedGoldSets.get(j);
+                        CoRefSetAgata goldSet = adaptedGoldSets.get(j);
                         if (goldSet.containsTargetTermId(id)) {
                             if (DEBUG) System.out.println("goldSet.getTargets() = " + goldSet.printTargetSet());
                             double score = setPrecisionScore(sysSet, goldSet);
@@ -484,10 +484,10 @@ public class EvaluateCorefs {
     }
     
     //// we count the number of
-    public double setPrecisionScore (CoRefSet sysSet, CoRefSet goldSet)   {
+    public double setPrecisionScore (CoRefSetAgata sysSet, CoRefSetAgata goldSet)   {
         double score = 0;
         for (int i = 0; i < sysSet.getTargets().size(); i++) {
-            CorefTarget s = sysSet.getTargets().get(i);
+            CorefTargetAgata s = sysSet.getTargets().get(i);
             if (goldSet.containsTarget(s)) {
                 score++;
             }
@@ -502,10 +502,10 @@ public class EvaluateCorefs {
     }
 
     //// we count the number of
-    public double setRecallScore (CoRefSet sysSet, CoRefSet goldSet)   {
+    public double setRecallScore (CoRefSetAgata sysSet, CoRefSetAgata goldSet)   {
         double score = 0;
         for (int i = 0; i < sysSet.getTargets().size(); i++) {
-            CorefTarget s = sysSet.getTargets().get(i);
+            CorefTargetAgata s = sysSet.getTargets().get(i);
             if (goldSet.containsTarget(s)) {
                 score++;
             }

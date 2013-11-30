@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.input;
 
-import eu.newsreader.eventcoreference.objects.CorefTarget;
-import eu.newsreader.eventcoreference.objects.EventMention;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
+import eu.newsreader.eventcoreference.objects.Mention;
 import eu.newsreader.eventcoreference.util.Anaphor;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -220,8 +220,8 @@ public class SemDomParser {
         return ids;
     }
 
-    static CorefTarget getEventMention(Node eventMention) {
-        CorefTarget event = new CorefTarget();
+    static CorefTargetAgata getEventMention(Node eventMention) {
+        CorefTargetAgata event = new CorefTargetAgata();
         Node eventNode = getSubNode(eventMention, "event");
         if (eventNode!=null) {
             Node targetNode = getSubNode(eventNode, "target");
@@ -281,7 +281,7 @@ public class SemDomParser {
         for (int i = 0; i < mentions.getLength(); i++) {
             Node mentionNode = (Node) mentions.item(i);
             if (mentionNode!=null) {
-                CorefTarget eventMentionTarget = getEventMention(mentionNode);
+                CorefTargetAgata eventMentionTarget = getEventMention(mentionNode);
                 if (!eventMentionTarget.getTermId().isEmpty()) {
                    n++;
                 }
@@ -297,20 +297,20 @@ public class SemDomParser {
             NodeList mentions = mentionsNode.getChildNodes();
             if (mentions!=null) {
                 int nMentions = getNumberOfMentions(mentions);
-                ArrayList<EventMention> eventMentionBelowThresholdArrayList = new ArrayList<EventMention>();
-                ArrayList<EventMention> eventMentionOriginalSingletonArrayList = new ArrayList<EventMention>();
-                ArrayList<EventMention> eventMentionArrayList = new ArrayList<EventMention>();
+                ArrayList<Mention> mentionBelowThresholdArrayList = new ArrayList<Mention>();
+                ArrayList<Mention> mentionOriginalSingletonArrayList = new ArrayList<Mention>();
+                ArrayList<Mention> mentionArrayList = new ArrayList<Mention>();
                 for (int i = 0; i < mentions.getLength(); i++) {
                     Node mentionNode = (Node) mentions.item(i);
                     if (mentionNode!=null) {
-                        CorefTarget eventMentionTarget = getEventMention(mentionNode);
+                        CorefTargetAgata eventMentionTarget = getEventMention(mentionNode);
                         if (!eventMentionTarget.getTermId().isEmpty()) {
-                            EventMention eventMention = new EventMention();
-                            eventMention.setEvent(eventMentionTarget);
+                            Mention mention = new Mention();
+                            mention.setEvent(eventMentionTarget);
                             //check the participants
                             double matches = 0;
                             ArrayList<String> idsForEventmentionds = getComponentIdsForEventMention(mentionNode, "participants");
-                            eventMention.setnP(idsForEventmentionds.size());
+                            mention.setnP(idsForEventmentionds.size());
                             if (idsForEventmentionds.size()>0) {
                                 //// we check all the other event mentions
                                 for (int j = 0; j < mentions.getLength(); j++) {
@@ -331,7 +331,7 @@ public class SemDomParser {
                                 int max = (nMentions-1)*idsForEventmentionds.size();
                                 double score = matches/max;
                                 /// the value is stored for the mention as the pScore.
-                                eventMention.setpScore(score);
+                                mention.setpScore(score);
                             }
                             else {
                                 /// there is only one mentions so there is nothing we can do
@@ -340,7 +340,7 @@ public class SemDomParser {
                             // check the times
                             matches = 0;
                             idsForEventmentionds = getComponentIdsForEventMention(mentionNode, "times");
-                            eventMention.setnT(idsForEventmentionds.size());
+                            mention.setnT(idsForEventmentionds.size());
                             if (idsForEventmentionds.size()>0) {
                                 for (int j = 0; j < mentions.getLength(); j++) {
                                     if (j!=i) {
@@ -356,13 +356,13 @@ public class SemDomParser {
                                 }
                                 int max = (nMentions-1)*idsForEventmentionds.size();
                                 double score = matches/max;
-                                eventMention.settScore(score);
+                                mention.settScore(score);
                             }
 
                             // check the locations
                             matches = 0;
                             idsForEventmentionds = getComponentIdsForEventMention(mentionNode, "locations");
-                            eventMention.setnL(idsForEventmentionds.size());
+                            mention.setnL(idsForEventmentionds.size());
                             if (idsForEventmentionds.size()>0) {
                                 for (int j = 0; j < mentions.getLength(); j++) {
                                     if (j!=i) {
@@ -378,46 +378,46 @@ public class SemDomParser {
                                 }
                                 int max = (nMentions-1)*idsForEventmentionds.size();
                                 double score = matches/max;
-                                eventMention.setlScore(score);
+                                mention.setlScore(score);
                             }
-                            eventMention.scoreEventMention(method);
+                            mention.scoreEventMention(method);
                             if (nMentions==1){
                                 ///singleton set
                               //  System.out.println("singleton eventMention = " + eventMention.toString());
-                                eventMentionOriginalSingletonArrayList.add(eventMention);
+                                mentionOriginalSingletonArrayList.add(mention);
                             }
-                            else if (eventMention.getIntScore()>=threshold) {
-                                eventMentionArrayList.add(eventMention);
+                            else if (mention.getIntScore()>=threshold) {
+                                mentionArrayList.add(mention);
                             }
                             else {
                                 //// mention in a multiform set that scores below the threshold
                               //  System.out.println("below threshold eventMention = " + eventMention.toString());
-                                eventMentionBelowThresholdArrayList.add(eventMention);
+                                mentionBelowThresholdArrayList.add(mention);
                             }
                         }
                     }
                 }
-                if (eventMentionArrayList.size()>0) {
+                if (mentionArrayList.size()>0) {
                     str = "\t<co-refs>\n";
-                    for (int i = 0; i < eventMentionArrayList.size(); i++) {
-                        EventMention eventMention = eventMentionArrayList.get(i);
-                        str += eventMention.toString();
+                    for (int i = 0; i < mentionArrayList.size(); i++) {
+                        Mention mention = mentionArrayList.get(i);
+                        str += mention.toString();
                     }
                     str += "\t</co-refs>\n";
                 }
-                if (eventMentionOriginalSingletonArrayList.size()>0) {
+                if (mentionOriginalSingletonArrayList.size()>0) {
                     str = "\t<co-refs> <!-- original singleton -->\n";
-                    for (int i = 0; i < eventMentionOriginalSingletonArrayList.size(); i++) {
-                        EventMention eventMention = eventMentionOriginalSingletonArrayList.get(i);
-                        str += eventMention.toString();
+                    for (int i = 0; i < mentionOriginalSingletonArrayList.size(); i++) {
+                        Mention mention = mentionOriginalSingletonArrayList.get(i);
+                        str += mention.toString();
                     }
                     str += "\t</co-refs>\n";
                 }
-                if (eventMentionBelowThresholdArrayList.size()>0) {
-                    for (int i = 0; i < eventMentionBelowThresholdArrayList.size(); i++) {
-                        EventMention eventMention = eventMentionBelowThresholdArrayList.get(i);
+                if (mentionBelowThresholdArrayList.size()>0) {
+                    for (int i = 0; i < mentionBelowThresholdArrayList.size(); i++) {
+                        Mention mention = mentionBelowThresholdArrayList.get(i);
                         str += "\t<co-refs> <!-- below threshold -->\n";
-                        str += eventMention.toString();
+                        str += mention.toString();
                         str += "\t</co-refs>\n";
                     }
                 }

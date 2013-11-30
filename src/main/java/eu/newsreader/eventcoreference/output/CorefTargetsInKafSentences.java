@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.output;
 
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafTerm;
 
@@ -44,7 +44,7 @@ public class CorefTargetsInKafSentences {
                     str = "<co-ref-sets file=\""+kaf.getName()+"\">\n";
                     fos.write(str.getBytes());
                     parser.parseFile(kaf);
-                    HashMap<String, CoRefSet> eventSets = new HashMap<String, CoRefSet>();
+                    HashMap<String, CoRefSetAgata> eventSets = new HashMap<String, CoRefSetAgata>();
                     for (int i = 0; i < parser.kafTermList.size(); i++) {
                         KafTerm kafTerm = parser.kafTermList.get(i);
                         if ((kafTerm.getPos().toLowerCase().startsWith("n")) ||
@@ -53,21 +53,21 @@ public class CorefTargetsInKafSentences {
                                 ) {
                             String sentenceId = parser.getSentenceId(kafTerm);
                             if (eventSets.containsKey(sentenceId)) {
-                                CoRefSet corefSet = eventSets.get(sentenceId);
-                                CorefTarget target = new CorefTarget();
+                                CoRefSetAgata corefSetAgata = eventSets.get(sentenceId);
+                                CorefTargetAgata target = new CorefTargetAgata();
                                 target.setDocId(kaf.getName());
                                 target.setTermId(kafTerm.getTid());
-                                corefSet.addTarget(target);
-                                eventSets.put(sentenceId, corefSet);
+                                corefSetAgata.addTarget(target);
+                                eventSets.put(sentenceId, corefSetAgata);
                             }
                             else {
-                                CoRefSet corefSet = new CoRefSet();
-                                corefSet.setId(sentenceId);
-                                CorefTarget target = new CorefTarget();
+                                CoRefSetAgata corefSetAgata = new CoRefSetAgata();
+                                corefSetAgata.setId(sentenceId);
+                                CorefTargetAgata target = new CorefTargetAgata();
                                 target.setDocId(kaf.getName());
                                 target.setTermId(kafTerm.getTid());
-                                corefSet.addTarget(target);
-                                eventSets.put(sentenceId, corefSet);
+                                corefSetAgata.addTarget(target);
+                                eventSets.put(sentenceId, corefSetAgata);
                             }
                         }
                     }
@@ -75,7 +75,7 @@ public class CorefTargetsInKafSentences {
                     Iterator keys = keySet.iterator();
                     while (keys.hasNext()) {
                         String key = (String) keys.next();
-                        CoRefSet corefs = eventSets.get(key);
+                        CoRefSetAgata corefs = eventSets.get(key);
                         str = corefs.toString();
                         fos.write(str.getBytes());
                     }

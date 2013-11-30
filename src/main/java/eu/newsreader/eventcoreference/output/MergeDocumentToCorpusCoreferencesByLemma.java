@@ -1,8 +1,8 @@
 package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.input.CorefSaxParser;
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class MergeDocumentToCorpusCoreferencesByLemma {
                 CorefSaxParser corefSaxParser = new CorefSaxParser();
                 corefSaxParser.parseFile(corefFilePath);
                 /// we first iterate over the map with file identifiers and the event coref maps
-                HashMap<String, CoRefSet> lemmaMap = new HashMap<String, CoRefSet>();
+                HashMap<String, CoRefSetAgata> lemmaMap = new HashMap<String, CoRefSetAgata>();
                 Set keySet = corefSaxParser.corefMap.keySet();
                 Iterator keys = keySet.iterator();
                 int setCount = 0;
@@ -45,22 +45,22 @@ public class MergeDocumentToCorpusCoreferencesByLemma {
                     String key = (String) keys.next();
                     /// keys are file identifiers
                     // We now get the components for the key (= particular file identifier), so just for one file
-                    ArrayList<CoRefSet> coRefSetsEvents = corefSaxParser.corefMap.get(key);
-                    for (int i = 0; i < coRefSetsEvents.size(); i++) {
-                        CoRefSet coRefSet = coRefSetsEvents.get(i);
-                        for (int j = 0; j < coRefSet.getTargets().size(); j++) {
-                            CorefTarget corefTarget = coRefSet.getTargets().get(j);
-                            if (lemmaMap.containsKey(corefTarget.getWord())) {
-                                CoRefSet coRefSetLemma = lemmaMap.get(corefTarget.getWord());
-                                coRefSetLemma.addTarget(corefTarget);
-                                lemmaMap.put(corefTarget.getWord(), coRefSetLemma);
+                    ArrayList<CoRefSetAgata> coRefSetsEventAgatas = corefSaxParser.corefMap.get(key);
+                    for (int i = 0; i < coRefSetsEventAgatas.size(); i++) {
+                        CoRefSetAgata coRefSetAgata = coRefSetsEventAgatas.get(i);
+                        for (int j = 0; j < coRefSetAgata.getTargets().size(); j++) {
+                            CorefTargetAgata corefTargetAgata = coRefSetAgata.getTargets().get(j);
+                            if (lemmaMap.containsKey(corefTargetAgata.getWord())) {
+                                CoRefSetAgata coRefSetAgataLemma = lemmaMap.get(corefTargetAgata.getWord());
+                                coRefSetAgataLemma.addTarget(corefTargetAgata);
+                                lemmaMap.put(corefTargetAgata.getWord(), coRefSetAgataLemma);
                             }
                             else {
-                                CoRefSet coRefSetLemma = new CoRefSet();
+                                CoRefSetAgata coRefSetAgataLemma = new CoRefSetAgata();
                                 setCount++;
-                                coRefSetLemma.setId(corefSaxParser.corpusName+"/"+setCount);
-                                coRefSetLemma.addTarget(corefTarget);
-                                lemmaMap.put(corefTarget.getWord(), coRefSetLemma);
+                                coRefSetAgataLemma.setId(corefSaxParser.corpusName+"/"+setCount);
+                                coRefSetAgataLemma.addTarget(corefTargetAgata);
+                                lemmaMap.put(corefTargetAgata.getWord(), coRefSetAgataLemma);
                             }
                         }
                     }
@@ -75,7 +75,7 @@ public class MergeDocumentToCorpusCoreferencesByLemma {
         }
     }
 
-    static void serializeCrossCorpus (String outputFilePath, CorefSaxParser corefSaxParser, HashMap<String, CoRefSet> lemmaMap) {
+    static void serializeCrossCorpus (String outputFilePath, CorefSaxParser corefSaxParser, HashMap<String, CoRefSetAgata> lemmaMap) {
         try {
             FileOutputStream fos = new FileOutputStream(outputFilePath);
             String str ="";
@@ -89,8 +89,8 @@ public class MergeDocumentToCorpusCoreferencesByLemma {
             Iterator keys = keySet.iterator();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                CoRefSet coRefSet = lemmaMap.get(key);
-                str = coRefSet.toString();
+                CoRefSetAgata coRefSetAgata = lemmaMap.get(key);
+                str = coRefSetAgata.toString();
                 fos.write(str.getBytes());
             }
             str = "</co-ref-sets>\n";

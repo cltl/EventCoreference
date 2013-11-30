@@ -1,6 +1,6 @@
 package eu.newsreader.eventcoreference.coref;
 
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,7 +50,7 @@ public class GranularityMatch {
         return -1;
     }
 
-    static public int getGranularityNrScore (CorefTarget target1, CorefTarget target2) {
+    static public int getGranularityNrScore (CorefTargetAgata target1, CorefTargetAgata target2) {
         int score = 0;
         if (!target1.getGranularityNumber().isEmpty() && !target2.getGranularityNumber().isEmpty()) {
             if (target1.getGranularityNumber().equalsIgnoreCase(target2.getGranularityNumber())) {
@@ -64,7 +64,7 @@ public class GranularityMatch {
         }
         return score;
     }
-    static public int getGranularityTypeScore (CorefTarget target1, CorefTarget target2) {
+    static public int getGranularityTypeScore (CorefTargetAgata target1, CorefTargetAgata target2) {
         int score = 0;
         if (target1.getGranularityType().isEmpty()) {
             if ((target1.getPos().equals("N.P"))  || (target1.getPos().equals("N.NPS"))) { /// treetagger style
@@ -96,7 +96,7 @@ public class GranularityMatch {
         return score;
     }
 
-    static public int getGranularityScore (CorefTarget target1, CorefTarget target2) {
+    static public int getGranularityScore (CorefTargetAgata target1, CorefTargetAgata target2) {
         int score = 0;
         score += getGranularityNrScore(target1, target2);
         score += getGranularityTypeScore(target1, target2);

@@ -1,7 +1,5 @@
 package eu.newsreader.eventcoreference.objects;
 
-import eu.kyotoproject.kaf.CorefTarget;
-
 import java.util.ArrayList;
 
 /**
@@ -11,7 +9,7 @@ import java.util.ArrayList;
  * Time: 3:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SemEvent extends SemObject{
+public class SemPlace extends SemObject{
   /*
   <semEvent id="e30" lcs="raid" score="2.4849066497880004" synset="eng-30-02020027-v" label="raid" mentions="2">
 	<mentions>
@@ -43,18 +41,19 @@ public class SemEvent extends SemObject{
    */
 
 
-   public SemEvent() {
-    }
+   public SemPlace() {
+
+   }
 
 
 
     public String toString () {
-        String str = "<semEvent id=\""+this.getId()+"\" lcs=\""+this.getLabel()+"\" score=\""+this.getScore()+"\" label=\""+this.getLabel()+"\" mentions=\""+this.getMentions().size()+"\">\n";
+        String str = "<semPlace id=\""+this.getId()+"\" lcs=\""+this.getLabel()+"\" score=\""+this.getScore()+"\" label=\""+this.getLabel()+"\" mentions=\""+this.getMentions().size()+"\">\n";
         str += "<mentions>\n";
         for (int i = 0; i < this.getMentions().size(); i++) {
             ArrayList<eu.kyotoproject.kaf.CorefTarget> mentions = this.getMentions().get(i);
             for (int j = 0; j < mentions.size(); j++) {
-                CorefTarget corefTarget = mentions.get(j);
+                eu.kyotoproject.kaf.CorefTarget corefTarget = mentions.get(j);
                 str += corefTarget.toString();
             }
         }

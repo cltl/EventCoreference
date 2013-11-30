@@ -1,8 +1,8 @@
 package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.input.CorefSaxParser;
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -125,13 +125,13 @@ public class CombineCorefOutputPerEvent {
                     String key = (String) keys.next();
                     /// keys are file identifiers
                     // We now get the components for the key (= particular file identifier), so just for one file
-                    ArrayList<CoRefSet> coRefSetsEvents = events.corefMap.get(key);
-                    ArrayList<CoRefSet> participantSets = participants.corefMap.get(key);
-                    ArrayList<CoRefSet> timeSets = times.corefMap.get(key);
-                    ArrayList<CoRefSet> locationSets = locations.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> coRefSetsEventAgatas = events.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> participantSets = participants.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> timeSets = times.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> locationSets = locations.corefMap.get(key);
 
                     /// we create the initial output string
-                    str = "<file name=\""+key+"\" eventCount=\""+coRefSetsEvents.size()+"\"";
+                    str = "<file name=\""+key+"\" eventCount=\""+ coRefSetsEventAgatas.size()+"\"";
                     str += " participantCount=\"";
                     if (participantSets!=null) {
                         str += participantSets.size()+"\"";
@@ -157,13 +157,13 @@ public class CombineCorefOutputPerEvent {
                     fos.write(str.getBytes());
 
                     /// we iterate over the events of a single file
-                    for (int i = 0; i < coRefSetsEvents.size(); i++) {
-                        CoRefSet coRefSet = coRefSetsEvents.get(i);
-                        str = "  <semEvent id=\""+coRefSet.getId()+"\" lcs=\""+coRefSet.getLcs()+"\" score=\""+coRefSet.getScore()+"\" synset=\""+coRefSet.getMostFrequentSynset()+"\" label=\""+coRefSet.getMostFrequentLemma()+"\" mentions=\""+coRefSet.getTargets().size()+"\">\n";
+                    for (int i = 0; i < coRefSetsEventAgatas.size(); i++) {
+                        CoRefSetAgata coRefSetAgata = coRefSetsEventAgatas.get(i);
+                        str = "  <semEvent id=\""+ coRefSetAgata.getId()+"\" lcs=\""+ coRefSetAgata.getLcs()+"\" score=\""+ coRefSetAgata.getScore()+"\" synset=\""+ coRefSetAgata.getMostFrequentSynset()+"\" label=\""+ coRefSetAgata.getMostFrequentLemma()+"\" mentions=\""+ coRefSetAgata.getTargets().size()+"\">\n";
                         str += "\t<mentions>\n";
                         fos.write(str.getBytes());
-                        for (int j = 0; j < coRefSet.getTargets().size(); j++) {
-                            CorefTarget eventTarget = coRefSet.getTargets().get(j);
+                        for (int j = 0; j < coRefSetAgata.getTargets().size(); j++) {
+                            CorefTargetAgata eventTarget = coRefSetAgata.getTargets().get(j);
                             str = "\t<event-mention>\n";
                             str += "\t\t<event>\n";
                             str += "\t"+eventTarget.toString();
@@ -179,7 +179,7 @@ public class CombineCorefOutputPerEvent {
                             if (participantSets!=null) {
                                 str ="\t\t<participants>\n";
                                 for (int s = 0; s < participantSets.size(); s++) {
-                                    CoRefSet refSet = participantSets.get(s);
+                                    CoRefSetAgata refSet = participantSets.get(s);
           /*                          if (refSet.containsTargetSentenceId(eventTarget.getSentenceId())) {
                                        str += "\t\t\t<participant id=\""+refSet.getParticipantId()+"\" lcs=\""+refSet.getLcs()+"\" score=\""+refSet.getScore()+"\" synset=\""+refSet.getMostFrequentSynset()+"\" label=\""+refSet.getMostFrequentLemma()+"\" mentions=\""+refSet.getTargets().size()+"\">\n";
                                         for (int p = 0; p < refSet.getTargets().size(); p++) {
@@ -196,7 +196,7 @@ public class CombineCorefOutputPerEvent {
                                         if (refSet.containsTargetSentenceId(sentenceId)) {
                                             String targetString = "";
                                             for (int p = 0; p < refSet.getTargets().size(); p++) {
-                                                CorefTarget target = refSet.getTargets().get(p);
+                                                CorefTargetAgata target = refSet.getTargets().get(p);
                                                 if (eventTarget.getDocId().equals(target.getDocId())) {
                                                     if (sentenceId.equals(target.getSentenceId())) {
                                                         targetString += "\t\t\t"+target.toString();
@@ -223,7 +223,7 @@ public class CombineCorefOutputPerEvent {
                             if (timeSets!=null) {
                                 str ="\t\t<times>\n";
                                 for (int s = 0; s < timeSets.size(); s++) {
-                                    CoRefSet refSet = timeSets.get(s);
+                                    CoRefSetAgata refSet = timeSets.get(s);
 /*                                    if (refSet.containsTargetSentenceId(eventTarget.getSentenceId())) {
                                         str += "\t\t\t<time id=\""+refSet.getTimeId()+"\" lcs=\""+refSet.getLcs()+"\" score=\""+refSet.getScore()+"\" synset=\""+refSet.getMostFrequentSynset()+"\" label=\""+refSet.getMostFrequentLemma()+"\" mentions=\""+refSet.getTargets().size()+"\">\n";
                                         for (int p = 0; p < refSet.getTargets().size(); p++) {
@@ -241,7 +241,7 @@ public class CombineCorefOutputPerEvent {
 
                                             String targetString = "";
                                             for (int p = 0; p < refSet.getTargets().size(); p++) {
-                                                CorefTarget target = refSet.getTargets().get(p);
+                                                CorefTargetAgata target = refSet.getTargets().get(p);
                                                 if (eventTarget.getDocId().equals(target.getDocId())) {
                                                     if (sentenceId.equals(target.getSentenceId())) {
                                                         targetString += "\t\t\t"+target.toString();
@@ -279,7 +279,7 @@ public class CombineCorefOutputPerEvent {
                             if (locationSets!=null) {
                                 str ="\t\t<locations>\n";
                                 for (int s = 0; s < locationSets.size(); s++) {
-                                    CoRefSet refSet = locationSets.get(s);
+                                    CoRefSetAgata refSet = locationSets.get(s);
 /*                                    if (refSet.containsTargetSentenceId(eventTarget.getSentenceId())) {
                                         str += "\t\t\t<location id=\""+refSet.getLocationId()+"\" lcs=\""+refSet.getLcs()+"\" score=\""+refSet.getScore()+"\" synset=\""+refSet.getMostFrequentSynset()+"\" label=\""+refSet.getMostFrequentLemma()+"\" mentions=\""+refSet.getTargets().size()+"\">\n";
                                         for (int p = 0; p < refSet.getTargets().size(); p++) {
@@ -297,7 +297,7 @@ public class CombineCorefOutputPerEvent {
 
                                             String targetString = "";
                                             for (int p = 0; p < refSet.getTargets().size(); p++) {
-                                                CorefTarget target = refSet.getTargets().get(p);
+                                                CorefTargetAgata target = refSet.getTargets().get(p);
                                                 if (eventTarget.getDocId().equals(target.getDocId())) {
                                                     if (sentenceId.equals(target.getSentenceId())) {
                                                         targetString += "\t\t\t"+target.toString();
@@ -351,19 +351,19 @@ public class CombineCorefOutputPerEvent {
         }
     }
 
-    static ArrayList<CoRefSet> getCorefSetFromRange (HashMap<String, ArrayList<CoRefSet>> corefMap, String sentenceIdString, int sentenceRange) {
-        ArrayList<CoRefSet> coRefSets = null;
-        coRefSets = corefMap.get(sentenceIdString);
+    static ArrayList<CoRefSetAgata> getCorefSetFromRange (HashMap<String, ArrayList<CoRefSetAgata>> corefMap, String sentenceIdString, int sentenceRange) {
+        ArrayList<CoRefSetAgata> coRefSetAgatas = null;
+        coRefSetAgatas = corefMap.get(sentenceIdString);
         if (sentenceRange>0) {
             /// we assume that the sentence id is an integer
             Integer sentenceId = Integer.parseInt(sentenceIdString);
             if (sentenceId!=null) {
                 for (int i = sentenceId; i < sentenceRange; i++) {
-                    ArrayList<CoRefSet> nextSet = corefMap.get(sentenceId+i);
+                    ArrayList<CoRefSetAgata> nextSet = corefMap.get(sentenceId+i);
                     if (nextSet!=null) {
                         for (int j = 0; j < nextSet.size(); j++) {
-                            CoRefSet coRefSet = nextSet.get(j);
-                            coRefSets.add(coRefSet);
+                            CoRefSetAgata coRefSetAgata = nextSet.get(j);
+                            coRefSetAgatas.add(coRefSetAgata);
                         }
                     }
                 }
@@ -378,7 +378,7 @@ public class CombineCorefOutputPerEvent {
                 }*/
             }
         }
-        return coRefSets;
+        return coRefSetAgatas;
     }
 
     static ArrayList<String> getSentenceRange (String sentenceIdString, int sentenceRange) {

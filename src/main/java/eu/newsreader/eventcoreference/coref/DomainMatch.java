@@ -1,6 +1,6 @@
 package eu.newsreader.eventcoreference.coref;
 
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -44,7 +44,7 @@ public class DomainMatch {
             return score;
         }
 
-    static public double getDomainExactScore (CorefTarget target1, CorefTarget target2) {
+    static public double getDomainExactScore (CorefTargetAgata target1, CorefTargetAgata target2) {
         double score = 0;
         if (target1.getDomain().isEmpty() || target2.getDomain().isEmpty()) {
             return  0;
@@ -55,7 +55,7 @@ public class DomainMatch {
         return score;
     }
 
-    static public double getDomainChainScore (CorefTarget target1, CorefTarget target2) {
+    static public double getDomainChainScore (CorefTargetAgata target1, CorefTargetAgata target2) {
         double score = 0;
         if (target1.getDomain().isEmpty() || target2.getDomain().isEmpty()) {
             return  0;
@@ -77,7 +77,7 @@ public class DomainMatch {
         return score;
     }
 
-    static public double getDomainSubScore (CorefTarget target1, CorefTarget target2) {
+    static public double getDomainSubScore (CorefTargetAgata target1, CorefTargetAgata target2) {
         if (target1.getDomain().isEmpty() || target2.getDomain().isEmpty()) {
             return  0;
         }
@@ -145,7 +145,7 @@ public class DomainMatch {
         readDomainHierarchy(file);
     }
 
-    static public double getDomainScore (CorefTarget target1, CorefTarget target2) {
+    static public double getDomainScore (CorefTargetAgata target1, CorefTargetAgata target2) {
         double score = 0;
         if (target1.getDomain().equalsIgnoreCase(target2.getDomain())) {
             score = 5;

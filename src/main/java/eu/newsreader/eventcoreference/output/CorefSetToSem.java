@@ -1,8 +1,8 @@
 package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.input.CorefSaxParser;
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 import eu.newsreader.eventcoreference.objects.Triple;
 
 import java.io.File;
@@ -116,13 +116,13 @@ public class CorefSetToSem {
                     String key = (String) keys.next();
                     /// keys are file identifiers
                     // We now get the components for the key (= particular file identifier), so just for one file
-                    ArrayList<CoRefSet> coRefSetsEvents = events.corefMap.get(key);
-                    ArrayList<CoRefSet> participantSets = participants.corefMap.get(key);
-                    ArrayList<CoRefSet> timeSets = times.corefMap.get(key);
-                    ArrayList<CoRefSet> locationSets = locations.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> coRefSetsEventAgatas = events.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> participantSets = participants.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> timeSets = times.corefMap.get(key);
+                    ArrayList<CoRefSetAgata> locationSets = locations.corefMap.get(key);
 
                     /// we create the initial output string
-                    str = "<topic name=\""+key+"\" eventCount=\""+coRefSetsEvents.size()+"\"";
+                    str = "<topic name=\""+key+"\" eventCount=\""+ coRefSetsEventAgatas.size()+"\"";
                     str += " participantCount=\"";
                     if (participantSets!=null) {
                         str += participantSets.size()+"\"";
@@ -147,16 +147,16 @@ public class CorefSetToSem {
                     str += ">\n";
                     fos.write(str.getBytes());
 
-                    if (coRefSetsEvents!=null) {
+                    if (coRefSetsEventAgatas !=null) {
                         /// we iterate over the events of a single file
                         str = "<semEvents>\n";
                         fos.write(str.getBytes());
-                        for (int i = 0; i < coRefSetsEvents.size(); i++) {
-                            CoRefSet coRefSet = coRefSetsEvents.get(i);
-                            str = "\t<semEvent id=\""+key+"/e"+coRefSet.getId()+"\" lcs=\""+coRefSet.getLcs()+"\" score=\""+coRefSet.getScore()+"\" synset=\""+coRefSet.getMostFrequentSynset()+"\" label=\""+coRefSet.getMostFrequentLemma()+"\" mentions=\""+coRefSet.getTargets().size()+"\">\n";
+                        for (int i = 0; i < coRefSetsEventAgatas.size(); i++) {
+                            CoRefSetAgata coRefSetAgata = coRefSetsEventAgatas.get(i);
+                            str = "\t<semEvent id=\""+key+"/e"+ coRefSetAgata.getId()+"\" lcs=\""+ coRefSetAgata.getLcs()+"\" score=\""+ coRefSetAgata.getScore()+"\" synset=\""+ coRefSetAgata.getMostFrequentSynset()+"\" label=\""+ coRefSetAgata.getMostFrequentLemma()+"\" mentions=\""+ coRefSetAgata.getTargets().size()+"\">\n";
                             fos.write(str.getBytes());
-                            for (int j = 0; j < coRefSet.getTargets().size(); j++) {
-                                CorefTarget eventTarget = coRefSet.getTargets().get(j);
+                            for (int j = 0; j < coRefSetAgata.getTargets().size(); j++) {
+                                CorefTargetAgata eventTarget = coRefSetAgata.getTargets().get(j);
                                 str = "\t"+eventTarget.toString();
                                 fos.write(str.getBytes());
                             }
@@ -172,11 +172,11 @@ public class CorefSetToSem {
                         str = "<semAgents>\n";
                         fos.write(str.getBytes());
                         for (int i = 0; i < participantSets.size(); i++) {
-                            CoRefSet coRefSet = participantSets.get(i);
-                            str = "\t<semAgent id=\""+key+"/a"+coRefSet.getId()+"\" lcs=\""+coRefSet.getLcs()+"\" score=\""+coRefSet.getScore()+"\" synset=\""+coRefSet.getMostFrequentSynset()+"\" label=\""+coRefSet.getMostFrequentLemma()+"\" mentions=\""+coRefSet.getTargets().size()+"\">\n";
+                            CoRefSetAgata coRefSetAgata = participantSets.get(i);
+                            str = "\t<semAgent id=\""+key+"/a"+ coRefSetAgata.getId()+"\" lcs=\""+ coRefSetAgata.getLcs()+"\" score=\""+ coRefSetAgata.getScore()+"\" synset=\""+ coRefSetAgata.getMostFrequentSynset()+"\" label=\""+ coRefSetAgata.getMostFrequentLemma()+"\" mentions=\""+ coRefSetAgata.getTargets().size()+"\">\n";
                             fos.write(str.getBytes());
-                            for (int j = 0; j < coRefSet.getTargets().size(); j++) {
-                                CorefTarget eventTarget = coRefSet.getTargets().get(j);
+                            for (int j = 0; j < coRefSetAgata.getTargets().size(); j++) {
+                                CorefTargetAgata eventTarget = coRefSetAgata.getTargets().get(j);
                                 str = "\t"+eventTarget.toString();
                                 fos.write(str.getBytes());
                             }
@@ -192,11 +192,11 @@ public class CorefSetToSem {
                         str = "<semPlaces>\n";
                         fos.write(str.getBytes());
                         for (int i = 0; i < locationSets.size(); i++) {
-                            CoRefSet coRefSet = locationSets.get(i);
-                            str = "\t<semPlace id=\""+key+"/p"+coRefSet.getId()+"\" lcs=\""+coRefSet.getLcs()+"\" score=\""+coRefSet.getScore()+"\" synset=\""+coRefSet.getMostFrequentSynset()+"\" label=\""+coRefSet.getMostFrequentLemma()+"\" mentions=\""+coRefSet.getTargets().size()+"\">\n";
+                            CoRefSetAgata coRefSetAgata = locationSets.get(i);
+                            str = "\t<semPlace id=\""+key+"/p"+ coRefSetAgata.getId()+"\" lcs=\""+ coRefSetAgata.getLcs()+"\" score=\""+ coRefSetAgata.getScore()+"\" synset=\""+ coRefSetAgata.getMostFrequentSynset()+"\" label=\""+ coRefSetAgata.getMostFrequentLemma()+"\" mentions=\""+ coRefSetAgata.getTargets().size()+"\">\n";
                             fos.write(str.getBytes());
-                            for (int j = 0; j < coRefSet.getTargets().size(); j++) {
-                                CorefTarget eventTarget = coRefSet.getTargets().get(j);
+                            for (int j = 0; j < coRefSetAgata.getTargets().size(); j++) {
+                                CorefTargetAgata eventTarget = coRefSetAgata.getTargets().get(j);
                                 str = "\t"+eventTarget.toString();
                                 fos.write(str.getBytes());
                             }
@@ -212,11 +212,11 @@ public class CorefSetToSem {
                         str = "<semTimes>\n";
                         fos.write(str.getBytes());
                         for (int i = 0; i < timeSets.size(); i++) {
-                            CoRefSet coRefSet = timeSets.get(i);
-                            str = "  <semTime id=\""+key+"/t"+coRefSet.getId()+"\" lcs=\""+coRefSet.getLcs()+"\" score=\""+coRefSet.getScore()+"\" synset=\""+coRefSet.getMostFrequentSynset()+"\" label=\""+coRefSet.getMostFrequentLemma()+"\" mentions=\""+coRefSet.getTargets().size()+"\">\n";
+                            CoRefSetAgata coRefSetAgata = timeSets.get(i);
+                            str = "  <semTime id=\""+key+"/t"+ coRefSetAgata.getId()+"\" lcs=\""+ coRefSetAgata.getLcs()+"\" score=\""+ coRefSetAgata.getScore()+"\" synset=\""+ coRefSetAgata.getMostFrequentSynset()+"\" label=\""+ coRefSetAgata.getMostFrequentLemma()+"\" mentions=\""+ coRefSetAgata.getTargets().size()+"\">\n";
                             fos.write(str.getBytes());
-                            for (int j = 0; j < coRefSet.getTargets().size(); j++) {
-                                CorefTarget eventTarget = coRefSet.getTargets().get(j);
+                            for (int j = 0; j < coRefSetAgata.getTargets().size(); j++) {
+                                CorefTargetAgata eventTarget = coRefSetAgata.getTargets().get(j);
                                 str = "\t"+eventTarget.toString();
                                 fos.write(str.getBytes());
                             }
@@ -228,7 +228,7 @@ public class CorefSetToSem {
                     }
 
                     /// now we get the relations
-                    getRelations(fos, events.fileName, coRefSetsEvents, participantSets, timeSets, locationSets, sentenceRange, key);
+                    getRelations(fos, events.fileName, coRefSetsEventAgatas, participantSets, timeSets, locationSets, sentenceRange, key);
                     str = "</topic>\n";
                     fos.write(str.getBytes());
                 }
@@ -272,10 +272,10 @@ public class CorefSetToSem {
 
 
     static void getRelations (FileOutputStream fos, String fileName,
-            ArrayList<CoRefSet> coRefSetsEvents ,
-            ArrayList<CoRefSet> participantSets,
-            ArrayList<CoRefSet> timeSets,
-            ArrayList<CoRefSet> locationSets,
+            ArrayList<CoRefSetAgata> coRefSetsEventAgatas,
+            ArrayList<CoRefSetAgata> participantSets,
+            ArrayList<CoRefSetAgata> timeSets,
+            ArrayList<CoRefSetAgata> locationSets,
             int sentenceRange,
             String key
     ) throws IOException {
@@ -287,10 +287,10 @@ public class CorefSetToSem {
         ArrayList<Triple> triplesP = new ArrayList<Triple>();
         ArrayList<Triple> triplesT = new ArrayList<Triple>();
 
-        for (int i = 0; i < coRefSetsEvents.size(); i++) {
-            CoRefSet coRefSet = coRefSetsEvents.get(i);
-            for (int j = 0; j < coRefSet.getTargets().size(); j++) {
-                CorefTarget eventTarget = coRefSet.getTargets().get(j);
+        for (int i = 0; i < coRefSetsEventAgatas.size(); i++) {
+            CoRefSetAgata coRefSetAgata = coRefSetsEventAgatas.get(i);
+            for (int j = 0; j < coRefSetAgata.getTargets().size(); j++) {
+                CorefTargetAgata eventTarget = coRefSetAgata.getTargets().get(j);
 
                 /// we obtain the sentence ids for the targets of the coreference set of the events
                 /// this sentence range determines which components belong to the event.
@@ -300,20 +300,20 @@ public class CorefSetToSem {
                 if (participantSets!=null) {
                    // System.out.println("PARTICIPANTS");
                     for (int s = 0; s < participantSets.size(); s++) {
-                        CoRefSet refSet = participantSets.get(s);
+                        CoRefSetAgata refSet = participantSets.get(s);
                         //// loop to add results for range of sentences
                         for (int k = 0; k < rangeOfSentenceIds.size(); k++) {
                             String sentenceId = rangeOfSentenceIds.get(k);
                             if (refSet.containsTargetSentenceId(sentenceId)) {
                                 for (int l = 0; l < refSet.getTargets().size(); l++) {
-                                    CorefTarget corefTarget = refSet.getTargets().get(l);
-                                    if (eventTarget.getDocId().equals(corefTarget.getDocId())) {
+                                    CorefTargetAgata corefTargetAgata = refSet.getTargets().get(l);
+                                    if (eventTarget.getDocId().equals(corefTargetAgata.getDocId())) {
                                         String predicate = "semHasAgent";
-                                        String subject = key+"/e"+ coRefSet.getId();
+                                        String subject = key+"/e"+ coRefSetAgata.getId();
                                         String object =  key+"/a"+ refSet.getId();
                                         Triple triple = new Triple(predicate, subject, object);
                                         String target = "\t\t<target id =\""+ eventTarget.getDocId()+"/"+eventTarget.getSentenceId()+"\""+"/>";
-                                        target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+corefTarget.getWord()+" -->";
+                                        target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+ corefTargetAgata.getWord()+" -->";
                                         int givenTriple = getTriple(triplesA, triple);
                                         if (givenTriple==-1) {
                                             relationCounter++;
@@ -340,20 +340,20 @@ public class CorefSetToSem {
                 if (timeSets!=null) {
                    // System.out.println("TIME");
                     for (int s = 0; s < timeSets.size(); s++) {
-                        CoRefSet refSet = timeSets.get(s);
+                        CoRefSetAgata refSet = timeSets.get(s);
                         //// loop to add results for range of sentences
                         for (int k = 0; k < rangeOfSentenceIds.size(); k++) {
                             String sentenceId = rangeOfSentenceIds.get(k);
                             if (refSet.containsTargetSentenceId(sentenceId)) {
                                 for (int l = 0; l < refSet.getTargets().size(); l++) {
-                                    CorefTarget corefTarget = refSet.getTargets().get(l);
-                                    if (eventTarget.getDocId().equals(corefTarget.getDocId())) {
+                                    CorefTargetAgata corefTargetAgata = refSet.getTargets().get(l);
+                                    if (eventTarget.getDocId().equals(corefTargetAgata.getDocId())) {
                                         String predicate = "semHasTime";
-                                        String subject = key+"/e"+ coRefSet.getId();
+                                        String subject = key+"/e"+ coRefSetAgata.getId();
                                         String object =  key+"/t"+ refSet.getId();
                                         Triple triple = new Triple(predicate, subject, object);
                                         String target = "\t\t<target id =\""+ eventTarget.getDocId()+"/"+eventTarget.getSentenceId()+"\""+"/>";
-                                        target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+corefTarget.getWord()+" -->";
+                                        target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+ corefTargetAgata.getWord()+" -->";
                                         int givenTriple = getTriple(triplesA, triple);
                                         if (givenTriple==-1) {
                                             relationCounter++;
@@ -380,20 +380,20 @@ public class CorefSetToSem {
                 if (locationSets!=null) {
                    // System.out.println("PLACES");
                     for (int s = 0; s < locationSets.size(); s++) {
-                        CoRefSet refSet = locationSets.get(s);
+                        CoRefSetAgata refSet = locationSets.get(s);
                         //// loop to add results for range of sentences
                         for (int k = 0; k < rangeOfSentenceIds.size(); k++) {
                             String sentenceId = rangeOfSentenceIds.get(k);
                             if (refSet.containsTargetSentenceId(sentenceId)) {
                                 for (int l = 0; l < refSet.getTargets().size(); l++) {
-                                    CorefTarget corefTarget = refSet.getTargets().get(l);
-                                    if (eventTarget.getDocId().equals(corefTarget.getDocId())) {
+                                    CorefTargetAgata corefTargetAgata = refSet.getTargets().get(l);
+                                    if (eventTarget.getDocId().equals(corefTargetAgata.getDocId())) {
                                         String predicate = "semHasPlace";
-                                        String subject = key+"/e"+ coRefSet.getId();
+                                        String subject = key+"/e"+ coRefSetAgata.getId();
                                         String object =  key+"/p"+ refSet.getId();
                                         Triple triple = new Triple(predicate, subject, object);
                                         String target = "\t\t<target id =\""+ eventTarget.getDocId()+"/"+eventTarget.getSentenceId()+"\""+"/>";
-                                        target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+corefTarget.getWord()+" -->";
+                                        target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+ corefTargetAgata.getWord()+" -->";
                                         int givenTriple = getTriple(triplesA, triple);
                                         if (givenTriple==-1) {
                                             relationCounter++;
@@ -467,19 +467,19 @@ public class CorefSetToSem {
      * @param sentenceRange
      * @return
      */
-    static ArrayList<CoRefSet> getCorefSetFromRange (HashMap<String, ArrayList<CoRefSet>> corefMap, String sentenceIdString, int sentenceRange) {
-        ArrayList<CoRefSet> coRefSets = null;
-        coRefSets = corefMap.get(sentenceIdString);
+    static ArrayList<CoRefSetAgata> getCorefSetFromRange (HashMap<String, ArrayList<CoRefSetAgata>> corefMap, String sentenceIdString, int sentenceRange) {
+        ArrayList<CoRefSetAgata> coRefSetAgatas = null;
+        coRefSetAgatas = corefMap.get(sentenceIdString);
         if (sentenceRange>0) {
             /// we assume that the sentence id is an integer
             Integer sentenceId = Integer.parseInt(sentenceIdString);
             if (sentenceId!=null) {
                 for (int i = sentenceId; i < sentenceRange; i++) {
-                    ArrayList<CoRefSet> nextSet = corefMap.get(sentenceId+i);
+                    ArrayList<CoRefSetAgata> nextSet = corefMap.get(sentenceId+i);
                     if (nextSet!=null) {
                         for (int j = 0; j < nextSet.size(); j++) {
-                            CoRefSet coRefSet = nextSet.get(j);
-                            coRefSets.add(coRefSet);
+                            CoRefSetAgata coRefSetAgata = nextSet.get(j);
+                            coRefSetAgatas.add(coRefSetAgata);
                         }
                     }
                 }
@@ -494,7 +494,7 @@ public class CorefSetToSem {
                 }*/
             }
         }
-        return coRefSets;
+        return coRefSetAgatas;
     }
 
     static ArrayList<String> getSentenceRange (String sentenceIdString, int sentenceRange) {

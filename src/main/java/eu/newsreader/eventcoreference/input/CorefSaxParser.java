@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.input;
 
-import eu.newsreader.eventcoreference.objects.CoRefSet;
-import eu.newsreader.eventcoreference.objects.CorefTarget;
+import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
+import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -32,8 +32,8 @@ public class CorefSaxParser extends DefaultHandler{
     public String fileName;
     public String corpusName;
     String orgFileName;
-    public HashMap<String, ArrayList<CoRefSet>> corefMap;
-    CoRefSet corefSet;
+    public HashMap<String, ArrayList<CoRefSetAgata>> corefMap;
+    CoRefSetAgata corefSetAgata;
     public String method = "";
     public String threshold = "";
 
@@ -53,8 +53,8 @@ public class CorefSaxParser extends DefaultHandler{
     }
     
     void init () {
-        corefMap = new HashMap<String, ArrayList<CoRefSet>>();
-        corefSet = new CoRefSet();
+        corefMap = new HashMap<String, ArrayList<CoRefSetAgata>>();
+        corefSetAgata = new CoRefSetAgata();
         fileName = "";
         corpusName = "";
         orgFileName = "";
@@ -143,23 +143,23 @@ public class CorefSaxParser extends DefaultHandler{
             //event score="1.1527777777777777" pScore="0.1527777777777778" tScore="0.0" lScore="0.0" nP="4" nL="1" nT="1"
         }
         else if (qName.equalsIgnoreCase("co-refs")) {
-            corefSet = new CoRefSet();
+            corefSetAgata = new CoRefSetAgata();
            // corefSet.setId(orgFileName);
             for (int i = 0; i < attributes.getLength(); i++) {
                 String name = attributes.getQName(i);
                 if (name.equalsIgnoreCase("id")) {
-                   corefSet.setId(attributes.getValue(i).trim());
+                   corefSetAgata.setId(attributes.getValue(i).trim());
                 }
                 else if (name.equalsIgnoreCase("cid")) {
-                   corefSet.setId(attributes.getValue(i).trim());
+                   corefSetAgata.setId(attributes.getValue(i).trim());
                 }
                 else if (name.equalsIgnoreCase("lcs")) {
-                    corefSet.setLcs(attributes.getValue(i).trim());
+                    corefSetAgata.setLcs(attributes.getValue(i).trim());
                 }
                 else if (name.equalsIgnoreCase("score")) {
                     try {
                         double score = Double.parseDouble(attributes.getValue(i).trim());
-                        corefSet.setScore(score);
+                        corefSetAgata.setScore(score);
                     } catch (NumberFormatException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
@@ -167,7 +167,7 @@ public class CorefSaxParser extends DefaultHandler{
             }
         }
         else if (qName.equalsIgnoreCase("target")) {
-            CorefTarget target = new CorefTarget();
+            CorefTargetAgata target = new CorefTargetAgata();
             for (int i = 0; i < attributes.getLength(); i++) {
                 String name = attributes.getQName(i);
                 if (name.equalsIgnoreCase("termId")) {
@@ -214,20 +214,20 @@ public class CorefSaxParser extends DefaultHandler{
 
                 }
             }
-            if (!hasTarget(corefSet, target)) {
-                corefSet.addTarget(target);
+            if (!hasTarget(corefSetAgata, target)) {
+                corefSetAgata.addTarget(target);
             }
         }
         value = "";
     }//--startElement
 
 
-    boolean hasTarget (CoRefSet corefSet, CorefTarget corefTarget) {
-        for (int i = 0; i < corefSet.getTargets().size(); i++) {
-            CorefTarget target = corefSet.getTargets().get(i);
-            if ((target.getTermId().equals(corefTarget.getTermId())) &&
-                (target.getSentenceId().equals(corefTarget.getSentenceId())) &&
-                (target.getDocId().equals(corefTarget.getDocId()))
+    boolean hasTarget (CoRefSetAgata corefSetAgata, CorefTargetAgata corefTargetAgata) {
+        for (int i = 0; i < corefSetAgata.getTargets().size(); i++) {
+            CorefTargetAgata target = corefSetAgata.getTargets().get(i);
+            if ((target.getTermId().equals(corefTargetAgata.getTermId())) &&
+                (target.getSentenceId().equals(corefTargetAgata.getSentenceId())) &&
+                (target.getDocId().equals(corefTargetAgata.getDocId()))
                     ) {
                 return true;
             }
@@ -238,16 +238,16 @@ public class CorefSaxParser extends DefaultHandler{
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
         if (qName.equalsIgnoreCase("co-refs")) {
-            if (corefSet.getTargets().size()>cardinality) {
+            if (corefSetAgata.getTargets().size()>cardinality) {
                 //// we only take coref sets with size > cardinality
                 if (corefMap.containsKey(fileName)) {
-                    ArrayList<CoRefSet> sets = corefMap.get(fileName);
-                    sets.add(corefSet);
+                    ArrayList<CoRefSetAgata> sets = corefMap.get(fileName);
+                    sets.add(corefSetAgata);
                     corefMap.put(fileName, sets);
                 }
                 else {
-                    ArrayList<CoRefSet> sets = new ArrayList<CoRefSet>();
-                    sets.add(corefSet);
+                    ArrayList<CoRefSetAgata> sets = new ArrayList<CoRefSetAgata>();
+                    sets.add(corefSetAgata);
                     corefMap.put(fileName, sets);
                 }
             }
@@ -276,10 +276,10 @@ public class CorefSaxParser extends DefaultHandler{
                 String key = (String) keys.next();
                 str = "<co-ref-sets file=\""+key+"\">\n";
                 fos.write(str.getBytes());
-                ArrayList<CoRefSet> coRefSets = corefMap.get(key);
-                for (int i = 0; i < coRefSets.size(); i++) {
-                    CoRefSet coRefSet = coRefSets.get(i);
-                    str = coRefSet.toString();
+                ArrayList<CoRefSetAgata> coRefSetAgatas = corefMap.get(key);
+                for (int i = 0; i < coRefSetAgatas.size(); i++) {
+                    CoRefSetAgata coRefSetAgata = coRefSetAgatas.get(i);
+                    str = coRefSetAgata.toString();
                     fos.write(str.getBytes());
                 }
                 str = "</co-ref-sets>\n";
@@ -307,10 +307,10 @@ public class CorefSaxParser extends DefaultHandler{
             Iterator keys = keySet.iterator();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                ArrayList<CoRefSet> coRefSets = corefMap.get(key);
-                for (int i = 0; i < coRefSets.size(); i++) {
-                    CoRefSet coRefSet = coRefSets.get(i);
-                    str = coRefSet.toString();
+                ArrayList<CoRefSetAgata> coRefSetAgatas = corefMap.get(key);
+                for (int i = 0; i < coRefSetAgatas.size(); i++) {
+                    CoRefSetAgata coRefSetAgata = coRefSetAgatas.get(i);
+                    str = coRefSetAgata.toString();
                     fos.write(str.getBytes());
                 }
             }
@@ -335,10 +335,10 @@ public class CorefSaxParser extends DefaultHandler{
             Iterator keys = keySet.iterator();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                ArrayList<CoRefSet> coRefSets = corefMap.get(key);
-                for (int i = 0; i < coRefSets.size(); i++) {
-                    CoRefSet coRefSet = coRefSets.get(i);
-                    str = coRefSet.toString();
+                ArrayList<CoRefSetAgata> coRefSetAgatas = corefMap.get(key);
+                for (int i = 0; i < coRefSetAgatas.size(); i++) {
+                    CoRefSetAgata coRefSetAgata = coRefSetAgatas.get(i);
+                    str = coRefSetAgata.toString();
                     fos.write(str.getBytes());
                 }
             }
