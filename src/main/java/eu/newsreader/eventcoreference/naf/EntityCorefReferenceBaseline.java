@@ -27,7 +27,7 @@ public class EntityCorefReferenceBaseline {
               processNafStream(System.in);
           }
           else {
-              String pathToNafFile = args[0];
+              String pathToNafFile = "";
               String extension = "";
               for (int i = 0; i < args.length; i++) {
                   String arg = args[i];
@@ -44,6 +44,7 @@ public class EntityCorefReferenceBaseline {
                   ArrayList<File> files = Util.makeRecursiveFileList(inpFile, extension);
                   for (int i = 0; i < files.size(); i++) {
                       File file = files.get(i);
+                     // System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
                       try {
                           FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".coref");
                           processNafFile(fos, file.getAbsolutePath());

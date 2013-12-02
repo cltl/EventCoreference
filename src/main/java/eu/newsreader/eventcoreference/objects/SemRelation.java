@@ -1,5 +1,6 @@
 package eu.newsreader.eventcoreference.objects;
 
+import com.hp.hpl.jena.rdf.model.*;
 import eu.kyotoproject.kaf.CorefTarget;
 
 import java.util.ArrayList;
@@ -82,5 +83,15 @@ public class SemRelation {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public Statement toJenaRdfStatement () {
+        Model model = ModelFactory.createDefaultModel();
+        Resource subject = model.createResource(this.getSubject());
+        Property predicate = model.createProperty(this.getId());
+        RDFNode object = model.createResource(this.getObject());
+
+        Statement statement = model.createStatement(subject, predicate, object);
+        return statement;
     }
 }

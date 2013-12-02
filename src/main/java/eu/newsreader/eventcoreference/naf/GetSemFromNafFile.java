@@ -1,8 +1,10 @@
 package eu.newsreader.eventcoreference.naf;
 
+import com.hp.hpl.jena.rdf.model.*;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 /**
@@ -39,6 +41,7 @@ public class GetSemFromNafFile {
         dateSense.setSensecode(kafSaxParser.getKafMetaData().getDateString());
         SemTime aSemTime = new SemTime();
         aSemTime.addConcept(dateSense);
+        aSemTime.setId(dateSense.getSensecode());
         semTimes.add(aSemTime);
         ArrayList<ArrayList<CorefTarget>> timeReferences = getTimeMentionsFromSrl(kafSaxParser);
         for (int i = 0; i < timeReferences.size(); i++) {
@@ -50,6 +53,7 @@ public class GetSemFromNafFile {
             sense.setRefType("roleType");
             sense.setSensecode("TMP");
             semTimeRole.addConcept(sense);
+            semTimeRole.setId(semTimeRole.getTopPhraseAsLabel());
             semTimes.add(semTimeRole);
         }
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
@@ -72,7 +76,7 @@ public class GetSemFromNafFile {
                 semPlace.setMentions(coreferenceSet.getSetsOfSpans());
                 semPlace.addPhraseCountsForMentions(kafSaxParser);
                 semPlace.addConcept(sense);
-                semPlace.setLabel("");
+               // semPlace.setLabel("");
                 semPlace.addConcepts(getExternalReferencesSrlParticipants(kafSaxParser, coreferenceSet));
                 semPlace.addConcepts(getExternalReferencesEntities(kafSaxParser, coreferenceSet));
                 semPlaces.add(semPlace);
@@ -159,7 +163,7 @@ public class GetSemFromNafFile {
                         }
                         if (!match) {
                             for (int l = 0; l < semTimes.size(); l++) {
-                                SemObject semTime = semPlaces.get(l);
+                                SemObject semTime = semTimes.get(l);
                                 if (match(kafParticipant.getSpanIds(), semTime)) {
                                     /// create sem relations
                                     SemRelation semRelation = new SemRelation();
@@ -192,11 +196,16 @@ public class GetSemFromNafFile {
 
     static boolean match (ArrayList<String> spans, SemObject semObject) {
         for (int i = 0; i < semObject.getMentions().size(); i++) {
-           /* eu.newsreader.eventcoreference.objects.CorefTarget corefTarget =  semObject.getMentions().get(i);
-            if (spans.contains(corefTarget.getTermId())) {
-                //// we have a match
-                return true;
-            }*/
+            ArrayList<ArrayList<CorefTarget>> mentions = semObject.getMentions();
+            for (int j = 0; j < mentions.size(); j++) {
+                ArrayList<CorefTarget> corefTargetArrayList = mentions.get(j);
+                for (int k = 0; k < corefTargetArrayList.size(); k++) {
+                    CorefTarget corefTarget = corefTargetArrayList.get(k);
+                    if (spans.contains(corefTarget.getId())) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
@@ -302,7 +311,78 @@ public class GetSemFromNafFile {
         return references;
     }
 
-    static public void serializeSem () {
+    static public void serializeJena (OutputStream stream,
+                                      ArrayList<SemObject> semEvents,
+                                      ArrayList<SemObject> semActors,
+                                      ArrayList<SemObject> semTimes,
+                                      ArrayList<SemObject> semPlaces,
+                                      ArrayList<SemRelation> semRelations) {
 
+
+
+        // create an empty Model
+        Model model = ModelFactory.createDefaultModel();
+        String nwr = "http://www.newsreader-project.eu/";
+        String wn = "http://example.org/wordnet3.0/";
+        String fn = "http://example.org/framenet/";
+        String vn = "http://example.org/verbnet/";
+        String pb = "http://example.org/propbank/";
+
+        model.setNsPrefix("nwr", nwr);
+        model.setNsPrefix("wn", wn);
+        model.setNsPrefix("fn", fn);
+        model.setNsPrefix("vn", vn);
+        model.setNsPrefix("pb", pb);
+        Bag events = model.createBag("http://www.newsreader-project/semEvents");
+        for (int i = 0; i < semEvents.size(); i++) {
+            SemObject semEvent = semEvents.get(i);
+            Resource resource = semEvent.toJenaRdfResource();
+            events.add(resource);
+        }
+
+        Bag actors = model.createBag("http://www.newsreader-project/semActors");
+        for (int i = 0; i < semActors.size(); i++) {
+            SemObject semActor = semActors.get(i);
+            Resource resource = semActor.toJenaRdfResource();
+            actors.add(resource);
+        }
+
+        Bag places = model.createBag("http://www.newsreader-project/semPlaces");
+        for (int i = 0; i < semPlaces.size(); i++) {
+            SemObject semPlace = semPlaces.get(i);
+            Resource resource = semPlace.toJenaRdfResource();
+            places.add(resource);
+        }
+
+        Bag times = model.createBag("http://www.newsreader-project/semTimes");
+        for (int i = 0; i < semTimes.size(); i++) {
+            SemObject semTime = semTimes.get(i);
+            Resource resource = semTime.toJenaRdfResource();
+            times.add(resource);
+        }
+
+        Bag relations = model.createBag("http://www.newsreader-project/semRelations");
+        for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+            Statement statement = semRelation.toJenaRdfStatement();
+            relations.add(statement);
+        }
+
+        model.write(stream);
+     //   model.write(stream, "N-TRIPLES");
+
+    }
+
+
+    static public void main (String [] args) {
+        //String pathToNafFile = args[0];
+        String pathToNafFile = "/Users/kyoto/Desktop/NWR-DATA/50_docs_test/57G4-MK21-F15F-1218.xml_357abd8739615e7f4afc60ade1f2847a.naf.coref";
+        ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
+        ArrayList<SemObject> semActors = new ArrayList<SemObject>();
+        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
+        ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
+        processNafFile(pathToNafFile, semEvents, semActors, semPlaces, semTimes, semRelations);
+        serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations);
     }
 }

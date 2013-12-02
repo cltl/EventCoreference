@@ -1,9 +1,16 @@
 package eu.newsreader.eventcoreference.objects;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 import eu.kyotoproject.kaf.CorefTarget;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.kyotoproject.kaf.KafTerm;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
@@ -15,35 +22,6 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public class SemObject {
-  /*
-  <semEvent id="e30" lcs="raid" score="2.4849066497880004" concept="eng-30-02020027-v" label="raid" mentions="2">
-	<mentions>
-	<event-mention>
-		<event>
-			<target termId="t285" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" concept="eng-30-02020027-v" rank="0.257681" word="raid"/>
-		<event>
-		<participants>
-			<participant id="p30" lcs="eng-30-00007846-n" score="2.639057329615259" concept="eng-30-10210137-n" label="rebel" mentions="26">
-					<target termId="t288" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" concept="eng-30-11346710-n" rank="0.227748" word="town"/>
-			</participant>
-			<participant id="p93" lcs="" score="0.0" concept="" label="Khalanga" mentions="1">
-					<target termId="t2810" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" concept="" rank="0.0" word="Khalanga"/>
-			</participant>
-			<participant id="p34" lcs="eng-30-08008335-n" score="2.639057329615259" concept="eng-30-08209687-n" label="police" mentions="16">
-					<target termId="t2827" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" concept="eng-30-08337324-n" rank="0.143377" word="office"/>
-					<target termId="t2830" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" concept="eng-30-08051946-n" rank="0.0895559" word="court"/>
-			</participant>
-		</participants>
-		<times>
-			<time id="e3" lcs="eng-30-15163157-n" score="2.890371757896165" concept="eng-30-15163979-n" label="Monday" mentions="9">
-					<target termId="t284" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" concept="eng-30-15164570-n" rank="1.0" word="Saturday"/>
-			</time>
-		</times>
-		<locations>
-		</locations>
-	</event-mention>
-
-   */
 
    private String id;
    private double score;
@@ -102,7 +80,7 @@ public class SemObject {
                 }
             }
             if (!phrase.isEmpty()) {
-                addPhraseCounts(phrase);
+                addPhraseCounts(phrase.trim());
             }
         }
     }
@@ -132,6 +110,38 @@ public class SemObject {
 
     public String getId() {
         return id;
+    }
+
+    public String getURI() {
+        String uri = "http://www.newsreader-project.eu/"+id;
+        return uri;
+    }
+
+    public String getURI(String nameSpace) {
+        String uri = nameSpace+":"+id;
+        return uri;
+    }
+
+    public void setTopPhraseAsLabel () {
+        Integer top = 0;
+        for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            if (phraseCount.getCount()>top) {
+                this.label = phraseCount.getPhrase();
+            }
+        }
+    }
+
+    public String getTopPhraseAsLabel () {
+        Integer top = 0;
+        String label = "";
+        for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            if (phraseCount.getCount()>top) {
+                label = phraseCount.getPhrase().replace(" ", "-");
+            }
+        }
+        return label;
     }
 
     public void setId(String id) {
@@ -170,5 +180,52 @@ public class SemObject {
         this.concepts.add(concept);
     }
 
+    public Element toRdf (Document xmldoc, String name) {
+        Element root = xmldoc.createElement(name);
+        if (this.getId() != null)
+            root.setAttribute("rdf:about", this.getId());
+
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            Element conceptUri = xmldoc.createElement("naf:uri");
+            conceptUri.setAttribute("rdf:resource", kafSense.getResource()+"#"+kafSense.getSensecode());
+            root.appendChild(conceptUri);
+        }
+
+        for (int i = 0; i < mentions.size(); i++) {
+            ArrayList<CorefTarget> corefTargetArrayList = mentions.get(i);
+            Element mentionElement = xmldoc.createElement("mentions");
+            for (int j = 0; j < corefTargetArrayList.size(); j++) {
+                CorefTarget corefTarget = corefTargetArrayList.get(j);
+                mentionElement.appendChild(corefTarget.toXML(xmldoc));
+            }
+            root.appendChild(mentionElement);
+        }
+        return root;
+    }
+
+    public Resource toJenaRdfResource () {
+        Model model = ModelFactory.createDefaultModel();
+        Resource resource = model.createResource(this.getURI());
+        resource.addProperty(RDFS.label, model.createLiteral(getTopPhraseAsLabel()));
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            resource.addProperty(RDF.type, kafSense.getSensecode());
+        }
+        return resource;
+    }
+
+    public Resource toJenaRdfResource (String nameSpace) {
+        Model model = ModelFactory.createDefaultModel();
+        Resource resource = model.createResource(this.getURI(nameSpace));
+        resource.addProperty(RDFS.label, model.createLiteral(getTopPhraseAsLabel()));
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            resource.addProperty(RDF.type, kafSense.getSensecode());
+        }
+        return resource;
+    }
+
 
 }
+
