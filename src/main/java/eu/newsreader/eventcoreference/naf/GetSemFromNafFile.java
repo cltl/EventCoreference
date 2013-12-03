@@ -3,6 +3,8 @@ package eu.newsreader.eventcoreference.naf;
 import com.hp.hpl.jena.rdf.model.*;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -368,8 +370,10 @@ public class GetSemFromNafFile {
             relations.add(statement);
         }
 
-        model.write(stream);
+      //  model.write(stream);
+      //  model.write(stream, "data.trig");
      //   model.write(stream, "N-TRIPLES");
+        RDFDataMgr.write(stream, model, RDFFormat.TRIG_PRETTY);
 
     }
 
