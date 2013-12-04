@@ -78,7 +78,7 @@ public class EventCorefLemmaBaseline {
                   else {
                       corefCounter++;
                       KafCoreferenceSet kafCoreferenceSet = new KafCoreferenceSet();
-                      String corefId = "coe"+corefCounter;
+                      String corefId = "coevent"+corefCounter;
                       kafCoreferenceSet.setCoid(corefId);
                       kafCoreferenceSet.setType("event");
                       kafCoreferenceSet.addSetsOfSpans(corefTargetArrayList);

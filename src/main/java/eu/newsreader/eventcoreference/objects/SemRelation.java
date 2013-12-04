@@ -49,8 +49,43 @@ public class SemRelation {
         this.corefTargets = corefTargets;
     }
 
+    public void setCorefTargetsWithMentions(ArrayList<ArrayList<CorefTarget>> mentions) {
+        for (int i = 0; i < mentions.size(); i++) {
+            ArrayList<CorefTarget> targets = mentions.get(i);
+            addCorefTargets(targets);
+        }
+    }
+
     public void addCorefTarget(CorefTarget corefTarget) {
         this.corefTargets.add(corefTarget);
+    }
+
+    public void addCorefTargets(ArrayList<CorefTarget> corefTargets) {
+        for (int i = 0; i < corefTargets.size(); i++) {
+            CorefTarget corefTarget = corefTargets.get(i);
+            this.corefTargets.add(corefTarget);
+        }
+    }
+
+    public void setCorefTargets(String baseUrl, ArrayList<CorefTarget> corefTargets) {
+        for (int i = 0; i < corefTargets.size(); i++) {
+            CorefTarget corefTarget = corefTargets.get(i);
+            corefTarget.setId(baseUrl+"/"+corefTarget.getId());
+        }
+        this.corefTargets = corefTargets;
+    }
+
+    public void addCorefTarget(String baseUrl, CorefTarget corefTarget) {
+        corefTarget.setId(baseUrl+"/"+corefTarget.getId());
+        this.corefTargets.add(corefTarget);
+    }
+
+    public void addCorefTargets(String baseUrl, ArrayList<CorefTarget> corefTargets) {
+        for (int i = 0; i < corefTargets.size(); i++) {
+            CorefTarget corefTarget = corefTargets.get(i);
+            corefTarget.setId(baseUrl+"/"+corefTarget.getId());
+            this.corefTargets.add(corefTarget);
+        }
     }
 
     public String getId() {
@@ -85,13 +120,32 @@ public class SemRelation {
         this.subject = subject;
     }
 
-    public Statement toJenaRdfStatement () {
-        Model model = ModelFactory.createDefaultModel();
+    public Statement toJenaRdfStatement (Model model) {
         Resource subject = model.createResource(this.getSubject());
-        Property predicate = model.createProperty(this.getId());
+        Property predicate = model.createProperty(this.getPredicate());
         RDFNode object = model.createResource(this.getObject());
 
         Statement statement = model.createStatement(subject, predicate, object);
         return statement;
+    }
+
+    public SemRelation (SemRelation semRelation) {
+        this.setSubject(semRelation.getSubject());
+        this.setObject(semRelation.getObject());
+        this.setPredicate(semRelation.getPredicate());
+        this.setCorefTargets(semRelation.getCorefTarget());
+    }
+
+    public boolean match (SemRelation semRelation) {
+        if (!this.getSubject().equals(semRelation.getSubject())) {
+            return  false;
+        }
+        if (!this.getObject().equals(semRelation.getObject())) {
+            return  false;
+        }
+        if (!this.getPredicate().equals(semRelation.getPredicate())) {
+            return  false;
+        }
+        return true;
     }
 }

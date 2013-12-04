@@ -25,12 +25,22 @@ public class PhraseCount {
         this.count = count;
     }
 
+    public void addCount(Integer count) {
+        this.count += count;
+    }
+
     public void incrementCount() {
         this.count++;
     }
 
     public String getPhrase() {
         return phrase;
+    }
+    public String getPhraseCount() {
+        return phrase+":"+count;
+    }
+    public String toString () {
+        return getPhraseCount();
     }
 
     public void setPhrase(String phrase) {
