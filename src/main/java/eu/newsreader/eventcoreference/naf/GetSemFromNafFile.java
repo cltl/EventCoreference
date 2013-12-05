@@ -1,8 +1,11 @@
 package eu.newsreader.eventcoreference.naf;
 
-import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -141,12 +144,12 @@ public class GetSemFromNafFile {
                             if (matchSpans(kafParticipant.getSpanIds(), semActor)) {
                                 /// create sem relations
                                 SemRelation semRelation = new SemRelation();
-                                String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
+                                //String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
+                                String relationInstanceId = baseUrl+"/"+kafEvent.getId();
                                 semRelation.setId(relationInstanceId);
                                 CorefTarget corefTarget = new CorefTarget();
-                                corefTarget.setId(kafEvent.getId());
+                                corefTarget.setId(kafParticipant.getId());
                                 semRelation.addCorefTarget(baseUrl, corefTarget);
-                               // semRelation.addCorefTarget(corefTarget);
                                 semRelation.setPredicate("hasSemActor");
                                 semRelation.setSubject(semEvent.getId());
                                 semRelation.setObject(semActor.getId());
@@ -161,11 +164,11 @@ public class GetSemFromNafFile {
                                 if (matchSpans(kafParticipant.getSpanIds(), semPlace)) {
                                     /// create sem relations
                                     SemRelation semRelation = new SemRelation();
-                                    String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
+                                    //String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
+                                    String relationInstanceId = baseUrl+"/"+kafEvent.getId();
                                     semRelation.setId(relationInstanceId);
                                     CorefTarget corefTarget = new CorefTarget();
-                                    corefTarget.setId(kafEvent.getId());
-                                   // semRelation.addCorefTarget( corefTarget);
+                                    corefTarget.setId(kafParticipant.getId());
                                     semRelation.addCorefTarget(baseUrl, corefTarget);
                                     semRelation.setPredicate("hasSemPlace");
                                     semRelation.setSubject(semEvent.getId());
@@ -182,11 +185,11 @@ public class GetSemFromNafFile {
                                 if (matchSpans(kafParticipant.getSpanIds(), semTime)) {
                                     /// create sem relations
                                     SemRelation semRelation = new SemRelation();
-                                    String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
+                                    //String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
+                                    String relationInstanceId = baseUrl+"/"+kafEvent.getId();
                                     semRelation.setId(relationInstanceId);
                                     CorefTarget corefTarget = new CorefTarget();
-                                    corefTarget.setId(kafEvent.getId());
-                                    //semRelation.addCorefTarget( corefTarget);
+                                    corefTarget.setId(kafParticipant.getId());
                                     semRelation.addCorefTarget(baseUrl, corefTarget);
                                     semRelation.setPredicate("hasSemTime");
                                     semRelation.setSubject(semEvent.getId());
@@ -210,12 +213,14 @@ public class GetSemFromNafFile {
         }
 
         /// in all cases there is no time relations we link it to the docTime
+        int docTimeRelationCount = 0;
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
             if (!timedSemEventIds.contains(semEvent.getId())) {
               /// timeless event
+                docTimeRelationCount++;
                 SemRelation semRelation = new SemRelation();
-                String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
+                String relationInstanceId = baseUrl+"/docTime/"+docTimeRelationCount;
                 semRelation.setId(relationInstanceId);
                 semRelation.setCorefTargetsWithMentions(semEvent.getMentions());
                 semRelation.setPredicate("hasSemTime");
@@ -392,46 +397,54 @@ public class GetSemFromNafFile {
         model.setNsPrefix("pb", pb);
         model.setNsPrefix("gaf", gaf);
         model.setNsPrefix("dbp", dbp);
-        Bag events = model.createBag("http://www.newsreader-project/semEvents");
+      //  Bag events = model.createBag("http://www.newsreader-project/semEvents");
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
-            Resource resource = semEvent.toJenaRdfResource(model);
-            events.add(resource);
+            semEvent.addToJenaModel(model, "semEvent");
+            //Resource resource = semEvent.toJenaRdfResource(model);
+       //     events.add(resource);
         }
 
 
-        Bag actors = model.createBag("http://www.newsreader-project/semActors");
+      //  Bag actors = model.createBag("http://www.newsreader-project/semActors");
         for (int i = 0; i < semActors.size(); i++) {
             SemObject semActor = semActors.get(i);
-            Resource resource = semActor.toJenaRdfResource(model);
-            actors.add(resource);
+            semActor.addToJenaModel(model, "semActor");
+            //Resource resource = semActor.toJenaRdfResource(model);
+      //      actors.add(resource);
         }
 
-        Bag places = model.createBag("http://www.newsreader-project/semPlaces");
+      //  Bag places = model.createBag("http://www.newsreader-project/semPlaces");
         for (int i = 0; i < semPlaces.size(); i++) {
             SemObject semPlace = semPlaces.get(i);
-            Resource resource = semPlace.toJenaRdfResource(model);
-            places.add(resource);
+            semPlace.addToJenaModel(model, "semPlace");
+            //Resource resource = semPlace.toJenaRdfResource(model);
+       //     places.add(resource);
         }
 
 
-        Bag times = model.createBag("http://www.newsreader-project/semTimes");
+      //  Bag times = model.createBag("http://www.newsreader-project/semTimes");
         for (int i = 0; i < semTimes.size(); i++) {
             SemObject semTime = semTimes.get(i);
-            Resource resource = semTime.toJenaRdfResource(model);
-            times.add(resource);
+            semTime.addToJenaModel(model, "semTime");
+            //Resource resource = semTime.toJenaRdfResource(model);
+       //     times.add(resource);
         }
 
-        Bag relations = model.createBag("http://www.newsreader-project/semRelations");
+        //Bag relations = model.createBag("http://www.newsreader-project/semRelations");
         for (int i = 0; i < semRelations.size(); i++) {
             SemRelation semRelation = semRelations.get(i);
+            semRelation.addToJenaModel(model);
+/*
             Statement statement = semRelation.toJenaRdfStatement(model);
             relations.add(statement);
+*/
         }
 
-        model.write(stream);
+     //   model.write(stream);
      //   model.write(stream, "N-TRIPLES");
-     //   RDFDataMgr.write(stream, model, RDFFormat.TRIG_PRETTY);
+        RDFDataMgr.write(stream, model, RDFFormat.TRIG_PRETTY);
+       // RDFDataMgr.write(stream, model, RDFFormat.NTRIPLES_UTF8);
       //  RDFDataMgr.write(stream, model, RDFFormat.TRIG_FLAT);
 
     }

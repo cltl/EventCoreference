@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.objects;
 
 import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.vocabulary.RDF;
 import eu.kyotoproject.kaf.CorefTarget;
 
 import java.util.ArrayList;
@@ -126,7 +127,48 @@ public class SemRelation {
         RDFNode object = model.createResource(this.getObject());
 
         Statement statement = model.createStatement(subject, predicate, object);
+
+/*
+        for (int i = 0; i < corefTargets.size(); i++) {
+                CorefTarget corefTarget = corefTargets.get(i);
+                Property property = model.createProperty("gaf:denotedBy");
+                statement.addProperty(property, corefTarget.getId());
+        }
+*/
         return statement;
+    }
+    public void addToJenaModel (Model model) {
+/*
+        NamedGraphSet graphset = new NamedGraphSetImpl();
+
+        NamedGraph graph = graphset.createGraph("http://example.org/persons/123");
+*/
+       // NodeMaker nodeMaker = new NodeMaker();
+
+/*
+        com.hp.hpl.jena.graph.Triple triple = new com.hp.hpl.jena.graph.Triple(Node.createURI(this.subject),
+                Node.createURI(this.predicate) ,
+                Node.createURI(this.object));
+*/
+/*
+        Resource subject = model.createResource(this.getSubject());
+        Property predicate = model.createProperty(this.getPredicate());
+        RDFNode object = model.createResource(this.getObject());
+
+        Statement statement = model.createStatement(subject, predicate, object);
+*/
+
+        Resource resource = model.createResource(this.id);
+        resource.addProperty(RDF.subject, this.getSubject());
+        resource.addProperty(RDF.predicate, this.getPredicate());
+        resource.addProperty(RDF.object, this.getObject());
+        resource.addProperty(RDF.type, "semRelation");
+
+        for (int i = 0; i < corefTargets.size(); i++) {
+                CorefTarget corefTarget = corefTargets.get(i);
+                Property property = model.createProperty("gaf:denotedBy");
+                resource.addProperty(property, corefTarget.getId());
+        }
     }
 
     public SemRelation (SemRelation semRelation) {

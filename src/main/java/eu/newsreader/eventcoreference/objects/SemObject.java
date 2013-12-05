@@ -242,6 +242,32 @@ public class SemObject {
         return resource;
     }
 
+    public void addToJenaModel (Model model, String type) {
+        Resource resource = model.createResource(this.getURI());
+        for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
+        }
+        //resource.addProperty(RDFS.label, model.createLiteral(getTopPhraseAsLabel()));
+        resource.addProperty(RDF.type, type);
+
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            String nameSpaceType = getNameSpaceTypeReference(kafSense);
+            resource.addProperty(RDF.type, nameSpaceType);
+        }
+        for (int i = 0; i < mentions.size(); i++) {
+            ArrayList<CorefTarget> corefTargets = mentions.get(i);
+            for (int j = 0; j < corefTargets.size(); j++) {
+                CorefTarget corefTarget = corefTargets.get(j);
+                Property property = model.createProperty("gaf:denotedBy");
+                resource.addProperty(property, corefTarget.getId());
+            }
+        }
+    }
+
+
+
     static public String getNameSpaceTypeReference (KafSense kafSense) {
         String ref = "";
         if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
