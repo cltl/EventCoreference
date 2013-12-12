@@ -40,7 +40,7 @@ public class DomainMatch {
             ArrayList<String> chain1 = getDomainChain(domain1);
             ArrayList<String> chain2 = getDomainChain(domain2);
             int averagedepth = (chain1.size()+chain2.size())/2;
-            score = vu.wntools.wnsimilarity.measures.LeacockChodorow.GetDistance(averagedepth,chain1,chain2);
+         //   score = vu.wntools.wnsimilarity.measures.LeacockChodorow.GetDistance(averagedepth,chain1,chain2);
             return score;
         }
 

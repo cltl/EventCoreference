@@ -385,7 +385,7 @@ public class GetSemFromNafFile {
 
         Dataset ds = TDBFactory.createDataset();
         //DatasetPrefixStorage datasetPrefixStorage = SetupTDB.makePrefixes(new Location("http://www.newsreader-project.eu/"), new DatasetControlNone());
-        Model dsModel = ds.getNamedModel("1");
+
         String nwr = "http://www.newsreader-project.eu/";
         String wn = "http://www.newsreader-project.eu/wordnet3.0/";
         String fn = "http://www.newsreader-project.eu/framenet/";
@@ -394,8 +394,24 @@ public class GetSemFromNafFile {
         String gaf = "http://groundedannotationframework.org/";
         String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
         String dbp = "http://dbpedia.org/resource/";
+        String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns/";
+        String rdfs= "http://www.w3.org/2000/01/rdf-schema/";
 
         //datasetPrefixStorage.insertPrefix();
+        Model defaultModel = ds.getDefaultModel();
+        defaultModel.setNsPrefix("nwr", nwr);
+        defaultModel.setNsPrefix("gaf", gaf);
+
+        defaultModel.setNsPrefix("nwr", nwr);
+        defaultModel.setNsPrefix("wn", wn);
+        defaultModel.setNsPrefix("fn", fn);
+        defaultModel.setNsPrefix("vn", vn);
+        defaultModel.setNsPrefix("pb", pb);
+        defaultModel.setNsPrefix("sem", sem);
+        defaultModel.setNsPrefix("gaf", gaf);
+        defaultModel.setNsPrefix("dbp", dbp);
+        defaultModel.setNsPrefix("rdf", rdf);
+        defaultModel.setNsPrefix("rdfs", rdfs);
 
         Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
         provenanceModel.setNsPrefix("nwr", nwr);
@@ -439,9 +455,10 @@ public class GetSemFromNafFile {
 
      //   model.write(stream);
      //   model.write(stream, "N-TRIPLES");
-        //RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
-        RDFDataMgr.write(stream, instanceModel, RDFFormat.TRIG_PRETTY);
-        RDFDataMgr.write(stream, provenanceModel, RDFFormat.TRIG_PRETTY);
+        //RDFDataMgr.write(stream, ds, RDFFormat.NQUADS_UTF8);
+        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+      //  RDFDataMgr.write(stream, instanceModel, RDFFormat.TRIG_PRETTY);
+      //  RDFDataMgr.write(stream, provenanceModel, RDFFormat.TRIG_PRETTY);
       //  RDFDataMgr.write(stream, ds, RDFFormat.RDFJSON);
        // RDFDataMgr.write(stream, model, RDFFormat.NTRIPLES_UTF8);
       //  RDFDataMgr.write(stream, model, RDFFormat.TRIG_FLAT);
