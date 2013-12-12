@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.objects;
 
+import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.vocabulary.RDF;
 import eu.kyotoproject.kaf.CorefTarget;
 
 import java.util.ArrayList;
@@ -158,7 +158,7 @@ public class SemRelation {
         Statement statement = model.createStatement(subject, predicate, object);
 */
 
-        Resource resource = model.createResource(this.id);
+/*        Resource resource = model.createResource(this.id);
         resource.addProperty(RDF.subject, this.getSubject());
         resource.addProperty(RDF.predicate, this.getPredicate());
         resource.addProperty(RDF.object, this.getObject());
@@ -168,6 +168,52 @@ public class SemRelation {
                 CorefTarget corefTarget = corefTargets.get(i);
                 Property property = model.createProperty("gaf:denotedBy");
                 resource.addProperty(property, corefTarget.getId());
+        }*/
+
+        Resource resource = model.createResource(this.getSubject());
+        Property predicate = model.createProperty(this.getPredicate());
+        resource.addProperty(predicate, this.getObject());
+    //    resource.addProperty(RDF.type, "semRelation");
+
+/*        for (int i = 0; i < corefTargets.size(); i++) {
+                CorefTarget corefTarget = corefTargets.get(i);
+                Property property = model.createProperty("gaf:denotedBy");
+                resource.addProperty(property, corefTarget.getId());
+        }*/
+    }
+
+
+    public Property getSemRelationType (String type) {
+        if (this.getPredicate().equalsIgnoreCase("hassemtime")) {
+            return Sem.hasTime;
+        }
+        else if (this.getPredicate().equalsIgnoreCase("hassemplace")) {
+            return Sem.hasPlace;
+        }
+        else if (this.getPredicate().equalsIgnoreCase("hassemactor")) {
+            return Sem.hasActor;
+        }
+        else {
+            return Sem.hasSubType;
+        }
+    }
+
+    public void addToJenaDataSet (Dataset ds, Model provenanceModel) {
+
+        Model relationModel = ds.getNamedModel("http://www.newsreader-project.eu/relation/"+this.id);
+
+        Resource subject = relationModel.createResource(this.getSubject());
+        Resource object = relationModel.createResource(this.getObject());
+        Property semProperty = getSemRelationType(this.getPredicate());
+        subject.addProperty(semProperty, object);
+
+
+        Resource provenanceResource = provenanceModel.createResource("http://www.newsreader-project.eu/relation/"+this.id);
+        for (int i = 0; i < corefTargets.size(); i++) {
+                CorefTarget corefTarget = corefTargets.get(i);
+                Property property = provenanceModel.createProperty("gaf:denotedBy");
+                Resource targerResource = provenanceModel.createResource("nwr:"+corefTarget.getId());
+                provenanceResource.addProperty(property, targerResource);
         }
     }
 

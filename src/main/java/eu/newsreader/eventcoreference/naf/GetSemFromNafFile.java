@@ -1,7 +1,8 @@
 package eu.newsreader.eventcoreference.naf;
 
+import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
 import org.apache.jena.riot.RDFDataMgr;
@@ -145,7 +146,7 @@ public class GetSemFromNafFile {
                                 /// create sem relations
                                 SemRelation semRelation = new SemRelation();
                                 //String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
-                                String relationInstanceId = baseUrl+"/"+kafEvent.getId();
+                                String relationInstanceId = baseUrl+"/"+kafEvent.getId()+":"+kafParticipant.getId();
                                 semRelation.setId(relationInstanceId);
                                 CorefTarget corefTarget = new CorefTarget();
                                 corefTarget.setId(kafParticipant.getId());
@@ -165,7 +166,7 @@ public class GetSemFromNafFile {
                                     /// create sem relations
                                     SemRelation semRelation = new SemRelation();
                                     //String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
-                                    String relationInstanceId = baseUrl+"/"+kafEvent.getId();
+                                    String relationInstanceId = baseUrl+"/"+kafEvent.getId()+":"+kafParticipant.getId();
                                     semRelation.setId(relationInstanceId);
                                     CorefTarget corefTarget = new CorefTarget();
                                     corefTarget.setId(kafParticipant.getId());
@@ -186,7 +187,7 @@ public class GetSemFromNafFile {
                                     /// create sem relations
                                     SemRelation semRelation = new SemRelation();
                                     //String relationInstanceId = baseUrl+"/relation"+semRelations.size()+1;
-                                    String relationInstanceId = baseUrl+"/"+kafEvent.getId();
+                                    String relationInstanceId = baseUrl+"/"+kafEvent.getId()+":"+kafParticipant.getId();
                                     semRelation.setId(relationInstanceId);
                                     CorefTarget corefTarget = new CorefTarget();
                                     corefTarget.setId(kafParticipant.getId());
@@ -381,69 +382,67 @@ public class GetSemFromNafFile {
 
 
         // create an empty Model
-        Model model = ModelFactory.createDefaultModel();
+
+        Dataset ds = TDBFactory.createDataset();
+        //DatasetPrefixStorage datasetPrefixStorage = SetupTDB.makePrefixes(new Location("http://www.newsreader-project.eu/"), new DatasetControlNone());
+        Model dsModel = ds.getNamedModel("1");
         String nwr = "http://www.newsreader-project.eu/";
         String wn = "http://www.newsreader-project.eu/wordnet3.0/";
         String fn = "http://www.newsreader-project.eu/framenet/";
         String vn = "http://www.newsreader-project.eu/verbnet/";
         String pb = "http://www.newsreader-project.eu/propbank/";
         String gaf = "http://groundedannotationframework.org/";
+        String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
         String dbp = "http://dbpedia.org/resource/";
 
-        model.setNsPrefix("nwr", nwr);
-        model.setNsPrefix("wn", wn);
-        model.setNsPrefix("fn", fn);
-        model.setNsPrefix("vn", vn);
-        model.setNsPrefix("pb", pb);
-        model.setNsPrefix("gaf", gaf);
-        model.setNsPrefix("dbp", dbp);
-      //  Bag events = model.createBag("http://www.newsreader-project/semEvents");
+        //datasetPrefixStorage.insertPrefix();
+
+        Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
+        provenanceModel.setNsPrefix("nwr", nwr);
+        provenanceModel.setNsPrefix("gaf", gaf);
+
+        Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
+        instanceModel.setNsPrefix("nwr", nwr);
+        instanceModel.setNsPrefix("wn", wn);
+        instanceModel.setNsPrefix("fn", fn);
+        instanceModel.setNsPrefix("vn", vn);
+        instanceModel.setNsPrefix("pb", pb);
+        instanceModel.setNsPrefix("sem", sem);
+        instanceModel.setNsPrefix("gaf", gaf);
+        instanceModel.setNsPrefix("dbp", dbp);
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
-            semEvent.addToJenaModel(model, "semEvent");
-            //Resource resource = semEvent.toJenaRdfResource(model);
-       //     events.add(resource);
+            semEvent.addToJenaModel(instanceModel, Sem.Event);
         }
 
 
-      //  Bag actors = model.createBag("http://www.newsreader-project/semActors");
         for (int i = 0; i < semActors.size(); i++) {
             SemObject semActor = semActors.get(i);
-            semActor.addToJenaModel(model, "semActor");
-            //Resource resource = semActor.toJenaRdfResource(model);
-      //      actors.add(resource);
+            semActor.addToJenaModel(instanceModel, Sem.Actor);
         }
 
-      //  Bag places = model.createBag("http://www.newsreader-project/semPlaces");
         for (int i = 0; i < semPlaces.size(); i++) {
             SemObject semPlace = semPlaces.get(i);
-            semPlace.addToJenaModel(model, "semPlace");
-            //Resource resource = semPlace.toJenaRdfResource(model);
-       //     places.add(resource);
+            semPlace.addToJenaModel(instanceModel, Sem.Place);
         }
 
 
-      //  Bag times = model.createBag("http://www.newsreader-project/semTimes");
         for (int i = 0; i < semTimes.size(); i++) {
             SemObject semTime = semTimes.get(i);
-            semTime.addToJenaModel(model, "semTime");
-            //Resource resource = semTime.toJenaRdfResource(model);
-       //     times.add(resource);
+            semTime.addToJenaModel(instanceModel, Sem.Time);
         }
 
-        //Bag relations = model.createBag("http://www.newsreader-project/semRelations");
         for (int i = 0; i < semRelations.size(); i++) {
             SemRelation semRelation = semRelations.get(i);
-            semRelation.addToJenaModel(model);
-/*
-            Statement statement = semRelation.toJenaRdfStatement(model);
-            relations.add(statement);
-*/
+            semRelation.addToJenaDataSet(ds, provenanceModel);
         }
 
      //   model.write(stream);
      //   model.write(stream, "N-TRIPLES");
-        RDFDataMgr.write(stream, model, RDFFormat.TRIG_PRETTY);
+        //RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        RDFDataMgr.write(stream, instanceModel, RDFFormat.TRIG_PRETTY);
+        RDFDataMgr.write(stream, provenanceModel, RDFFormat.TRIG_PRETTY);
+      //  RDFDataMgr.write(stream, ds, RDFFormat.RDFJSON);
        // RDFDataMgr.write(stream, model, RDFFormat.NTRIPLES_UTF8);
       //  RDFDataMgr.write(stream, model, RDFFormat.TRIG_FLAT);
 

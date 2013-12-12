@@ -215,6 +215,7 @@ public class InterDocumentEventCoref {
                 SemRelation semRelation = mySemRelations.get(j);
                 //System.out.println("semRelation.getSubject() = " + semRelation.getSubject());
                 SemRelation globalSemRelationCandidate = new SemRelation(semRelation);
+                globalSemRelationCandidate.setId(semRelation.getId());
                 if (localToGlobalEventMap.containsKey(semRelation.getSubject())) {
                     String globalId = localToGlobalEventMap.get(semRelation.getSubject());
                     globalSemRelationCandidate.setSubject(globalId);
@@ -249,7 +250,7 @@ public class InterDocumentEventCoref {
         }
         try {
             FileOutputStream fos = new FileOutputStream(pathToNafFolder+"/sem.trig");
-            GetSemFromNafFile.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations);
+            GetSemFromNafFile.serializeJena(fos,  semEvents, semActors, semPlaces, semTimes, semRelations);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
