@@ -141,8 +141,8 @@ public class SemRelation {
 
         Model relationModel = ds.getNamedModel("http://www.newsreader-project.eu/relation/"+this.id);
 
-        Resource subject = relationModel.createResource(this.getSubject());
-        Resource object = relationModel.createResource(this.getObject());
+        Resource subject = relationModel.createResource("nwr:"+this.getSubject());
+        Resource object = relationModel.createResource("nwr:"+this.getObject());
         Property semProperty = getSemRelationType(this.getPredicate());
         subject.addProperty(semProperty, object);
 
