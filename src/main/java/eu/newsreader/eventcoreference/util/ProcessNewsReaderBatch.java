@@ -42,12 +42,16 @@ public class ProcessNewsReaderBatch {
                 for (int i = 0; i < mappings.size(); i++) {
                     String pathToFile = mappings.get(i);
                     File file = new File (pathToFile);
+                    /// REMOVE QUOTES TO GET THE COREFS
+
                     try {
                         String outputFile = keyFolder.getAbsolutePath()+"/"+file.getName()+corefExtension;
                         resultFiles.add(outputFile);
+
                         FileOutputStream fos = new FileOutputStream(outputFile);
                         EntityCorefReferenceBaseline.processNafFile(fos, file.getAbsolutePath());
                         fos.close();
+
                     } catch (IOException e) {
                         e.printStackTrace();  //To change body of catch statement ßuse File | Settings | File Templates.
                     }
