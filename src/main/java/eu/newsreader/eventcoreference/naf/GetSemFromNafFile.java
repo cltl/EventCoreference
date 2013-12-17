@@ -83,8 +83,8 @@ public class GetSemFromNafFile {
                 semEvent.setId(baseUrl+"/"+coreferenceSet.getCoid());
                 semEvent.setMentions(baseUrl, coreferenceSet.getSetsOfSpans());
                 semEvent.addPhraseCountsForMentions(kafSaxParser);
-                semEvent.addConcept(sense);
                 semEvent.setConcept(getExternalReferencesSrlEvents(kafSaxParser, coreferenceSet));
+                semEvent.addConcept(sense);
                 semEvents.add(semEvent);
             }
             else if (coreferenceSet.getType().equalsIgnoreCase("location")) {
@@ -270,10 +270,22 @@ public class GetSemFromNafFile {
                     ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(k);
                     for (int l = 0; l < corefTargets.size(); l++) {
                         CorefTarget corefTarget = corefTargets.get(l);
+
                         if (corefTarget.getId().equals(termId)) {
                             match = true;
                             break;
                         }
+                        /// ID-HACK
+                        String id = corefTarget.getId();
+                        int idx = corefTarget.getId().lastIndexOf("/");
+                        if (idx>-1) {
+                            id = id.substring(idx+1);
+                        }
+                        if (id.equals(termId)) {
+                            match = true;
+                            break;
+                        }
+
                     }
                 }
             }
@@ -300,6 +312,10 @@ public class GetSemFromNafFile {
                         for (int m = 0; m < corefTargets.size(); m++) {
                             CorefTarget corefTarget = corefTargets.get(m);
 
+                            if (corefTarget.getId().equals(termId)) {
+                                match = true;
+                                break;
+                            }
                             /// ID-HACK
                             String id = corefTarget.getId();
                             int idx = corefTarget.getId().lastIndexOf("/");

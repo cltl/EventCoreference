@@ -219,42 +219,15 @@ public class SemObject {
     }
 
 
-    public Resource toJenaRdfResource (Model model) {
-        Resource resource = model.createResource(this.getURI());
-        for (int i = 0; i < phraseCounts.size(); i++) {
-            PhraseCount phraseCount = phraseCounts.get(i);
-            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
-        }
-        //resource.addProperty(RDFS.label, model.createLiteral(getTopPhraseAsLabel()));
-        for (int i = 0; i < concepts.size(); i++) {
-            KafSense kafSense = concepts.get(i);
-            String nameSpaceType = getNameSpaceTypeReference(kafSense);
-            resource.addProperty(RDF.type, nameSpaceType);
-        }
-        for (int i = 0; i < mentions.size(); i++) {
-            ArrayList<CorefTarget> corefTargets = mentions.get(i);
-            for (int j = 0; j < corefTargets.size(); j++) {
-                CorefTarget corefTarget = corefTargets.get(j);
-                Property property = model.createProperty("gaf:denotedBy");
-                resource.addProperty(property, corefTarget.getId());
-            }
-        }
-        return resource;
-    }
-
     public void addToJenaModel (Model model, Resource type) {
         Resource resource = model.createResource(this.getURI());
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
         }
-        //resource.addProperty(RDFS.label, model.createLiteral(getTopPhraseAsLabel()));
-        //Property sem = model.createProperty("sem");
 
 
-       // RDFNode rdfNode = model.createResource(type);
         resource.addProperty(RDF.type, type);
-      //  resource.addProperty(RDF.type, type);
 
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
