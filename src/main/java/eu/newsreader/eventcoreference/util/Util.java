@@ -40,6 +40,26 @@ public class Util {
         return acceptedFileList;
     }
 
+    static public ArrayList<File> makeFolderList(File inputFile) {
+        ArrayList<File> folderList = new ArrayList<File>();
+        File[] theFileList = null;
+        if ((inputFile.canRead()) && inputFile.isDirectory()) {
+            theFileList = inputFile.listFiles();
+            for (int i = 0; i < theFileList.length; i++) {
+                File newFile = theFileList[i];
+                if (newFile.isDirectory()) {
+                    folderList.add(newFile);
+                }
+            }
+        } else {
+            System.out.println("Cannot access file:" + inputFile + "#");
+            if (!inputFile.exists()) {
+                System.out.println("File does not exist!");
+            }
+        }
+        return folderList;
+    }
+
 
     static public void getStats(String fileName) {
         /*

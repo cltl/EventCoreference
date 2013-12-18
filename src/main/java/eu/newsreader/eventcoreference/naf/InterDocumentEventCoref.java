@@ -73,9 +73,10 @@ public class InterDocumentEventCoref {
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
+        //System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
-            System.out.println("file.getName() = " + file.getName());
+            //System.out.println("file.getName() = " + file.getAbsolutePath());
             ArrayList<SemObject> mySemEvents = new ArrayList<SemObject>();
             ArrayList<SemObject> mySemActors = new ArrayList<SemObject>();
             ArrayList<SemObject> mySemTimes = new ArrayList<SemObject>();
