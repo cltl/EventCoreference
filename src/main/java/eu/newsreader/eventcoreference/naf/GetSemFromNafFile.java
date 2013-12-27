@@ -92,7 +92,7 @@ public class GetSemFromNafFile {
             }
             else if (coreferenceSet.getType().equalsIgnoreCase("location")) {
                 SemPlace semPlace = new SemPlace();
-                semPlace.setId(baseUrl+"/"+coreferenceSet.getCoid());
+                semPlace.setId(baseUrl + "/" + coreferenceSet.getCoid());
                 semPlace.setMentions(baseUrl, coreferenceSet.getSetsOfSpans());
                 semPlace.addPhraseCountsForMentions(kafSaxParser);
                 semPlace.addConcept(sense);
@@ -103,7 +103,7 @@ public class GetSemFromNafFile {
             else  {
                 /// assume it is an actor
                 SemActor semActor = new SemActor();
-                semActor.setId(baseUrl+"/"+coreferenceSet.getCoid());
+                semActor.setId(baseUrl + "/" + coreferenceSet.getCoid());
                 semActor.setMentions(baseUrl, coreferenceSet.getSetsOfSpans());
                 semActor.addPhraseCountsForMentions(kafSaxParser);
                 semActor.addConcept(sense);
@@ -255,6 +255,14 @@ public class GetSemFromNafFile {
                     if (idx>-1) {
                         id = id.substring(idx+1);
                     }
+
+                    // System.out.println("id = " + id);
+                    //id = t582#char=2856,2863
+                    ///// ofset HACK
+                    idx = id.indexOf("#");
+                    if (idx>-1) {
+                        id = id.substring(0, idx);
+                    }
                     if (spans.contains(id)) {
                         return true;
                     }
@@ -287,6 +295,16 @@ public class GetSemFromNafFile {
                         if (idx>-1) {
                             id = id.substring(idx+1);
                         }
+
+                        // System.out.println("id = " + id);
+                        //id = t582#char=2856,2863
+                        ///// ofset HACK
+                        idx = id.indexOf("#");
+                        if (idx>-1) {
+                            id = id.substring(0, idx);
+                        }
+
+
                         if (id.equals(termId)) {
                             match = true;
                             break;
@@ -328,6 +346,16 @@ public class GetSemFromNafFile {
                             if (idx>-1) {
                                 id = id.substring(idx+1);
                             }
+
+                            // System.out.println("id = " + id);
+                            //id = t582#char=2856,2863
+                            ///// ofset HACK
+                            idx = id.indexOf("#");
+                            if (idx>-1) {
+                                id = id.substring(0, idx);
+                            }
+
+
                             if (id.equals(termId)) {
                                 match = true;
                                 break;
@@ -374,11 +402,22 @@ public class GetSemFromNafFile {
                         for (int m = 0; m < corefTargets.size(); m++) {
                             CorefTarget corefTarget = corefTargets.get(m);
 
+                            /// ID-HACK
                             String id = corefTarget.getId();
                             int idx = corefTarget.getId().lastIndexOf("/");
                             if (idx>-1) {
                                 id = id.substring(idx+1);
                             }
+
+                            // System.out.println("id = " + id);
+                            //id = t582#char=2856,2863
+                            ///// ofset HACK
+                            idx = id.indexOf("#");
+                            if (idx>-1) {
+                                id = id.substring(0, idx);
+                            }
+
+
                             if (id.equals(entityCorefTarget.getId())) {
                                 match = true;
                                 break;

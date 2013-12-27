@@ -46,32 +46,35 @@ public class Util {
         int highestOffSet = -1;
         int lengthOffSet = -1;
         KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
-        for (int i = 0; i < kafTerm.getSpans().size(); i++) {
-            String tokenId = kafTerm.getSpans().get(i);
-            KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
-            if (!kafWordForm.getCharOffset().isEmpty()) {
-                int offSet = Integer.parseInt(kafWordForm.getCharOffset());
-                int length = Integer.parseInt(kafWordForm.getCharLength());
-                if (firstOffSet==-1 || firstOffSet>offSet) {
-                    firstOffSet = offSet;
-                }
-                if (highestOffSet==-1 ||offSet>highestOffSet) {
-                    highestOffSet = offSet;
-                    lengthOffSet = length;
+        if (kafTerm==null) {
+           // System.out.println("corefTarget = " + corefTarget.getId());
+        }
+        else {
+            for (int i = 0; i < kafTerm.getSpans().size(); i++) {
+                String tokenId = kafTerm.getSpans().get(i);
+                KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
+                if (!kafWordForm.getCharOffset().isEmpty()) {
+                    int offSet = Integer.parseInt(kafWordForm.getCharOffset());
+                    int length = Integer.parseInt(kafWordForm.getCharLength());
+                    if (firstOffSet==-1 || firstOffSet>offSet) {
+                        firstOffSet = offSet;
+                    }
+                    if (highestOffSet==-1 ||offSet>highestOffSet) {
+                        highestOffSet = offSet;
+                        lengthOffSet = length;
+                    }
                 }
             }
-        }
 
-        if (firstOffSet>-1 && highestOffSet>-1) {
-            int end_offset = highestOffSet+lengthOffSet;
-            corefTarget.setId(corefTarget.getId()+"#char="+firstOffSet+","+end_offset);
+            if (firstOffSet>-1 && highestOffSet>-1) {
+                int end_offset = highestOffSet+lengthOffSet;
+                corefTarget.setId(corefTarget.getId()+"#char="+firstOffSet+","+end_offset);
+            }
         }
     }
 
     /**
      *      Mention URI = News URI + "#char=START_OFFSET,END_OFFSET"
-     * @param kafSaxParser
-     * @param targetTerm
      */
 /*    static public String getMentionUri (KafSaxParser kafSaxParser, String targetTerm) {
         String mentionTarget = targetTerm;
