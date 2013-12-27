@@ -15,6 +15,28 @@ import java.util.Set;
  */
 public class Util {
 
+    static public String cleanUri (String uri) {
+        String cleanUri = "";
+        int idx = uri.lastIndexOf("/");
+        for (int i = 0; i < uri.toCharArray().length; i++) {
+            char c = uri.toCharArray()[i];
+            if ((i>idx) || idx==-1) {
+                if ((c!='.') &&
+                    (c!='(') &&
+                    (c!=',') &&
+                    (c!=')')
+                        ){
+                   cleanUri+=c;
+                }
+            }
+            else {
+                cleanUri +=c;
+            }
+        }
+        cleanUri = cleanUri.replaceAll("%23","");
+        return cleanUri;
+    }
+
     static public ArrayList<File> makeRecursiveFileList(File inputFile, String theFilter) {
         ArrayList<File> acceptedFileList = new ArrayList<File>();
         File[] theFileList = null;

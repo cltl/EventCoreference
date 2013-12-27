@@ -3,6 +3,7 @@ package eu.newsreader.eventcoreference.objects;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.*;
 import eu.kyotoproject.kaf.CorefTarget;
+import eu.newsreader.eventcoreference.naf.ResourcesUri;
 
 import java.util.ArrayList;
 
@@ -141,8 +142,8 @@ public class SemRelation {
 
         Model relationModel = ds.getNamedModel("http://www.newsreader-project.eu/relation/"+this.id);
 
-        Resource subject = relationModel.createResource("nwr:"+this.getSubject());
-        Resource object = relationModel.createResource("nwr:"+this.getObject());
+        Resource subject = relationModel.createResource(ResourcesUri.nwr+this.getSubject());
+        Resource object = relationModel.createResource(ResourcesUri.nwr+this.getObject());
         Property semProperty = getSemRelationType(this.getPredicate());
         subject.addProperty(semProperty, object);
 
@@ -150,8 +151,8 @@ public class SemRelation {
         Resource provenanceResource = provenanceModel.createResource("http://www.newsreader-project.eu/relation/"+this.id);
         for (int i = 0; i < corefTargets.size(); i++) {
                 CorefTarget corefTarget = corefTargets.get(i);
-                Property property = provenanceModel.createProperty("gaf:denotedBy");
-                Resource targerResource = provenanceModel.createResource("nwr:"+corefTarget.getId());
+                Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
+                Resource targerResource = provenanceModel.createResource(ResourcesUri.gaf+corefTarget.getId());
                 provenanceResource.addProperty(property, targerResource);
         }
     }

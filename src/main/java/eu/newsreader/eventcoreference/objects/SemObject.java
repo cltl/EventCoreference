@@ -9,6 +9,8 @@ import eu.kyotoproject.kaf.CorefTarget;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.kyotoproject.kaf.KafTerm;
+import eu.newsreader.eventcoreference.naf.ResourcesUri;
+import eu.newsreader.eventcoreference.util.Util;
 
 import java.util.ArrayList;
 
@@ -239,7 +241,7 @@ public class SemObject {
             ArrayList<CorefTarget> corefTargets = mentions.get(i);
             for (int j = 0; j < corefTargets.size(); j++) {
                 CorefTarget corefTarget = corefTargets.get(j);
-                Property property = model.createProperty("gaf:denotedBy");
+                Property property = model.createProperty(ResourcesUri.gaf+"denotedBy");
                 Resource targetResource = model.createResource("nwr:"+corefTarget.getId());
                 resource.addProperty(property, targetResource);
             }
@@ -250,29 +252,38 @@ public class SemObject {
 
     static public String getNameSpaceTypeReference (KafSense kafSense) {
         String ref = "";
+        /**
+         *         String nwr = "http://www.newsreader-project.eu/";
+         String wn = "http://www.newsreader-project.eu/wordnet3.0/";
+         String fn = "http://www.newsreader-project.eu/framenet/";
+         String vn = "http://www.newsreader-project.eu/verbnet/";
+         String pb = "http://www.newsreader-project.eu/propbank/";
+         String gaf = "http://groundedannotationframework.org/";
+         String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
+         */
         if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
-            ref = "vn:"+kafSense.getSensecode();
+            ref = ResourcesUri.vn+ kafSense.getSensecode();
         }
         else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-            ref = "wn:"+kafSense.getSensecode();
+            ref = ResourcesUri.wn+kafSense.getSensecode();
         }
         else if (kafSense.getResource().equalsIgnoreCase("framenet")) {
-            ref = "fn:"+kafSense.getSensecode();
+            ref = ResourcesUri.fn+kafSense.getSensecode();
         }
         else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
-            ref = "pb:"+kafSense.getSensecode();
+            ref = ResourcesUri.pb+kafSense.getSensecode();
         }
         else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
-            ref = "nb:"+kafSense.getSensecode();
+            ref = ResourcesUri.nb+kafSense.getSensecode();
         }
-        else if (kafSense.getResource().equalsIgnoreCase("eventype")) {
-            ref = "nwr:"+kafSense.getSensecode();
+        else if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
+            ref = ResourcesUri.nwr+kafSense.getSensecode();
         }
         else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
-            ref = kafSense.getSensecode();
+            ref = Util.cleanUri(kafSense.getSensecode());
         }
         else {
-            ref = "nwr:"+kafSense.getSensecode();
+            ref = ResourcesUri.nwr+kafSense.getSensecode();
         }
 
         return ref;

@@ -401,47 +401,37 @@ public class GetSemFromNafFile {
 
         Dataset ds = TDBFactory.createDataset();
         //DatasetPrefixStorage datasetPrefixStorage = SetupTDB.makePrefixes(new Location("http://www.newsreader-project.eu/"), new DatasetControlNone());
-
-        String nwr = "http://www.newsreader-project.eu/";
-        String wn = "http://www.newsreader-project.eu/wordnet3.0/";
-        String fn = "http://www.newsreader-project.eu/framenet/";
-        String vn = "http://www.newsreader-project.eu/verbnet/";
-        String pb = "http://www.newsreader-project.eu/propbank/";
-        String gaf = "http://groundedannotationframework.org/";
-        String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
-        String dbp = "http://dbpedia.org/resource/";
-        String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns/";
-        String rdfs= "http://www.w3.org/2000/01/rdf-schema/";
-
         //datasetPrefixStorage.insertPrefix();
         Model defaultModel = ds.getDefaultModel();
-        defaultModel.setNsPrefix("nwr", nwr);
-        defaultModel.setNsPrefix("gaf", gaf);
+        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
 
-        defaultModel.setNsPrefix("nwr", nwr);
-        defaultModel.setNsPrefix("wn", wn);
-        defaultModel.setNsPrefix("fn", fn);
-        defaultModel.setNsPrefix("vn", vn);
-        defaultModel.setNsPrefix("pb", pb);
-        defaultModel.setNsPrefix("sem", sem);
-        defaultModel.setNsPrefix("gaf", gaf);
-        defaultModel.setNsPrefix("dbp", dbp);
-        defaultModel.setNsPrefix("rdf", rdf);
-        defaultModel.setNsPrefix("rdfs", rdfs);
+        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
+        defaultModel.setNsPrefix("fn", ResourcesUri.fn);
+        defaultModel.setNsPrefix("vn", ResourcesUri.vn);
+        defaultModel.setNsPrefix("pb", ResourcesUri.pb);
+        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
+        defaultModel.setNsPrefix("sem", ResourcesUri.sem);
+        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);
+        defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
+        defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
 
         Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
-        provenanceModel.setNsPrefix("nwr", nwr);
-        provenanceModel.setNsPrefix("gaf", gaf);
+        provenanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        provenanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
 
         Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
-        instanceModel.setNsPrefix("nwr", nwr);
-        instanceModel.setNsPrefix("wn", wn);
-        instanceModel.setNsPrefix("fn", fn);
-        instanceModel.setNsPrefix("vn", vn);
-        instanceModel.setNsPrefix("pb", pb);
-        instanceModel.setNsPrefix("sem", sem);
-        instanceModel.setNsPrefix("gaf", gaf);
-        instanceModel.setNsPrefix("dbp", dbp);
+        instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
+        instanceModel.setNsPrefix("fn", ResourcesUri.fn);
+        instanceModel.setNsPrefix("vn", ResourcesUri.vn);
+        instanceModel.setNsPrefix("pb", ResourcesUri.pb);
+        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
+        instanceModel.setNsPrefix("sem", ResourcesUri.sem);
+        instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
             semEvent.addToJenaModel(instanceModel, Sem.Event);
