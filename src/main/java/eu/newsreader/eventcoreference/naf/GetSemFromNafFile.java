@@ -5,6 +5,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
@@ -61,6 +62,7 @@ public class GetSemFromNafFile {
         ArrayList<ArrayList<CorefTarget>> timeReferences = getTimeMentionsFromSrl(kafSaxParser);
         for (int i = 0; i < timeReferences.size(); i++) {
             ArrayList<CorefTarget> corefTargetArrayList = timeReferences.get(i);
+            Util.getMentionUriArrayList(kafSaxParser, corefTargetArrayList);
             SemTime semTimeRole = new SemTime();
             semTimeRole.addMentions(baseUrl, corefTargetArrayList);
             semTimeRole.addPhraseCountsForMentions(kafSaxParser);
@@ -75,6 +77,7 @@ public class GetSemFromNafFile {
 
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            Util.getMentionUriArrayArrayList(kafSaxParser, coreferenceSet.getSetsOfSpans());
             KafSense sense = new KafSense();
             sense.setRefType("corefType");
             sense.setSensecode(coreferenceSet.getType());
@@ -84,7 +87,7 @@ public class GetSemFromNafFile {
                 semEvent.setMentions(baseUrl, coreferenceSet.getSetsOfSpans());
                 semEvent.addPhraseCountsForMentions(kafSaxParser);
                 semEvent.setConcept(getExternalReferencesSrlEvents(kafSaxParser, coreferenceSet));
-                semEvent.addConcept(sense);
+                //semEvent.addConcept(sense);
                 semEvents.add(semEvent);
             }
             else if (coreferenceSet.getType().equalsIgnoreCase("location")) {
@@ -120,7 +123,7 @@ public class GetSemFromNafFile {
 */
 
 
-        //@TODO get SemRelations
+
         /*
             - iterate over de SRL layers
             - represent predicates and participants
@@ -150,6 +153,7 @@ public class GetSemFromNafFile {
                                 semRelation.setId(relationInstanceId);
                                 CorefTarget corefTarget = new CorefTarget();
                                 corefTarget.setId(kafParticipant.getId());
+                                Util.getMentionUriCorefTarget(kafSaxParser, corefTarget);
                                 semRelation.addCorefTarget(baseUrl, corefTarget);
                                 semRelation.setPredicate("hasSemActor");
                                 semRelation.setSubject(semEvent.getId());
@@ -170,6 +174,7 @@ public class GetSemFromNafFile {
                                     semRelation.setId(relationInstanceId);
                                     CorefTarget corefTarget = new CorefTarget();
                                     corefTarget.setId(kafParticipant.getId());
+                                    Util.getMentionUriCorefTarget(kafSaxParser, corefTarget);
                                     semRelation.addCorefTarget(baseUrl, corefTarget);
                                     semRelation.setPredicate("hasSemPlace");
                                     semRelation.setSubject(semEvent.getId());
@@ -191,6 +196,7 @@ public class GetSemFromNafFile {
                                     semRelation.setId(relationInstanceId);
                                     CorefTarget corefTarget = new CorefTarget();
                                     corefTarget.setId(kafParticipant.getId());
+                                    Util.getMentionUriCorefTarget(kafSaxParser, corefTarget);
                                     semRelation.addCorefTarget(baseUrl, corefTarget);
                                     semRelation.setPredicate("hasSemTime");
                                     semRelation.setSubject(semEvent.getId());
@@ -408,7 +414,7 @@ public class GetSemFromNafFile {
 
         defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
         defaultModel.setNsPrefix("fn", ResourcesUri.fn);
-/*
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
         defaultModel.setNsPrefix("wn", ResourcesUri.wn);
         defaultModel.setNsPrefix("vn", ResourcesUri.vn);
         defaultModel.setNsPrefix("pb", ResourcesUri.pb);
@@ -417,6 +423,7 @@ public class GetSemFromNafFile {
         defaultModel.setNsPrefix("sem", ResourcesUri.sem);
         defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
         defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);
+        defaultModel.setNsPrefix("owl", ResourcesUri.owl);
         defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
         defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
 
@@ -427,7 +434,7 @@ public class GetSemFromNafFile {
         Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
         instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
         instanceModel.setNsPrefix("fn", ResourcesUri.fn);
-/*
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
         instanceModel.setNsPrefix("wn", ResourcesUri.wn);
         instanceModel.setNsPrefix("vn", ResourcesUri.vn);
         instanceModel.setNsPrefix("pb", ResourcesUri.pb);
@@ -435,6 +442,7 @@ public class GetSemFromNafFile {
 */
         instanceModel.setNsPrefix("sem", ResourcesUri.sem);
         instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        instanceModel.setNsPrefix("owl", ResourcesUri.owl);
         instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
@@ -463,16 +471,7 @@ public class GetSemFromNafFile {
             semRelation.addToJenaDataSet(ds, provenanceModel);
         }
 
-     //   model.write(stream);
-     //   model.write(stream, "N-TRIPLES");
-        //RDFDataMgr.write(stream, ds, RDFFormat.NQUADS_UTF8);
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
-      //  RDFDataMgr.write(stream, instanceModel, RDFFormat.TRIG_PRETTY);
-      //  RDFDataMgr.write(stream, provenanceModel, RDFFormat.TRIG_PRETTY);
-      //  RDFDataMgr.write(stream, ds, RDFFormat.RDFJSON);
-       // RDFDataMgr.write(stream, model, RDFFormat.NTRIPLES_UTF8);
-      //  RDFDataMgr.write(stream, model, RDFFormat.TRIG_FLAT);
-
     }
 
 

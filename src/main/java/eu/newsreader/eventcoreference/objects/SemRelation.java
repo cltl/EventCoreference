@@ -152,7 +152,7 @@ public class SemRelation {
         for (int i = 0; i < corefTargets.size(); i++) {
                 CorefTarget corefTarget = corefTargets.get(i);
                 Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
-                Resource targerResource = provenanceModel.createResource(ResourcesUri.gaf+corefTarget.getId());
+                Resource targerResource = provenanceModel.createResource(ResourcesUri.nwr+corefTarget.getId());
                 provenanceResource.addProperty(property, targerResource);
         }
     }

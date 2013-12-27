@@ -16,5 +16,6 @@ public class ResourcesUri {
     final static public String dbp = "http://dbpedia.org/resource/";
     final static public String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     final static public String rdfs= "http://www.w3.org/2000/01/rdf-schema#";
+    final static public String owl= "http://www.w3.org/2002/07/owl#";
 
 }

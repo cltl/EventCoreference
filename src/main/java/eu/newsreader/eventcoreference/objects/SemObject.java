@@ -3,6 +3,7 @@ package eu.newsreader.eventcoreference.objects;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import eu.kyotoproject.kaf.CorefTarget;
@@ -228,7 +229,6 @@ public class SemObject {
             resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
         }
 
-
         resource.addProperty(RDF.type, type);
 
         for (int i = 0; i < concepts.size(); i++) {
@@ -245,9 +245,23 @@ public class SemObject {
             else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
                 continue;
             }
-            String nameSpaceType = getNameSpaceTypeReference(kafSense);
-            Resource conceptResource = model.createResource(nameSpaceType);
-            resource.addProperty(RDF.type, conceptResource);
+            else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
+                /*
+                (5) DBpedia resources are used as classes via rdf:type triples, while
+                    they should be treated as instances, by either:
+                    - using them as the subject of extracted triples (suggested), or
+                    - linking them to entity/event URIs using owl:sameAs triples
+                 */
+
+                String nameSpaceType = getNameSpaceTypeReference(kafSense);
+                Resource conceptResource = model.createResource(nameSpaceType);
+                resource.addProperty(OWL.sameAs, conceptResource);
+            }
+            else {
+                String nameSpaceType = getNameSpaceTypeReference(kafSense);
+                Resource conceptResource = model.createResource(nameSpaceType);
+                resource.addProperty(RDF.type, conceptResource);
+            }
         }
         for (int i = 0; i < mentions.size(); i++) {
             ArrayList<CorefTarget> corefTargets = mentions.get(i);
