@@ -428,7 +428,7 @@ public class GetSemFromNafFile {
         instanceModel.setNsPrefix("fn", ResourcesUri.fn);
         instanceModel.setNsPrefix("vn", ResourcesUri.vn);
         instanceModel.setNsPrefix("pb", ResourcesUri.pb);
-        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
+        instanceModel.setNsPrefix("nb", ResourcesUri.nb);
         instanceModel.setNsPrefix("sem", ResourcesUri.sem);
         instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
         instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);
