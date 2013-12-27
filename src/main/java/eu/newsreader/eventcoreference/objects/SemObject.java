@@ -83,6 +83,13 @@ public class SemObject {
                 if (idx>-1) {
                     id = id.substring(idx+1);
                 }
+               // System.out.println("id = " + id);
+                //id = t582#char=2856,2863
+                ///// ofset HACK
+                idx = id.indexOf("#");
+                if (idx>-1) {
+                    id = id.substring(0, idx);
+                }
                 KafTerm kafTerm = kafSaxParser.getTerm(id);
                 if (kafTerm!=null) {
                     phrase += " "+kafTerm.getLemma();
@@ -96,6 +103,7 @@ public class SemObject {
             }
         }
     }
+
     public ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>> getMentions() {
         return mentions;
     }

@@ -62,10 +62,10 @@ public class GetSemFromNafFile {
         ArrayList<ArrayList<CorefTarget>> timeReferences = getTimeMentionsFromSrl(kafSaxParser);
         for (int i = 0; i < timeReferences.size(); i++) {
             ArrayList<CorefTarget> corefTargetArrayList = timeReferences.get(i);
-            Util.getMentionUriArrayList(kafSaxParser, corefTargetArrayList);
             SemTime semTimeRole = new SemTime();
+            semTimeRole.addPhraseCountsForMentions(kafSaxParser); // added before we change the targets
+            Util.getMentionUriArrayList(kafSaxParser, corefTargetArrayList);
             semTimeRole.addMentions(baseUrl, corefTargetArrayList);
-            semTimeRole.addPhraseCountsForMentions(kafSaxParser);
             KafSense sense = new KafSense();
             sense.setRefType("roleType");
             sense.setSensecode("TMP");
