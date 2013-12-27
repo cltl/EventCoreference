@@ -233,6 +233,18 @@ public class SemObject {
 
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
+            if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
+                continue;
+            }
+            else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+                continue;
+            }
+            else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
+                continue;
+            }
+            else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
+                continue;
+            }
             String nameSpaceType = getNameSpaceTypeReference(kafSense);
             Resource conceptResource = model.createResource(nameSpaceType);
             resource.addProperty(RDF.type, conceptResource);
@@ -242,7 +254,7 @@ public class SemObject {
             for (int j = 0; j < corefTargets.size(); j++) {
                 CorefTarget corefTarget = corefTargets.get(j);
                 Property property = model.createProperty(ResourcesUri.gaf+"denotedBy");
-                Resource targetResource = model.createResource("nwr:"+corefTarget.getId());
+                Resource targetResource = model.createResource(ResourcesUri.nwr+corefTarget.getId());
                 resource.addProperty(property, targetResource);
             }
         }

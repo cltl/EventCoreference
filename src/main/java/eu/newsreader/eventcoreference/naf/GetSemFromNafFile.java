@@ -407,11 +407,13 @@ public class GetSemFromNafFile {
         defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
 
         defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
         defaultModel.setNsPrefix("fn", ResourcesUri.fn);
+/*
+        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
         defaultModel.setNsPrefix("vn", ResourcesUri.vn);
         defaultModel.setNsPrefix("pb", ResourcesUri.pb);
         defaultModel.setNsPrefix("nb", ResourcesUri.nb);
+*/
         defaultModel.setNsPrefix("sem", ResourcesUri.sem);
         defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
         defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);
@@ -424,11 +426,13 @@ public class GetSemFromNafFile {
 
         Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
         instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
         instanceModel.setNsPrefix("fn", ResourcesUri.fn);
+/*
+        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
         instanceModel.setNsPrefix("vn", ResourcesUri.vn);
         instanceModel.setNsPrefix("pb", ResourcesUri.pb);
         instanceModel.setNsPrefix("nb", ResourcesUri.nb);
+*/
         instanceModel.setNsPrefix("sem", ResourcesUri.sem);
         instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
         instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);

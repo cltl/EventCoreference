@@ -24,6 +24,7 @@ public class Util {
                 if ((c!='.') &&
                     (c!='(') &&
                     (c!=',') &&
+                    (c!='\'') &&
                     (c!=')')
                         ){
                    cleanUri+=c;
