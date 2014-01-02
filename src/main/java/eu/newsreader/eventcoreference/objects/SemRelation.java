@@ -140,22 +140,23 @@ public class SemRelation {
 
     public void addToJenaDataSet (Dataset ds, Model provenanceModel) {
 
-        Model relationModel = ds.getNamedModel("http://www.newsreader-project.eu/relation/"+this.id);
+        Model relationModel = ds.getNamedModel(this.id);
 
-        Resource subject = relationModel.createResource(ResourcesUri.nwr+this.getSubject());
-        Resource object = relationModel.createResource(ResourcesUri.nwr+this.getObject());
+        Resource subject = relationModel.createResource(this.getSubject());
+        Resource object = relationModel.createResource(this.getObject());
         Property semProperty = getSemRelationType(this.getPredicate());
         subject.addProperty(semProperty, object);
 
 
-        Resource provenanceResource = provenanceModel.createResource("http://www.newsreader-project.eu/relation/"+this.id);
+        Resource provenanceResource = provenanceModel.createResource(this.id);
         for (int i = 0; i < corefTargets.size(); i++) {
                 CorefTarget corefTarget = corefTargets.get(i);
                 Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
-                Resource targerResource = provenanceModel.createResource(ResourcesUri.nwr+corefTarget.getId());
-                provenanceResource.addProperty(property, targerResource);
+                Resource targetResource = provenanceModel.createResource(corefTarget.getId());
+                provenanceResource.addProperty(property, targetResource);
         }
     }
+
 
     public SemRelation (SemRelation semRelation) {
         this.setSubject(semRelation.getSubject());

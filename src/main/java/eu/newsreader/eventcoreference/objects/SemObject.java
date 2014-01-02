@@ -3,13 +3,13 @@ package eu.newsreader.eventcoreference.objects;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import eu.kyotoproject.kaf.CorefTarget;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.kyotoproject.kaf.KafTerm;
+import eu.newsreader.eventcoreference.naf.GetSemFromNafFile;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.util.Util;
 
@@ -79,7 +79,7 @@ public class SemObject {
                 CorefTarget target = corefTarget.get(j);
                 /// ID-HACK
                 String id = target.getId();
-                int idx = target.getId().lastIndexOf("/");
+                int idx = target.getId().lastIndexOf(GetSemFromNafFile.ID_SEPARATOR);
                 if (idx>-1) {
                     id = id.substring(idx+1);
                 }
@@ -125,7 +125,7 @@ public class SemObject {
             ArrayList<CorefTarget> corefTargetArrayList = mentions.get(i);
             for (int j = 0; j < corefTargetArrayList.size(); j++) {
                 CorefTarget corefTarget = corefTargetArrayList.get(j);
-                corefTarget.setId(baseUrl+"/"+corefTarget.getId());
+                corefTarget.setId(baseUrl+corefTarget.getId());
             }
         }
         this.mentions = mentions;
@@ -134,7 +134,7 @@ public class SemObject {
     public void addMentions(String baseUrl, ArrayList<eu.kyotoproject.kaf.CorefTarget> mentions) {
         for (int i = 0; i < mentions.size(); i++) {
             CorefTarget corefTarget = mentions.get(i);
-            corefTarget.setId(baseUrl+"/"+corefTarget.getId());
+            corefTarget.setId(baseUrl+corefTarget.getId());
         }
         this.mentions.add(mentions);
     }
@@ -159,13 +159,29 @@ public class SemObject {
         return id;
     }
 
+    public void setIdByReference() {
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
+                /*
+                (5) DBpedia resources are used as classes via rdf:type triples, while
+                    they should be treated as instances, by either:
+                    - using them as the subject of extracted triples (suggested), or
+                    - linking them to entity/event URIs using owl:sameAs triples
+                 */
+                id = getNameSpaceTypeReference(kafSense);
+                break;
+            }
+        }
+    }
+
     public String getURI() {
-        String uri = "http://www.newsreader-project.eu/"+id;
+        String uri = id;
         return uri;
     }
 
     public String getURI(String nameSpace) {
-        String uri = nameSpace+":"+id;
+        String uri = nameSpace+id;
         return uri;
     }
 
@@ -232,6 +248,7 @@ public class SemObject {
 
     public void addToJenaModel (Model model, Resource type) {
         Resource resource = model.createResource(this.getURI());
+        if (this.getURI().endsWith("Japan")) {
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
@@ -260,10 +277,11 @@ public class SemObject {
                     - using them as the subject of extracted triples (suggested), or
                     - linking them to entity/event URIs using owl:sameAs triples
                  */
-
-                String nameSpaceType = getNameSpaceTypeReference(kafSense);
+/*                String nameSpaceType = getNameSpaceTypeReference(kafSense);
                 Resource conceptResource = model.createResource(nameSpaceType);
-                resource.addProperty(OWL.sameAs, conceptResource);
+                resource.addProperty(OWL.sameAs, conceptResource);*/
+                /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
+                continue;
             }
             else {
                 String nameSpaceType = getNameSpaceTypeReference(kafSense);
@@ -276,12 +294,12 @@ public class SemObject {
             for (int j = 0; j < corefTargets.size(); j++) {
                 CorefTarget corefTarget = corefTargets.get(j);
                 Property property = model.createProperty(ResourcesUri.gaf+"denotedBy");
-                Resource targetResource = model.createResource(ResourcesUri.nwr+corefTarget.getId());
+                Resource targetResource = model.createResource(corefTarget.getId());
                 resource.addProperty(property, targetResource);
             }
         }
+        }
     }
-
 
 
     static public String getNameSpaceTypeReference (KafSense kafSense) {
@@ -375,18 +393,18 @@ public class SemObject {
             }
         }
         for (int i = 0; i < anObject.getPhraseCounts().size(); i++) {
-            PhraseCount phraseCount = anObject.getPhraseCounts().get(i);
+            PhraseCount anObjectphraseCount = anObject.getPhraseCounts().get(i);
             boolean match = false;
             for (int j = 0; j < phraseCounts.size(); j++) {
-                PhraseCount count = phraseCounts.get(j);
-                if (count.getPhrase().equals(phraseCount.getPhrase())) {
-                    count.addCount(phraseCount.getCount());
+                PhraseCount myCount = phraseCounts.get(j);
+                if (myCount.getPhrase().equals(anObjectphraseCount.getPhrase())) {
+                    myCount.addCount(anObjectphraseCount.getCount());
                     match = true;
                     break;
                 }
             }
             if (!match) {
-                phraseCounts.add(phraseCount);
+               phraseCounts.add(anObjectphraseCount);
             }
         }
         for (int i = 0; i < anObject.getMentions().size(); i++) {
