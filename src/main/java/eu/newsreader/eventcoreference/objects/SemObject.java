@@ -248,7 +248,6 @@ public class SemObject {
 
     public void addToJenaModel (Model model, Resource type) {
         Resource resource = model.createResource(this.getURI());
-        if (this.getURI().endsWith("Japan")) {
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
@@ -297,7 +296,6 @@ public class SemObject {
                 Resource targetResource = model.createResource(corefTarget.getId());
                 resource.addProperty(property, targetResource);
             }
-        }
         }
     }
 
