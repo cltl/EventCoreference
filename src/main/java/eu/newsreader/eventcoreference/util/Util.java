@@ -45,6 +45,7 @@ public class Util {
         int firstOffSet = -1;
         int highestOffSet = -1;
         int lengthOffSet = -1;
+        String wordTokenString = "";
         KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
         if (kafTerm==null) {
            // System.out.println("corefTarget = " + corefTarget.getId());
@@ -53,6 +54,12 @@ public class Util {
             for (int i = 0; i < kafTerm.getSpans().size(); i++) {
                 String tokenId = kafTerm.getSpans().get(i);
                 KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
+                if (wordTokenString.isEmpty()) {
+                    wordTokenString = kafWordForm.getWid();
+                }
+                else {
+                    wordTokenString +=","+ kafWordForm.getWid();
+                }
                 if (!kafWordForm.getCharOffset().isEmpty()) {
                     int offSet = Integer.parseInt(kafWordForm.getCharOffset());
                     int length = Integer.parseInt(kafWordForm.getCharLength());
@@ -68,7 +75,8 @@ public class Util {
 
             if (firstOffSet>-1 && highestOffSet>-1) {
                 int end_offset = highestOffSet+lengthOffSet;
-                corefTarget.setId(corefTarget.getId()+"#char="+firstOffSet+","+end_offset);
+               // corefTarget.setId(corefTarget.getId()+"#char="+firstOffSet+","+end_offset);
+                corefTarget.setId("char="+firstOffSet+","+end_offset+"&word="+wordTokenString+"&term="+corefTarget.getId());
             }
         }
     }

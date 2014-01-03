@@ -44,7 +44,7 @@ public class GetSemFromNafFile {
             strdate = sdf.format(date.getTime());
         }
 */
-        String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", ID_SEPARATOR)+ID_SEPARATOR;
+        String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", ID_SEPARATOR)+"#";
        // String baseUrl = ResourcesUri.nwr;
 
         //// we first store the publication date as a time
