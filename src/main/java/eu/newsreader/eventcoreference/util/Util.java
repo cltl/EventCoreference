@@ -136,6 +136,26 @@ public class Util {
         return cleanUri;
     }
 
+    static public String getTermIdFromCorefTarget (CorefTarget corefTarget, String ID_SEPARATOR) {
+
+       // http://www.newsreader-project.eu/2004_4_26_4C7M-RB90-01K9-42PW.xml#char=174,182&word=w30&term=t30
+        /// ID-HACK
+        String id = corefTarget.getId();
+        int idx = id.lastIndexOf(ID_SEPARATOR);
+        if (idx>-1) {
+            id = id.substring(idx+1);
+        }
+//        /
+        // char=174,182&word=w30&term=t30
+
+        ///// ofset HACK
+        idx = id.lastIndexOf("=");
+        if (idx>-1) {
+            id = id.substring(idx+1);
+        }
+        return id;
+    }
+    
     static public ArrayList<File> makeRecursiveFileList(File inputFile, String theFilter) {
         ArrayList<File> acceptedFileList = new ArrayList<File>();
         File[] theFileList = null;

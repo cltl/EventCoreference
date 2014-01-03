@@ -24,7 +24,8 @@ import java.util.Set;
  */
 public class GetSemFromNafFile {
 
-    static final public String ID_SEPARATOR = "_";
+    static final public String ID_SEPARATOR = "#";
+    static final public String URI_SEPARATOR = "_";
 
     static public void processNafFile (String pathToNafFile,
                                        ArrayList<SemObject> semEvents,
@@ -44,7 +45,7 @@ public class GetSemFromNafFile {
             strdate = sdf.format(date.getTime());
         }
 */
-        String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", ID_SEPARATOR)+"#";
+        String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", URI_SEPARATOR)+ID_SEPARATOR;
        // String baseUrl = ResourcesUri.nwr;
 
         //// we first store the publication date as a time
@@ -250,22 +251,7 @@ public class GetSemFromNafFile {
                 ArrayList<CorefTarget> corefTargetArrayList = mentions.get(j);
                 for (int k = 0; k < corefTargetArrayList.size(); k++) {
                     CorefTarget corefTarget = corefTargetArrayList.get(k);
-                   // System.out.println("spans.toString() = " + spans.toString());
-                   // System.out.println("corefTarget = " + corefTarget.getId());
-                    /// ID-HACK
-                    String id = corefTarget.getId();
-                    int idx = id.lastIndexOf(ID_SEPARATOR);
-                    if (idx>-1) {
-                        id = id.substring(idx+1);
-                    }
-
-                    // System.out.println("id = " + id);
-                    //id = t582#char=2856,2863
-                    ///// ofset HACK
-                    idx = id.indexOf("#");
-                    if (idx>-1) {
-                        id = id.substring(0, idx);
-                    }
+                    String id = Util.getTermIdFromCorefTarget(corefTarget, ID_SEPARATOR);
                     if (spans.contains(id)) {
                         return true;
                     }
@@ -292,22 +278,7 @@ public class GetSemFromNafFile {
                             match = true;
                             break;
                         }
-                        /// ID-HACK
-                        String id = corefTarget.getId();
-                        int idx = corefTarget.getId().lastIndexOf(ID_SEPARATOR);
-                        if (idx>-1) {
-                            id = id.substring(idx+1);
-                        }
-
-                        // System.out.println("id = " + id);
-                        //id = t582#char=2856,2863
-                        ///// ofset HACK
-                        idx = id.indexOf("#");
-                        if (idx>-1) {
-                            id = id.substring(0, idx);
-                        }
-
-
+                        String id = Util.getTermIdFromCorefTarget(corefTarget, ID_SEPARATOR);
                         if (id.equals(termId)) {
                             match = true;
                             break;
@@ -344,22 +315,7 @@ public class GetSemFromNafFile {
                                     match = true;
                                     break;
                                 }
-                                /// ID-HACK
-                                String id = corefTarget.getId();
-                                int idx = corefTarget.getId().lastIndexOf(ID_SEPARATOR);
-                                if (idx>-1) {
-                                    id = id.substring(idx+1);
-                                }
-
-                                // System.out.println("id = " + id);
-                                //id = t582#char=2856,2863
-                                ///// ofset HACK
-                                idx = id.indexOf("#");
-                                if (idx>-1) {
-                                    id = id.substring(0, idx);
-                                }
-
-
+                                String id = Util.getTermIdFromCorefTarget(corefTarget, ID_SEPARATOR);
                                 if (id.equals(corefTargetParticipant.getId())) {
                                     match = true;
                                     break;
@@ -429,23 +385,7 @@ public class GetSemFromNafFile {
                         ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(l);
                         for (int m = 0; m < corefTargets.size(); m++) {
                             CorefTarget corefTarget = corefTargets.get(m);
-
-                            /// ID-HACK
-                            String id = corefTarget.getId();
-                            int idx = corefTarget.getId().lastIndexOf(ID_SEPARATOR);
-                            if (idx>-1) {
-                                id = id.substring(idx+1);
-                            }
-
-                            // System.out.println("id = " + id);
-                            //id = t582#char=2856,2863
-                            ///// ofset HACK
-                            idx = id.indexOf("#");
-                            if (idx>-1) {
-                                id = id.substring(0, idx);
-                            }
-
-
+                            String id = Util.getTermIdFromCorefTarget(corefTarget, ID_SEPARATOR);
                             if (id.equals(entityCorefTarget.getId())) {
                                 match = true;
                                 break;

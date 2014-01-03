@@ -77,19 +77,7 @@ public class SemObject {
             String phrase = "";
             for (int j = 0; j < corefTarget.size(); j++) {
                 CorefTarget target = corefTarget.get(j);
-                /// ID-HACK
-                String id = target.getId();
-                int idx = target.getId().lastIndexOf(GetSemFromNafFile.ID_SEPARATOR);
-                if (idx>-1) {
-                    id = id.substring(idx+1);
-                }
-               // System.out.println("id = " + id);
-                //id = t582#char=2856,2863
-                ///// ofset HACK
-                idx = id.indexOf("#");
-                if (idx>-1) {
-                    id = id.substring(0, idx);
-                }
+                String id = Util.getTermIdFromCorefTarget(target, GetSemFromNafFile.ID_SEPARATOR);
                 KafTerm kafTerm = kafSaxParser.getTerm(id);
                 if (kafTerm!=null) {
                     phrase += " "+kafTerm.getLemma();
