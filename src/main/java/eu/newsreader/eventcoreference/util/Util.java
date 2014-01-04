@@ -5,11 +5,8 @@ import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafTerm;
 import eu.kyotoproject.kaf.KafWordForm;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -120,6 +117,8 @@ public class Util {
             char c = uri.toCharArray()[i];
             if ((i>idx) || idx==-1) {
                 if ((c!='.') &&
+                    (c!='&') &&
+                    (c!='*') &&
                     (c!='(') &&
                     (c!=',') &&
                     (c!='\'') &&
@@ -133,6 +132,10 @@ public class Util {
             }
         }
         cleanUri = cleanUri.replaceAll("%23","");
+        cleanUri = cleanUri.replaceAll("%3F","");
+        cleanUri = cleanUri.replaceAll("%7C","");
+        cleanUri = cleanUri.replaceAll("%22R%22","");
+        cleanUri = cleanUri.replaceAll("-","_");
         return cleanUri;
     }
 
@@ -201,118 +204,5 @@ public class Util {
         return folderList;
     }
 
-
-    static public void getStats(String fileName) {
-        /*
-        2013-04-30/sem.trig:            a                dbp:India , dbp:Jeep_Grand_Cherokee , dbp:Chrysler , sem:Place ,
-        2013-04-30/sem.trig:            a                sem:Place , <nwr:location> , <pb:locate.01> , dbp:New_Jersey ;
-         */
-        HashMap<String, Integer> anyMap = new HashMap<String, Integer>();
-        HashMap<String, Integer> placeMap = new HashMap<String, Integer>();
-        HashMap<String, Integer> actorMap = new HashMap<String, Integer>();
-        //HashMap<String, ArrayList<String>> timeMap = new HashMap<String, ArrayList<String>>();
-
-        if (new File(fileName).exists() ) {
-            try {
-                FileInputStream fis = new FileInputStream(fileName);
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader in = new BufferedReader(isr);
-                String inputLine;
-                while (in.ready()&&(inputLine = in.readLine()) != null) {
-                    //System.out.println(inputLine);
-                    if (inputLine.trim().length()>0) {
-                        int idx_s = inputLine.indexOf("@prefix");
-                        if (idx_s==-1) {
-                            String typeString = inputLine.substring(49).trim();
-                            String [] fields = typeString.split(",");
-                            boolean p = false;
-                            boolean a = false;
-                            for (int i = 0; i < fields.length; i++) {
-                                String field = fields[i].trim();
-                                if (field.startsWith("sem:Place")) {
-                                    p = true;
-                                }
-                                else if (field.startsWith("sem:Actor")) {
-                                    a = true;
-                                }
-                            }
-                            for (int i = 0; i < fields.length; i++) {
-                                String field = fields[i].trim();
-                                if (field.endsWith(";")) {
-                                    field = field.substring(0, field.length()-1).trim();
-                                   // System.out.println("field = " + field);
-                                }
-                                if (field.startsWith("dbp:")) {
-                                    if (anyMap.containsKey(field)) {
-                                        Integer cnt = anyMap.get(field);
-                                        cnt++;
-                                        anyMap.put(field, cnt);
-                                    }
-                                    else {
-                                        anyMap.put(field, 1);
-                                    }
-                                    if (a) {
-                                        if (actorMap.containsKey(field)) {
-                                            Integer cnt = actorMap.get(field);
-                                            cnt++;
-                                            actorMap.put(field, cnt);
-                                        }
-                                        else {
-                                            actorMap.put(field, 1);
-                                        }
-                                    }
-                                    if (p) {
-                                        if (placeMap.containsKey(field)) {
-                                            Integer cnt = placeMap.get(field);
-                                            cnt++;
-                                            placeMap.put(field, cnt);
-                                        }
-                                        else {
-                                            placeMap.put(field, 1);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                FileOutputStream fos = new FileOutputStream(fileName+".xls");
-                String str = "\tDBP\tsem:Actor\tsem:Place\n";
-                str += "ALL ENTITIES\t"+anyMap.size()+"\t"+actorMap.size()+"\t"+placeMap.size()+"\n";
-                fos.write(str.getBytes());
-                Set keySet = anyMap.keySet();
-                Iterator keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String key = (String) keys.next();
-                    Integer cnt = anyMap.get(key);
-                    Integer aCnt = 0;
-                    Integer pCnt = 0;
-                    if (actorMap.containsKey(key)) {
-                       aCnt = actorMap.get(key);
-                    }
-                    if (placeMap.containsKey(key)) {
-                       pCnt = placeMap.get(key);
-                    }
-                    str = key+"\t"+cnt+"\t"+aCnt+"\t"+pCnt+"\n";
-                    fos.write(str.getBytes());
-                }
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    static public void main (String [] args) {
-        //String file = args[0];
-        String file = "/Users/kyoto/Desktop/NWR-DATA/trig/dbp.lst";
-        getStats(file);
-    }
 
 }

@@ -6,7 +6,7 @@ package eu.newsreader.eventcoreference.naf;
 public class ResourcesUri {
 
     final static public String nwr = "http://www.newsreader-project.eu/";
-    final static public String wn = "http://www.newsreader-project.eu/wordnet3.0/";
+    final static public String wn = "http://www.newsreader-project.eu/wordnet3.0";
     final static public String fn = "http://www.newsreader-project.eu/framenet/";
     final static public String vn = "http://www.newsreader-project.eu/verbnet/";
     final static public String pb = "http://www.newsreader-project.eu/propbank/";

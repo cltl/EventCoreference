@@ -150,7 +150,8 @@ public class SemObject {
     public void setIdByReference() {
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
-            if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
+            if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
+                    (kafSense.getSensecode().indexOf("dbpedia.org/")>-1)) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
