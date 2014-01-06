@@ -11,6 +11,7 @@ public class SemUtilObject {
     private ArrayList<String> labels;
     private Integer dispersion;
     private Integer mentions;
+    private Integer singletons;
 
     public SemUtilObject() {
         this.uri = "";
@@ -18,6 +19,7 @@ public class SemUtilObject {
         this.labels =  new ArrayList<String>();
         this.dispersion = 0;
         this.mentions = 0;
+        this.singletons = 0;
     }
 
     public String getUri() {
@@ -74,6 +76,14 @@ public class SemUtilObject {
 
     public void addMentions(Integer mentions) {
         this.mentions += mentions;
+    }
+
+    public Integer getSingletons() {
+        return singletons;
+    }
+
+    public void setSingletons(Integer singletons) {
+        this.singletons = singletons;
     }
 
     public void mergeObject(SemUtilObject semUtilObject) {

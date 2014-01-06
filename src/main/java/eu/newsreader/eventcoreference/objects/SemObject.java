@@ -319,10 +319,15 @@ public class SemObject {
             ref = ResourcesUri.nwr+kafSense.getSensecode();
         }
         else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
-            ref = Util.cleanUri(kafSense.getSensecode());
+            ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
         }
         else {
-            ref = ResourcesUri.nwr+kafSense.getSensecode();
+            if (kafSense.getSensecode().indexOf(ResourcesUri.dbp)>-1) {
+                ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
+            }
+            else {
+                ref = ResourcesUri.nwr+kafSense.getSensecode();
+            }
         }
 
         return ref;

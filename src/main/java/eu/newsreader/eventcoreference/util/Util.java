@@ -110,32 +110,41 @@ public class Util {
         return mentionTarget;
     }*/
 
-    static public String cleanUri (String uri) {
-        String cleanUri = "";
-        int idx = uri.lastIndexOf("/");
-        for (int i = 0; i < uri.toCharArray().length; i++) {
-            char c = uri.toCharArray()[i];
-            if ((i>idx) || idx==-1) {
+    static public String cleanDbpediaUri(String uri, String ns) {
+        String cleanUri = ns;
+        // <http://dbpedia.org/resource/MG_F_/_MG_TF>
+        if (uri.startsWith(ns)) {
+            for (int i = ns.length(); i < uri.toCharArray().length; i++) {
+                char c = uri.toCharArray()[i];
                 if ((c!='.') &&
                     (c!='&') &&
                     (c!='*') &&
+                    (c!=':') &&
+                    (c!='+') &&
+                    (c!='-') &&
+                    (c!='–') &&
                     (c!='(') &&
+                    (c!='/') &&
+                    (c!='!') &&
                     (c!=',') &&
                     (c!='\'') &&
                     (c!=')')
-                        ){
+                        ) {
                    cleanUri+=c;
                 }
+                else {
+                     if (c=='-') { cleanUri += "_"; }
+                     if (c=='–') { cleanUri += "_"; }
+                }
             }
-            else {
-                cleanUri +=c;
-            }
+            cleanUri = cleanUri.replaceAll("%23","");
+            cleanUri = cleanUri.replaceAll("%3F","");
+            cleanUri = cleanUri.replaceAll("%7C","");
+            cleanUri = cleanUri.replaceAll("%22","");
         }
-        cleanUri = cleanUri.replaceAll("%23","");
-        cleanUri = cleanUri.replaceAll("%3F","");
-        cleanUri = cleanUri.replaceAll("%7C","");
-        cleanUri = cleanUri.replaceAll("%22R%22","");
-        cleanUri = cleanUri.replaceAll("-","_");
+        else {
+            System.out.println("uri = " + uri);
+        }
         return cleanUri;
     }
 
