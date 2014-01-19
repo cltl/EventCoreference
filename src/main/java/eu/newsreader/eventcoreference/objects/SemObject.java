@@ -274,6 +274,9 @@ public class SemObject {
             else {
                 String nameSpaceType = getNameSpaceTypeReference(kafSense);
                 Resource conceptResource = model.createResource(nameSpaceType);
+                if (!conceptResource.isURIResource()) {
+                    System.out.println("conceptResource.getURI() = " + conceptResource.getURI()); 
+                }
                 resource.addProperty(RDF.type, conceptResource);
             }
         }
@@ -319,11 +322,13 @@ public class SemObject {
             ref = ResourcesUri.nwr+kafSense.getSensecode();
         }
         else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
-            ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
+            ref = ResourcesUri.dbp+kafSense.getSensecode();
+           // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
         }
         else {
             if (kafSense.getSensecode().indexOf(ResourcesUri.dbp)>-1) {
-                ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
+                ref = ResourcesUri.dbp+kafSense.getSensecode();
+                //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
             }
             else {
                 ref = ResourcesUri.nwr+kafSense.getSensecode();

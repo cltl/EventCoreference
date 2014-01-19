@@ -170,7 +170,7 @@ public class Statistics {
         }
     }
 
-        static HashMap<String, Integer> eventLabelMap = new HashMap<String, Integer>();
+    static HashMap<String, Integer> eventLabelMap = new HashMap<String, Integer>();
     static HashMap<String, Integer> actorLabelMap = new HashMap<String, Integer>();
     static HashMap<String, Integer> placeLabelMap = new HashMap<String, Integer>();
     static HashMap<String, Integer> timeLabelMap = new HashMap<String, Integer>();
@@ -187,27 +187,22 @@ public class Statistics {
     static boolean TIME = false;
 
 
-    static void storeLabels (HashMap<String, Integer> map, ArrayList<String> labels) {
+    static void storeLabels (HashMap<String, Integer> map, ArrayList<LabelCount> labels) {
         for (int i = 0; i < labels.size(); i++) {
-            String s = labels.get(i);
-            int idx = s.lastIndexOf(":");
-            if (idx>-1) {
-                String label = s.substring(0, idx);
-                Integer cnt = Integer.parseInt(s.substring(idx + 1));
-                if (map.containsKey(label)) {
-                    Integer labelCnt = map.get(label);
-                    labelCnt += cnt;
-                    map.put(label, labelCnt);
-                }
-                else {
-                    map.put(label, cnt);
-                }
+            LabelCount labelCount = labels.get(i);
+            if (map.containsKey(labelCount.getLabel())) {
+                Integer labelCnt = map.get(labelCount.getLabel());
+                labelCnt += labelCount.getCnt();
+                map.put(labelCount.getLabel(), labelCnt);
+            }
+            else {
+                map.put(labelCount.getLabel(), labelCount.getCnt());
             }
         }
     }
     
     static void storeObject (SemUtilObject semUtilObject, String theType) {
-        if (semUtilObject!=null) {
+        if (semUtilObject!=null && !semUtilObject.getUri().trim().isEmpty()) {
             if (DBP) {
                 if (semUtilObject.getUri().startsWith("dbp:") || semUtilObject.getUri().indexOf("dbpedia")>-1) {
                     if (dbpMap.containsKey(semUtilObject.getUri())) {
@@ -218,6 +213,15 @@ public class Statistics {
                     else {
                         dbpMap.put(semUtilObject.getUri(), semUtilObject);
                     }
+/*
+                    System.out.println(semUtilObject.getUri());
+                    if (semUtilObject.getTypes().contains("sem:Place")) {
+                        System.out.println("\tsem:Place");
+                    }
+                    if (semUtilObject.getTypes().contains("sem:Actor")) {
+                        System.out.println("\tsem:Actor");
+                    }
+*/
                 }
             }
             if (EVENT) {
@@ -320,23 +324,21 @@ public class Statistics {
                         }
                         else if (read) {
                             if (inputLine.indexOf("}")>-1) {
-                                storeObject(semUtilObject, theType);
+                                ///we are done
                                 break;
                             }
                             else {
                                 if (inputLine.toLowerCase().startsWith("<http")) {
-                                    storeObject(semUtilObject, theType);
                                     semUtilObject = new SemUtilObject();
                                     semUtilObject.setUri(inputLine.trim());
                                 }
                                 else if (inputLine.toLowerCase().startsWith("nwr:")) {
-                                    storeObject(semUtilObject, theType);
                                     semUtilObject = new SemUtilObject();
                                     semUtilObject.setUri(inputLine.trim());
                                 }
                                 else if (inputLine.toLowerCase().startsWith("dbp:")) {
                                     //dbp:India  a           sem:Actor , nwr:misc , sem:Place , nwr:location ;
-                                    storeObject(semUtilObject, theType);
+                                    //System.out.println("inputLine = " + inputLine);
                                     semUtilObject = new SemUtilObject();
                                     int idx = inputLine.indexOf(" a ");
                                     if (idx>-1) {
@@ -344,6 +346,9 @@ public class Statistics {
                                         String[] types = inputLine.substring(idx+3).trim().split(",");
                                         for (int i = 0; i < types.length; i++) {
                                             String type = types[i].trim();
+                                            if (type.endsWith(" ;")) {
+                                                type = type.substring(0, type.length()-1).trim();
+                                            }
                                             semUtilObject.addTypes(type);
                                             if (type.equals("sem:Event")) {
                                                 theType = type;
@@ -359,12 +364,18 @@ public class Statistics {
                                             }
                                         }
                                     }
+                                    else {
+                                        semUtilObject.setUri(inputLine.trim());
+                                    }
                                 }
                                 else if (inputLine.startsWith("a       ")) {
                                     //a              sem:Actor , nwr:organization ;
                                     String[] types = inputLine.substring(3).trim().split(",");
                                     for (int i = 0; i < types.length; i++) {
                                         String type = types[i].trim();
+                                        if (type.endsWith(" ;")) {
+                                            type = type.substring(0, type.length()-1).trim();
+                                        }
                                         semUtilObject.addTypes(type);
                                         if (type.equals("sem:Event")) {
                                             theType = type;
@@ -378,65 +389,86 @@ public class Statistics {
                                         else if (type.equals("sem:Time")) {
                                             theType = type;
                                         }
-                                    }
-                                }
-                                else if (inputLine.toLowerCase().startsWith("rdfs:label")) {
-                                    //rdfs:label     "indian:1" , "India:2" ;
-                                    int idx = inputLine.indexOf("\"");
-                                    if (idx >-1) {
-                                        String[] labels = inputLine.substring(idx).trim().split("\" , \"");
-                                        for (int i = 0; i < labels.length; i++) {
-                                            String label = labels[i].trim();
-                                            if (label.startsWith("\"")) {
-                                                label = label.substring(1);
-                                            }
-                                            if (label.endsWith("\" ;")) {
-                                                label = label.substring(0, label.length()-3);
-                                            }
-                                            label = label.replaceAll("\t", " ");
-                                            //System.out.println("label = " + label);
-                                            semUtilObject.addLabels(label);
+                                        else {
+                                           // System.out.println("unknown type = " + type);
                                         }
                                     }
                                 }
-                                else if (inputLine.startsWith("gaf:denotedBy")) {
-                                    //gaf:denotedBy  <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B6.xml#char=1404,1410&word=w261&term=t261> , <http://www.newsreader-project.eu/2004_4_26_4C7N-GTG0-0002-M1S5.xml#char=364,369&word=w69&term=t69> .
-                                    int idx = inputLine.indexOf(" <");
-                                    if (idx >-1) {
-                                        String[] mentions = inputLine.substring(idx).trim().split("<");
-                                        semUtilObject.setMentions(mentions.length);
-                                        ArrayList<String> sources = new ArrayList<String>();
-                                        ArrayList<String> dupsources = new ArrayList<String>();
-                                        for (int i = 0; i < mentions.length; i++) {
-                                            String mention = mentions[i].trim();
-                                            //System.out.println("mention = " + mention);
-                                            int idx_m = mention.indexOf("#");
-                                            if (idx_m>-1) {
-                                                String source = mention.substring(0, idx);
-                                                if (!sources.contains(source)) {
-                                                    sources.add(source);
+                                else {
+                                    if (inputLine.toLowerCase().startsWith("rdfs:label")) {
+                                        //rdfs:label     "indian:1" , "India:2" ;
+                                        int idx = inputLine.indexOf("\"");
+                                        if (idx > -1) {
+                                            String[] labels = inputLine.substring(idx).trim().split("\" , \"");
+                                            for (int i = 0; i < labels.length; i++) {
+                                                String label = labels[i].trim();
+                                                if (label.startsWith("\"")) {
+                                                    label = label.substring(1);
                                                 }
-                                                else {
-                                                    if (!dupsources.contains(source)) {
-                                                        dupsources.add(source);
+                                                if (label.endsWith("\" ;")) {
+                                                    label = label.substring(0, label.length() - 3);
+                                                }
+                                                label = label.replaceAll("\t", " ");
+                                                LabelCount labelCount = new LabelCount(label);
+                                                semUtilObject.addLabelCount(labelCount);
+                                            }
+                                        }
+                                    } else if (inputLine.startsWith("gaf:denotedBy")) {
+                                        //gaf:denotedBy  <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B6.xml#char=1404,1410&word=w261&term=t261> , <http://www.newsreader-project.eu/2004_4_26_4C7N-GTG0-0002-M1S5.xml#char=364,369&word=w69&term=t69> .
+                                        int idx = inputLine.indexOf(" <");
+                                        if (idx > -1) {
+                                            int mentionsCount = 0;
+                                            String[] mentions = inputLine.substring(idx).trim().split("<");
+                                            //semUtilObject.setMentions(mentions.length);
+                                            ArrayList<String> sources = new ArrayList<String>();
+                                            ArrayList<String> dupsources = new ArrayList<String>();
+                                            for (int i = 0; i < mentions.length; i++) {
+                                                String mention = mentions[i].trim();
+                                                if (!mention.isEmpty()) {
+                                                    mentionsCount++;
+/*                                                    if (!semUtilObject.mentionStrings.contains(mention)) {
+                                                        semUtilObject.mentionStrings.add(mention);
+                                                    }*/
+                                                    // System.out.println("mention = " + mention);
+                                                    int idx_m = mention.indexOf("#");
+                                                    if (idx_m > -1) {
+                                                        String source = mention.substring(0, idx).trim();
+                                                        if (!source.isEmpty()) {
+                                                            if (!sources.contains(source)) {
+                                                                sources.add(source);
+                                                            }
+                                                            else {
+                                                                if (!dupsources.contains(source)) {
+                                                                    dupsources.add(source);
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                        Integer singletons = 0;
-                                        for (int i = 0; i < sources.size(); i++) {
-                                            String s = sources.get(i);
-                                            if (dupsources.contains(s)) {
-                                                singletons++;
+                                            semUtilObject.setMentions(mentionsCount);
+                                            Integer singletons = 0;
+                                            for (int i = 0; i < sources.size(); i++) {
+                                                String s = sources.get(i);
+                                                if (!s.isEmpty()) {
+                                                    if (dupsources.contains(s)) {
+                                                        singletons++;
+                                                    }
+                                                }
                                             }
+                                            // System.out.println("singletons = " + singletons);
+                                            semUtilObject.setSingletons(singletons);
+                                            semUtilObject.setDispersion(sources.size());
+                                        } else {
+                                            //  System.out.println("inputLine = " + inputLine);
                                         }
-                                       // System.out.println("singletons = " + singletons);
-                                        semUtilObject.setSingletons(singletons);
-                                        semUtilObject.setDispersion(sources.size());
                                     }
-                                    else {
-                                      //  System.out.println("inputLine = " + inputLine);
-                                    }
+                                }
+
+                                if (inputLine.endsWith(" .")) {
+                                    /// marks the end of the trig object, so we store it
+                                    storeObject(semUtilObject, theType);
+                                    semUtilObject = new SemUtilObject();
                                 }
                             }
                         }
@@ -448,6 +480,7 @@ public class Statistics {
             }
         }
     }
+
 
 
     /**
@@ -687,7 +720,7 @@ public class Statistics {
             while (keys.hasNext()) {
                 String key = (String) keys.next();
                 SemUtilObject semUtilObject = timeMap.get(key);
-                str += semUtilObject.toStatString();
+                str = semUtilObject.toStatString();
                 str += "\n";
                 fos.write(str.getBytes());
             }
@@ -700,11 +733,12 @@ public class Statistics {
 
     static public void main (String [] args) {
         String folder = "/Users/piek/Desktop/NWR-DATA/trig/entitycoref";
+        //String folder = "/Users/piek/Desktop/NWR-DATA/trig/test";
         EVENT = true;
-        DBP = true;
-        ACTOR = true;
-        PLACE = true;
-        TIME = true;
+        //DBP = true;
+       // ACTOR = true;
+       // PLACE = true;
+       // TIME = true;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--event")) {
@@ -726,8 +760,8 @@ public class Statistics {
                 folder =args[i+1];
             }
         }
-        //statsForAll(folder);
-        statsPerYear(folder);
+        statsForAll(folder);
+        //statsPerYear(folder);
     }
 
 
@@ -777,8 +811,9 @@ public class Statistics {
             fos.write(str.getBytes());
             for (int y = 1; y < yearStrings.size(); y++) { // skip the first [0] which holds the total
                 String year =  yearStrings.get(y);
-               // System.out.println("year = " + year);
+                System.out.println("year = " + year);
                 ArrayList<String> folders = yearMap.get(year);
+                System.out.println("folders.size() = " + folders.size());
                 timeMap = new HashMap<String, SemUtilObject>();
                 eventMap = new HashMap<String, SemUtilObject>();
                 placeMap = new HashMap<String, SemUtilObject>();
@@ -798,32 +833,42 @@ public class Statistics {
                 }
                 str = year;
                 TotalStats totalStats = null;
+
                 totalStats = getTotalStatsString(dbpMap, year);
+                System.out.println("dbpMap.size() = " + dbpMap.size());
+                System.out.println("totalStats.instances = " + totalStats.getInstances());
+                System.out.println("totalStats.getMentions() = " + totalStats.getMentions());
+                System.out.println("totalStats.getLabels() = " + totalStats.getLabels());
                 str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
                         "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
                         "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
+
                 totalStats = getTotalStatsString(eventMap, year);
-                System.out.println(year+"\t"+totalStats.getMentions()+"\t" + totalStats.getSingletons()+"\t"+totalStats.getSingletonsPerMentionString());
                 totalStats.setLabels(eventLabelMap.size());
                 str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
                         "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
                         "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
+
                 totalStats = getTotalStatsString(actorMap, year);
                 totalStats.setLabels(actorLabelMap.size());
                 str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
                         "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
                         "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
+
                 totalStats = getTotalStatsString(placeMap, year);
+
                 totalStats.setLabels(placeLabelMap.size());
                 str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
                         "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
                         "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
+
                 totalStats = getTotalStatsString(timeMap, year);
                 str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
                         "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
                         "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
                 str += "\n";
                 fos.write(str.getBytes());
+
                 eventLabelMax = updateTotalLabelMap(eventLabelTotalMap, eventLabelMap, y, yearStrings.size());
                 actorLabelMax = updateTotalLabelMap(actorLabelTotalMap, actorLabelMap, y, yearStrings.size());
                 placeLabelMax = updateTotalLabelMap(placeLabelTotalMap, placeLabelMap, y, yearStrings.size());
@@ -950,6 +995,9 @@ public class Statistics {
 
     static TotalStats getTotalStatsString (HashMap<String, SemUtilObject> totalMap, String year){
             TotalStats totalStats = new TotalStats();
+            Integer topMention = 0;
+            ArrayList<String> topMentions = new ArrayList<String>();
+            String topMentionUri = "";
             Set keySet = totalMap.keySet();
             Iterator keys = keySet.iterator();
             while (keys.hasNext()) {
@@ -959,7 +1007,18 @@ public class Statistics {
                 totalStats.addSources(semUtilObject.getDispersion());
                 totalStats.addLabels(semUtilObject.getLabels().size());
                 totalStats.addSingletons(semUtilObject.getSingletons());
+                if (semUtilObject.getMentions()>topMention) {
+                    topMention = semUtilObject.getMentions();
+                    topMentions = semUtilObject.mentionStrings;
+                    topMentionUri = semUtilObject.getUri();
+                }
             }
+        System.out.println("topMentionUri = " + topMentionUri);
+        System.out.println("topMention = " + topMention);
+        for (int i = 0; i < topMentions.size(); i++) {
+            String s = topMentions.get(i);
+            System.out.println("mention = " + s);
+        }
             totalStats.setInstances(totalMap.size());
             totalStats.setYear(year);
             return totalStats;
