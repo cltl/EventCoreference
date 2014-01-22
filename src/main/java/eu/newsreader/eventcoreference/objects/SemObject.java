@@ -5,13 +5,10 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-import eu.kyotoproject.kaf.CorefTarget;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.kyotoproject.kaf.KafTerm;
-import eu.newsreader.eventcoreference.naf.GetSemFromNafFile;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
-import eu.newsreader.eventcoreference.util.Util;
 
 import java.util.ArrayList;
 
@@ -30,10 +27,12 @@ public class SemObject {
    private ArrayList<PhraseCount> phraseCounts;
    private String lcs;
    private String label;
-   private ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>> mentions;
+   private ArrayList<NafMention> nafMentions;
+ //  private ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>> mentions;
 
    public SemObject() {
-        this.mentions = new ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>>();;
+     //   this.mentions = new ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>>();
+        this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
         this.label = "";
         this.lcs = "";
@@ -72,18 +71,17 @@ public class SemObject {
     }
 
     public void addPhraseCountsForMentions (KafSaxParser kafSaxParser) {
-        for (int i = 0; i < mentions.size(); i++) {
-            ArrayList<CorefTarget> corefTarget = mentions.get(i);
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
             String phrase = "";
-            for (int j = 0; j < corefTarget.size(); j++) {
-                CorefTarget target = corefTarget.get(j);
-                String id = Util.getTermIdFromCorefTarget(target, GetSemFromNafFile.ID_SEPARATOR);
-                KafTerm kafTerm = kafSaxParser.getTerm(id);
+            for (int j = 0; j < nafMention.getTermsIds().size(); j++) {
+                String termId = nafMention.getTermsIds().get(j);
+                KafTerm kafTerm = kafSaxParser.getTerm(termId);
                 if (kafTerm!=null) {
                     phrase += " "+kafTerm.getLemma();
                 }
                 else {
-                   // System.out.println("no KafTerm for id = " + id);
+                    System.out.println("no KafTerm for id = " + termId);
                 }
             }
             if (!phrase.isEmpty()) {
@@ -92,6 +90,19 @@ public class SemObject {
         }
     }
 
+    public ArrayList<NafMention> getNafMentions() {
+        return nafMentions;
+    }
+
+    public void setNafMentions(ArrayList<NafMention> nafMentions) {
+        this.nafMentions = nafMentions;
+    }
+
+    public void addMentionUri(NafMention mentionUri) {
+        this.nafMentions.add(mentionUri);
+    }
+
+/*
     public ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>> getMentions() {
         return mentions;
     }
@@ -134,6 +145,7 @@ public class SemObject {
         }
         this.mentions.add(mention);
     }
+*/
 
     public String getLcs() {
         return lcs;
@@ -280,6 +292,15 @@ public class SemObject {
                 resource.addProperty(RDF.type, conceptResource);
             }
         }
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property property = model.createProperty(ResourcesUri.gaf+"denotedBy");
+            Resource targetResource = model.createResource(nafMention.toString());
+            resource.addProperty(property, targetResource);
+
+        }
+/*
         for (int i = 0; i < mentions.size(); i++) {
             ArrayList<CorefTarget> corefTargets = mentions.get(i);
             for (int j = 0; j < corefTargets.size(); j++) {
@@ -289,8 +310,8 @@ public class SemObject {
                 resource.addProperty(property, targetResource);
             }
         }
+*/
     }
-
 
     static public String getNameSpaceTypeReference (KafSense kafSense) {
         String ref = "";
@@ -404,10 +425,16 @@ public class SemObject {
                phraseCounts.add(anObjectphraseCount);
             }
         }
+        for (int i = 0; i < anObject.getNafMentions().size(); i++) {
+            NafMention nafMention = anObject.getNafMentions().get(i);
+            this.nafMentions.add(nafMention);
+        }
+/*
         for (int i = 0; i < anObject.getMentions().size(); i++) {
             ArrayList<CorefTarget> corefTargetArrayList = anObject.getMentions().get(i);
             mentions.add(corefTargetArrayList);
         }
+*/
     }
 
 }

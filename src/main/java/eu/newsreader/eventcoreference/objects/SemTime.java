@@ -1,7 +1,5 @@
 package eu.newsreader.eventcoreference.objects;
 
-import java.util.ArrayList;
-
 /**
  * Created by IntelliJ IDEA.
  * User: kyoto
@@ -47,8 +45,13 @@ public class SemTime extends SemObject{
 
 
     public String toString () {
-        String str = "<semTime id=\""+this.getId()+"\" lcs=\""+this.getLabel()+"\" score=\""+this.getScore()+"\" label=\""+this.getLabel()+"\" mentions=\""+this.getMentions().size()+"\">\n";
+        String str = "<semTime id=\""+this.getId()+"\" lcs=\""+this.getLabel()+"\" score=\""+this.getScore()+"\" label=\""+this.getLabel()+"\" mentions=\""+this.getNafMentions().size()+"\">\n";
         str += "<mentions>\n";
+        for (int i = 0; i < this.getNafMentions().size(); i++) {
+            NafMention s = this.getNafMentions().get(i);
+            str += s.toString()+"\n";
+        }
+/*
         for (int i = 0; i < this.getMentions().size(); i++) {
             ArrayList<eu.kyotoproject.kaf.CorefTarget> mentions = this.getMentions().get(i);
             for (int j = 0; j < mentions.size(); j++) {
@@ -56,6 +59,7 @@ public class SemTime extends SemObject{
                 str += corefTarget.toString();
             }
         }
+*/
         str += "</mentions>\n";
         str += "</semEvent>\n";
         return str;

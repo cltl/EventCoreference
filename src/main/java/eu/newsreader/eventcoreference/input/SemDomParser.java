@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.input;
 
 import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
-import eu.newsreader.eventcoreference.objects.Mention;
+import eu.newsreader.eventcoreference.objects.AgataMention;
 import eu.newsreader.eventcoreference.util.Anaphor;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -297,20 +297,20 @@ public class SemDomParser {
             NodeList mentions = mentionsNode.getChildNodes();
             if (mentions!=null) {
                 int nMentions = getNumberOfMentions(mentions);
-                ArrayList<Mention> mentionBelowThresholdArrayList = new ArrayList<Mention>();
-                ArrayList<Mention> mentionOriginalSingletonArrayList = new ArrayList<Mention>();
-                ArrayList<Mention> mentionArrayList = new ArrayList<Mention>();
+                ArrayList<AgataMention> agataMentionBelowThresholdArrayList = new ArrayList<AgataMention>();
+                ArrayList<AgataMention> agataMentionOriginalSingletonArrayList = new ArrayList<AgataMention>();
+                ArrayList<AgataMention> agataMentionArrayList = new ArrayList<AgataMention>();
                 for (int i = 0; i < mentions.getLength(); i++) {
                     Node mentionNode = (Node) mentions.item(i);
                     if (mentionNode!=null) {
                         CorefTargetAgata eventMentionTarget = getEventMention(mentionNode);
                         if (!eventMentionTarget.getTermId().isEmpty()) {
-                            Mention mention = new Mention();
-                            mention.setEvent(eventMentionTarget);
+                            AgataMention agataMention = new AgataMention();
+                            agataMention.setEvent(eventMentionTarget);
                             //check the participants
                             double matches = 0;
                             ArrayList<String> idsForEventmentionds = getComponentIdsForEventMention(mentionNode, "participants");
-                            mention.setnP(idsForEventmentionds.size());
+                            agataMention.setnP(idsForEventmentionds.size());
                             if (idsForEventmentionds.size()>0) {
                                 //// we check all the other event mentions
                                 for (int j = 0; j < mentions.getLength(); j++) {
@@ -331,7 +331,7 @@ public class SemDomParser {
                                 int max = (nMentions-1)*idsForEventmentionds.size();
                                 double score = matches/max;
                                 /// the value is stored for the mention as the pScore.
-                                mention.setpScore(score);
+                                agataMention.setpScore(score);
                             }
                             else {
                                 /// there is only one mentions so there is nothing we can do
@@ -340,7 +340,7 @@ public class SemDomParser {
                             // check the times
                             matches = 0;
                             idsForEventmentionds = getComponentIdsForEventMention(mentionNode, "times");
-                            mention.setnT(idsForEventmentionds.size());
+                            agataMention.setnT(idsForEventmentionds.size());
                             if (idsForEventmentionds.size()>0) {
                                 for (int j = 0; j < mentions.getLength(); j++) {
                                     if (j!=i) {
@@ -356,13 +356,13 @@ public class SemDomParser {
                                 }
                                 int max = (nMentions-1)*idsForEventmentionds.size();
                                 double score = matches/max;
-                                mention.settScore(score);
+                                agataMention.settScore(score);
                             }
 
                             // check the locations
                             matches = 0;
                             idsForEventmentionds = getComponentIdsForEventMention(mentionNode, "locations");
-                            mention.setnL(idsForEventmentionds.size());
+                            agataMention.setnL(idsForEventmentionds.size());
                             if (idsForEventmentionds.size()>0) {
                                 for (int j = 0; j < mentions.getLength(); j++) {
                                     if (j!=i) {
@@ -378,46 +378,46 @@ public class SemDomParser {
                                 }
                                 int max = (nMentions-1)*idsForEventmentionds.size();
                                 double score = matches/max;
-                                mention.setlScore(score);
+                                agataMention.setlScore(score);
                             }
-                            mention.scoreEventMention(method);
+                            agataMention.scoreEventMention(method);
                             if (nMentions==1){
                                 ///singleton set
                               //  System.out.println("singleton eventMention = " + eventMention.toString());
-                                mentionOriginalSingletonArrayList.add(mention);
+                                agataMentionOriginalSingletonArrayList.add(agataMention);
                             }
-                            else if (mention.getIntScore()>=threshold) {
-                                mentionArrayList.add(mention);
+                            else if (agataMention.getIntScore()>=threshold) {
+                                agataMentionArrayList.add(agataMention);
                             }
                             else {
                                 //// mention in a multiform set that scores below the threshold
                               //  System.out.println("below threshold eventMention = " + eventMention.toString());
-                                mentionBelowThresholdArrayList.add(mention);
+                                agataMentionBelowThresholdArrayList.add(agataMention);
                             }
                         }
                     }
                 }
-                if (mentionArrayList.size()>0) {
+                if (agataMentionArrayList.size()>0) {
                     str = "\t<co-refs>\n";
-                    for (int i = 0; i < mentionArrayList.size(); i++) {
-                        Mention mention = mentionArrayList.get(i);
-                        str += mention.toString();
+                    for (int i = 0; i < agataMentionArrayList.size(); i++) {
+                        AgataMention agataMention = agataMentionArrayList.get(i);
+                        str += agataMention.toString();
                     }
                     str += "\t</co-refs>\n";
                 }
-                if (mentionOriginalSingletonArrayList.size()>0) {
+                if (agataMentionOriginalSingletonArrayList.size()>0) {
                     str = "\t<co-refs> <!-- original singleton -->\n";
-                    for (int i = 0; i < mentionOriginalSingletonArrayList.size(); i++) {
-                        Mention mention = mentionOriginalSingletonArrayList.get(i);
-                        str += mention.toString();
+                    for (int i = 0; i < agataMentionOriginalSingletonArrayList.size(); i++) {
+                        AgataMention agataMention = agataMentionOriginalSingletonArrayList.get(i);
+                        str += agataMention.toString();
                     }
                     str += "\t</co-refs>\n";
                 }
-                if (mentionBelowThresholdArrayList.size()>0) {
-                    for (int i = 0; i < mentionBelowThresholdArrayList.size(); i++) {
-                        Mention mention = mentionBelowThresholdArrayList.get(i);
+                if (agataMentionBelowThresholdArrayList.size()>0) {
+                    for (int i = 0; i < agataMentionBelowThresholdArrayList.size(); i++) {
+                        AgataMention agataMention = agataMentionBelowThresholdArrayList.get(i);
                         str += "\t<co-refs> <!-- below threshold -->\n";
-                        str += mention.toString();
+                        str += agataMention.toString();
                         str += "\t</co-refs>\n";
                     }
                 }

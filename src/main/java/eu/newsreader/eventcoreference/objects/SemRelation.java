@@ -1,8 +1,9 @@
 package eu.newsreader.eventcoreference.objects;
 
 import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.*;
-import eu.kyotoproject.kaf.CorefTarget;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ public class SemRelation {
     private String predicate;
     private String subject;
     private String object;
-    private ArrayList<CorefTarget> corefTargets;
+    //private ArrayList<CorefTarget> corefTargets;
+    private ArrayList<NafMention> nafMentions;
 
 
     public void SemRelation () {
@@ -36,14 +38,35 @@ public class SemRelation {
     }
 
     public SemRelation() {
-        this.corefTargets = new ArrayList<CorefTarget>();
+        this.nafMentions = new ArrayList<NafMention>();
+        //this.corefTargets = new ArrayList<CorefTarget>();
         this.id = "";
         this.object = "";
         this.predicate = "";
         this.subject = "";
     }
 
-    public ArrayList<CorefTarget> getCorefTarget() {
+    public ArrayList<NafMention> getNafMentions() {
+        return nafMentions;
+    }
+
+    public void setNafMentions(ArrayList<NafMention> nafMentions) {
+        this.nafMentions = nafMentions;
+    }
+
+    public void addMention(NafMention mention) {
+            this.nafMentions.add(mention);
+    }
+
+    public void addMentions(ArrayList<NafMention> mentions) {
+        for (int i = 0; i < mentions.size(); i++) {
+            NafMention nafMention = mentions.get(i);
+            this.addMention(nafMention);
+        }
+    }
+
+
+    /*    public ArrayList<CorefTarget> getCorefTarget() {
         return corefTargets;
     }
 
@@ -88,7 +111,7 @@ public class SemRelation {
             corefTarget.setId(baseUrl+"/"+corefTarget.getId());
             this.corefTargets.add(corefTarget);
         }
-    }
+    }*/
 
     public String getId() {
         return id;
@@ -149,11 +172,66 @@ public class SemRelation {
 
 
         Resource provenanceResource = provenanceModel.createResource(this.id);
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
+            Resource targetResource = provenanceModel.createResource(nafMention.toString());
+            provenanceResource.addProperty(property, targetResource);
+
+        }
+/*
         for (int i = 0; i < corefTargets.size(); i++) {
                 CorefTarget corefTarget = corefTargets.get(i);
                 Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
                 Resource targetResource = provenanceModel.createResource(corefTarget.getId());
                 provenanceResource.addProperty(property, targetResource);
+        }
+*/
+    }
+
+
+    public void addToJenaDataSet (Dataset ds, Model relationModel, Model provenanceModel) {
+
+
+
+        Model namedRelation = ds.getNamedModel(this.id);
+
+        Resource subject = namedRelation.createResource(this.getSubject());
+        Resource object = namedRelation.createResource(this.getObject());
+        Property semProperty = getSemRelationType(this.getPredicate());
+        subject.addProperty(semProperty, object);
+        relationModel.add(namedRelation);
+
+        Resource provenanceResource = provenanceModel.createResource(this.id);
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
+            Resource targetResource = provenanceModel.createResource(nafMention.toString());
+            provenanceResource.addProperty(property, targetResource);
+
+        }
+    }
+
+
+
+    public void addToJenaDataSet (Model relationModel, Model provenanceModel) {
+
+        Resource subject = relationModel.createResource(this.getSubject());
+        Resource object = relationModel.createResource(this.getObject());
+        Property semProperty = getSemRelationType(this.getPredicate());
+        subject.addProperty(semProperty, object);
+
+
+        Resource provenanceResource = provenanceModel.createResource(this.id);
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
+            Resource targetResource = provenanceModel.createResource(nafMention.toString());
+            provenanceResource.addProperty(property, targetResource);
+
         }
     }
 
@@ -162,7 +240,8 @@ public class SemRelation {
         this.setSubject(semRelation.getSubject());
         this.setObject(semRelation.getObject());
         this.setPredicate(semRelation.getPredicate());
-        this.setCorefTargets(semRelation.getCorefTarget());
+        //this.setCorefTargets(semRelation.getCorefTarget());
+        this.setNafMentions(semRelation.getNafMentions());
     }
 
     public boolean match (SemRelation semRelation) {

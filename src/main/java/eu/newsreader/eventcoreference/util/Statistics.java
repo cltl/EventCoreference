@@ -350,9 +350,21 @@ public class Statistics {
                                                 type = type.substring(0, type.length()-1).trim();
                                             }
                                             semUtilObject.addTypes(type);
-                                            if (type.equals("sem:Event")) {
-                                                theType = type;
+                                           /* if (type.equals("nwr:contextual")) {
+                                                theType = "sem:Event";
+                                            }*/
+                                            if (type.equals("nwr:communication") || type.equals("nwr:cognition")) {
+                                                theType = "sem:Event";
                                             }
+                                            /*if (type.equals("nwr:cognition")) {
+                                                theType = type;
+                                            }*/
+                                            /*if (type.equals("nwr:grammatical")) {
+                                                theType = type;
+                                            }*/
+                                            /*if (type.equals("sem:Event")) {
+                                                theType = type;
+                                            }*/
                                             else if (type.equals("sem:Place")) {
                                                 theType = type;
                                             }
@@ -377,9 +389,23 @@ public class Statistics {
                                             type = type.substring(0, type.length()-1).trim();
                                         }
                                         semUtilObject.addTypes(type);
-                                        if (type.equals("sem:Event")) {
-                                            theType = type;
-                                        }
+
+                                        semUtilObject.addTypes(type);
+                                        /*if (type.equals("nwr:contextual")) {
+                                            theType = "sem:Event";
+                                        }*/
+                                            if (type.equals("nwr:communication") || type.equals("nwr:cognition")) {
+                                                theType = "sem:Event";
+                                            }
+                                            /*if (type.equals("nwr:cognition")) {
+                                                theType = type;
+                                            }*/
+                                            /*if (type.equals("nwr:grammatical")) {
+                                                theType = type;
+                                            }*/
+                                            /*if (type.equals("sem:Event")) {
+                                                theType = type;
+                                            }*/
                                         else if (type.equals("sem:Place")) {
                                             theType = type;
                                         }
@@ -429,12 +455,13 @@ public class Statistics {
 /*                                                    if (!semUtilObject.mentionStrings.contains(mention)) {
                                                         semUtilObject.mentionStrings.add(mention);
                                                     }*/
-                                                    // System.out.println("mention = " + mention);
+                                                  //  System.out.println("mention = " + mention);
                                                     int idx_m = mention.indexOf("#");
                                                     if (idx_m > -1) {
-                                                        String source = mention.substring(0, idx).trim();
+                                                        String source = mention.substring(0, idx_m).trim();
                                                         if (!source.isEmpty()) {
                                                             if (!sources.contains(source)) {
+                                                              //  System.out.println("source = " + source);
                                                                 sources.add(source);
                                                             }
                                                             else {
@@ -736,9 +763,9 @@ public class Statistics {
         //String folder = "/Users/piek/Desktop/NWR-DATA/trig/test";
         EVENT = true;
         //DBP = true;
-       // ACTOR = true;
-       // PLACE = true;
-       // TIME = true;
+        //ACTOR = true;
+        //PLACE = true;
+        //TIME = true;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--event")) {
@@ -760,8 +787,8 @@ public class Statistics {
                 folder =args[i+1];
             }
         }
-        statsForAll(folder);
-        //statsPerYear(folder);
+        //statsForAll(folder);
+        statsPerYear(folder);
     }
 
 
@@ -800,7 +827,13 @@ public class Statistics {
             HashMap<String, Integer[]> actorLabelTotalMap = new HashMap<String, Integer[]>();
             HashMap<String, Integer[]> placeLabelTotalMap = new HashMap<String, Integer[]>();
             HashMap<String, Integer[]> timeLabelTotalMap = new HashMap<String, Integer[]>();
-            String statFile = folder+"/"+"yearOverview.xls";
+            String statFile = folder+"/";
+            if (EVENT) statFile+="EVENT_";
+            if (DBP) statFile+="DBP_";
+            if (ACTOR) statFile+="ACTOR_";
+            if (PLACE) statFile+="PLACE_";
+            if (TIME) statFile+="TIME_";
+            statFile +="yearOverview.xls";
             FileOutputStream fos = new FileOutputStream(statFile);
             String str = "\t"+"DBP\t\t\t\t\t\t\t"+"Events\t\t\t\t\t\t\t"+ "Actors\t\t\t\t\t\t\t"+ "Places\t\t\t\t\t\t\t"+ "Times\t\t\t\t\t\t\t"+"\n";
             str += "YEAR\t"+"Instances\tMentions\tM/I\tSources\tS/I\tLabels\tL/I\t"
@@ -869,69 +902,76 @@ public class Statistics {
                 str += "\n";
                 fos.write(str.getBytes());
 
-                eventLabelMax = updateTotalLabelMap(eventLabelTotalMap, eventLabelMap, y, yearStrings.size());
-                actorLabelMax = updateTotalLabelMap(actorLabelTotalMap, actorLabelMap, y, yearStrings.size());
-                placeLabelMax = updateTotalLabelMap(placeLabelTotalMap, placeLabelMap, y, yearStrings.size());
-                timeLabelMax = updateTotalLabelMap(timeLabelTotalMap, timeLabelMap, y, yearStrings.size());
+                if (EVENT) eventLabelMax = updateTotalLabelMap(eventLabelTotalMap, eventLabelMap, y, yearStrings.size());
+                if (ACTOR) actorLabelMax = updateTotalLabelMap(actorLabelTotalMap, actorLabelMap, y, yearStrings.size());
+                if (PLACE) placeLabelMax = updateTotalLabelMap(placeLabelTotalMap, placeLabelMap, y, yearStrings.size());
+                if (TIME) timeLabelMax = updateTotalLabelMap(timeLabelTotalMap, timeLabelMap, y, yearStrings.size());
             }
             fos.close();
 
-            String labelFile = folder+"/"+"labelUsageEvents.xls";
-            fos = new FileOutputStream(labelFile);
-            str = "Event labels\t"+eventLabelTotalMap.size()+"\n";
-            fos.write(str.getBytes());
-            str = "Events";
-            for (int i = 0; i < yearStrings.size(); i++) {
-                String s = yearStrings.get(i);
-                str += "\t"+s;
-            }
-            str += "\n";
-            fos.write(str.getBytes());
-            writeLabelsStats(eventLabelTotalMap, eventLabelMax, fos);
-            fos.close();
 
-            labelFile = folder+"/"+"labelUsageActors.xls";
-            fos = new FileOutputStream(labelFile);
-            str = "Actor labels\t"+actorLabelTotalMap.size()+"\n";
-            fos.write(str.getBytes());
-            str = "Actors";
-            for (int i = 0; i < yearStrings.size(); i++) {
-                String s = yearStrings.get(i);
-                str += "\t"+s;
+            String labelFile = "";
+            if (EVENT) {
+                labelFile = folder+"/"+"labelUsageEvents.xls";
+                fos = new FileOutputStream(labelFile);
+                str = "Event labels\t"+eventLabelTotalMap.size()+"\n";
+                fos.write(str.getBytes());
+                str = "Events";
+                for (int i = 0; i < yearStrings.size(); i++) {
+                    String s = yearStrings.get(i);
+                    str += "\t"+s;
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+                writeLabelsStats(eventLabelTotalMap, eventLabelMax, fos);
+                fos.close();
             }
-            str += "\n";
-            fos.write(str.getBytes());
-            writeLabelsStats(actorLabelTotalMap, actorLabelMax, fos);
-            fos.close();
 
-            labelFile = folder+"/"+"labelUsagePlaces.xls";
-            fos = new FileOutputStream(labelFile);
-            str = "Places labels\t"+placeLabelTotalMap.size()+"\n";
-            fos.write(str.getBytes());
-            str = "Places";
-            for (int i = 0; i < yearStrings.size(); i++) {
-                String s = yearStrings.get(i);
-                str += "\t"+s;
+            if (ACTOR) {
+                labelFile = folder+"/"+"labelUsageActors.xls";
+                fos = new FileOutputStream(labelFile);
+                str = "Actor labels\t"+actorLabelTotalMap.size()+"\n";
+                fos.write(str.getBytes());
+                str = "Actors";
+                for (int i = 0; i < yearStrings.size(); i++) {
+                    String s = yearStrings.get(i);
+                    str += "\t"+s;
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+                writeLabelsStats(actorLabelTotalMap, actorLabelMax, fos);
+                fos.close();
             }
-            str += "\n";
-            fos.write(str.getBytes());
-            writeLabelsStats(placeLabelTotalMap, placeLabelMax, fos);
-            fos.close();
-
-
-            labelFile = folder+"/"+"labelUsageTimes.xls";
-            fos = new FileOutputStream(labelFile);
-            str = "Times labels\t"+timeLabelTotalMap.size()+"\n";
-            fos.write(str.getBytes());
-            str = "Times";
-            for (int i = 0; i < yearStrings.size(); i++) {
-                String s = yearStrings.get(i);
-                str += "\t"+s;
+            if (PLACE) {
+                labelFile = folder+"/"+"labelUsagePlaces.xls";
+                fos = new FileOutputStream(labelFile);
+                str = "Places labels\t"+placeLabelTotalMap.size()+"\n";
+                fos.write(str.getBytes());
+                str = "Places";
+                for (int i = 0; i < yearStrings.size(); i++) {
+                    String s = yearStrings.get(i);
+                    str += "\t"+s;
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+                writeLabelsStats(placeLabelTotalMap, placeLabelMax, fos);
+                fos.close();
             }
-            str += "\n";
-            fos.write(str.getBytes());
-            writeLabelsStats(timeLabelTotalMap, timeLabelMax, fos);
-            fos.close();
+            if (TIME) {
+                labelFile = folder+"/"+"labelUsageTimes.xls";
+                fos = new FileOutputStream(labelFile);
+                str = "Times labels\t"+timeLabelTotalMap.size()+"\n";
+                fos.write(str.getBytes());
+                str = "Times";
+                for (int i = 0; i < yearStrings.size(); i++) {
+                    String s = yearStrings.get(i);
+                    str += "\t"+s;
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+                writeLabelsStats(timeLabelTotalMap, timeLabelMax, fos);
+                fos.close();
+             }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -1013,12 +1053,12 @@ public class Statistics {
                     topMentionUri = semUtilObject.getUri();
                 }
             }
-        System.out.println("topMentionUri = " + topMentionUri);
-        System.out.println("topMention = " + topMention);
-        for (int i = 0; i < topMentions.size(); i++) {
-            String s = topMentions.get(i);
-            System.out.println("mention = " + s);
-        }
+            System.out.println("topMentionUri = " + topMentionUri);
+            System.out.println("topMention = " + topMention);
+            for (int i = 0; i < topMentions.size(); i++) {
+                String s = topMentions.get(i);
+                System.out.println("mention = " + s);
+            }
             totalStats.setInstances(totalMap.size());
             totalStats.setYear(year);
             return totalStats;

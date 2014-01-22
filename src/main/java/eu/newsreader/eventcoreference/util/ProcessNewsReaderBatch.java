@@ -86,7 +86,7 @@ public class ProcessNewsReaderBatch {
                 keys = keySet.iterator();
                 while (keys.hasNext()) {
                     File pathToNafFolder = (File) keys.next();
-                    System.out.println("pathToNafFolder = " + pathToNafFolder);
+                   // System.out.println("pathToNafFolder = " + pathToNafFolder);
                     InterDocumentEventCoref.processFolder (pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold);
                 }
             }

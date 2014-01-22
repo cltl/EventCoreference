@@ -256,7 +256,8 @@ public class InterDocumentEventCoref {
                     SemRelation relation = semRelations.get(k);
                     if (globalSemRelationCandidate.match(relation)) {
                         //// merge mentions
-                        relation.addCorefTargets(globalSemRelationCandidate.getCorefTarget());
+
+                        relation.addMentions(globalSemRelationCandidate.getNafMentions());
                         merge = true;
                         break;
                     }
@@ -268,6 +269,7 @@ public class InterDocumentEventCoref {
             }
         }
         try {
+            //System.out.println("pathToNafFolder = " + pathToNafFolder);
             FileOutputStream fos = new FileOutputStream(pathToNafFolder+"/sem.trig");
             GetSemFromNafFile.serializeJena(fos,  semEvents, semActors, semPlaces, semTimes, semRelations);
             fos.close();

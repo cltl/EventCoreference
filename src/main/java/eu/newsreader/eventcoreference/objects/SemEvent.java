@@ -1,9 +1,5 @@
 package eu.newsreader.eventcoreference.objects;
 
-import eu.kyotoproject.kaf.CorefTarget;
-
-import java.util.ArrayList;
-
 /**
  * Created by IntelliJ IDEA.
  * User: kyoto
@@ -49,14 +45,10 @@ public class SemEvent extends SemObject{
 
 
     public String toString () {
-        String str = "<semEvent id=\""+this.getId()+"\" lcs=\""+this.getLabel()+"\" score=\""+this.getScore()+"\" label=\""+this.getLabel()+"\" mentions=\""+this.getMentions().size()+"\">\n";
+        String str = "<semEvent id=\""+this.getId()+"\" lcs=\""+this.getLabel()+"\" score=\""+this.getScore()+"\" label=\""+this.getLabel()+"\" mentions=\""+this.getNafMentions().size()+"\">\n";
         str += "<mentions>\n";
-        for (int i = 0; i < this.getMentions().size(); i++) {
-            ArrayList<eu.kyotoproject.kaf.CorefTarget> mentions = this.getMentions().get(i);
-            for (int j = 0; j < mentions.size(); j++) {
-                CorefTarget corefTarget = mentions.get(j);
-                str += corefTarget.toString();
-            }
+        for (int i = 0; i < this.getNafMentions().size(); i++) {
+            str += this.getNafMentions().get(i)+"\n";
         }
         str += "</mentions>\n";
         str += "</semEvent>\n";

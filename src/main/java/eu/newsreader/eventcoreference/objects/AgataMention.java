@@ -7,7 +7,7 @@ package eu.newsreader.eventcoreference.objects;
  * Time: 3:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Mention {
+public class AgataMention {
   /*
   <semEvent id="e30" lcs="raid" score="2.4849066497880004" synset="eng-30-02020027-v" label="raid" mentions="2">
 	<mentions>
@@ -52,7 +52,7 @@ public class Mention {
    private CoRefSetAgata times;
    private CoRefSetAgata locations;
 
-    public Mention() {
+    public AgataMention() {
         this.nL = 0;
         this.nP = 0;
         this.nT = 0;
