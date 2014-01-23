@@ -523,7 +523,7 @@ public class GetSemFromNafFile {
 */
         defaultModel.setNsPrefix("sem", ResourcesUri.sem);
         defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
-        defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);
+       // defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);          /// removed because of dot problem in dbpedia URIs
         defaultModel.setNsPrefix("owl", ResourcesUri.owl);
         defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
         defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
@@ -546,7 +546,7 @@ public class GetSemFromNafFile {
       //  instanceModel.setNsPrefix("tl", ResourcesUri.tl);
         instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
         instanceModel.setNsPrefix("owl", ResourcesUri.owl);
-        instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);
+     //   instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);       /// removed because of dot problem in dbpedia URIs
 
  /*       Model relationModel = ds.getNamedModel("http://www.newsreader-project.eu/relations");
         relationModel.setNsPrefix("nwr", ResourcesUri.nwr);
