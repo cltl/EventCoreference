@@ -28,10 +28,8 @@ public class SemObject {
    private String lcs;
    private String label;
    private ArrayList<NafMention> nafMentions;
- //  private ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>> mentions;
 
    public SemObject() {
-     //   this.mentions = new ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>>();
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
         this.label = "";
@@ -101,51 +99,6 @@ public class SemObject {
     public void addMentionUri(NafMention mentionUri) {
         this.nafMentions.add(mentionUri);
     }
-
-/*
-    public ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>> getMentions() {
-        return mentions;
-    }
-
-    public void setMentions(ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>> mentions) {
-        this.mentions = mentions;
-    }
-
-    public void addMentions(ArrayList<eu.kyotoproject.kaf.CorefTarget> mentions) {
-        this.mentions.add(mentions);
-    }
-
-    public void addMention(ArrayList<eu.kyotoproject.kaf.CorefTarget> mention) {
-        this.mentions.add(mention);
-    }
-
-    public void setMentions(String baseUrl, ArrayList<ArrayList<eu.kyotoproject.kaf.CorefTarget>> mentions) {
-        for (int i = 0; i < mentions.size(); i++) {
-            ArrayList<CorefTarget> corefTargetArrayList = mentions.get(i);
-            for (int j = 0; j < corefTargetArrayList.size(); j++) {
-                CorefTarget corefTarget = corefTargetArrayList.get(j);
-                corefTarget.setId(baseUrl+corefTarget.getId());
-            }
-        }
-        this.mentions = mentions;
-    }
-
-    public void addMentions(String baseUrl, ArrayList<eu.kyotoproject.kaf.CorefTarget> mentions) {
-        for (int i = 0; i < mentions.size(); i++) {
-            CorefTarget corefTarget = mentions.get(i);
-            corefTarget.setId(baseUrl+corefTarget.getId());
-        }
-        this.mentions.add(mentions);
-    }
-
-    public void addMention(String baseUrl, ArrayList<eu.kyotoproject.kaf.CorefTarget> mention) {
-        for (int i = 0; i < mention.size(); i++) {
-            CorefTarget corefTarget = mention.get(i);
-            corefTarget.setId(baseUrl+"/"+corefTarget.getId());
-        }
-        this.mentions.add(mention);
-    }
-*/
 
     public String getLcs() {
         return lcs;
@@ -286,9 +239,9 @@ public class SemObject {
             else {
                 String nameSpaceType = getNameSpaceTypeReference(kafSense);
                 Resource conceptResource = model.createResource(nameSpaceType);
-                if (!conceptResource.isURIResource()) {
+/*                if (!conceptResource.isURIResource()) {
                     System.out.println("conceptResource.getURI() = " + conceptResource.getURI()); 
-                }
+                }*/
                 resource.addProperty(RDF.type, conceptResource);
             }
         }
@@ -343,12 +296,14 @@ public class SemObject {
             ref = ResourcesUri.nwr+kafSense.getSensecode();
         }
         else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
-            ref = ResourcesUri.dbp+kafSense.getSensecode();
+            ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
+           // ref = ResourcesUri.dbp+kafSense.getSensecode();
            // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
         }
         else {
             if (kafSense.getSensecode().indexOf(ResourcesUri.dbp)>-1) {
-                ref = ResourcesUri.dbp+kafSense.getSensecode();
+               // ref = ResourcesUri.dbp+kafSense.getSensecode();
+                ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
                 //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
             }
             else {
