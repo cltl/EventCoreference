@@ -1,5 +1,7 @@
 package eu.newsreader.eventcoreference.objects;
 
+import eu.kyotoproject.kaf.KafFactuality;
+
 import java.util.ArrayList;
 
 /**
@@ -11,6 +13,8 @@ public class NafMention {
     private String offSetEnd;
     private ArrayList<String> tokensIds;
     private ArrayList<String> termsIds;
+    private KafFactuality factuality;
+
 
     public NafMention(String baseUri) {
         this.baseUri = baseUri;
@@ -18,6 +22,7 @@ public class NafMention {
         this.offSetEnd = "";
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
+        this.factuality = new KafFactuality();
     }
 
     public NafMention() {
@@ -26,6 +31,15 @@ public class NafMention {
         this.offSetEnd = "";
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
+        this.factuality = new KafFactuality();
+    }
+
+    public KafFactuality getFactuality() {
+        return factuality;
+    }
+
+    public void setFactuality(KafFactuality factuality) {
+        this.factuality = factuality;
     }
 
     public String getBaseUri() {

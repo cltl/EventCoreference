@@ -7,6 +7,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -166,9 +167,16 @@ public class SemRelation {
         Model relationModel = ds.getNamedModel(this.id);
 
         Resource subject = relationModel.createResource(this.getSubject());
-        Resource object = relationModel.createResource(this.getObject());
-        Property semProperty = getSemRelationType(this.getPredicate());
-        subject.addProperty(semProperty, object);
+        if (this.getPredicate().equalsIgnoreCase("nwr:hasFactBankValue")) {
+            Property factProperty = relationModel.createProperty(this.getPredicate());
+          //  Resource object = (Resource) relationModel.createLiteral(this.getObject());
+            subject.addProperty(factProperty, this.getObject());
+        }
+        else {
+            Resource object = relationModel.createResource(this.getObject());
+            Property semProperty = getSemRelationType(this.getPredicate());
+            subject.addProperty(semProperty, object);
+        }
 
 
         Resource provenanceResource = provenanceModel.createResource(this.id);
@@ -180,16 +188,57 @@ public class SemRelation {
             provenanceResource.addProperty(property, targetResource);
 
         }
-/*
-        for (int i = 0; i < corefTargets.size(); i++) {
-                CorefTarget corefTarget = corefTargets.get(i);
-                Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
-                Resource targetResource = provenanceModel.createResource(corefTarget.getId());
-                provenanceResource.addProperty(property, targetResource);
-        }
-*/
     }
 
+    public void addToJenaDataSet (Dataset ds, Model provenanceModel,
+                                  HashMap<String, SourceMeta> sourceMetaHashMap) {
+
+        Model relationModel = ds.getNamedModel(this.id);
+
+        Resource subject = relationModel.createResource(this.getSubject());
+        if (this.getPredicate().equalsIgnoreCase("nwr:hasFactBankValue")) {
+            Property factProperty = relationModel.createProperty(this.getPredicate());
+            //  Resource object = (Resource) relationModel.createLiteral(this.getObject());
+            subject.addProperty(factProperty, this.getObject());
+        }
+        else {
+            Resource object = relationModel.createResource(this.getObject());
+            Property semProperty = getSemRelationType(this.getPredicate());
+            subject.addProperty(semProperty, object);
+        }
+
+
+
+        Resource provenanceResource = provenanceModel.createResource(this.id);
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
+            Resource targetResource = provenanceModel.createResource(nafMention.toString());
+            provenanceResource.addProperty(property, targetResource);
+
+        }
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            if (sourceMetaHashMap.containsKey(nafMention.getBaseUri())) {
+                SourceMeta sourceMeta = sourceMetaHashMap.get(nafMention.getBaseUri());
+                Property property = provenanceModel.createProperty(ResourcesUri.prov+"wasAttributedTo");
+                if (!sourceMeta.getAuthor().isEmpty()) {
+                    Resource targetResource = provenanceModel.createResource(ResourcesUri.nwrauthor+sourceMeta.getAuthor());
+                    provenanceResource.addProperty(property, targetResource);
+                }
+                if (!sourceMeta.getOwner().isEmpty()) {
+                    Resource targetResource = provenanceModel.createResource(ResourcesUri.nwrsourceowner+sourceMeta.getOwner());
+                    provenanceResource.addProperty(property, targetResource);
+                }
+            }
+            else {
+              //  System.out.println("No meta nafMention.getBaseUri() = " + nafMention.getBaseUri());
+            }
+        }
+    }
+     //nwr:hasFactBankValue
 
     public void addToJenaDataSet (Dataset ds, Model relationModel, Model provenanceModel) {
 

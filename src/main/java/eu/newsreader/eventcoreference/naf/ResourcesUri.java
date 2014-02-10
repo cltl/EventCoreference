@@ -6,6 +6,10 @@ package eu.newsreader.eventcoreference.naf;
 public class ResourcesUri {
 
     final static public String nwr = "http://www.newsreader-project.eu/";
+    final static public String nwrdata = "http://www.newsreader-project.eu/data/";
+    final static public String nwrauthor = "http://www.newsreader-project.eu/author/";
+    final static public String nwrsourceowner = "http://www.newsreader-project.eu/sourceowner/";
+    final static public String nwrvalue = "http://www.newsreader-project.eu/values/";
     final static public String wn = "http://www.newsreader-project.eu/wordnet3.0";
     final static public String fn = "http://www.newsreader-project.eu/framenet/";
     final static public String vn = "http://www.newsreader-project.eu/verbnet/";
@@ -18,5 +22,6 @@ public class ResourcesUri {
     final static public String rdfs= "http://www.w3.org/2000/01/rdf-schema#";
     final static public String tl = "http://purl.org/NET/c4dm/timeline.owl#";
     final static public String owl= "http://www.w3.org/2002/07/owl#";
+    final static public String prov= "http://www.w3.org/2002/07/prov-o#";
 
 }

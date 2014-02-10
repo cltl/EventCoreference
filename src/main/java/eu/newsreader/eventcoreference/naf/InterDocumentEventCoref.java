@@ -2,6 +2,8 @@ package eu.newsreader.eventcoreference.naf;
 
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
+import eu.newsreader.eventcoreference.objects.SourceMeta;
+import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.File;
@@ -21,6 +23,7 @@ public class InterDocumentEventCoref {
     static final String layer = "sem-instances";
     static final String name = "vua-event-coref-interdoc-time-lemma-baseline";
     static final String version = "1.0";
+    static HashMap<String, SourceMeta> sourceMetaHashMap = null;
 /*
     static ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
     static ArrayList<SemObject> semActors = new ArrayList<SemObject>();
@@ -41,6 +44,7 @@ public class InterDocumentEventCoref {
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 0;
 
+        String pathToSourceDataFile = "";
         String pathToNafFolder = "";
         String extension = "";
         for (int i = 0; i < args.length; i++) {
@@ -57,6 +61,11 @@ public class InterDocumentEventCoref {
             else if (arg.equals("--phrase-match") && args.length>(i+1)) {
                 phraseMatchThreshold = Double.parseDouble(args[i+1]);
             }
+            else if (arg.equals("--source-data") && args.length>(i+1)) {
+                pathToSourceDataFile = args[i+1];
+                sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
+               // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
+            }
         }
         processFolder (new File(pathToNafFolder), extension, conceptMatchThreshold, phraseMatchThreshold);
     }
@@ -71,6 +80,7 @@ public class InterDocumentEventCoref {
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
+        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
         //System.out.println("files.size() = " + files.size());
@@ -82,7 +92,8 @@ public class InterDocumentEventCoref {
             ArrayList<SemObject> mySemTimes = new ArrayList<SemObject>();
             ArrayList<SemObject> mySemPlaces = new ArrayList<SemObject>();
             ArrayList<SemRelation> mySemRelations = new ArrayList<SemRelation>();
-            GetSemFromNafFile.processNafFile(file.getAbsolutePath(), mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations);
+            ArrayList<SemRelation> myFactRelations = new ArrayList<SemRelation>();
+            GetSemFromNafFile.processNafFile(file.getAbsolutePath(), mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations);
 
             HashMap<String, String> localToGlobalEventMap = new HashMap<String, String>();
             HashMap<String, String> localToGlobalActorMap = new HashMap<String, String>();
@@ -267,11 +278,51 @@ public class InterDocumentEventCoref {
                     semRelations.add(globalSemRelationCandidate);
                 }
             }
+
+           // System.out.println("myFactRelations = " + myFactRelations.size());
+            for (int j = 0; j < myFactRelations.size(); j++) {
+                SemRelation semRelation = myFactRelations.get(j);
+               // System.out.println("semRelation.getSubject() = " + semRelation.getSubject());
+
+                SemRelation globalSemRelationCandidate = new SemRelation(semRelation);
+                globalSemRelationCandidate.setId(semRelation.getId());
+                if (localToGlobalEventMap.containsKey(semRelation.getSubject())) {
+                    String globalId = localToGlobalEventMap.get(semRelation.getSubject());
+                    globalSemRelationCandidate.setSubject(globalId);
+                }
+                if (localToGlobalActorMap.containsKey(semRelation.getObject())) {
+                    String globalId = localToGlobalActorMap.get(semRelation.getObject());
+                    globalSemRelationCandidate.setObject(globalId);
+                }
+                else if (localToGlobalPlaceMap.containsKey(semRelation.getObject())) {
+                    String globalId = localToGlobalPlaceMap.get(semRelation.getObject());
+                    globalSemRelationCandidate.setObject(globalId);
+                }
+                else if (localToGlobalTimeMap.containsKey(semRelation.getObject())) {
+                    String globalId = localToGlobalTimeMap.get(semRelation.getObject());
+                    globalSemRelationCandidate.setObject(globalId);
+                }
+                boolean merge = false;
+                for (int k = 0; k < factRelations.size(); k++) {
+                    SemRelation relation = factRelations.get(k);
+                    if (globalSemRelationCandidate.match(relation)) {
+                        //// merge mentions
+
+                        relation.addMentions(globalSemRelationCandidate.getNafMentions());
+                        merge = true;
+                        break;
+                    }
+                }
+
+                if (!merge) {
+                    factRelations.add(globalSemRelationCandidate);
+                }
+            }
         }
         try {
             //System.out.println("pathToNafFolder = " + pathToNafFolder);
             FileOutputStream fos = new FileOutputStream(pathToNafFolder+"/sem.trig");
-            GetSemFromNafFile.serializeJena(fos,  semEvents, semActors, semPlaces, semTimes, semRelations);
+            GetSemFromNafFile.serializeJena(fos,  semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, sourceMetaHashMap);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

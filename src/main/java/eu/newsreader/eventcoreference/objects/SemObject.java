@@ -5,6 +5,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
+import eu.kyotoproject.kaf.KafFactuality;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.kyotoproject.kaf.KafTerm;
@@ -29,7 +30,7 @@ public class SemObject {
    private String label;
    private ArrayList<NafMention> nafMentions;
 
-   public SemObject() {
+    public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
         this.label = "";
@@ -37,6 +38,19 @@ public class SemObject {
         this.score = 0;
         this.concepts = new ArrayList<KafSense>();
         this.phraseCounts = new ArrayList<PhraseCount>();
+    }
+
+
+    public void setFactuality(KafSaxParser kafSaxParser) {
+        for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
+            KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
+            for (int j = 0; j < nafMentions.size(); j++) {
+                NafMention nafMention = nafMentions.get(j);
+                if (nafMention.getTokensIds().contains(kafFactuality.getId())) {
+                    nafMention.setFactuality(kafFactuality);
+                }
+            }
+        }
     }
 
     public void setConcepts(ArrayList<KafSense> concepts) {

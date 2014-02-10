@@ -24,6 +24,34 @@ import java.util.Set;
  */
 public class GetSemFromNafFile {
 
+    /* @TODO
+    - namespace http://www.newsreader-project.eu/data/cars
+    - namespace http://www.newsreader-project.eu/authors
+    - namespace http://www.newsreader-project.eu/publishers
+
+        - read meta file, field 6 and 9
+        - 6 = author
+        - 9 = publisher
+
+            <http://www.newsreader-project.eu/2003_1_1_47VH-FG40-010D-Y403.xml#pr1,rl1>
+            gaf:denotedBy  <http://www.newsreader-project.eu/data/car/2003_1_1/47VH-FG40-010D-Y403.xml#rl1> ,
+http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-018S-21S2	2003-10-10	WHEELS; Pg. D9	The Record (Kitchener-Waterloo, Ontario)	GREG SCHNEIDER		U.S. auto companies get low marks in new survey	Copyright 2003 Metroland Media Group Ltd	3315
+
+
+           <http://www.newsreader-project.eu/2003_1_1_47VH-FG40-010D-Y403.xml#pr1,rl1>
+            prov:wasAttributedTo  <http://www.newsreader-project.eu/authors/GREG_SCHNEIDER> ,
+            <http://www.newsreader-project.eu/publisher/Metroland_Media_Group_Ltd> .
+
+
+        - for each factuality statement that is not CT+, intersect with event word tokens
+
+        <factvalue confidence="0.8264118229513245" id="w71" prediction="CT+"/>
+
+        <http://www.newsreader-project.eu/2003_1_1_47VH-FG40-010D-Y403.xml#pr1,rl1>
+            nwr:hasFactBankValue  <http://www.newsreader-project.eu/values/CT+> .
+    */
+
+
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
 
@@ -32,21 +60,13 @@ public class GetSemFromNafFile {
                                        ArrayList<SemObject> semActors,
                                        ArrayList<SemObject> semPlaces,
                                        ArrayList<SemObject> semTimes,
-                                       ArrayList<SemRelation> semRelations) {
+                                       ArrayList<SemRelation> semRelations,
+                                       ArrayList<SemRelation> factRelations
+    ) {
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(pathToNafFile);
-/*
-        Calendar date = Calendar.getInstance();
-        date.setTimeInMillis(System.currentTimeMillis());
-        String strdate = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        if (date != null) {
-            strdate = sdf.format(date.getTime());
-        }
-*/
-        String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", URI_SEPARATOR)+ID_SEPARATOR;
-       // String baseUrl = ResourcesUri.nwr;
+        //String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", URI_SEPARATOR)+ID_SEPARATOR;
+        String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
 
         //// we first store the publication date as a time
         KafSense dateSense = new KafSense();
@@ -56,28 +76,18 @@ public class GetSemFromNafFile {
         //docSemTime.addConcept(dateSense);
         docSemTime.setId(ResourcesUri.nwr+dateSense.getSensecode());
         docSemTime.addPhraseCounts(dateSense.getSensecode());
-/*        CorefTarget dateCorefTarget = new CorefTarget();
-        dateCorefTarget.setId(baseUrl+"nafHeader"+"/"+"fileDesc"+"#"+"creationtime");
-        ArrayList<CorefTarget> targets = new ArrayList<CorefTarget>();
-        targets.add(dateCorefTarget);
-        docSemTime.addMentions(targets);
-*/
         NafMention mention = new NafMention(baseUrl+"nafHeader"+"_"+"fileDesc"+"_"+"creationtime");
         docSemTime.addMentionUri(mention);
         semTimes.add(docSemTime);
 
         //// we get time references from the SRL layer
-        // HACK FUNCTION BECASUE THERE IS YET NO COREFERENCE SET FOR TIME, WHEN THIS IS IN NAF WE CAN DEPRECATE THIS FUNCTION
+        // HACK FUNCTION BECAUSE THERE IS YET NO COREFERENCE SET FOR TIME, WHEN THIS IS IN NAF WE CAN DEPRECATE THIS FUNCTION
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = getTimeMentionsHashMapFromSrl (kafSaxParser);
         Set keySet = timeReferences.keySet();
         Iterator keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = (String) keys.next();
             ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = timeReferences.get(key);
-/*
-            Util.getMentionUriArrayList(kafSaxParser, corefTargetArrayList);
-            semTimeRole.addMentions(baseUrl, corefTargetArrayList);
-*/
             SemTime semTimeRole = new SemTime();
             semTimeRole.setId(baseUrl + key);
             ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
@@ -90,19 +100,16 @@ public class GetSemFromNafFile {
 
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
-
-            //Util.getMentionUriArrayArrayList(kafSaxParser, coreferenceSet.getSetsOfSpans());
             ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayList(baseUrl, kafSaxParser, coreferenceSet.getSetsOfSpans());
-
             KafSense sense = new KafSense();
             sense.setRefType("corefType");
             sense.setSensecode(coreferenceSet.getType());
             if (coreferenceSet.getType().equalsIgnoreCase("event")) {
                 SemEvent semEvent = new SemEvent();
                 semEvent.setId(baseUrl+coreferenceSet.getCoid());
-                //semEvent.setMentions(baseUrl, coreferenceSet.getSetsOfSpans());
                 semEvent.setNafMentions(mentionArrayList);
                 semEvent.addPhraseCountsForMentions(kafSaxParser);
+                semEvent.setFactuality(kafSaxParser);
                 semEvent.setConcept(getExternalReferencesSrlEvents(kafSaxParser, coreferenceSet));
                 semEvent.setIdByReference();
                 semEvents.add(semEvent);
@@ -110,7 +117,6 @@ public class GetSemFromNafFile {
             else if (coreferenceSet.getType().equalsIgnoreCase("location")) {
                 SemPlace semPlace = new SemPlace();
                 semPlace.setId(baseUrl + coreferenceSet.getCoid());
-               // semPlace.setMentions(baseUrl, coreferenceSet.getSetsOfSpans());
                 semPlace.setNafMentions(mentionArrayList);
                 semPlace.addPhraseCountsForMentions(kafSaxParser);
                 semPlace.addConcept(sense);
@@ -120,19 +126,9 @@ public class GetSemFromNafFile {
                 semPlaces.add(semPlace);
             }
             else  {
-                /// assume it is an actor
-/*                if (coreferenceSet.getType().equalsIgnoreCase("organization")) {
-                    for (int j = 0; j < coreferenceSet.getSetsOfSpans().size(); j++) {
-                        ArrayList<CorefTarget> corefTargets = coreferenceSet.getSetsOfSpans().get(j);
-                        for (int k = 0; k < corefTargets.size(); k++) {
-                            CorefTarget corefTarget = corefTargets.get(k);
-                            System.out.println("corefTarget.toString() = " + corefTarget.toString());
-                        }
-                    }
-                }*/
+
                 SemActor semActor = new SemActor();
                 semActor.setId(baseUrl  + coreferenceSet.getCoid());
-                //semActor.setMentions(baseUrl, coreferenceSet.getSetsOfSpans());
                 semActor.setNafMentions(mentionArrayList);
                 semActor.addPhraseCountsForMentions(kafSaxParser);
                 semActor.addConcept(sense);
@@ -154,6 +150,31 @@ public class GetSemFromNafFile {
 
 
 
+
+
+        /*   We check the factuality of each mention. If we have a value, we create a nwr:hasFactBankValue relation between the event and the value
+             The id of the relation is defined a loca counter
+         */
+        int factualityCounter = 0;
+
+        for (int i = 0; i < semEvents.size(); i++) {
+            SemObject semObject = semEvents.get(i);
+            for (int j = 0; j < semObject.getNafMentions().size(); j++) {
+                NafMention nafMention = semObject.getNafMentions().get(j);
+                if (!nafMention.getFactuality().getPrediction().isEmpty()) {
+                    factualityCounter++;
+                    SemRelation semRelation = new SemRelation();
+                    String relationInstanceId = baseUrl+"facValue_"+factualityCounter;
+                    semRelation.setId(relationInstanceId);
+                    semRelation.addMention(nafMention);
+                    semRelation.setPredicate("nwr:hasFactBankValue");
+                    semRelation.setSubject(semObject.getId());
+                    semRelation.setObject(nafMention.getFactuality().getPrediction());
+                    factRelations.add(semRelation);
+                }
+            }
+        }
+
         /*
             - iterate over de SRL layers
             - represent predicates and participants
@@ -161,7 +182,6 @@ public class GetSemFromNafFile {
             - if so use the instanceId
             - if not create a new instanceId
          */
-
         ArrayList<String> timedSemEventIds = new ArrayList<String>();
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
             KafEvent kafEvent =  kafSaxParser.getKafEventArrayList().get(i);
@@ -180,12 +200,6 @@ public class GetSemFromNafFile {
                                 SemRelation semRelation = new SemRelation();
                                 String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                 semRelation.setId(relationInstanceId);
-/*
-                                CorefTarget corefTarget = new CorefTarget();
-                                corefTarget.setId(kafParticipant.getId());
-                                Util.getMentionUriCorefTarget(kafSaxParser, corefTarget);
-                                semRelation.addCorefTarget(baseUrl, corefTarget);
-*/
                                 NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
                                 semRelation.addMention(relNafMention);
                                 semRelation.setPredicate("hasSemActor");
@@ -204,12 +218,6 @@ public class GetSemFromNafFile {
                                     SemRelation semRelation = new SemRelation();
                                     String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                     semRelation.setId(relationInstanceId);
-/*
-                                    CorefTarget corefTarget = new CorefTarget();
-                                    corefTarget.setId(kafParticipant.getId());
-                                    Util.getMentionUriCorefTarget(kafSaxParser, corefTarget);
-                                    semRelation.addCorefTarget(baseUrl, corefTarget);
-*/
                                     NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
                                     semRelation.addMention(relNafMention);
                                     semRelation.setPredicate("hasSemPlace");
@@ -229,10 +237,6 @@ public class GetSemFromNafFile {
                                     SemRelation semRelation = new SemRelation();
                                     String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                     semRelation.setId(relationInstanceId);
-/*                                    CorefTarget corefTarget = new CorefTarget();
-                                    corefTarget.setId(kafParticipant.getId());
-                                    Util.getMentionUriCorefTarget(kafSaxParser, corefTarget);
-                                    semRelation.addCorefTarget(baseUrl, corefTarget);*/
                                     NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
                                     semRelation.addMention(relNafMention);
                                     semRelation.setPredicate("hasSemTime");
@@ -266,11 +270,6 @@ public class GetSemFromNafFile {
                 SemRelation semRelation = new SemRelation();
                 String relationInstanceId = baseUrl+"docTime_"+docTimeRelationCount;
                 semRelation.setId(relationInstanceId);
-               // semRelation.setCorefTargetsWithMentions(semEvent.getMentions());
-/*
-                NafMention nafMention = new NafMention(baseUrl);
-                semRelation.addMention(nafMention);
-*/
                 //// Since the doctime has no reference in the text, we use the mentions of the events to point to
                 semRelation.setNafMentions(semEvent.getNafMentions());
                 semRelation.setPredicate("hasSemTime");
@@ -299,25 +298,6 @@ public class GetSemFromNafFile {
         return false;
     }
 
-/*
-    static boolean matchSpans(ArrayList<String> spans, SemObject semObject) {
-        for (int i = 0; i < semObject.getMentions().size(); i++) {
-            ArrayList<ArrayList<CorefTarget>> mentions = semObject.getMentions();
-            for (int j = 0; j < mentions.size(); j++) {
-                ArrayList<CorefTarget> corefTargetArrayList = mentions.get(j);
-                for (int k = 0; k < corefTargetArrayList.size(); k++) {
-                    CorefTarget corefTarget = corefTargetArrayList.get(k);
-                    String id = Util.getTermIdFromCorefTarget(corefTarget, ID_SEPARATOR);
-                    if (spans.contains(id)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-*/
     static ArrayList<KafSense> getExternalReferencesSrlEvents (KafSaxParser kafSaxParser, KafCoreferenceSet kafCoreferenceSet) {
         ArrayList<KafSense> references = new ArrayList<KafSense>();
 
@@ -335,11 +315,6 @@ public class GetSemFromNafFile {
                             match = true;
                             break;
                         }
-/*                        String id = Util.getTermIdFromCorefTarget(corefTarget, ID_SEPARATOR);
-                        if (id.equals(termId)) {
-                            match = true;
-                            break;
-                        }*/
 
                     }
                 }
@@ -372,13 +347,6 @@ public class GetSemFromNafFile {
                                     match = true;
                                     break;
                                 }
-/*
-                                String id = Util.getTermIdFromCorefTarget(corefTarget, ID_SEPARATOR);
-                                if (id.equals(corefTargetParticipant.getId())) {
-                                    match = true;
-                                    break;
-                                }
-*/
                             }
                         }
                     }
@@ -479,13 +447,6 @@ public class GetSemFromNafFile {
                                 match = true;
                                 break;
                             }
-/*
-                            String id = Util.getTermIdFromCorefTarget(corefTarget, ID_SEPARATOR);
-                            if (id.equals(entityCorefTarget.getId())) {
-                                match = true;
-                                break;
-                            }
-*/
                         }
                     }
                 }
@@ -497,12 +458,129 @@ public class GetSemFromNafFile {
         return references;
     }
 
+/*
     static public void serializeJena (OutputStream stream,
                                       ArrayList<SemObject> semEvents,
                                       ArrayList<SemObject> semActors,
                                       ArrayList<SemObject> semPlaces,
                                       ArrayList<SemObject> semTimes,
                                       ArrayList<SemRelation> semRelations) {
+
+
+
+        // create an empty Model
+
+        Dataset ds = TDBFactory.createDataset();
+        Model defaultModel = ds.getDefaultModel();
+        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
+
+        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        defaultModel.setNsPrefix("fn", ResourcesUri.fn);
+*/
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
+        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
+        defaultModel.setNsPrefix("vn", ResourcesUri.vn);
+        defaultModel.setNsPrefix("pb", ResourcesUri.pb);
+        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
+*//*
+
+        defaultModel.setNsPrefix("sem", ResourcesUri.sem);
+        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
+       // defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);          /// removed because of dot problem in dbpedia URIs
+        defaultModel.setNsPrefix("owl", ResourcesUri.owl);
+        defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
+        defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
+       // defaultModel.setNsPrefix("tl", ResourcesUri.tl);
+
+        Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
+        provenanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        provenanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        provenanceModel.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
+        provenanceModel.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
+
+        Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
+        instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        instanceModel.setNsPrefix("fn", ResourcesUri.fn);
+*/
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
+        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
+        instanceModel.setNsPrefix("vn", ResourcesUri.vn);
+        instanceModel.setNsPrefix("pb", ResourcesUri.pb);
+        instanceModel.setNsPrefix("nb", ResourcesUri.nb);
+*//*
+
+        instanceModel.setNsPrefix("sem", ResourcesUri.sem);
+      //  instanceModel.setNsPrefix("tl", ResourcesUri.tl);
+        instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        instanceModel.setNsPrefix("owl", ResourcesUri.owl);
+     //   instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);       /// removed because of dot problem in dbpedia URIs
+
+ */
+/*       Model relationModel = ds.getNamedModel("http://www.newsreader-project.eu/relations");
+        relationModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        relationModel.setNsPrefix("fn", ResourcesUri.fn);
+*//*
+*/
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
+        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
+        instanceModel.setNsPrefix("vn", ResourcesUri.vn);
+        instanceModel.setNsPrefix("pb", ResourcesUri.pb);
+        instanceModel.setNsPrefix("nb", ResourcesUri.nb);
+*//*
+*/
+/*
+        relationModel.setNsPrefix("sem", ResourcesUri.sem);
+        //  instanceModel.setNsPrefix("tl", ResourcesUri.tl);
+        relationModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        relationModel.setNsPrefix("owl", ResourcesUri.owl);
+        relationModel.setNsPrefix("dbp", ResourcesUri.dbp);*//*
+
+
+        for (int i = 0; i < semEvents.size(); i++) {
+            SemObject semEvent = semEvents.get(i);
+            semEvent.addToJenaModel(instanceModel, Sem.Event);
+        }
+
+
+        for (int i = 0; i < semActors.size(); i++) {
+            SemObject semActor = semActors.get(i);
+            semActor.addToJenaModel(instanceModel, Sem.Actor);
+        }
+
+        for (int i = 0; i < semPlaces.size(); i++) {
+            SemObject semPlace = semPlaces.get(i);
+            semPlace.addToJenaModel(instanceModel, Sem.Place);
+        }
+
+
+        for (int i = 0; i < semTimes.size(); i++) {
+            SemObject semTime = semTimes.get(i);
+            semTime.addToJenaModel(instanceModel, Sem.Time);
+        }
+
+        for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+
+            semRelation.addToJenaDataSet(ds, provenanceModel);
+
+            //*/
+/** Next version adds relations to one single relation graph
+            //semRelation.addToJenaDataSet(ds, relationModel, provenanceModel);
+        }
+
+        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+    }
+*/
+
+    static public void serializeJena (OutputStream stream,
+                                      ArrayList<SemObject> semEvents,
+                                      ArrayList<SemObject> semActors,
+                                      ArrayList<SemObject> semPlaces,
+                                      ArrayList<SemObject> semTimes,
+                                      ArrayList<SemRelation> semRelations,
+                                      ArrayList<SemRelation> factRelations,
+                                      HashMap <String, SourceMeta> sourceMetaHashMap) {
 
 
 
@@ -532,6 +610,8 @@ public class GetSemFromNafFile {
         Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
         provenanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
         provenanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        provenanceModel.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
+        provenanceModel.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
 
         Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
         instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
@@ -587,10 +667,28 @@ public class GetSemFromNafFile {
 
         for (int i = 0; i < semRelations.size(); i++) {
             SemRelation semRelation = semRelations.get(i);
-            semRelation.addToJenaDataSet(ds, provenanceModel);
+            if (sourceMetaHashMap!=null) {
+                semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
+
+            }
+            else {
+                semRelation.addToJenaDataSet(ds, provenanceModel);
+            }
 
             ///** Next version adds relations to one single relation graph
             //semRelation.addToJenaDataSet(ds, relationModel, provenanceModel);
+        }
+
+        for (int i = 0; i < factRelations.size(); i++) {
+            SemRelation semRelation = factRelations.get(i);
+            semRelation.addToJenaDataSet(ds, provenanceModel);
+            if (sourceMetaHashMap!=null) {
+                semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
+
+            }
+            else {
+                semRelation.addToJenaDataSet(ds, provenanceModel);
+            }
         }
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
@@ -605,7 +703,8 @@ public class GetSemFromNafFile {
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        processNafFile(pathToNafFile, semEvents, semActors, semPlaces, semTimes, semRelations);
-        serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations);
+        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
+        processNafFile(pathToNafFile, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
     }
 }

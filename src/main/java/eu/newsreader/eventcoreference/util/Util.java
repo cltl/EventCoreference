@@ -19,67 +19,6 @@ import java.util.HashMap;
  */
 public class Util {
 
-    static public void getMentionUriArrayList_old (KafSaxParser kafSaxParser,
-                                                             ArrayList<CorefTarget> corefTargetArrayList) {
-        for (int i = 0; i < corefTargetArrayList.size(); i++) {
-            CorefTarget corefTarget = corefTargetArrayList.get(i);
-            getMentionUriCorefTarget_old(kafSaxParser, corefTarget);
-        }
-    }
-
-    static public void getMentionUriArrayArrayList_old (KafSaxParser kafSaxParser,
-                                                             ArrayList<ArrayList<CorefTarget>> corefTargetArrayList) {
-        for (int i = 0; i < corefTargetArrayList.size(); i++) {
-            ArrayList<CorefTarget> corefTargets = corefTargetArrayList.get(i);
-            getMentionUriArrayList_old(kafSaxParser, corefTargets);
-        }
-    }
-
-    /**
-     *      Mention URI = News URI + "#char=START_OFFSET,END_OFFSET"
-     * @param kafSaxParser
-     * @param corefTarget
-     */
-    static public void getMentionUriCorefTarget_old (KafSaxParser kafSaxParser, CorefTarget corefTarget) {
-        int firstOffSet = -1;
-        int highestOffSet = -1;
-        int lengthOffSet = -1;
-        String wordTokenString = "";
-        KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
-        if (kafTerm==null) {
-           // System.out.println("corefTarget = " + corefTarget.getId());
-        }
-        else {
-            for (int i = 0; i < kafTerm.getSpans().size(); i++) {
-                String tokenId = kafTerm.getSpans().get(i);
-                KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
-                if (wordTokenString.isEmpty()) {
-                    wordTokenString = kafWordForm.getWid();
-                }
-                else {
-                    wordTokenString +=","+ kafWordForm.getWid();
-                }
-                if (!kafWordForm.getCharOffset().isEmpty()) {
-                    int offSet = Integer.parseInt(kafWordForm.getCharOffset());
-                    int length = Integer.parseInt(kafWordForm.getCharLength());
-                    if (firstOffSet==-1 || firstOffSet>offSet) {
-                        firstOffSet = offSet;
-                    }
-                    if (highestOffSet==-1 ||offSet>highestOffSet) {
-                        highestOffSet = offSet;
-                        lengthOffSet = length;
-                    }
-                }
-            }
-
-            if (firstOffSet>-1 && highestOffSet>-1) {
-                int end_offset = highestOffSet+lengthOffSet;
-               // corefTarget.setId(corefTarget.getId()+"#char="+firstOffSet+","+end_offset);
-                corefTarget.setId("char="+firstOffSet+","+end_offset+"&word="+wordTokenString+"&term="+corefTarget.getId());
-            }
-        }
-    }
-
     static public ArrayList<NafMention> getNafMentionArrayList (String baseUri, KafSaxParser kafSaxParser,
                                                         ArrayList<ArrayList<CorefTarget>> corefTargetArrayList) {
         ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
