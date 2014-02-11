@@ -31,7 +31,7 @@ public class ReadSourceMetaFile {
                             String field = fields[i];
                             System.out.println("field "+i+" = " + field);
                         }*/
-                        String key = fields[0]+"#";
+                        String key = fields[0];
                        // System.out.println("key = " + key);
                         SourceMeta sourceMeta = new SourceMeta(fields);
                         data.put(key,sourceMeta);

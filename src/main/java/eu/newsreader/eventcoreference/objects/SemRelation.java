@@ -220,8 +220,8 @@ public class SemRelation {
 
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
-            if (sourceMetaHashMap.containsKey(nafMention.getBaseUri())) {
-                SourceMeta sourceMeta = sourceMetaHashMap.get(nafMention.getBaseUri());
+            if (sourceMetaHashMap.containsKey(nafMention.getBaseUriWithoutId())) {
+                SourceMeta sourceMeta = sourceMetaHashMap.get(nafMention.getBaseUriWithoutId());
                 Property property = provenanceModel.createProperty(ResourcesUri.prov+"wasAttributedTo");
                 if (!sourceMeta.getAuthor().isEmpty()) {
                     Resource targetResource = provenanceModel.createResource(ResourcesUri.nwrauthor+sourceMeta.getAuthor());
@@ -233,11 +233,11 @@ public class SemRelation {
                 }
             }
             else {
-              //  System.out.println("No meta nafMention.getBaseUri() = " + nafMention.getBaseUri());
+               // System.out.println("No meta nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
+              //  System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
             }
         }
     }
-     //nwr:hasFactBankValue
 
     public void addToJenaDataSet (Dataset ds, Model relationModel, Model provenanceModel) {
 

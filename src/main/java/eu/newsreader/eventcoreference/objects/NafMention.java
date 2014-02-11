@@ -45,6 +45,15 @@ public class NafMention {
     public String getBaseUri() {
         return baseUri;
     }
+    public String getBaseUriWithoutId() {
+        int idx = baseUri.lastIndexOf("#");
+        if (idx>-1) {
+            return baseUri.substring(0, idx);
+        }
+        else {
+            return baseUri;
+        }
+    }
 
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
