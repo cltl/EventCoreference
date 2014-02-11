@@ -43,7 +43,7 @@ public class InterDocumentEventCoref {
 
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 0;
-
+        String projectName = "";
         String pathToSourceDataFile = "";
         String pathToNafFolder = "";
         String extension = "";
@@ -61,17 +61,20 @@ public class InterDocumentEventCoref {
             else if (arg.equals("--phrase-match") && args.length>(i+1)) {
                 phraseMatchThreshold = Double.parseDouble(args[i+1]);
             }
+            else if (arg.equals("--project") && args.length>(i+1)) {
+                projectName = args[i+1];
+            }
             else if (arg.equals("--source-data") && args.length>(i+1)) {
                 pathToSourceDataFile = args[i+1];
                 sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
                // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
             }
         }
-        processFolder (new File(pathToNafFolder), extension, conceptMatchThreshold, phraseMatchThreshold);
+        processFolder (projectName, new File(pathToNafFolder), extension, conceptMatchThreshold, phraseMatchThreshold);
     }
 
 
-    public static void processFolder (File pathToNafFolder, String extension, double conceptMatchThreshold,
+    public static void processFolder (String project, File pathToNafFolder, String extension, double conceptMatchThreshold,
                                       double phraseMatchThreshold
 
     ) {
@@ -93,7 +96,7 @@ public class InterDocumentEventCoref {
             ArrayList<SemObject> mySemPlaces = new ArrayList<SemObject>();
             ArrayList<SemRelation> mySemRelations = new ArrayList<SemRelation>();
             ArrayList<SemRelation> myFactRelations = new ArrayList<SemRelation>();
-            GetSemFromNafFile.processNafFile(file.getAbsolutePath(), mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations);
+            GetSemFromNafFile.processNafFile(project, file.getAbsolutePath(), mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations);
 
             HashMap<String, String> localToGlobalEventMap = new HashMap<String, String>();
             HashMap<String, String> localToGlobalActorMap = new HashMap<String, String>();

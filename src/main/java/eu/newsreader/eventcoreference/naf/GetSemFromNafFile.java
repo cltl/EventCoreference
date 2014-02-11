@@ -55,7 +55,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
 
-    static public void processNafFile (String pathToNafFile,
+    static public void processNafFile (String project, String pathToNafFile,
                                        ArrayList<SemObject> semEvents,
                                        ArrayList<SemObject> semActors,
                                        ArrayList<SemObject> semPlaces,
@@ -66,7 +66,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(pathToNafFile);
         //String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", URI_SEPARATOR)+ID_SEPARATOR;
-        String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
+        String baseUrl = ResourcesUri.nwrdata+project+"/"+kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
 
         //// we first store the publication date as a time
         KafSense dateSense = new KafSense();
@@ -74,7 +74,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         dateSense.setSensecode(kafSaxParser.getKafMetaData().getCreationtime());
         SemTime docSemTime = new SemTime();
         //docSemTime.addConcept(dateSense);
-        docSemTime.setId(ResourcesUri.nwr+dateSense.getSensecode());
+        docSemTime.setId(ResourcesUri.nwrtime+dateSense.getSensecode());
         docSemTime.addPhraseCounts(dateSense.getSensecode());
         NafMention mention = new NafMention(baseUrl+"nafHeader"+"_"+"fileDesc"+"_"+"creationtime");
         docSemTime.addMentionUri(mention);
@@ -167,7 +167,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                     String relationInstanceId = baseUrl+"facValue_"+factualityCounter;
                     semRelation.setId(relationInstanceId);
                     semRelation.addMention(nafMention);
-                    semRelation.setPredicate("nwr:hasFactBankValue");
+                    semRelation.setPredicate("hasFactBankValue");
                     semRelation.setSubject(semObject.getId());
                     semRelation.setObject(nafMention.getFactuality().getPrediction());
                     factRelations.add(semRelation);
@@ -698,13 +698,14 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
         String pathToNafFile = "/Users/piek/Desktop/NWR-DATA/trig/test2/2003-01-01/57FS-KV01-F0J6-D1H8.xml_082dbf3073807d0c4a49bbbea19242b2.naf.coref";
+        String project = "cars";
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-        processNafFile(pathToNafFile, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        processNafFile(project, pathToNafFile, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
     }
 }

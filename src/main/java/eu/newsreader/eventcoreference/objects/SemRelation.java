@@ -167,10 +167,9 @@ public class SemRelation {
         Model relationModel = ds.getNamedModel(this.id);
 
         Resource subject = relationModel.createResource(this.getSubject());
-        if (this.getPredicate().equalsIgnoreCase("nwr:hasFactBankValue")) {
-            Property factProperty = relationModel.createProperty(this.getPredicate());
-          //  Resource object = (Resource) relationModel.createLiteral(this.getObject());
-            subject.addProperty(factProperty, this.getObject());
+        if (this.getPredicate().equalsIgnoreCase("hasFactBankValue")) {
+            Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue+this.getPredicate());
+            subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
         }
         else {
             Resource object = relationModel.createResource(this.getObject());
@@ -196,8 +195,8 @@ public class SemRelation {
         Model relationModel = ds.getNamedModel(this.id);
 
         Resource subject = relationModel.createResource(this.getSubject());
-        if (this.getPredicate().equalsIgnoreCase("nwr:hasFactBankValue")) {
-            Property factProperty = relationModel.createProperty(this.getPredicate());
+        if (this.getPredicate().equalsIgnoreCase("hasFactBankValue")) {
+            Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue+this.getPredicate());
             //  Resource object = (Resource) relationModel.createLiteral(this.getObject());
             subject.addProperty(factProperty, this.getObject());
         }

@@ -6,10 +6,11 @@ package eu.newsreader.eventcoreference.naf;
 public class ResourcesUri {
 
     final static public String nwr = "http://www.newsreader-project.eu/";
+    final static public String nwrtime = "http://www.newsreader-project.eu/time/";
     final static public String nwrdata = "http://www.newsreader-project.eu/data/";
     final static public String nwrauthor = "http://www.newsreader-project.eu/author/";
     final static public String nwrsourceowner = "http://www.newsreader-project.eu/sourceowner/";
-    final static public String nwrvalue = "http://www.newsreader-project.eu/values/";
+    final static public String nwrvalue = "http://www.newsreader-project.eu/value/";
     final static public String wn = "http://www.newsreader-project.eu/wordnet3.0";
     final static public String fn = "http://www.newsreader-project.eu/framenet/";
     final static public String vn = "http://www.newsreader-project.eu/verbnet/";

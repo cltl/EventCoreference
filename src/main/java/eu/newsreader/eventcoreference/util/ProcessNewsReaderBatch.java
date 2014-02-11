@@ -20,6 +20,7 @@ public class ProcessNewsReaderBatch {
         //String pathToProcessFile = args[0];
         String pathToClusterFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference/publicationDatesFiles.txt";
         String pathToNafClusters = "";
+        String projectName  = "";
         boolean DO_entitycoref = false;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -28,6 +29,9 @@ public class ProcessNewsReaderBatch {
             }
             else if (arg.equals("--cluster-folders") && args.length>(i+1)) {
                 pathToNafClusters = args[i+1];
+            }
+            else if (arg.equals("--project") && args.length>(i+1)) {
+                projectName = args[i+1];
             }
             else if (arg.equals("--concept-match") && args.length>(i+1)) {
                 conceptMatchThreshold = Double.parseDouble(args[i+1]);
@@ -87,7 +91,7 @@ public class ProcessNewsReaderBatch {
                 while (keys.hasNext()) {
                     File pathToNafFolder = (File) keys.next();
                    // System.out.println("pathToNafFolder = " + pathToNafFolder);
-                    InterDocumentEventCoref.processFolder (pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold);
+                    InterDocumentEventCoref.processFolder (projectName, pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold);
                 }
             }
         }
@@ -97,7 +101,7 @@ public class ProcessNewsReaderBatch {
                 ArrayList<File> folders = Util.makeFolderList(nafClusterFolder);
                 for (int i = 0; i < folders.size(); i++) {
                     File pathToNafFolder =  folders.get(i);
-                    InterDocumentEventCoref.processFolder (pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold);
+                    InterDocumentEventCoref.processFolder (projectName, pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold);
                 }
             }
         }
