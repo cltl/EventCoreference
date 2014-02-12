@@ -1,5 +1,6 @@
 package eu.newsreader.eventcoreference.naf;
 
+import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
 import eu.newsreader.eventcoreference.objects.SourceMeta;
@@ -78,6 +79,7 @@ public class InterDocumentEventCoref {
                                       double phraseMatchThreshold
 
     ) {
+        KafSaxParser kafSaxParser = new KafSaxParser();
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
@@ -96,7 +98,8 @@ public class InterDocumentEventCoref {
             ArrayList<SemObject> mySemPlaces = new ArrayList<SemObject>();
             ArrayList<SemRelation> mySemRelations = new ArrayList<SemRelation>();
             ArrayList<SemRelation> myFactRelations = new ArrayList<SemRelation>();
-            GetSemFromNafFile.processNafFile(project, file.getAbsolutePath(), mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations);
+            kafSaxParser.parseFile(file.getAbsolutePath());
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations);
 
             HashMap<String, String> localToGlobalEventMap = new HashMap<String, String>();
             HashMap<String, String> localToGlobalActorMap = new HashMap<String, String>();

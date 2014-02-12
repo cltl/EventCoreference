@@ -55,7 +55,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
 
-    static public void processNafFile (String project, String pathToNafFile,
+    static public void processNafFile (String project, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semEvents,
                                        ArrayList<SemObject> semActors,
                                        ArrayList<SemObject> semPlaces,
@@ -63,10 +63,11 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                                        ArrayList<SemRelation> semRelations,
                                        ArrayList<SemRelation> factRelations
     ) {
-        KafSaxParser kafSaxParser = new KafSaxParser();
-        kafSaxParser.parseFile(pathToNafFile);
         //String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", URI_SEPARATOR)+ID_SEPARATOR;
-        String baseUrl = ResourcesUri.nwrdata+project+"/"+kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
+        String baseUrl = kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
+        if (!baseUrl.toLowerCase().startsWith("http"))     {
+            baseUrl = ResourcesUri.nwrdata+project+"/"+kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
+        }
 
         //// we first store the publication date as a time
         KafSense dateSense = new KafSense();
@@ -705,7 +706,9 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-        processNafFile(project, pathToNafFile, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        KafSaxParser kafSaxParser = new KafSaxParser();
+        kafSaxParser.parseFile(pathToNafFile);
+        processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
     }
 }

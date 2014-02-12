@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Created by kyoto on 12/13/13.
  */
-public class ProcessNewsReaderBatch {
+public class ProcessNewsReaderCarBatch {
     static String corefExtension = ".coref";
     static double conceptMatchThreshold = 0.6;
     static double phraseMatchThreshold = 0.6;
@@ -51,7 +51,7 @@ public class ProcessNewsReaderBatch {
             if (entitycoref.exists()) {
                 HashMap<File, ArrayList<String>> dataMapOut = new HashMap<File, ArrayList<String>>();
 
-                HashMap<String, ArrayList<String>> dataMapIn = ReadFileToStringHashMap(pathToClusterFile);
+                HashMap<String, ArrayList<String>> dataMapIn = Util.ReadFileToStringHashMap(pathToClusterFile);
                 Set keySet = dataMapIn.keySet();
                 Iterator keys = keySet.iterator();
                 while (keys.hasNext()) {
@@ -105,53 +105,6 @@ public class ProcessNewsReaderBatch {
                 }
             }
         }
-    }
-
-
-    /**
-     * 2003-01-01	/home/vanerp/NewsReaderProcessed/Batch1/47K9-W260-006F-01XY.xml_dc767673993538525fb781e3dff2b0aa.naf
-     2003-01-01	/home/vanerp/NewsReaderProcessed/Batch1/47KF-GV00-00VR-R53W.xml_aa38e56214ddf44297b6afe6d0128dd2.naf
-     */
-    /**
-     *
-     * @param fileName
-     * @return
-     */
-    static public HashMap ReadFileToStringHashMap(String fileName) {
-        HashMap<String, ArrayList<String>> lineHashMap = new HashMap<String, ArrayList<String>>();
-        if (new File(fileName).exists() ) {
-            try {
-                FileInputStream fis = new FileInputStream(fileName);
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader in = new BufferedReader(isr);
-                String inputLine;
-                while (in.ready()&&(inputLine = in.readLine()) != null) {
-                    //System.out.println(inputLine);
-                    if (inputLine.trim().length()>0) {
-                        int idx_s = inputLine.indexOf("\t");
-                        if (idx_s>-1) {
-                            String key = inputLine.substring(0, idx_s).trim();
-
-                            String value = inputLine.substring(idx_s+1).trim();
-                            if (lineHashMap.containsKey(key)) {
-                                ArrayList<String> files = lineHashMap.get(key);
-                                files.add(value);
-                                lineHashMap.put(key, files);
-                            }
-                            else {
-                                ArrayList<String> files = new ArrayList<String>();
-                                files.add(value);
-                                lineHashMap.put(key, files);
-                            }
-                        }
-                    }
-                }
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return lineHashMap;
     }
 
 

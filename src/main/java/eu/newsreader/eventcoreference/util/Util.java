@@ -6,7 +6,7 @@ import eu.kyotoproject.kaf.KafTerm;
 import eu.kyotoproject.kaf.KafWordForm;
 import eu.newsreader.eventcoreference.objects.NafMention;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -256,6 +256,28 @@ public class Util {
         return acceptedFileList;
     }
 
+    static public ArrayList<File> makeFlatFileList(File inputFile, String theFilter) {
+        ArrayList<File> acceptedFileList = new ArrayList<File>();
+        File[] theFileList = null;
+        if ((inputFile.canRead()) && inputFile.isDirectory()) {
+            theFileList = inputFile.listFiles();
+            for (int i = 0; i < theFileList.length; i++) {
+                File newFile = theFileList[i];
+                if (!newFile.isDirectory()) {
+                    if (newFile.getName().endsWith(theFilter)) {
+                        acceptedFileList.add(newFile);
+                    }
+                }
+            }
+        } else {
+            System.out.println("Cannot access file:" + inputFile + "#");
+            if (!inputFile.exists()) {
+                System.out.println("File does not exist!");
+            }
+        }
+        return acceptedFileList;
+    }
+
     static public ArrayList<File> makeFolderList(File inputFile) {
         ArrayList<File> folderList = new ArrayList<File>();
         File[] theFileList = null;
@@ -327,5 +349,59 @@ public class Util {
         return folderList;
     }
 
+
+    static public HashMap ReadFileToStringHashMap(String fileName) {
+        HashMap<String, ArrayList<String>> lineHashMap = new HashMap<String, ArrayList<String>>();
+        if (new File(fileName).exists() ) {
+            try {
+                FileInputStream fis = new FileInputStream(fileName);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                while (in.ready()&&(inputLine = in.readLine()) != null) {
+                    //System.out.println(inputLine);
+                    if (inputLine.trim().length()>0) {
+                        int idx_s = inputLine.indexOf("\t");
+                        if (idx_s>-1) {
+                            String key = inputLine.substring(0, idx_s).trim();
+                            String value = inputLine.substring(idx_s+1).trim();
+                            if (lineHashMap.containsKey(key)) {
+                                ArrayList<String> files = lineHashMap.get(key);
+                                files.add(value);
+                                lineHashMap.put(key, files);
+                            }
+                            else {
+                                ArrayList<String> files = new ArrayList<String>();
+                                files.add(value);
+                                lineHashMap.put(key, files);
+                            }
+                        }
+                    }
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return lineHashMap;
+    }
+
+
+    static public int copyFile(File inputFile, File outputFile) {
+        if (!inputFile.exists()) {
+            return -1;
+        }
+        try {
+            DataInputStream in = new DataInputStream(new FileInputStream(inputFile));
+            byte[] buffer = new byte[(int) inputFile.length()];
+            in.readFully(buffer);
+            in.close();
+            DataOutputStream out = new DataOutputStream(new FileOutputStream(outputFile));
+            out.write(buffer);
+        } catch (IOException e) {
+            return -3;
+        }
+        return 0;
+    }
 
 }
