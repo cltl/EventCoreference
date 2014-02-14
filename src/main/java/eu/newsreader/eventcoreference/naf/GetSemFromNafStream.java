@@ -13,7 +13,7 @@ public class GetSemFromNafStream {
 
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
-        String projectName  = "";
+        String projectName  = "test";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--project") && args.length>(i+1)) {
