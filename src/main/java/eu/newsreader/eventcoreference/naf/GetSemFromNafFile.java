@@ -97,7 +97,19 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semTimes.add(semTimeRole);
         }
 
-
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> locationReferences = getLocationMentionsHashMapFromSrl (kafSaxParser);
+        keySet = timeReferences.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = locationReferences.get(key);
+            SemPlace semPlaceRole = new SemPlace();
+            semPlaceRole.setId(baseUrl + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semPlaceRole.setNafMentions(mentions);
+            semPlaceRole.addPhraseCountsForMentions(kafSaxParser);
+            semPlaces.add(semPlaceRole);
+        }
 
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
@@ -116,6 +128,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                 semEvents.add(semEvent);
             }
             else if (coreferenceSet.getType().equalsIgnoreCase("location")) {
+                //// problem... the coref sets do not have a type for entities when created by EHU
                 SemPlace semPlace = new SemPlace();
                 semPlace.setId(baseUrl + coreferenceSet.getCoid());
                 semPlace.setNafMentions(mentionArrayList);
@@ -391,6 +404,34 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
                 if (kafParticipant.getRole().endsWith("-TMP")) {
+                    String srl = kafParticipant.getId();
+                    if (mentions.containsKey(srl)) {
+                        ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(srl);
+                        srlTargets.add(kafParticipant.getSpans());
+                        mentions.put(srl, srlTargets);
+                    }
+                    else {
+                        ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();
+                        srlTargets.add(kafParticipant.getSpans());
+                        mentions.put(srl,srlTargets);
+                    }
+                }
+            }
+        }
+        return mentions;
+    }
+
+  /**
+
+     */
+    static HashMap<String, ArrayList<ArrayList<CorefTarget>>> getLocationMentionsHashMapFromSrl (KafSaxParser kafSaxParser) {
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentions = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
+
+        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+            KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
+            for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
+                KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
+                if (kafParticipant.getRole().endsWith("-LOC")) {
                     String srl = kafParticipant.getId();
                     if (mentions.containsKey(srl)) {
                         ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(srl);

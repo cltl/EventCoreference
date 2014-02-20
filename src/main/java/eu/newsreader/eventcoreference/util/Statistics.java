@@ -758,38 +758,6 @@ public class Statistics {
     }
 
 
-    static public void main (String [] args) {
-        String folder = "/Users/piek/Desktop/NWR-DATA/trig/entitycoref";
-        //String folder = "/Users/piek/Desktop/NWR-DATA/trig/test";
-        EVENT = true;
-        //DBP = true;
-        //ACTOR = true;
-        //PLACE = true;
-        //TIME = true;
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.equals("--event")) {
-                EVENT = true;
-            }
-            else if (arg.equals("--dbp")) {
-                DBP = true;
-            }
-            else if (arg.equals("--actor")) {
-                ACTOR = true;
-            }
-            else if (arg.equals("--place")) {
-                PLACE = true;
-            }
-            else if (arg.equals("--time")) {
-                TIME = true;
-            }
-            else if (arg.equals("--folder") && args.length>(i+1)) {
-                folder =args[i+1];
-            }
-        }
-        //statsForAll(folder);
-        statsPerYear(folder);
-    }
 
 
     static void statsPerYear (String folder) {
@@ -1108,6 +1076,40 @@ public class Statistics {
             statFile = folder+"/"+"stats-time.xls";
             saveTimeStats(statFile);
         }
+    }
+
+    static public void main (String [] args) {
+        String folder = "/Users/piek/Desktop/NWR-DATA/techcrunch/techcrunch_clustered_trig";
+      //  String folder = "/Users/piek/Desktop/NWR-DATA/trig/entitycoref";
+        //String folder = "/Users/piek/Desktop/NWR-DATA/trig/test";
+        //EVENT = true;
+        //DBP = true;
+        //ACTOR = true;
+        //PLACE = true;
+        TIME = true;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("--event")) {
+                EVENT = true;
+            }
+            else if (arg.equals("--dbp")) {
+                DBP = true;
+            }
+            else if (arg.equals("--actor")) {
+                ACTOR = true;
+            }
+            else if (arg.equals("--place")) {
+                PLACE = true;
+            }
+            else if (arg.equals("--time")) {
+                TIME = true;
+            }
+            else if (arg.equals("--folder") && args.length>(i+1)) {
+                folder =args[i+1];
+            }
+        }
+        //statsForAll(folder);
+        statsPerYear(folder);
     }
 
 }

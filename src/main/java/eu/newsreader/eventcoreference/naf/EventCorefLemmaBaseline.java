@@ -1,7 +1,11 @@
 package eu.newsreader.eventcoreference.naf;
 
 import eu.kyotoproject.kaf.*;
+import eu.newsreader.eventcoreference.util.Util;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -24,13 +28,26 @@ public class EventCorefLemmaBaseline {
               }
               else {
                   String pathToNafFile = args[0];
+                  String extension = "";
+                  String folder = "";
                   for (int i = 0; i < args.length; i++) {
                       String arg = args[i];
                       if (arg.equals("--naf-file") && args.length>(i+1)) {
                           pathToNafFile = args[i+1];
                       }
+                      else if (arg.equals("--naf-folder") && args.length>(i+1)) {
+                          folder = args[i+1];
+                      }
+                      if (arg.equals("--extension") && args.length>(i+1)) {
+                          extension = args[i+1];
+                      }
                   }
-                  processNafFile(pathToNafFile);
+                  if (!folder.isEmpty()) {
+                      processNafFolder (new File (folder), extension);
+                  }
+                  else {
+                      processNafFile(pathToNafFile);
+                  }
               }
           }
 
@@ -47,6 +64,25 @@ public class EventCorefLemmaBaseline {
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
           }
+
+          static public void processNafFolder (File pathToNafFolder, String extension) {
+              ArrayList<File> files = Util.makeFlatFileList(pathToNafFolder, extension);
+              for (int i = 0; i < files.size(); i++) {
+                  File file = files.get(i);
+                  KafSaxParser kafSaxParser = new KafSaxParser();
+                  kafSaxParser.parseFile(file);
+                  process(kafSaxParser);
+                  try {
+                      FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".coref");
+                      kafSaxParser.writeNafToStream(fos);
+                      fos.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+
+          }
+
 
           static void process(KafSaxParser kafSaxParser) {
               Calendar date = Calendar.getInstance();
