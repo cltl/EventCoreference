@@ -24,7 +24,7 @@ public class InterDocumentEventCoref {
     static final String layer = "sem-instances";
     static final String name = "vua-event-coref-interdoc-time-lemma-baseline";
     static final String version = "1.0";
-    static HashMap<String, SourceMeta> sourceMetaHashMap = null;
+    //static HashMap<String, SourceMeta> sourceMetaHashMap = null;
 /*
     static ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
     static ArrayList<SemObject> semActors = new ArrayList<SemObject>();
@@ -41,7 +41,7 @@ public class InterDocumentEventCoref {
         semPlaces = new ArrayList<SemObject>();
         semRelations = new ArrayList<SemRelation>();
 */
-
+        HashMap<String, SourceMeta> sourceMetaHashMap = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 0;
         String projectName = "";
@@ -71,12 +71,13 @@ public class InterDocumentEventCoref {
                // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
             }
         }
-        processFolder (projectName, new File(pathToNafFolder), extension, conceptMatchThreshold, phraseMatchThreshold);
+        processFolder (projectName, new File(pathToNafFolder), extension, conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap);
     }
 
 
     public static void processFolder (String project, File pathToNafFolder, String extension, double conceptMatchThreshold,
-                                      double phraseMatchThreshold
+                                      double phraseMatchThreshold,
+                                      HashMap<String, SourceMeta> sourceMetaHashMap
 
     ) {
         KafSaxParser kafSaxParser = new KafSaxParser();

@@ -45,6 +45,7 @@ public class NafMention {
     public String getBaseUri() {
         return baseUri;
     }
+
     public String getBaseUriWithoutId() {
         int idx = baseUri.lastIndexOf("#");
         if (idx>-1) {

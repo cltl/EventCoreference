@@ -97,6 +97,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semTimes.add(semTimeRole);
         }
 
+/*
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> locationReferences = getLocationMentionsHashMapFromSrl (kafSaxParser);
         keySet = timeReferences.keySet();
         keys = keySet.iterator();
@@ -110,6 +111,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semPlaceRole.addPhraseCountsForMentions(kafSaxParser);
             semPlaces.add(semPlaceRole);
         }
+*/
 
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);

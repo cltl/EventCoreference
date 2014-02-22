@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.util;
 
 import eu.newsreader.eventcoreference.naf.InterDocumentEventCoref;
+import eu.newsreader.eventcoreference.objects.SourceMeta;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public class ProcessNewsReaderCarBatch {
 
     static public void main (String [] args) {
         //String pathToProcessFile = args[0];
+        HashMap<String, SourceMeta> sourceMetaHashMap = null;
+        String pathToSourceDataFile = "";
         String pathToClusterFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference/publicationDatesFiles.txt";
         String pathToNafClusters = "";
         String projectName  = "";
@@ -41,6 +44,12 @@ public class ProcessNewsReaderCarBatch {
             }
             else if (arg.equals("--entity-coref")) {
                 DO_entitycoref = true;
+            }
+
+            else if (arg.equals("--source-data") && args.length>(i+1)) {
+                pathToSourceDataFile = args[i+1];
+                sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
+                System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
             }
         }
         if (DO_entitycoref) {
@@ -91,7 +100,7 @@ public class ProcessNewsReaderCarBatch {
                 while (keys.hasNext()) {
                     File pathToNafFolder = (File) keys.next();
                    // System.out.println("pathToNafFolder = " + pathToNafFolder);
-                    InterDocumentEventCoref.processFolder (projectName, pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold);
+                    InterDocumentEventCoref.processFolder (projectName, pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold,sourceMetaHashMap);
                 }
             }
         }
@@ -101,7 +110,7 @@ public class ProcessNewsReaderCarBatch {
                 ArrayList<File> folders = Util.makeFolderList(nafClusterFolder);
                 for (int i = 0; i < folders.size(); i++) {
                     File pathToNafFolder =  folders.get(i);
-                    InterDocumentEventCoref.processFolder (projectName, pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold);
+                    InterDocumentEventCoref.processFolder (projectName, pathToNafFolder, corefExtension, conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap);
                 }
             }
         }

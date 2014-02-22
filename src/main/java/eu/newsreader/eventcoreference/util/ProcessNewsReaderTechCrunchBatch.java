@@ -41,7 +41,7 @@ public class ProcessNewsReaderTechCrunchBatch {
             for (int i = 0; i < folders.size(); i++) {
                 File pathToNafFolder =  folders.get(i);
                // System.out.println("pathToNafFolder.getName() = " + pathToNafFolder.getName());
-                InterDocumentEventCoref.processFolder (projectName, pathToNafFolder, extension, conceptMatchThreshold, phraseMatchThreshold);
+                InterDocumentEventCoref.processFolder (projectName, pathToNafFolder, extension, conceptMatchThreshold, phraseMatchThreshold, null);
             }
         }
         else {

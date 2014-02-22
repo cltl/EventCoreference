@@ -34,6 +34,7 @@ public class ReadSourceMetaFile {
                         String key = fields[0];
                        // System.out.println("key = " + key);
                         SourceMeta sourceMeta = new SourceMeta(fields);
+                       // System.out.println("key = " + key);
                         data.put(key,sourceMeta);
                     }
                     else {

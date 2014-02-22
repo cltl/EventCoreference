@@ -23,6 +23,6 @@ public class ResourcesUri {
     final static public String rdfs= "http://www.w3.org/2000/01/rdf-schema#";
     final static public String tl = "http://purl.org/NET/c4dm/timeline.owl#";
     final static public String owl= "http://www.w3.org/2002/07/owl#";
-    final static public String prov= "http://www.w3.org/2002/07/prov-o#";
+    final static public String prov= "http://www.w3.org/ns/prov#";
 
 }
