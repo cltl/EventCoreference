@@ -56,7 +56,15 @@ public class Util {
                     mention.addTokensId(kafWordForm.getWid());
                     if (!kafWordForm.getCharOffset().isEmpty()) {
                         int offSet = Integer.parseInt(kafWordForm.getCharOffset());
-                        int length = Integer.parseInt(kafWordForm.getCharLength());
+                        int length = 0;
+                        try {
+                            length = Integer.parseInt(kafWordForm.getCharLength());
+                        } catch (NumberFormatException e) {
+                        //    e.printStackTrace();
+                        }
+                        if (length==0) {
+                         length = kafWordForm.getWf().length();
+                        }
                         if (firstOffSet==-1 || firstOffSet>offSet) {
                             firstOffSet = offSet;
                         }

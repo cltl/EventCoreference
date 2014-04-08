@@ -86,15 +86,14 @@ public class EventCorefLemmaBaseline {
 
           static void process(KafSaxParser kafSaxParser) {
               Calendar date = Calendar.getInstance();
-              date.setTimeInMillis(System.currentTimeMillis());
-              String strdate = null;
+              String strBeginDate = null;
+              String strEndDate = null;
               SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+              date.setTimeInMillis(System.currentTimeMillis());
               if (date != null) {
-                  strdate = sdf.format(date.getTime());
+                  strBeginDate = sdf.format(date.getTime());
               }
 
-              kafSaxParser.getKafMetaData().addLayer(layer, name, version, strdate);
 
               int corefCounter = 0;
               HashMap<String, KafCoreferenceSet> kafCoreferenceSetHashMap = new HashMap<String, KafCoreferenceSet>();
@@ -128,6 +127,14 @@ public class EventCorefLemmaBaseline {
                   KafCoreferenceSet kafCoreferenceSet = kafCoreferenceSetHashMap.get(key);
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
+              date.setTimeInMillis(System.currentTimeMillis());
+              if (date != null) {
+                  strEndDate = sdf.format(date.getTime());
+              }
+
+              LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
+              kafSaxParser.getKafMetaData().addLayer(name, lp);
+
           }
 
 }
