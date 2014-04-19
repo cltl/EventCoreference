@@ -38,6 +38,44 @@ public class SemTime extends SemObject{
 
    */
 
+    /*
+    2. time aspects
+
+I see that you define the time instances with a prefix “tl:”,
+referring to the timeline ontology.
+Are you suggesting to use that ontology to model time,
+or are you using the prefix to define the URI of the time instance?
+In the former case, additional assertions have to be added to define the object
+(e.g. type - tl:Instant, tl:Interval - , tl:start, etc),
+otherwise we just end up with an instance with a label attached to it,
+which cannot be actually exploited.
+In the latter case, we don’t need to introduce this namespace,
+we can directly use the nwr one.
+
+Note that the "additional assertions" comment applies also
+if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the example.trig in attachment).
+
+	#acquisition event between two companies (actor_01, actor_02), at a certain date/time
+    nwr:event_01
+        a rsem:Event, newsEvents:Acquisition ;
+        rsem:hasActor nwr:actor_01, nwr:actor_02 ;
+        rsem:hasTime nwr:time_01 .
+
+    nwr:actor_01
+        a rsem:Actor, dbpedia:Company .
+
+    nwr:actor_02
+        a rsem:Actor, dbpedia:Company .
+
+    nwr:time_01
+        a rsem:Time, owltime:Instant ;
+        owltime:inDateTime nwr:20010101 .
+
+    nwr:20010101
+        owltime:day "1"^^xsd:int ;
+        owltime:month "1"^^xsd:int ;
+        owltime:year "2001"^^xsd:int .
+     */
 
    public SemTime() {
     }

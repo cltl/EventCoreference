@@ -24,5 +24,7 @@ public class ResourcesUri {
     final static public String tl = "http://purl.org/NET/c4dm/timeline.owl#";
     final static public String owl= "http://www.w3.org/2002/07/owl#";
     final static public String prov= "http://www.w3.org/ns/prov#";
+    final static public String owltime= "http://www.w3.org/TR/owl-time#";
+    //final static public String owltime= "http://www.w3.org/2002/07/owl#";
 
 }

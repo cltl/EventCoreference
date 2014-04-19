@@ -204,6 +204,7 @@ public class SemRelation {
             Resource object = relationModel.createResource(this.getObject());
             Property semProperty = getSemRelationType(this.getPredicate());
             subject.addProperty(semProperty, object);
+          //  Property owlProperty = OWL.ObjectProperty.getProperty()
         }
 
 

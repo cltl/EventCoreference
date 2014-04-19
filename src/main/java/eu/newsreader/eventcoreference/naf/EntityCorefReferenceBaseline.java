@@ -85,14 +85,14 @@ public class EntityCorefReferenceBaseline {
 
 
     static void process (KafSaxParser kafSaxParser) {
-                Calendar date = Calendar.getInstance();
-                String strBeginDate = null;
-                String strEndDate = null;
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                date.setTimeInMillis(System.currentTimeMillis());
-                if (date != null) {
+              Calendar date = Calendar.getInstance();
+              String strBeginDate = null;
+              String strEndDate = null;
+              SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+              date.setTimeInMillis(System.currentTimeMillis());
+              if (date != null) {
                     strBeginDate = sdf.format(date.getTime());
-                }
+              }
               int corefCounter = 0;
               HashMap<String, KafCoreferenceSet> kafCoreferenceSetHashMap = new HashMap<String, KafCoreferenceSet>();
               for (int i = 0; i < kafSaxParser.kafEntityArrayList.size(); i++) {
@@ -140,13 +140,13 @@ public class EntityCorefReferenceBaseline {
                   KafCoreferenceSet kafCoreferenceSet = kafCoreferenceSetHashMap.get(key);
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
-                date.setTimeInMillis(System.currentTimeMillis());
-                if (date != null) {
+              date.setTimeInMillis(System.currentTimeMillis());
+              if (date != null) {
                     strEndDate = sdf.format(date.getTime());
-                }
+              }
 
-                LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
-                kafSaxParser.getKafMetaData().addLayer(name, lp);
+              LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
+              kafSaxParser.getKafMetaData().addLayer(name, lp);
           }
 
 }
