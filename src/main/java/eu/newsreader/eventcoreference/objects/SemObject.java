@@ -227,11 +227,11 @@ public class SemObject {
 
         resource.addProperty(RDF.type, Sem.Time);
 
-        Resource aResource = model.createResource("time:Instant");
+        Resource aResource = model.createResource(ResourcesUri.owltime+"Instant");
         Property property = model.createProperty("owltime:Instant");
         resource.addProperty(RDF.type, aResource);
 
-        property = model.createProperty("time:inDateTime");
+        property = model.createProperty(ResourcesUri.owltime+"inDateTime");
         resource.addProperty(property, owlTime.getDateString());
 
         for (int i = 0; i < nafMentions.size(); i++) {
@@ -258,11 +258,11 @@ public class SemObject {
 
             resource.addProperty(RDF.type, Sem.Time);
 
-            Resource aResource = model.createResource("time:Instant");
+            Resource aResource = model.createResource(ResourcesUri.owltime+"Instant");
             Property property = model.createProperty("owltime:Instant");
             resource.addProperty(RDF.type, aResource);
 
-            property = model.createProperty("time:inDateTime");
+            property = model.createProperty(ResourcesUri.owltime+"inDateTime");
             resource.addProperty(property, owlTime.getDateString());
 
        /* for (int i = 0; i < nafMentions.size(); i++) {
@@ -288,13 +288,13 @@ public class SemObject {
 
         resource.addProperty(RDF.type, Sem.Time);
 
-        Resource interval = model.createResource("time:Interval");
+        Resource interval = model.createResource(ResourcesUri.owltime+"Interval");
         Property property = model.createProperty("owltime:Interval");
 
         resource.addProperty(RDF.type, interval);
 
         //Resource inDateTime = model.createResource("owltime:inDateTime");
-        property = model.createProperty("time:inDateTime");
+        property = model.createProperty(ResourcesUri.owltime+"inDateTime");
         resource.addProperty(property, owlTime.getDateString());
 
         for (int i = 0; i < nafMentions.size(); i++) {
@@ -320,11 +320,11 @@ public class SemObject {
             }
 
             resource.addProperty(RDF.type, Sem.Time);
-            Resource interval = model.createResource("time:Interval");
+            Resource interval = model.createResource(ResourcesUri.owltime+"Interval");
             Property property = model.createProperty("owltime:Interval");
             resource.addProperty(RDF.type, interval);
 
-            property = model.createProperty("time:inDateTime");
+            property = model.createProperty(ResourcesUri.owltime+"inDateTime");
             resource.addProperty(property, owlTime.getDateString());
 
        /* for (int i = 0; i < nafMentions.size(); i++) {

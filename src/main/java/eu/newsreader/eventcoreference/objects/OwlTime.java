@@ -235,23 +235,23 @@ public class OwlTime {
           */
 
         Resource resource = model.createResource(this.getDateString());
-        Property property = model.createProperty("time:DateTimeDescription");
+        Property property = model.createProperty(ResourcesUri.owltime+"DateTimeDescription");
 
         resource.addProperty(RDF.type, property);
 
         if (!this.day.isEmpty()) {
-            Property day = model.createProperty("time:day");
+            Property day = model.createProperty(ResourcesUri.owltime+"day");
             resource.addProperty(day, this.getDay(), XSDDatatype.XSDgDay);
         }
         if (!this.month.isEmpty()) {
-            Property month = model.createProperty("time:month");
+            Property month = model.createProperty(ResourcesUri.owltime+"month");
             resource.addProperty(month, this.getMonth(),XSDDatatype.XSDgMonth);
         }
         if (!this.year.isEmpty()) {
-            Property year = model.createProperty("time:year");
+            Property year = model.createProperty(ResourcesUri.owltime+"year");
             resource.addProperty(year, this.getYear(),XSDDatatype.XSDgYear);
-            Property unit = model.createProperty("time:unitType");
-            Property day = model.createProperty("time:unitDay");
+            Property unit = model.createProperty(ResourcesUri.owltime+"unitType");
+            Property day = model.createProperty(ResourcesUri.owltime+"unitDay");
             resource.addProperty(unit, day);
         }
     }
@@ -265,23 +265,23 @@ public class OwlTime {
           */
 
         Resource resource = model.createResource(this.getDateString());
-        Property property = model.createProperty("time:DurationDescription");
+        Property property = model.createProperty(ResourcesUri.owltime+"DurationDescription");
 
         resource.addProperty(RDF.type, property);
 
         if (!this.day.isEmpty()) {
-            Property day = model.createProperty("time:day");
+            Property day = model.createProperty(ResourcesUri.owltime+"day");
             resource.addProperty(day, this.getDay(), XSDDatatype.XSDgDay);
         }
         if (!this.month.isEmpty()) {
-            Property month = model.createProperty("time:month");
+            Property month = model.createProperty(ResourcesUri.owltime+"month");
             resource.addProperty(month, this.getMonth(),XSDDatatype.XSDgMonth);
         }
         if (!this.year.isEmpty()) {
-            Property year = model.createProperty("time:year");
+            Property year = model.createProperty(ResourcesUri.owltime+"year");
             resource.addProperty(year, this.getYear(),XSDDatatype.XSDgYear);
-            Property unit = model.createProperty("time:unitType");
-            Property day = model.createProperty("time:unitDay");
+            Property unit = model.createProperty(ResourcesUri.owltime+"unitType");
+            Property day = model.createProperty(ResourcesUri.owltime+"unitDay");
             resource.addProperty(unit, day);
         }
     }
