@@ -58,6 +58,14 @@ public class SemObject {
         this.concepts = concepts;
     }
 
+    public String getPhrase () {
+        String phrase = "";
+        if (phraseCounts.size()>0) {
+            phrase = phraseCounts.get(0).getPhrase();
+        }
+        return  phrase;
+    }
+
     public ArrayList<PhraseCount> getPhraseCounts() {
         return phraseCounts;
     }

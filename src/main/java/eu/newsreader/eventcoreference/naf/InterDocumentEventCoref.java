@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.naf;
 
 import eu.kyotoproject.kaf.KafSaxParser;
+import eu.newsreader.eventcoreference.objects.OwlTime;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
 import eu.newsreader.eventcoreference.objects.SourceMeta;
@@ -75,6 +76,118 @@ public class InterDocumentEventCoref {
     }
 
 
+    public static boolean compareTime (ArrayList<SemObject> mySemTimes,
+                                       ArrayList<SemObject> semTimes) {
+
+        for (int i = 0; i < mySemTimes.size(); i++) {
+            SemObject mySemTime = mySemTimes.get(i);
+            OwlTime myOwlTime = new OwlTime();
+            myOwlTime.parseStringDate(mySemTime.getPhrase());
+            for (int j = 0; j < semTimes.size(); j++) {
+                SemObject semTime = semTimes.get(j);
+                OwlTime owlTime = new OwlTime();
+                owlTime.parseStringDate(semTime.getPhrase());
+                /// replace this by exact time matches....
+                if (myOwlTime.matchTimeEmbedded(owlTime)) {
+                  //  System.out.println("myOwlTime.getDateString() = " + myOwlTime.getDateString());
+                  //  System.out.println("owlTime.getDateString() = " + owlTime.getDateString());
+
+                   return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    public static boolean comparePlace (ArrayList<SemObject> mySemPlaces,
+                                       ArrayList<SemObject> semPlaces) {
+
+        for (int i = 0; i < mySemPlaces.size(); i++) {
+            SemObject mySemPlace = mySemPlaces.get(i);
+            for (int j = 0; j < semPlaces.size(); j++) {
+                SemObject semPlace = semPlaces.get(j);
+                if (mySemPlace.getURI().equals(semPlace)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean compareActor (ArrayList<SemObject> mySemActors,
+                                       ArrayList<SemObject> semActors) {
+
+        for (int i = 0; i < mySemActors.size(); i++) {
+            SemObject mySemActor = mySemActors.get(i);
+            for (int j = 0; j < semActors.size(); j++) {
+                SemObject semActor = semActors.get(j);
+                if (semActor.getURI().equals(semActor)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean compareComponents (SemObject mySemEvent,
+                                          ArrayList<SemObject> theSemActors,
+                                          ArrayList<SemObject> theSemPlaces,
+                                          ArrayList<SemObject> theSemTimes,
+                                          ArrayList<SemRelation> mySemRelations,
+                                          SemObject semEvent,
+                                          ArrayList<SemObject> semActors,
+                                          ArrayList<SemObject> semPlaces,
+                                          ArrayList<SemObject> semTimes,
+                                          ArrayList<SemRelation> semRelations) {
+
+        ArrayList<SemObject> mySemTimes = getMySemObjects(mySemEvent, mySemRelations, theSemTimes);
+        ArrayList<SemObject> oSemTimes = getMySemObjects(semEvent, semRelations, semTimes);
+        if (!compareTime(mySemTimes, oSemTimes)) {
+           return false;
+        }
+        ArrayList<SemObject> mySemPlaces = getMySemObjects(mySemEvent, mySemRelations, theSemPlaces);
+        ArrayList<SemObject> oSemPlaces = getMySemObjects(semEvent, semRelations, semPlaces);
+        if (mySemPlaces.size()>0 && oSemPlaces.size()>0) {
+            if (!comparePlace(mySemPlaces, oSemPlaces)) {
+                return false;
+            }
+        }
+        ArrayList<SemObject> mySemActors = getMySemObjects(mySemEvent, mySemRelations, theSemActors);
+        ArrayList<SemObject> oSemActors = getMySemObjects(semEvent, semRelations, semActors);
+        if (!compareActor(mySemActors, oSemActors)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static ArrayList<SemRelation> getMySemRelations (SemObject event, ArrayList<SemRelation> semRelations) {
+        ArrayList<SemRelation> mySemRelations = new ArrayList<SemRelation>();
+        for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+            if (semRelation.getSubject().equals(event.getId())) {
+                mySemRelations.add(semRelation);
+            }
+        }
+        return mySemRelations;
+    }
+
+    public static ArrayList<SemObject> getMySemObjects (SemObject event, ArrayList<SemRelation> semRelations, ArrayList<SemObject> semObjects) {
+        ArrayList<SemObject> mySemObjects = new ArrayList<SemObject>();
+        for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+            for (int j = 0; j < mySemObjects.size(); j++) {
+                SemObject semObject = mySemObjects.get(j);
+                if (semRelation.getSubject().equals(event.getId()) &&
+                    semRelation.getObject().equals(semObject.getId())) {
+                    mySemObjects.add(semObject);
+                }
+            }
+        }
+        return semObjects;
+    }
+
+
     public static void processFolder (String project, File pathToNafFolder, String extension, double conceptMatchThreshold,
                                       double phraseMatchThreshold,
                                       HashMap<String, SourceMeta> sourceMetaHashMap
@@ -119,21 +232,30 @@ public class InterDocumentEventCoref {
                         System.out.println("mySemEvent.getPhraseCounts().toString() = " + mySemEvent.getPhraseCounts().toString());
     */
                     if (phraseMatch>=phraseMatchThreshold) {
-                        merge = true;
-                        semEvent.mergeSemObject(mySemEvent);
-                        localToGlobalEventMap.put(mySemEvent.getId(), semEvent.getId());
-                        /// merge and check relations
-                        /// but we can only check the relations after we checked the objects as well
-                        break;
+                        if (compareComponents(mySemEvent, mySemActors, mySemPlaces, mySemTimes, mySemRelations,
+                                              semEvent, semActors, semPlaces, semTimes, semRelations)) {
+                            merge = true;
+                            semEvent.mergeSemObject(mySemEvent);
+                            localToGlobalEventMap.put(mySemEvent.getId(), semEvent.getId());
+                            /// merge and check relations
+                            /// but we can only check the relations after we checked the objects as well
+                            break;
+                        }
+                        else {
+                           // System.out.println("NOT MERGING THESE semEvent.getPhrase() = " + semEvent.getPhrase());
+                        }
                     }
                     else {
                         if (conceptMatchThreshold>0)  {
                             double conceptMatch = mySemEvent.matchObjectByConcepts((semEvent));
                             if (conceptMatch>=conceptMatchThreshold) {
-                                merge = true;
-                                semEvent.mergeSemObject(mySemEvent);
-                                localToGlobalEventMap.put(mySemEvent.getId(), semEvent.getId());
-                                break;
+                                if (compareComponents(mySemEvent, mySemActors, mySemPlaces, mySemTimes, mySemRelations,
+                                        semEvent, semActors, semPlaces, semTimes, semRelations)) {
+                                    merge = true;
+                                    semEvent.mergeSemObject(mySemEvent);
+                                    localToGlobalEventMap.put(mySemEvent.getId(), semEvent.getId());
+                                    break;
+                                }
                             }
                         }
                     }

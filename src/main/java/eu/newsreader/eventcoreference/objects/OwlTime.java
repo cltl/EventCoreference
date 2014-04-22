@@ -151,6 +151,45 @@ public class OwlTime {
         }
     }
 
+    public boolean matchTimeExact (OwlTime time) {
+        if (time.getDateString().isEmpty() || this.getDateString().isEmpty()) {
+            return false;
+        }
+        if (time.getDateString().equals(this.getDateString())) {
+            return true;
+        }
+        else {
+           return false;
+        }
+    }
+
+    public boolean matchTimeEmbedded (OwlTime time) {
+        if (time.getDateString().isEmpty() || this.getDateString().isEmpty()) {
+            return false;
+        }
+        if (time.getDateString().equals(this.getDateString())) {
+            return true;
+        }
+        else {
+            if (!time.getYear().equals(this.getYear())) {
+                return false;
+            } else {
+                if (time.getDay().isEmpty() || this.getDay().isEmpty()) {
+                    if (time.getMonth().equals(this.getMonth())) {
+                        return true;
+                    } else if (time.getMonth().isEmpty() || this.getMonth().isEmpty()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+
     public void parseStringDate (String date) {
         ///2013-01-01
         String year = getYearFromString(date);
