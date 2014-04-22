@@ -209,6 +209,7 @@ public class OwlTime {
         return -1;
     }
 
+
     public String getDateString () {
         String str = ResourcesUri.nwrtime+this.year;
         if (!this.month.isEmpty()) {

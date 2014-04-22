@@ -240,6 +240,7 @@ public class SemRelation {
         }
     }
 
+/*
     public void addToJenaDataSet (Dataset ds, Model relationModel, Model provenanceModel) {
 
 
@@ -283,6 +284,7 @@ public class SemRelation {
 
         }
     }
+*/
 
 
     public SemRelation (SemRelation semRelation) {

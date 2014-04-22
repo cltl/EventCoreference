@@ -228,11 +228,11 @@ public class SemObject {
         resource.addProperty(RDF.type, Sem.Time);
 
         Resource aResource = model.createResource(ResourcesUri.owltime+"Instant");
-        Property property = model.createProperty("owltime:Instant");
         resource.addProperty(RDF.type, aResource);
 
-        property = model.createProperty(ResourcesUri.owltime+"inDateTime");
-        resource.addProperty(property, owlTime.getDateString());
+        Resource value = model.createResource(owlTime.getDateString());
+        Property property = model.createProperty(ResourcesUri.owltime+"inDateTime");
+        resource.addProperty(property, value);
 
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
@@ -259,19 +259,12 @@ public class SemObject {
             resource.addProperty(RDF.type, Sem.Time);
 
             Resource aResource = model.createResource(ResourcesUri.owltime+"Instant");
-            Property property = model.createProperty("owltime:Instant");
             resource.addProperty(RDF.type, aResource);
+            Resource value = model.createResource(owlTime.getDateString());
+            Property property = model.createProperty(ResourcesUri.owltime+"inDateTime");
+            resource.addProperty(property, value);
 
-            property = model.createProperty(ResourcesUri.owltime+"inDateTime");
-            resource.addProperty(property, owlTime.getDateString());
 
-       /* for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property gaf = model.createProperty(ResourcesUri.gaf+"denotedBy");
-            Resource targetResource = model.createResource(nafMention.toString());
-            resource.addProperty(gaf, targetResource);
-
-        }*/
         }
     }
 
@@ -289,13 +282,11 @@ public class SemObject {
         resource.addProperty(RDF.type, Sem.Time);
 
         Resource interval = model.createResource(ResourcesUri.owltime+"Interval");
-        Property property = model.createProperty("owltime:Interval");
-
         resource.addProperty(RDF.type, interval);
 
-        //Resource inDateTime = model.createResource("owltime:inDateTime");
-        property = model.createProperty(ResourcesUri.owltime+"inDateTime");
-        resource.addProperty(property, owlTime.getDateString());
+        Resource value = model.createResource(owlTime.getDateString());
+        Property property = model.createProperty(ResourcesUri.owltime+"inDateTime");
+        resource.addProperty(property, value);
 
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
@@ -321,19 +312,11 @@ public class SemObject {
 
             resource.addProperty(RDF.type, Sem.Time);
             Resource interval = model.createResource(ResourcesUri.owltime+"Interval");
-            Property property = model.createProperty("owltime:Interval");
             resource.addProperty(RDF.type, interval);
 
-            property = model.createProperty(ResourcesUri.owltime+"inDateTime");
-            resource.addProperty(property, owlTime.getDateString());
-
-       /* for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property gaf = model.createProperty(ResourcesUri.gaf+"denotedBy");
-            Resource targetResource = model.createResource(nafMention.toString());
-            resource.addProperty(gaf, targetResource);
-
-        }*/
+            Resource value = model.createResource(owlTime.getDateString());
+            Property property = model.createProperty(ResourcesUri.owltime+"inDateTime");
+            resource.addProperty(property, value);
         }
     }
 
@@ -391,17 +374,6 @@ public class SemObject {
             resource.addProperty(property, targetResource);
 
         }
-/*
-        for (int i = 0; i < mentions.size(); i++) {
-            ArrayList<CorefTarget> corefTargets = mentions.get(i);
-            for (int j = 0; j < corefTargets.size(); j++) {
-                CorefTarget corefTarget = corefTargets.get(j);
-                Property property = model.createProperty(ResourcesUri.gaf+"denotedBy");
-                Resource targetResource = model.createResource(corefTarget.getId());
-                resource.addProperty(property, targetResource);
-            }
-        }
-*/
     }
 
     static public String getNameSpaceTypeReference (KafSense kafSense) {
@@ -522,12 +494,6 @@ public class SemObject {
             NafMention nafMention = anObject.getNafMentions().get(i);
             this.nafMentions.add(nafMention);
         }
-/*
-        for (int i = 0; i < anObject.getMentions().size(); i++) {
-            ArrayList<CorefTarget> corefTargetArrayList = anObject.getMentions().get(i);
-            mentions.add(corefTargetArrayList);
-        }
-*/
     }
 
 }
