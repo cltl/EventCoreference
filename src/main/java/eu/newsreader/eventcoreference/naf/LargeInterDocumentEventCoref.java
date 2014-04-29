@@ -1,18 +1,16 @@
 package eu.newsreader.eventcoreference.naf;
 
 import eu.kyotoproject.kaf.KafSaxParser;
-import eu.newsreader.eventcoreference.objects.OwlTime;
-import eu.newsreader.eventcoreference.objects.SemObject;
-import eu.newsreader.eventcoreference.objects.SemRelation;
-import eu.newsreader.eventcoreference.objects.SourceMeta;
+import eu.kyotoproject.kaf.KafSense;
+import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
 import eu.newsreader.eventcoreference.util.Util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,30 +19,16 @@ import java.util.HashMap;
  * Time: 7:54 PM
  * To change this template use File | Settings | File Templates.
  */
-public class InterDocumentEventCoref {
+public class LargeInterDocumentEventCoref {
     static final String layer = "sem-instances";
     static final String name = "vua-event-coref-interdoc-time-lemma-baseline";
     static final String version = "1.0";
-    //static HashMap<String, SourceMeta> sourceMetaHashMap = null;
-/*
-    static ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
-    static ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-    static ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-    static ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
-    static ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-*/
 
     static public void main (String [] args) {
-/*
-        semEvents = new ArrayList<SemObject>();
-        semActors = new ArrayList<SemObject>();
-        semTimes = new ArrayList<SemObject>();
-        semPlaces = new ArrayList<SemObject>();
-        semRelations = new ArrayList<SemRelation>();
-*/
+
         HashMap<String, SourceMeta> sourceMetaHashMap = null;
         double conceptMatchThreshold = 0;
-        double phraseMatchThreshold = 0;
+        double phraseMatchThreshold = 1;
         String projectName = "";
         String pathToSourceDataFile = "";
         String pathToNafFolder = "";
@@ -72,7 +56,12 @@ public class InterDocumentEventCoref {
                // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
             }
         }
-        processFolder (projectName, new File(pathToNafFolder), extension, conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap);
+       // processFolderForEntities(projectName, new File(pathToNafFolder), extension, conceptMatchThreshold, phraseMatchThreshold);
+        try {
+            processFolderEvents(projectName, new File(pathToNafFolder), extension);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -200,12 +189,22 @@ public class InterDocumentEventCoref {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
+        ArrayList<SemObject> mySemEvents = new ArrayList<SemObject>();
+        ArrayList<SemObject> mySemActors = new ArrayList<SemObject>();
+        ArrayList<SemObject> mySemTimes = new ArrayList<SemObject>();
+        ArrayList<SemObject> mySemPlaces = new ArrayList<SemObject>();
+        ArrayList<SemRelation> mySemRelations = new ArrayList<SemRelation>();
+        ArrayList<SemRelation> myFactRelations = new ArrayList<SemRelation>();
+        HashMap<String, String> localToGlobalEventMap = new HashMap<String, String>();
+        HashMap<String, String> localToGlobalActorMap = new HashMap<String, String>();
+        HashMap<String, String> localToGlobalPlaceMap = new HashMap<String, String>();
+        HashMap<String, String> localToGlobalTimeMap = new HashMap<String, String>();
 
+        //FileOutputStream timelessEventsFos = new FileOutputStream(pathToNafFolder+"/timelesssem.trig");
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
         //System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
-/*
             if (i%50==0) {
                 System.out.println("i = " + i);
                 System.out.println("file.getName() = " + file.getAbsolutePath());
@@ -215,22 +214,35 @@ public class InterDocumentEventCoref {
                 System.out.println("semPlaces = " + semPlaces.size());
                 System.out.println("semRelations = " + semRelations.size());
             }
-*/
-            ArrayList<SemObject> mySemEvents = new ArrayList<SemObject>();
-            ArrayList<SemObject> mySemActors = new ArrayList<SemObject>();
-            ArrayList<SemObject> mySemTimes = new ArrayList<SemObject>();
-            ArrayList<SemObject> mySemPlaces = new ArrayList<SemObject>();
-            ArrayList<SemRelation> mySemRelations = new ArrayList<SemRelation>();
-            ArrayList<SemRelation> myFactRelations = new ArrayList<SemRelation>();
+            mySemEvents = new ArrayList<SemObject>();
+            mySemActors = new ArrayList<SemObject>();
+            mySemTimes = new ArrayList<SemObject>();
+            mySemPlaces = new ArrayList<SemObject>();
+            mySemRelations = new ArrayList<SemRelation>();
+            myFactRelations = new ArrayList<SemRelation>();
             kafSaxParser.parseFile(file.getAbsolutePath());
             GetSemFromNafFile.processNafFile(project, kafSaxParser, mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations);
-            HashMap<String, String> localToGlobalEventMap = new HashMap<String, String>();
-            HashMap<String, String> localToGlobalActorMap = new HashMap<String, String>();
-            HashMap<String, String> localToGlobalPlaceMap = new HashMap<String, String>();
-            HashMap<String, String> localToGlobalTimeMap = new HashMap<String, String>();
+            localToGlobalEventMap = new HashMap<String, String>();
+            localToGlobalActorMap = new HashMap<String, String>();
+            localToGlobalPlaceMap = new HashMap<String, String>();
+            localToGlobalTimeMap = new HashMap<String, String>();
 
+            ArrayList<SemObject> times = new ArrayList<SemObject>();
             for (int j = 0; j < mySemEvents.size(); j++) {
                 SemObject mySemEvent = mySemEvents.get(j);
+/*                times = getMySemObjects(mySemEvent, mySemRelations, mySemTimes);
+                if (times.size()==0) {
+
+                    ArrayList<SemObject> theSemEvent = new ArrayList<SemObject>(); theSemEvent.add(mySemEvent);
+                    ArrayList<SemObject> myTimes = getMySemObjects(mySemEvent, mySemRelations, mySemTimes);
+                    ArrayList<SemObject> myPlaces = getMySemObjects(mySemEvent, mySemRelations, mySemPlaces);
+                    ArrayList<SemObject> myActors = getMySemObjects(mySemEvent, mySemRelations, mySemActors);
+                    ArrayList<SemRelation> myRelations = getMySemRelations(mySemEvent, mySemRelations);
+                    ArrayList<SemRelation> myFacts = getMySemRelations(mySemEvent, myFactRelations);
+                    GetSemFromNafFile.serializeJena(timelessEventsFos,  theSemEvent, myActors, myPlaces, myTimes, myRelations, myFacts, sourceMetaHashMap);
+                    continue;
+                }*/
+
                 boolean merge = false;
                 for (int k = 0; k < semEvents.size(); k++) {
                     SemObject semEvent = semEvents.get(k);
@@ -241,7 +253,7 @@ public class InterDocumentEventCoref {
                         System.out.println("mySemEvent.getPhraseCounts().toString() = " + mySemEvent.getPhraseCounts().toString());
     */
                     if (phraseMatch>=phraseMatchThreshold) {
-                        if (compareComponents(mySemEvent, mySemActors, mySemPlaces, mySemTimes, mySemRelations,
+                        if (compareComponents(mySemEvent, mySemActors, mySemPlaces, times, mySemRelations,
                                               semEvent, semActors, semPlaces, semTimes, semRelations)) {
                             merge = true;
                             semEvent.mergeSemObject(mySemEvent);
@@ -461,6 +473,287 @@ public class InterDocumentEventCoref {
             //System.out.println("pathToNafFolder = " + pathToNafFolder);
             FileOutputStream fos = new FileOutputStream(pathToNafFolder+"/sem.trig");
             GetSemFromNafFile.serializeJena(fos,  semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, sourceMetaHashMap);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public static void processFolderEvents (String project, File pathToNafFolder, String extension
+
+    ) throws IOException {
+        File eventFolder = new File (pathToNafFolder+"/events");
+        if (!eventFolder.exists()) {
+            eventFolder.mkdir();
+        }
+        File speechFolder = new File (eventFolder+"/"+"speech");
+        if (!speechFolder.exists()) {
+            speechFolder.mkdir();
+        }
+        File otherFolder = new File (eventFolder+"/"+"other");
+        if (!otherFolder.exists()) {
+            otherFolder.mkdir();
+        }
+        File grammaticalFolder = new File (eventFolder+"/"+"grammatical");
+        if (!grammaticalFolder.exists()) {
+            grammaticalFolder.mkdir();
+        }
+
+        KafSaxParser kafSaxParser = new KafSaxParser();
+        ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
+        ArrayList<SemObject> semActors = new ArrayList<SemObject>();
+        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
+        ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
+        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
+
+        ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
+        //System.out.println("files.size() = " + files.size());
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+            if (!file.getName().equals("59V3-4CT1-JB32-V0V2.xml"))  {
+                continue;
+            }
+            if (i % 50 == 0) {
+                System.out.println("i = " + i);
+                System.out.println("file.getName() = " + file.getAbsolutePath());
+            }
+            semEvents = new ArrayList<SemObject>();
+            semActors = new ArrayList<SemObject>();
+            semTimes = new ArrayList<SemObject>();
+            semPlaces = new ArrayList<SemObject>();
+            semRelations = new ArrayList<SemRelation>();
+            factRelations = new ArrayList<SemRelation>();
+            kafSaxParser.parseFile(file.getAbsolutePath());
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+
+            // We need to create output objects that are more informative than the Trig output and store these in files per date
+
+            ArrayList<SemObject> times = new ArrayList<SemObject>();
+            for (int j = 0; j < semEvents.size(); j++) {
+                    SemObject mySemEvent = semEvents.get(j);
+                    ArrayList<SemObject> myTimes = getMySemObjects(mySemEvent, semRelations, semTimes);
+                    ArrayList<SemObject> myPlaces = getMySemObjects(mySemEvent, semRelations, semPlaces);
+                    ArrayList<SemObject> myActors = getMySemObjects(mySemEvent, semRelations, semActors);
+                    ArrayList<SemRelation> myRelations = getMySemRelations(mySemEvent, semRelations);
+                    ArrayList<SemRelation> myFacts = getMySemRelations(mySemEvent, factRelations);
+                    CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
+                    File folder = otherFolder;
+                    for (int k = 0; k < mySemEvent.getConcepts().size(); k++) {
+                        KafSense kafSense = mySemEvent.getConcepts().get(k);
+                        if (kafSense.getSensecode().equalsIgnoreCase("speech-cognition")) {
+                            folder = speechFolder;
+                            break;
+                        }
+                        else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
+                            folder = speechFolder;
+                            break;
+                        }
+                        else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
+                            folder = speechFolder;
+                            break;
+                        }
+                        else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
+                            folder = grammaticalFolder;
+                            break;
+                        }
+                    }
+                    File timeFile  = null;
+
+                   // eventFos.writeObject(compositeEvent);
+                    /// now we need to write the event data and relations to the proper time folder for comparison
+                    if (myTimes.size()==0) {
+                        /// timeless
+                        timeFile = new File(folder.getAbsolutePath() + "/" + "events-"+"timeless"+ ".obj");
+
+                    }
+                    else if (myTimes.size()==1) {
+                        /// time: same year or exact?
+                        String timePhrase = OwlTime.getYearFromString(myTimes.get(0).getPhrase());
+                        timeFile = new File(folder.getAbsolutePath() + "/" + "events"+timePhrase+ ".obj");
+                    }
+                    else {
+                        /// special case if multiple times, what to do? create a period?
+                        //// ?????
+                        //ArrayList<String> coveredYears = new ArrayList<String>();
+                        TreeSet<String> treeSet = new TreeSet<String>();
+                        String timePhrase = "";
+                        for (int k = 0; k < myTimes.size(); k++) {
+                            SemObject semObject = myTimes.get(k);
+                            String year = OwlTime.getYearFromString(semObject.getPhrase());
+                            if (!treeSet.contains(year)) {
+                                treeSet.add(year);
+                            }
+                        }
+                        if (treeSet.size()>4 && folder.getName().equals("other")) {
+                            System.out.println("mySemEvent = " + mySemEvent.getPhrase());
+                            for (int k = 0; k < mySemEvent.getNafMentions().size(); k++) {
+                                NafMention nafMention = mySemEvent.getNafMentions().get(k);
+                                System.out.println("nafMention.toString() = " + nafMention.toString());
+                            }
+                            for (int k = 0; k < myTimes.size(); k++) {
+                                SemObject semObject = myTimes.get(k);
+                                for (int l = 0; l < semObject.getNafMentions().size(); l++) {
+                                    NafMention nafMention = semObject.getNafMentions().get(l);
+                                    System.out.println("time nafMention.toString() = " + nafMention.toString());
+                                }
+                            }
+                        }
+                        Iterator keys = treeSet.iterator();
+                        while (keys.hasNext()) {
+                            timePhrase +="-"+keys.next();
+                        }
+                        timeFile = new File(folder.getAbsolutePath() + "/" + "events"+timePhrase+ ".obj");
+                    }
+                    if (timeFile!=null) {
+                        if (timeFile.exists()) {
+                          //  System.out.println("appending to timeFile.getName() = " + timeFile.getName());
+                            OutputStream os = new FileOutputStream(timeFile, true);
+                            ObjectOutputStream eventFos = new ObjectOutputStream(os);
+                            try {
+                                eventFos.writeObject(compositeEvent);
+                            } catch (IOException e) {
+                                //e.printStackTrace();
+                            }
+                            os.close();
+                            eventFos.close();
+                        } else {
+                         //   System.out.println("timeFile.getName() = " + timeFile.getName());
+                            OutputStream os = new FileOutputStream(timeFile);
+                            ObjectOutputStream eventFos = new ObjectOutputStream(os);
+                            try {
+                                eventFos.writeObject(compositeEvent);
+                            } catch (IOException e) {
+                               // e.printStackTrace();
+                            }
+                            os.close();
+                            eventFos.close();
+                        }
+                    }
+                }
+        }
+
+    }
+
+    public static void processFolderForEntities (String project, File pathToNafFolder, String extension, double conceptMatchThreshold,
+                                      double phraseMatchThreshold
+
+    ) {
+        KafSaxParser kafSaxParser = new KafSaxParser();
+        ArrayList<SemObject> semActors = new ArrayList<SemObject>();
+        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
+        ArrayList<SemObject> mySemActors = new ArrayList<SemObject>();
+        ArrayList<SemObject> mySemTimes = new ArrayList<SemObject>();
+        ArrayList<SemObject> mySemPlaces = new ArrayList<SemObject>();
+
+        //FileOutputStream timelessEventsFos = new FileOutputStream(pathToNafFolder+"/timelesssem.trig");
+        ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
+        //System.out.println("files.size() = " + files.size());
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+            if (i%50==0) {
+                System.out.println("i = " + i);
+                System.out.println("file.getName() = " + file.getAbsolutePath());
+                System.out.println("semActors = " + semActors.size());
+                System.out.println("semTimes = " + semTimes.size());
+                System.out.println("semPlaces = " + semPlaces.size());
+            }
+            mySemActors = new ArrayList<SemObject>();
+            mySemTimes = new ArrayList<SemObject>();
+            mySemPlaces = new ArrayList<SemObject>();
+            kafSaxParser.parseFile(file.getAbsolutePath());
+            GetSemFromNafFile.processNafFileForEntities(project, kafSaxParser, mySemActors, mySemPlaces, mySemTimes);
+
+            for (int j = 0; j < mySemActors.size(); j++) {
+                SemObject mySemActor = mySemActors.get(j);
+                boolean merge = false;
+                for (int k = 0; k < semActors.size(); k++) {
+                    SemObject semActor = semActors.get(k);
+                    double phraseMatch = mySemActor.matchObjectByPhrases((semActor));
+                    if (phraseMatch>=phraseMatchThreshold) {
+                        merge = true;
+                        semActor.mergeSemObject(mySemActor);
+                        break;
+                    }
+                    else {
+                        if (conceptMatchThreshold>0)  {
+                            double conceptMatch = mySemActor.matchObjectByConcepts((semActor));
+                            if (conceptMatch>=conceptMatchThreshold) {
+                                merge = true;
+                                semActor.mergeSemObject(mySemActor);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!merge) {
+                    semActors.add(mySemActor);
+                }
+            }
+
+
+            for (int j = 0; j < mySemPlaces.size(); j++) {
+                SemObject mySemPlace = mySemPlaces.get(j);
+                boolean merge = false;
+                for (int k = 0; k < semPlaces.size(); k++) {
+                    SemObject semPlace = semPlaces.get(k);
+                    double phraseMatch = mySemPlace.matchObjectByPhrases((semPlace));
+                    if (phraseMatch>=phraseMatchThreshold) {
+                        merge = true;
+                        semPlace.mergeSemObject(mySemPlace);
+                        break;
+                    }
+                    else {
+                        if (conceptMatchThreshold>0)  {
+                            double conceptMatch = mySemPlace.matchObjectByConcepts((semPlace));
+                            if (conceptMatch>=conceptMatchThreshold) {
+                                merge = true;
+                                semPlace.mergeSemObject(mySemPlace);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!merge) {
+                    semPlaces.add(mySemPlace);
+                }
+            }
+
+            for (int j = 0; j < mySemTimes.size(); j++) {
+                SemObject mySemTime = mySemTimes.get(j);
+                boolean merge = false;
+                for (int k = 0; k < semTimes.size(); k++) {
+                    SemObject semTime = semTimes.get(k);
+                    double phraseMatch = mySemTime.matchObjectByPhrases((semTime));
+                    if (phraseMatch>=phraseMatchThreshold) {
+                        merge = true;
+                        semTime.mergeSemObject(mySemTime);
+                        break;
+                    }
+                    else {
+                        if (conceptMatchThreshold>0)  {
+                            double conceptMatch = mySemTime.matchObjectByConcepts((semTime));
+                            if (conceptMatch>=conceptMatchThreshold) {
+                                merge = true;
+                                semTime.mergeSemObject(mySemTime);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!merge) {
+                    semTimes.add(mySemTime);
+                }
+            }
+        }
+        try {
+            //System.out.println("pathToNafFolder = " + pathToNafFolder);
+            FileOutputStream fos = new FileOutputStream(pathToNafFolder+"/sem-entities.trig");
+            GetSemFromNafFile.serializeJenaEntities(fos, semActors, semPlaces, semTimes);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

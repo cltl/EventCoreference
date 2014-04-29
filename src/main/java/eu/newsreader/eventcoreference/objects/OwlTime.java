@@ -139,15 +139,55 @@ public class OwlTime {
         this.instance = instance;
     }
 
+    public String separateWords (String date) {
+        String str = date;
+        String [] fields = date.split(" ");
+        if (fields.length>1) {
+            for (int i = 0; i < fields.length; i++) {
+                String field = fields[i];
+                str += " "+removePunctuation(field);
+            }
+        }
+        return str;
+    }
+
+    public String removePunctuation (String s) {
+        final String punctuation = ",./\\;(){}[]:";
+        String str = "";
+        for (int i = 0; i < s.toCharArray().length; i++) {
+            String c = s.substring(i, i+1);
+            if (punctuation.contains(c)) str += " ";
+            str += c;
+        }
+        return str.trim();
+    }
+
     public void parsePublicationDate (String date) {
         ///2013-01-01
-        String [] fields = date.split("-");
-        if (fields.length==3) {
-            //System.out.println("date = " + date);
-            this.instance = date;
-            this.day = (new Integer(fields[2])).toString();
-            this.month = (new Integer(fields[1])).toString();
-            this.year = (new Integer(fields[0])).toString();
+        try {
+            String [] fields = date.split("-");
+            if (fields.length==3) {
+                //System.out.println("date = " + date);
+                this.instance = date;
+                if (fields[0].length()==4) {
+                    this.day = (new Integer(fields[2])).toString();
+                    this.month = (new Integer(fields[1])).toString();
+                    this.year = (new Integer(fields[0])).toString();
+                }
+                else if (fields[2].length()==4) {
+                    this.day = (new Integer(fields[0])).toString();
+                    this.month = (new Integer(fields[1])).toString();
+                    this.year = (new Integer(fields[2])).toString();
+                }
+            }
+            else {
+                /// publication dates can have all kinds of formats.
+                // November 18, 2004
+                parseStringDate(date);
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            System.out.println("date = " + date);
         }
     }
 
@@ -190,19 +230,52 @@ public class OwlTime {
     }
 
 
-    public void parseStringDate (String date) {
-        ///2013-01-01
-        String year = getYearFromString(date);
-        if (!year.isEmpty()) {
-            this.year = year;
-            int month = getMonthFromString(date);
-            if (month>-1) {
-                this.month = (new Integer(month)).toString();
-                int day = getDayFromString(date);
-                if (day>-1) {
-                    this.day = (new Integer(day).toString());
+    public void parseStringDateWithDocTimeYearFallBack (String rawdate, String docTime) {
+        try {
+            String date = removePunctuation(rawdate);
+            String year = getYearFromString(date);
+            if (year.isEmpty()) {
+                /// if empty we steal the docTime year
+                /// Some strings provide month and or day but not the year
+                parsePublicationDate(docTime);
+            }
+            else {
+                this.year = year;
+            }
+            if (!this.year.isEmpty()) {
+                int month = getMonthFromString(date);
+                if (month>-1) {
+                    this.month = (new Integer(month)).toString();
+                    int day = getDayFromString(date);
+                    if (day>-1) {
+                        this.day = (new Integer(day).toString());
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("rawdate = " + rawdate);
+        }
+    }
+
+    public void parseStringDate (String rawdate) {
+        try {
+            String date = removePunctuation(rawdate);
+            String year = getYearFromString(date);
+            if (!year.isEmpty()) {
+                this.year = year;
+                int month = getMonthFromString(date);
+                if (month>-1) {
+                    this.month = (new Integer(month)).toString();
+                    int day = getDayFromString(date);
+                    if (day>-1) {
+                        this.day = (new Integer(day).toString());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("rawdate = " + rawdate);
         }
     }
 

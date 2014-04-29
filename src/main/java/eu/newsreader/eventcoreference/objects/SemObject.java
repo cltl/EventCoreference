@@ -10,6 +10,8 @@ import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.kyotoproject.kaf.KafTerm;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
@@ -22,13 +24,13 @@ import java.util.ArrayList;
  */
 public class SemObject {
 
-   private String id;
-   private double score;
-   private ArrayList<KafSense> concepts;
-   private ArrayList<PhraseCount> phraseCounts;
-   private String lcs;
-   private String label;
-   private ArrayList<NafMention> nafMentions;
+    private String id;
+    private double score;
+    private ArrayList<KafSense> concepts;
+    private ArrayList<PhraseCount> phraseCounts;
+    private String lcs;
+    private String label;
+    private ArrayList<NafMention> nafMentions;
 
     public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();
@@ -47,7 +49,7 @@ public class SemObject {
             for (int j = 0; j < nafMentions.size(); j++) {
                 NafMention nafMention = nafMentions.get(j);
                 if (nafMention.getTokensIds().contains(kafFactuality.getId())) {
-                   // System.out.println("nafMention.toString() = " + nafMention.toString());
+                    // System.out.println("nafMention.toString() = " + nafMention.toString());
                     nafMention.setFactuality(kafFactuality);
                 }
             }
@@ -58,12 +60,12 @@ public class SemObject {
         this.concepts = concepts;
     }
 
-    public String getPhrase () {
+    public String getPhrase() {
         String phrase = "";
-        if (phraseCounts.size()>0) {
+        if (phraseCounts.size() > 0) {
             phrase = phraseCounts.get(0).getPhrase();
         }
-        return  phrase;
+        return phrase;
     }
 
     public ArrayList<PhraseCount> getPhraseCounts() {
@@ -91,17 +93,16 @@ public class SemObject {
         }
     }
 
-    public void addPhraseCountsForMentions (KafSaxParser kafSaxParser) {
+    public void addPhraseCountsForMentions(KafSaxParser kafSaxParser) {
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
             String phrase = "";
             for (int j = 0; j < nafMention.getTermsIds().size(); j++) {
                 String termId = nafMention.getTermsIds().get(j);
                 KafTerm kafTerm = kafSaxParser.getTerm(termId);
-                if (kafTerm!=null) {
-                    phrase += " "+kafTerm.getLemma();
-                }
-                else {
+                if (kafTerm != null) {
+                    phrase += " " + kafTerm.getLemma();
+                } else {
                     System.out.println("no KafTerm for id = " + termId);
                 }
             }
@@ -139,7 +140,7 @@ public class SemObject {
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
             if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
-                    (kafSense.getSensecode().indexOf("dbpedia.org/")>-1)) {
+                    (kafSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
@@ -158,27 +159,27 @@ public class SemObject {
     }
 
     public String getURI(String nameSpace) {
-        String uri = nameSpace+id;
+        String uri = nameSpace + id;
         return uri;
     }
 
-    public void setTopPhraseAsLabel () {
+    public void setTopPhraseAsLabel() {
         Integer top = 0;
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
-            if (phraseCount.getCount()>top) {
-                this.label = phraseCount.getPhrase()+":"+phraseCount.getCount();
+            if (phraseCount.getCount() > top) {
+                this.label = phraseCount.getPhrase() + ":" + phraseCount.getCount();
             }
         }
     }
 
-    public String getTopPhraseAsLabel () {
+    public String getTopPhraseAsLabel() {
         Integer top = 0;
         String label = "";
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
-            if (phraseCount.getCount()>top) {
-                label = phraseCount.getPhrase().replace(" ", "-")+":"+phraseCount.getCount();
+            if (phraseCount.getCount() > top) {
+                label = phraseCount.getPhrase().replace(" ", "-") + ":" + phraseCount.getCount();
             }
         }
         return label;
@@ -222,9 +223,9 @@ public class SemObject {
         }
     }
 
-    public void addToJenaModelTimeInstant (Model model) {
+    public void addToJenaModelTimeInstant(Model model, String docTime) {
         OwlTime owlTime = new OwlTime();
-        owlTime.parseStringDate(phraseCounts.get(0).getPhrase());
+        owlTime.parseStringDateWithDocTimeYearFallBack(getPhrase(), docTime);
         owlTime.addToJenaModelOwlTimeInstant(model);
 
         Resource resource = model.createResource(this.getURI());
@@ -235,16 +236,16 @@ public class SemObject {
 
         resource.addProperty(RDF.type, Sem.Time);
 
-        Resource aResource = model.createResource(ResourcesUri.owltime+"Instant");
+        Resource aResource = model.createResource(ResourcesUri.owltime + "Instant");
         resource.addProperty(RDF.type, aResource);
 
         Resource value = model.createResource(owlTime.getDateString());
-        Property property = model.createProperty(ResourcesUri.owltime+"inDateTime");
+        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
-            Property gaf = model.createProperty(ResourcesUri.gaf+"denotedBy");
+            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
             Resource targetResource = model.createResource(nafMention.toString());
             resource.addProperty(gaf, targetResource);
 
@@ -252,8 +253,8 @@ public class SemObject {
 
     }
 
-    public void addToJenaModelDocTimeInstant (Model model) {
-        if (nafMentions.size()>0) {
+    public void addToJenaModelDocTimeInstant(Model model) {
+        if (nafMentions.size() > 0) {
             OwlTime owlTime = new OwlTime();
             owlTime.parsePublicationDate(phraseCounts.get(0).getPhrase());
             owlTime.addToJenaModelOwlTimeInstant(model);
@@ -261,24 +262,24 @@ public class SemObject {
             Resource resource = model.createResource(this.getURI());
             for (int i = 0; i < phraseCounts.size(); i++) {
                 PhraseCount phraseCount = phraseCounts.get(i);
-                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
+                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
             }
 
             resource.addProperty(RDF.type, Sem.Time);
 
-            Resource aResource = model.createResource(ResourcesUri.owltime+"Instant");
+            Resource aResource = model.createResource(ResourcesUri.owltime + "Instant");
             resource.addProperty(RDF.type, aResource);
             Resource value = model.createResource(owlTime.getDateString());
-            Property property = model.createProperty(ResourcesUri.owltime+"inDateTime");
+            Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
             resource.addProperty(property, value);
 
 
         }
     }
 
-    public void addToJenaModelTimeInterval (Model model) {
+    public void addToJenaModelTimeInterval(Model model, String docTime) {
         OwlTime owlTime = new OwlTime();
-        owlTime.parseStringDate(phraseCounts.get(0).getPhrase());
+        owlTime.parseStringDateWithDocTimeYearFallBack(getPhrase(), docTime);
         owlTime.addToJenaModelOwlTimeInstant(model);
 
         Resource resource = model.createResource(this.getURI());
@@ -289,16 +290,16 @@ public class SemObject {
 
         resource.addProperty(RDF.type, Sem.Time);
 
-        Resource interval = model.createResource(ResourcesUri.owltime+"Interval");
+        Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
         resource.addProperty(RDF.type, interval);
 
         Resource value = model.createResource(owlTime.getDateString());
-        Property property = model.createProperty(ResourcesUri.owltime+"inDateTime");
+        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
-            Property gaf = model.createProperty(ResourcesUri.gaf+"denotedBy");
+            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
             Resource targetResource = model.createResource(nafMention.toString());
             resource.addProperty(gaf, targetResource);
 
@@ -306,33 +307,33 @@ public class SemObject {
 
     }
 
-    public void addToJenaModelDocTimeInterval (Model model) {
-        if (nafMentions.size()>0 && phraseCounts.size()>0) {
+    public void addToJenaModelDocTimeInterval(Model model) {
+        if (phraseCounts.size() > 0) {
             OwlTime owlTime = new OwlTime();
-            owlTime.parsePublicationDate(phraseCounts.get(0).getPhrase());
+            owlTime.parsePublicationDate(getPhrase());
             owlTime.addToJenaModelOwlTimeInstant(model);
 
             Resource resource = model.createResource(this.getURI());
             for (int i = 0; i < phraseCounts.size(); i++) {
                 PhraseCount phraseCount = phraseCounts.get(i);
-                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
+                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
             }
 
             resource.addProperty(RDF.type, Sem.Time);
-            Resource interval = model.createResource(ResourcesUri.owltime+"Interval");
+            Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
             resource.addProperty(RDF.type, interval);
 
             Resource value = model.createResource(owlTime.getDateString());
-            Property property = model.createProperty(ResourcesUri.owltime+"inDateTime");
+            Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
             resource.addProperty(property, value);
         }
     }
 
-    public void addToJenaModel (Model model, Resource type) {
+    public void addToJenaModel(Model model, Resource type) {
         Resource resource = model.createResource(this.getURI());
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
-           // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
+            // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
             resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
         }
 
@@ -342,17 +343,13 @@ public class SemObject {
             KafSense kafSense = concepts.get(i);
             if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
                 continue;
-            }
-            else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+            } else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
                 continue;
-            }
-            else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
+            } else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
                 continue;
-            }
-            else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
+            } else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
                 continue;
-            }
-            else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
+            } else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
@@ -364,8 +361,7 @@ public class SemObject {
                 resource.addProperty(OWL.sameAs, conceptResource);*/
                 /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
                 continue;
-            }
-            else {
+            } else {
                 String nameSpaceType = getNameSpaceTypeReference(kafSense);
                 Resource conceptResource = model.createResource(nameSpaceType);
 /*                if (!conceptResource.isURIResource()) {
@@ -377,14 +373,14 @@ public class SemObject {
 
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
-            Property property = model.createProperty(ResourcesUri.gaf+"denotedBy");
+            Property property = model.createProperty(ResourcesUri.gaf + "denotedBy");
             Resource targetResource = model.createResource(nafMention.toString());
             resource.addProperty(property, targetResource);
 
         }
     }
 
-    static public String getNameSpaceTypeReference (KafSense kafSense) {
+    static public String getNameSpaceTypeReference(KafSense kafSense) {
         String ref = "";
         /**
          *         String nwr = "http://www.newsreader-project.eu/";
@@ -396,36 +392,37 @@ public class SemObject {
          String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
          */
         if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
-            ref = ResourcesUri.vn+ kafSense.getSensecode();
-        }
-        else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-            ref = ResourcesUri.wn+kafSense.getSensecode();
-        }
-        else if (kafSense.getResource().equalsIgnoreCase("framenet")) {
-            ref = ResourcesUri.fn+kafSense.getSensecode();
-        }
-        else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
-            ref = ResourcesUri.pb+kafSense.getSensecode();
-        }
-        else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
-            ref = ResourcesUri.nb+kafSense.getSensecode();
-        }
-        else if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
-            ref = ResourcesUri.nwr+kafSense.getSensecode();
-        }
-        else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
+            ref = ResourcesUri.vn + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+            ref = ResourcesUri.wn + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("framenet")) {
+            ref = ResourcesUri.fn + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
+            ref = ResourcesUri.pb + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
+            ref = ResourcesUri.nb + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
+            ref = ResourcesUri.nwr + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
             ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
-           // ref = ResourcesUri.dbp+kafSense.getSensecode();
-           // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
-        }
-        else {
-            if (kafSense.getSensecode().indexOf(ResourcesUri.dbp)>-1) {
-               // ref = ResourcesUri.dbp+kafSense.getSensecode();
+            // ref = ResourcesUri.dbp+kafSense.getSensecode();
+            // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
+        } else {
+            if (kafSense.getSensecode().indexOf(ResourcesUri.dbp) > -1) {
+                // ref = ResourcesUri.dbp+kafSense.getSensecode();
                 ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
                 //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
-            }
-            else {
-                ref = ResourcesUri.nwr+kafSense.getSensecode();
+            } else {
+                if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
+                    kafSense.setSensecode("SPEECH_COGNITIVE");
+                } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
+                    kafSense.setSensecode("SPEECH_COGNITIVE");
+                } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
+                    kafSense.setSensecode("GRAMMATICAL");
+                } else if (kafSense.getSensecode().equalsIgnoreCase("contextual")) {
+                    kafSense.setSensecode("OTHER");
+                }
+                ref = ResourcesUri.nwr + kafSense.getSensecode();
             }
         }
 
@@ -433,7 +430,7 @@ public class SemObject {
     }
 
 
-    public double matchObjectByConcepts (SemObject anObject) {
+    public double matchObjectByConcepts(SemObject anObject) {
         double score = -1;
         int nMatches = 0;
         for (int i = 0; i < concepts.size(); i++) {
@@ -447,10 +444,11 @@ public class SemObject {
                 }
             }
         }
-        score = ((double) nMatches/concepts.size()) * ((double) nMatches/anObject.getConcepts().size());
+        score = ((double) nMatches / concepts.size()) * ((double) nMatches / anObject.getConcepts().size());
         return score;
     }
-    public double matchObjectByPhrases (SemObject anObject) {
+
+    public double matchObjectByPhrases(SemObject anObject) {
         double score = -1;
         int nMatches = 0;
         for (int i = 0; i < phraseCounts.size(); i++) {
@@ -464,11 +462,11 @@ public class SemObject {
                 }
             }
         }
-        score = ((double) nMatches/getPhraseCounts().size()) * ((double) nMatches/anObject.getPhraseCounts().size());
+        score = ((double) nMatches / getPhraseCounts().size()) * ((double) nMatches / anObject.getPhraseCounts().size());
         return score;
     }
 
-    public void mergeSemObject (SemObject anObject) {
+    public void mergeSemObject(SemObject anObject) {
         for (int i = 0; i < anObject.getConcepts().size(); i++) {
             KafSense kafSense = anObject.getConcepts().get(i);
             boolean match = false;
@@ -495,7 +493,7 @@ public class SemObject {
                 }
             }
             if (!match) {
-               phraseCounts.add(anObjectphraseCount);
+                phraseCounts.add(anObjectphraseCount);
             }
         }
         for (int i = 0; i < anObject.getNafMentions().size(); i++) {
@@ -504,5 +502,11 @@ public class SemObject {
         }
     }
 
-}
+    public Element toXML(Document xmldoc) {
+        Element root = xmldoc.createElement("object");
+        if (!this.getURI().isEmpty())
+            root.setAttribute("uri", this.getURI());
+        return root;
+    }
 
+}

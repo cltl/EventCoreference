@@ -70,20 +70,22 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             baseUrl = ResourcesUri.nwrdata+project+"/"+kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
         }
 
-        //// we first store the publication date as a time
-        KafSense dateSense = new KafSense();
-        dateSense.setRefType("publication date");
-        dateSense.setSensecode(kafSaxParser.getKafMetaData().getCreationtime());
-        docSemTime = new SemTime();
-        //docSemTime.addConcept(dateSense);
+        if (!kafSaxParser.getKafMetaData().getCreationtime().isEmpty()) {
+            //// we first store the publication date as a time
+            KafSense dateSense = new KafSense();
+            dateSense.setRefType("publication date");
+            dateSense.setSensecode(kafSaxParser.getKafMetaData().getCreationtime());
+            docSemTime = new SemTime();
+            //docSemTime.addConcept(dateSense);
 
 
-        //docSemTime.setId(ResourcesUri.nwrtime+dateSense.getSensecode());
-        docSemTime.setId(baseUrl+"nafHeader"+"_"+"fileDesc"+"_"+"creationtime");
-        docSemTime.addPhraseCounts(dateSense.getSensecode());
-        NafMention mention = new NafMention(baseUrl+"nafHeader"+"_"+"fileDesc"+"_"+"creationtime");
-        docSemTime.addMentionUri(mention);
-        //semTimes.add(docSemTime);
+            //docSemTime.setId(ResourcesUri.nwrtime+dateSense.getSensecode());
+            docSemTime.setId(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
+            docSemTime.addPhraseCounts(dateSense.getSensecode());
+            NafMention mention = new NafMention(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
+            docSemTime.addMentionUri(mention);
+            //semTimes.add(docSemTime);
+        }
 
         //// we get time references from the SRL layer
         // HACK FUNCTION BECAUSE THERE IS YET NO COREFERENCE SET FOR TIME, WHEN THIS IS IN NAF WE CAN DEPRECATE THIS FUNCTION
@@ -149,16 +151,36 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                 semPlaces.add(semPlace);
             }
             else  {
-
-                SemActor semActor = new SemActor();
-                semActor.setId(baseUrl  + coreferenceSet.getCoid());
-                semActor.setNafMentions(mentionArrayList);
-                semActor.addPhraseCountsForMentions(kafSaxParser);
-                semActor.addConcept(sense);
-                semActor.addConcepts(getExternalReferencesSrlParticipants(kafSaxParser, coreferenceSet));
-                semActor.addConcepts(getExternalReferencesEntities(kafSaxParser, coreferenceSet));
-                semActor.setIdByReference();
-                semActors.add(semActor);
+                boolean location = false;
+                for (int j = 0; j < kafSaxParser.kafEntityArrayList.size(); j++) {
+                    KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
+                    if (Util.intersectingSpans(kafEntity.getSetsOfSpans(), coreferenceSet.getSetsOfSpans())) {
+                        if (kafEntity.getType().equals("location")) {
+                            SemPlace semPlace = new SemPlace();
+                            semPlace.setId(baseUrl + coreferenceSet.getCoid());
+                            semPlace.setNafMentions(mentionArrayList);
+                            semPlace.addPhraseCountsForMentions(kafSaxParser);
+                            semPlace.addConcept(sense);
+                            semPlace.addConcepts(getExternalReferencesSrlParticipants(kafSaxParser, coreferenceSet));
+                            semPlace.addConcepts(getExternalReferencesEntities(kafSaxParser, coreferenceSet));
+                            semPlace.setIdByReference();
+                            semPlaces.add(semPlace);
+                            location = true;
+                            break;
+                        }
+                    }
+                }
+                if (!location) {
+                    SemActor semActor = new SemActor();
+                    semActor.setId(baseUrl + coreferenceSet.getCoid());
+                    semActor.setNafMentions(mentionArrayList);
+                    semActor.addPhraseCountsForMentions(kafSaxParser);
+                    semActor.addConcept(sense);
+                    semActor.addConcepts(getExternalReferencesSrlParticipants(kafSaxParser, coreferenceSet));
+                    semActor.addConcepts(getExternalReferencesEntities(kafSaxParser, coreferenceSet));
+                    semActor.setIdByReference();
+                    semActors.add(semActor);
+                }
             }
         }
 
@@ -284,45 +306,144 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         }
 
         /// in all cases there is no time relations we link it to the docTime
-        int docTimeRelationCount = 0;
-        for (int i = 0; i < semEvents.size(); i++) {
-            SemObject semEvent = semEvents.get(i);
-            if (!timedSemEventIds.contains(semEvent.getId())) {
-              /// timeless event
-                docTimeRelationCount++;
-                SemRelation semRelation = new SemRelation();
-                String relationInstanceId = baseUrl+"docTime_"+docTimeRelationCount;
-                semRelation.setId(relationInstanceId);
-                //// Since the doctime has no reference in the text, we use the mentions of the events to point to
-                semRelation.setNafMentions(semEvent.getNafMentions());
-                semRelation.setPredicate("hasSemTime");
-                semRelation.setSubject(semEvent.getId());
-                semRelation.setObject(docSemTime.getId());
-                semRelations.add(semRelation);
-            }
 
+        if (!docSemTime.getPhrase().isEmpty()) {
+            /// in all cases there is no time relations we link it to the docTime
+            int docTimeRelationCount = 0;
+            for (int i = 0; i < semEvents.size(); i++) {
+                SemObject semEvent = semEvents.get(i);
+                if (!timedSemEventIds.contains(semEvent.getId())) {
+                    /// timeless event
+                    docTimeRelationCount++;
+                    SemRelation semRelation = new SemRelation();
+                    String relationInstanceId = baseUrl + "docTime_" + docTimeRelationCount;
+                    semRelation.setId(relationInstanceId);
+                    //// Since the doctime has no reference in the text, we use the mentions of the events to point to
+                    semRelation.setNafMentions(semEvent.getNafMentions());
+                    semRelation.setPredicate("hasSemTime");
+                    semRelation.setSubject(semEvent.getId());
+                    semRelation.setObject(docSemTime.getId());
+                    semRelations.add(semRelation);
+                }
+
+            }
         }
-/*
-        /// in all cases there is no time relations we link it to the docTime
-        int docTimeRelationCount = 0;
-        for (int i = 0; i < semEvents.size(); i++) {
-            SemObject semEvent = semEvents.get(i);
-            if (!timedSemEventIds.contains(semEvent.getId())) {
-              /// timeless event
-                docTimeRelationCount++;
-                SemRelation semRelation = new SemRelation();
-                String relationInstanceId = baseUrl+"docTime_"+docTimeRelationCount;
-                semRelation.setId(relationInstanceId);
-                //// Since the doctime has no reference in the text, we use the mentions of the events to point to
-                semRelation.setNafMentions(semEvent.getNafMentions());
-                semRelation.setPredicate("hasSemTime");
-                semRelation.setSubject(semEvent.getId());
-                semRelation.setObject(docSemTime.getId());
-                semRelations.add(semRelation);
-            }
+    }
 
+    static public void processNafFileForEntities (String project, KafSaxParser kafSaxParser,
+                                       ArrayList<SemObject> semActors,
+                                       ArrayList<SemObject> semPlaces,
+                                       ArrayList<SemObject> semTimes
+    ) {
+        //String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", URI_SEPARATOR)+ID_SEPARATOR;
+        String baseUrl = kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
+        if (!baseUrl.toLowerCase().startsWith("http"))     {
+            baseUrl = ResourcesUri.nwrdata+project+"/"+kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
+        }
+
+        //// we first store the publication date as a time
+        KafSense dateSense = new KafSense();
+        dateSense.setRefType("publication date");
+        dateSense.setSensecode(kafSaxParser.getKafMetaData().getCreationtime());
+        docSemTime = new SemTime();
+        //docSemTime.addConcept(dateSense);
+
+
+        //docSemTime.setId(ResourcesUri.nwrtime+dateSense.getSensecode());
+        docSemTime.setId(baseUrl+"nafHeader"+"_"+"fileDesc"+"_"+"creationtime");
+        docSemTime.addPhraseCounts(dateSense.getSensecode());
+        NafMention mention = new NafMention(baseUrl+"nafHeader"+"_"+"fileDesc"+"_"+"creationtime");
+        docSemTime.addMentionUri(mention);
+        //semTimes.add(docSemTime);
+
+        //// we get time references from the SRL layer
+        // HACK FUNCTION BECAUSE THERE IS YET NO COREFERENCE SET FOR TIME, WHEN THIS IS IN NAF WE CAN DEPRECATE THIS FUNCTION
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = getTimeMentionsHashMapFromSrl (kafSaxParser);
+        Set keySet = timeReferences.keySet();
+        Iterator keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = timeReferences.get(key);
+            SemTime semTimeRole = new SemTime();
+            semTimeRole.setId(baseUrl + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semTimeRole.setNafMentions(mentions);
+            semTimeRole.addPhraseCountsForMentions(kafSaxParser);
+            String phrase = semTimeRole.getPhraseCounts().get(0).getPhrase();
+            if (!OwlTime.getYearFromString(phrase).isEmpty()) {
+                semTimes.add(semTimeRole);
+            }
+        }
+
+/*
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> locationReferences = getLocationMentionsHashMapFromSrl (kafSaxParser);
+        keySet = timeReferences.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = locationReferences.get(key);
+            SemPlace semPlaceRole = new SemPlace();
+            semPlaceRole.setId(baseUrl + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semPlaceRole.setNafMentions(mentions);
+            semPlaceRole.addPhraseCountsForMentions(kafSaxParser);
+            semPlaces.add(semPlaceRole);
         }
 */
+
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayList(baseUrl, kafSaxParser, coreferenceSet.getSetsOfSpans());
+            KafSense sense = new KafSense();
+            sense.setRefType("corefType");
+            sense.setSensecode(coreferenceSet.getType());
+            if (coreferenceSet.getType().equalsIgnoreCase("event")) {
+            }
+            else if (coreferenceSet.getType().equalsIgnoreCase("location")) {
+                //// problem... the coref sets do not have a type for entities when created by EHU
+                SemPlace semPlace = new SemPlace();
+                semPlace.setId(baseUrl + coreferenceSet.getCoid());
+                semPlace.setNafMentions(mentionArrayList);
+                semPlace.addPhraseCountsForMentions(kafSaxParser);
+                semPlace.addConcept(sense);
+                semPlace.addConcepts(getExternalReferencesSrlParticipants(kafSaxParser, coreferenceSet));
+                semPlace.addConcepts(getExternalReferencesEntities(kafSaxParser, coreferenceSet));
+                semPlace.setIdByReference();
+                semPlaces.add(semPlace);
+            }
+            else  {
+                boolean location = false;
+                for (int j = 0; j < kafSaxParser.kafEntityArrayList.size(); j++) {
+                    KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
+                    if (Util.intersectingSpans(kafEntity.getSetsOfSpans(), coreferenceSet.getSetsOfSpans())) {
+                        if (kafEntity.getType().equals("location")) {
+                            SemPlace semPlace = new SemPlace();
+                            semPlace.setId(baseUrl + coreferenceSet.getCoid());
+                            semPlace.setNafMentions(mentionArrayList);
+                            semPlace.addPhraseCountsForMentions(kafSaxParser);
+                            semPlace.addConcept(sense);
+                            semPlace.addConcepts(getExternalReferencesSrlParticipants(kafSaxParser, coreferenceSet));
+                            semPlace.addConcepts(getExternalReferencesEntities(kafSaxParser, coreferenceSet));
+                            semPlace.setIdByReference();
+                            semPlaces.add(semPlace);
+                            location = true;
+                            break;
+                        }
+                    }
+                }
+                if (!location) {
+                    SemActor semActor = new SemActor();
+                    semActor.setId(baseUrl + coreferenceSet.getCoid());
+                    semActor.setNafMentions(mentionArrayList);
+                    semActor.addPhraseCountsForMentions(kafSaxParser);
+                    semActor.addConcept(sense);
+                    semActor.addConcepts(getExternalReferencesSrlParticipants(kafSaxParser, coreferenceSet));
+                    semActor.addConcepts(getExternalReferencesEntities(kafSaxParser, coreferenceSet));
+                    semActor.setIdByReference();
+                    semActors.add(semActor);
+                }
+            }
+        }
     }
 
 
@@ -604,13 +725,13 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             SemObject semPlace = semPlaces.get(i);
             semPlace.addToJenaModel(instanceModel, Sem.Place);
         }
-
-        docSemTime.addToJenaModelDocTimeInterval(instanceModel);
-
+        if (!docSemTime.getPhrase().isEmpty()) {
+            docSemTime.addToJenaModelDocTimeInterval(instanceModel);
+        }
         for (int i = 0; i < semTimes.size(); i++) {
             SemObject semTime = semTimes.get(i);
             //semTime.addToJenaModel(instanceModel, Sem.Time);
-            semTime.addToJenaModelTimeInterval(instanceModel);
+            semTime.addToJenaModelTimeInterval(instanceModel, docSemTime.getPhrase());
         }
 
         for (int i = 0; i < semRelations.size(); i++) {
@@ -637,6 +758,166 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             else {
                 semRelation.addToJenaDataSet(ds, provenanceModel);
             }
+        }
+
+        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+    }
+
+    static public void serializeJenaEvents (OutputStream stream,
+                                      ArrayList<SemObject> semEvents,
+                                      ArrayList<SemRelation> semRelations,
+                                      ArrayList<SemRelation> factRelations,
+                                      HashMap <String, SourceMeta> sourceMetaHashMap) {
+
+
+
+        // create an empty Model
+
+        Dataset ds = TDBFactory.createDataset();
+        Model defaultModel = ds.getDefaultModel();
+        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
+
+        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        defaultModel.setNsPrefix("fn", ResourcesUri.fn);
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
+        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
+        defaultModel.setNsPrefix("vn", ResourcesUri.vn);
+        defaultModel.setNsPrefix("pb", ResourcesUri.pb);
+        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
+*/
+        defaultModel.setNsPrefix("sem", ResourcesUri.sem);
+        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
+       // defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);          /// removed because of dot problem in dbpedia URIs
+        defaultModel.setNsPrefix("owl", ResourcesUri.owl);
+        defaultModel.setNsPrefix("time", ResourcesUri.owltime);
+        defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
+        defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
+       // defaultModel.setNsPrefix("tl", ResourcesUri.tl);
+
+        Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
+        provenanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        provenanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        provenanceModel.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
+        provenanceModel.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
+
+        Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
+        instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        instanceModel.setNsPrefix("fn", ResourcesUri.fn);
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
+        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
+        instanceModel.setNsPrefix("vn", ResourcesUri.vn);
+        instanceModel.setNsPrefix("pb", ResourcesUri.pb);
+        instanceModel.setNsPrefix("nb", ResourcesUri.nb);
+*/
+        instanceModel.setNsPrefix("sem", ResourcesUri.sem);
+        instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        instanceModel.setNsPrefix("owl", ResourcesUri.owl);
+        //  instanceModel.setNsPrefix("tl", ResourcesUri.tl);
+        instanceModel.setNsPrefix("time", ResourcesUri.owltime);
+
+     //   instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);       /// removed because of dot problem in dbpedia URIs
+
+        for (int i = 0; i < semEvents.size(); i++) {
+            SemObject semEvent = semEvents.get(i);
+            semEvent.addToJenaModel(instanceModel, Sem.Event);
+        }
+
+        for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+            if (sourceMetaHashMap!=null) {
+                semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
+
+            }
+            else {
+                semRelation.addToJenaDataSet(ds, provenanceModel);
+            }
+
+            ///** Next version adds relations to one single relation graph
+            //semRelation.addToJenaDataSet(ds, relationModel, provenanceModel);
+        }
+
+        for (int i = 0; i < factRelations.size(); i++) {
+            SemRelation semRelation = factRelations.get(i);
+            semRelation.addToJenaDataSet(ds, provenanceModel);
+            if (sourceMetaHashMap!=null) {
+                semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
+
+            }
+            else {
+                semRelation.addToJenaDataSet(ds, provenanceModel);
+            }
+        }
+
+        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+    }
+
+
+    static public void serializeJenaEntities (OutputStream stream,
+                                      ArrayList<SemObject> semActors,
+                                      ArrayList<SemObject> semPlaces,
+                                      ArrayList<SemObject> semTimes) {
+
+
+
+        // create an empty Model
+
+        Dataset ds = TDBFactory.createDataset();
+        Model defaultModel = ds.getDefaultModel();
+        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
+
+        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        defaultModel.setNsPrefix("fn", ResourcesUri.fn);
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
+        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
+        defaultModel.setNsPrefix("vn", ResourcesUri.vn);
+        defaultModel.setNsPrefix("pb", ResourcesUri.pb);
+        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
+*/
+        defaultModel.setNsPrefix("sem", ResourcesUri.sem);
+        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
+       // defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);          /// removed because of dot problem in dbpedia URIs
+        defaultModel.setNsPrefix("owl", ResourcesUri.owl);
+        defaultModel.setNsPrefix("time", ResourcesUri.owltime);
+        defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
+        defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
+       // defaultModel.setNsPrefix("tl", ResourcesUri.tl);
+
+        Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
+        instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
+        instanceModel.setNsPrefix("fn", ResourcesUri.fn);
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
+        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
+        instanceModel.setNsPrefix("vn", ResourcesUri.vn);
+        instanceModel.setNsPrefix("pb", ResourcesUri.pb);
+        instanceModel.setNsPrefix("nb", ResourcesUri.nb);
+*/
+        instanceModel.setNsPrefix("sem", ResourcesUri.sem);
+        instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
+        instanceModel.setNsPrefix("owl", ResourcesUri.owl);
+        //  instanceModel.setNsPrefix("tl", ResourcesUri.tl);
+        instanceModel.setNsPrefix("time", ResourcesUri.owltime);
+
+     //   instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);       /// removed because of dot problem in dbpedia URIs
+
+
+        for (int i = 0; i < semActors.size(); i++) {
+            SemObject semActor = semActors.get(i);
+            semActor.addToJenaModel(instanceModel, Sem.Actor);
+        }
+
+        for (int i = 0; i < semPlaces.size(); i++) {
+            SemObject semPlace = semPlaces.get(i);
+            semPlace.addToJenaModel(instanceModel, Sem.Place);
+        }
+
+        docSemTime.addToJenaModelDocTimeInterval(instanceModel);
+
+        for (int i = 0; i < semTimes.size(); i++) {
+            SemObject semTime = semTimes.get(i);
+            //semTime.addToJenaModel(instanceModel, Sem.Time);
+            semTime.addToJenaModelTimeInterval(instanceModel, docSemTime.getPhrase());
         }
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);

@@ -1,6 +1,6 @@
 package eu.newsreader.eventcoreference.util;
 
-import eu.newsreader.eventcoreference.naf.InterDocumentEventCoref;
+import eu.newsreader.eventcoreference.naf.LargeInterDocumentEventCoref;
 
 import java.io.File;
 
@@ -9,12 +9,12 @@ import java.io.File;
  */
 public class ProcessNewsReaderFolderBatch {
     static String extension = ".naf";
-    static double conceptMatchThreshold = 0.6;
-    static double phraseMatchThreshold = 0.6;
+    static double conceptMatchThreshold = 0;
+    static double phraseMatchThreshold = 1;
 
     static public void main (String [] args) {
-        String pathToNafFolder = "";
-        String projectName  = "";
+        String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out";
+        String projectName  = "worldcup";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--folder") && args.length>(i+1)) {
@@ -36,7 +36,15 @@ public class ProcessNewsReaderFolderBatch {
 
         File nafFolder = new File (pathToNafFolder);
         if (nafFolder.exists()) {
-                InterDocumentEventCoref.processFolder (projectName, nafFolder, extension, conceptMatchThreshold, phraseMatchThreshold, null);
+            LargeInterDocumentEventCoref.processFolder(projectName, nafFolder, extension, conceptMatchThreshold, phraseMatchThreshold, null);
+                //LargeInterDocumentEventCoref.processFolderForEntities(projectName, nafFolder, extension, conceptMatchThreshold, phraseMatchThreshold);
+/*
+            try {
+                LargeInterDocumentEventCoref.processFolderEvents(projectName, nafFolder, extension);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+*/
         }
         else {
             System.out.println("Cannot find nafFolder.getAbsolutePath() = " + nafFolder.getAbsolutePath());

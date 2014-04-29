@@ -37,6 +37,7 @@ public class ProcessSeparateNafFilesBatch {
             KafSaxParser kafSaxParser = new KafSaxParser();
             for (int i = 0; i < nafFiles.size(); i++) {
                 File file = nafFiles.get(i);
+                //System.out.println("file.getName() = " + file.getName());
                 kafSaxParser.parseFile(file);
                 ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
                 ArrayList<SemObject> semActors = new ArrayList<SemObject>();
