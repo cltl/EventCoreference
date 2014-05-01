@@ -165,15 +165,20 @@ public class LargeInterDocumentEventCoref {
         ArrayList<SemObject> mySemObjects = new ArrayList<SemObject>();
         for (int i = 0; i < semRelations.size(); i++) {
             SemRelation semRelation = semRelations.get(i);
-            for (int j = 0; j < mySemObjects.size(); j++) {
-                SemObject semObject = mySemObjects.get(j);
+            for (int j = 0; j < semObjects.size(); j++) {
+                SemObject semObject = semObjects.get(j);
                 if (semRelation.getSubject().equals(event.getId()) &&
                     semRelation.getObject().equals(semObject.getId())) {
+/*
+                    System.out.println("semRelation = " + semRelation.getSubject());
+                    System.out.println("semRelation = " + semRelation.getPredicate());
+                    System.out.println("semRelation = " + semRelation.getObject());
+*/
                     mySemObjects.add(semObject);
                 }
             }
         }
-        return semObjects;
+        return mySemObjects;
     }
 
 
@@ -511,8 +516,8 @@ public class LargeInterDocumentEventCoref {
         //System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
-            if (!file.getName().equals("59V3-4CT1-JB32-V0V2.xml"))  {
-                continue;
+            if (!file.getName().startsWith("59V3-4CT1-JB32-V0V2.xml"))  {
+           //     continue;
             }
             if (i % 50 == 0) {
                 System.out.println("i = " + i);
@@ -586,16 +591,16 @@ public class LargeInterDocumentEventCoref {
                             }
                         }
                         if (treeSet.size()>4 && folder.getName().equals("other")) {
-                            System.out.println("mySemEvent = " + mySemEvent.getPhrase());
+                          //  System.out.println("mySemEvent = " + mySemEvent.getPhrase());
                             for (int k = 0; k < mySemEvent.getNafMentions().size(); k++) {
                                 NafMention nafMention = mySemEvent.getNafMentions().get(k);
-                                System.out.println("nafMention.toString() = " + nafMention.toString());
+                             //   System.out.println("nafMention.toString() = " + nafMention.toString());
                             }
                             for (int k = 0; k < myTimes.size(); k++) {
                                 SemObject semObject = myTimes.get(k);
                                 for (int l = 0; l < semObject.getNafMentions().size(); l++) {
                                     NafMention nafMention = semObject.getNafMentions().get(l);
-                                    System.out.println("time nafMention.toString() = " + nafMention.toString());
+                              //      System.out.println("time nafMention.toString() = " + nafMention.toString());
                                 }
                             }
                         }

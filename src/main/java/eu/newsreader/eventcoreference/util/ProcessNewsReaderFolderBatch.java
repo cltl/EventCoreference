@@ -3,6 +3,7 @@ package eu.newsreader.eventcoreference.util;
 import eu.newsreader.eventcoreference.naf.LargeInterDocumentEventCoref;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by kyoto on 12/13/13.
@@ -36,15 +37,14 @@ public class ProcessNewsReaderFolderBatch {
 
         File nafFolder = new File (pathToNafFolder);
         if (nafFolder.exists()) {
-            LargeInterDocumentEventCoref.processFolder(projectName, nafFolder, extension, conceptMatchThreshold, phraseMatchThreshold, null);
+          //  LargeInterDocumentEventCoref.processFolder(projectName, nafFolder, extension, conceptMatchThreshold, phraseMatchThreshold, null);
                 //LargeInterDocumentEventCoref.processFolderForEntities(projectName, nafFolder, extension, conceptMatchThreshold, phraseMatchThreshold);
-/*
+
             try {
                 LargeInterDocumentEventCoref.processFolderEvents(projectName, nafFolder, extension);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-*/
         }
         else {
             System.out.println("Cannot find nafFolder.getAbsolutePath() = " + nafFolder.getAbsolutePath());
