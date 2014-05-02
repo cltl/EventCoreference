@@ -1,13 +1,14 @@
 package eu.newsreader.eventcoreference.objects;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import eu.newsreader.eventcoreference.coref.ComponentMatch;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by piek on 4/23/14.
  */
-public class CompositeEvent {
+public class CompositeEvent implements Serializable{
 
     private SemObject event;
     private ArrayList<SemObject> mySemTimes;
@@ -97,11 +98,52 @@ public class CompositeEvent {
         this.mySemRelations.add(mySemRelation);
     }
 
-    public void serialize (ObjectOutputStream fos) {
-        try {
-            fos.writeObject(this);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public ArrayList<SemRelation> getMySemFactRelations() {
+        return mySemFactRelations;
+    }
+
+    public void setMySemFactRelations(ArrayList<SemRelation> mySemFactRelations) {
+        this.mySemFactRelations = mySemFactRelations;
+    }
+
+    public void addMySemFactRelation(SemRelation mySemFactRelation) {
+        this.mySemFactRelations.add(mySemFactRelation);
+    }
+
+    public void mergeRelations (CompositeEvent event) {
+         for (int i = 0; i < event.getMySemRelations().size(); i++) {
+            SemRelation semRelation = event.getMySemRelations().get(i);
+            boolean match = false;
+            for (int j = 0; j < this.getMySemRelations().size(); j++) {
+                SemRelation relation = this.getMySemRelations().get(j);
+                if (ComponentMatch.compareSemRelation(semRelation, relation)) {
+                    relation.addMentions(semRelation.getNafMentions());
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                this.addMySemRelation(semRelation);
+            }
         }
     }
+
+    public void mergeFactRelations (CompositeEvent event) {
+         for (int i = 0; i < event.getMySemFactRelations().size(); i++) {
+            SemRelation semRelation = event.getMySemFactRelations().get(i);
+            boolean match = false;
+            for (int j = 0; j < this.getMySemFactRelations().size(); j++) {
+                SemRelation relation = this.getMySemFactRelations().get(j);
+                if (ComponentMatch.compareSemRelation(semRelation, relation)) {
+                    relation.addMentions(semRelation.getNafMentions());
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                this.addMySemFactRelation(semRelation);
+            }
+        }
+    }
+
 }

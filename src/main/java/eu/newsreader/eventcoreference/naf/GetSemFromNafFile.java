@@ -750,7 +750,6 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
 
         for (int i = 0; i < factRelations.size(); i++) {
             SemRelation semRelation = factRelations.get(i);
-            semRelation.addToJenaDataSet(ds, provenanceModel);
             if (sourceMetaHashMap!=null) {
                 semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
 
@@ -763,10 +762,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
     }
 
-    static public void serializeJenaEvents (OutputStream stream,
-                                      ArrayList<SemObject> semEvents,
-                                      ArrayList<SemRelation> semRelations,
-                                      ArrayList<SemRelation> factRelations,
+    static public void serializeJenaEvents (OutputStream stream,HashMap<String, ArrayList<CompositeEvent>> semEvents,
                                       HashMap <String, SourceMeta> sourceMetaHashMap) {
 
 
@@ -818,36 +814,37 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
 
      //   instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);       /// removed because of dot problem in dbpedia URIs
 
-        for (int i = 0; i < semEvents.size(); i++) {
-            SemObject semEvent = semEvents.get(i);
-            semEvent.addToJenaModel(instanceModel, Sem.Event);
+        Set keySet = semEvents.keySet();
+        Iterator keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String lemma = (String) keys.next();
+            ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
+            for (int i = 0; i < compositeEvents.size(); i++) {
+                CompositeEvent compositeEvent = compositeEvents.get(i);
+                compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
+                for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
+                    SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
+                    if (sourceMetaHashMap!=null) {
+                        semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
+
+                    }
+                    else {
+                        semRelation.addToJenaDataSet(ds, provenanceModel);
+                    }
+                }
+                for (int j = 0; j < compositeEvent.getMySemFactRelations().size(); j++) {
+                    SemRelation semRelation = compositeEvent.getMySemFactRelations().get(j);
+                    if (sourceMetaHashMap!=null) {
+                        semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
+
+                    }
+                    else {
+                        semRelation.addToJenaDataSet(ds, provenanceModel);
+                    }
+                }
+            }
         }
 
-        for (int i = 0; i < semRelations.size(); i++) {
-            SemRelation semRelation = semRelations.get(i);
-            if (sourceMetaHashMap!=null) {
-                semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
-
-            }
-            else {
-                semRelation.addToJenaDataSet(ds, provenanceModel);
-            }
-
-            ///** Next version adds relations to one single relation graph
-            //semRelation.addToJenaDataSet(ds, relationModel, provenanceModel);
-        }
-
-        for (int i = 0; i < factRelations.size(); i++) {
-            SemRelation semRelation = factRelations.get(i);
-            semRelation.addToJenaDataSet(ds, provenanceModel);
-            if (sourceMetaHashMap!=null) {
-                semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
-
-            }
-            else {
-                semRelation.addToJenaDataSet(ds, provenanceModel);
-            }
-        }
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
     }

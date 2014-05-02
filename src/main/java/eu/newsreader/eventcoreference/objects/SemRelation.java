@@ -6,6 +6,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,7 +17,7 @@ import java.util.HashMap;
  * Time: 5:13 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SemRelation {
+public class SemRelation implements Serializable {
 /*
     <semRelation id="TOPIC_44_EVENT_COREFERENCE_CORPUS/2413"
     predicate="semHasTime"

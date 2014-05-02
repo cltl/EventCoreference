@@ -1,5 +1,7 @@
 package eu.newsreader.eventcoreference.objects;
 
+import java.io.Serializable;
+
 /**
  * Created with IntelliJ IDEA.
  * User: kyoto
@@ -7,7 +9,7 @@ package eu.newsreader.eventcoreference.objects;
  * Time: 4:56 PM
  * To change this template use File | Settings | File Templates.
  */
-public class PhraseCount {
+public class PhraseCount  implements Serializable {
 
     private String phrase;
     private Integer count;

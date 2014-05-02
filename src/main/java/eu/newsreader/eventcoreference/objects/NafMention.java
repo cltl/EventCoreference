@@ -2,12 +2,13 @@ package eu.newsreader.eventcoreference.objects;
 
 import eu.kyotoproject.kaf.KafFactuality;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by piek on 1/22/14.
  */
-public class NafMention {
+public class NafMention implements Serializable {
     private String baseUri;
     private String offSetStart;
     private String offSetEnd;

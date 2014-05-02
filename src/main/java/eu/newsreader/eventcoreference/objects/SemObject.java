@@ -13,6 +13,7 @@ import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -22,9 +23,10 @@ import java.util.ArrayList;
  * Time: 3:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SemObject {
+public class SemObject implements Serializable {
 
     private String id;
+    private String uri;
     private double score;
     private ArrayList<KafSense> concepts;
     private ArrayList<PhraseCount> phraseCounts;
@@ -36,6 +38,7 @@ public class SemObject {
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
         this.label = "";
+        this.uri = "";
         this.lcs = "";
         this.score = 0;
         this.concepts = new ArrayList<KafSense>();
@@ -154,13 +157,21 @@ public class SemObject {
     }
 
     public String getURI() {
-        String uri = id;
+        if (uri.isEmpty()) {
+            uri = this.getId();
+        }
         return uri;
     }
 
     public String getURI(String nameSpace) {
-        String uri = nameSpace + id;
+        if (uri.isEmpty()) {
+            uri = nameSpace + id;
+        }
         return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public void setTopPhraseAsLabel() {

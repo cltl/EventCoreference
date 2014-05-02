@@ -19,6 +19,20 @@ import java.util.HashMap;
  */
 public class Util {
 
+    static public class AppendableObjectOutputStream extends ObjectOutputStream {
+
+        public AppendableObjectOutputStream(OutputStream out) throws IOException {
+            super(out);
+        }
+
+        @Override
+        protected void writeStreamHeader() throws IOException {
+            // do not write a header
+            reset();
+        }
+
+    }
+
     static public ArrayList<NafMention> getNafMentionArrayList (String baseUri, KafSaxParser kafSaxParser,
                                                         ArrayList<ArrayList<CorefTarget>> corefTargetArrayList) {
         ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
@@ -237,6 +251,29 @@ public class Util {
             id = id.substring(idx+1);
         }
         return id;
+    }
+
+    static public ArrayList<File> makeRecursiveFileList(File inputFile) {
+        ArrayList<File> acceptedFileList = new ArrayList<File>();
+        File[] theFileList = null;
+        if ((inputFile.canRead()) && inputFile.isDirectory()) {
+            theFileList = inputFile.listFiles();
+            for (int i = 0; i < theFileList.length; i++) {
+                File newFile = theFileList[i];
+                if (newFile.isDirectory()) {
+                    ArrayList<File> nextFileList = makeRecursiveFileList(newFile);
+                    acceptedFileList.addAll(nextFileList);
+                } else {
+                    acceptedFileList.add(newFile);
+                }
+            }
+        } else {
+            System.out.println("Cannot access file:" + inputFile + "#");
+            if (!inputFile.exists()) {
+                System.out.println("File does not exist!");
+            }
+        }
+        return acceptedFileList;
     }
 
     static public ArrayList<File> makeRecursiveFileList(File inputFile, String theFilter) {
