@@ -28,8 +28,8 @@ public class CompositeEvent implements Serializable{
 
     public CompositeEvent(SemObject event,
                           ArrayList<SemObject> mySemTimes,
-                          ArrayList<SemObject> mySemPlaces,
                           ArrayList<SemObject> mySemActors,
+                          ArrayList<SemObject> mySemPlaces,
                           ArrayList<SemRelation> mySemRelations,
                           ArrayList<SemRelation> mySemFactRelations
                           ) {

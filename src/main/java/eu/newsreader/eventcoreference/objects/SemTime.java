@@ -1,5 +1,12 @@
 package eu.newsreader.eventcoreference.objects;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
+import eu.newsreader.eventcoreference.naf.ResourcesUri;
+
 /**
  * Created by IntelliJ IDEA.
  * User: kyoto
@@ -77,7 +84,10 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         owltime:year "2001"^^xsd:int .
      */
 
+   private OwlTime owlTime;
+
    public SemTime() {
+       owlTime = new OwlTime();
     }
 
 
@@ -133,4 +143,113 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
      </event-mention>
  
     */
+
+    public OwlTime getOwlTime() {
+        return owlTime;
+    }
+
+    public void setOwlTime(OwlTime owlTime) {
+        this.owlTime = owlTime;
+    }
+
+    public void addToJenaModelTimeInstant(Model model, OwlTime owlTime) {
+        this.getOwlTime().addToJenaModelOwlTimeInstant(model);
+
+        Resource resource = model.createResource(this.getURI());
+        for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+        }
+
+        resource.addProperty(RDF.type, Sem.Time);
+
+        Resource aResource = model.createResource(ResourcesUri.owltime + "Instant");
+        resource.addProperty(RDF.type, aResource);
+
+        Resource value = model.createResource(owlTime.getDateString());
+        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+        resource.addProperty(property, value);
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
+            Resource targetResource = model.createResource(nafMention.toString());
+            resource.addProperty(gaf, targetResource);
+
+        }
+    }
+
+    public void addToJenaModelDocTimeInstant(Model model) {
+        if (nafMentions.size() > 0) {
+            OwlTime owlTime = new OwlTime();
+            owlTime.parsePublicationDate(phraseCounts.get(0).getPhrase());
+            owlTime.addToJenaModelOwlTimeInstant(model);
+
+            Resource resource = model.createResource(this.getURI());
+            for (int i = 0; i < phraseCounts.size(); i++) {
+                PhraseCount phraseCount = phraseCounts.get(i);
+                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+            }
+
+            resource.addProperty(RDF.type, Sem.Time);
+
+            Resource aResource = model.createResource(ResourcesUri.owltime + "Instant");
+            resource.addProperty(RDF.type, aResource);
+            Resource value = model.createResource(owlTime.getDateString());
+            Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+            resource.addProperty(property, value);
+
+
+        }
+    }
+
+    public void addToJenaModelTimeInterval(Model model) {
+        this.getOwlTime().addToJenaModelOwlTimeDuration(model);
+
+        Resource resource = model.createResource(this.getURI());
+        for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+        }
+
+        resource.addProperty(RDF.type, Sem.Time);
+
+        Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
+        resource.addProperty(RDF.type, interval);
+
+        Resource value = model.createResource(owlTime.getDateString());
+        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+        resource.addProperty(property, value);
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
+            Resource targetResource = model.createResource(nafMention.toString());
+            resource.addProperty(gaf, targetResource);
+
+        }
+
+    }
+
+    public void addToJenaModelDocTimeInterval(Model model) {
+        if (phraseCounts.size() > 0) {
+            OwlTime owlTime = new OwlTime();
+            owlTime.parsePublicationDate(getPhrase());
+            owlTime.addToJenaModelOwlTimeInstant(model);
+
+            Resource resource = model.createResource(this.getURI());
+            for (int i = 0; i < phraseCounts.size(); i++) {
+                PhraseCount phraseCount = phraseCounts.get(i);
+                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+            }
+
+            resource.addProperty(RDF.type, Sem.Time);
+            Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
+            resource.addProperty(RDF.type, interval);
+
+            Resource value = model.createResource(owlTime.getDateString());
+            Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+            resource.addProperty(property, value);
+        }
+    }
 }

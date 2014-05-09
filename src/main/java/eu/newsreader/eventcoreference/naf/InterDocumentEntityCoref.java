@@ -21,7 +21,7 @@ public class InterDocumentEntityCoref {
     static public void main (String [] args) {
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
-        String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out";
+        String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
         String projectName  = "worldcup";
         String extension = "";
         for (int i = 0; i < args.length; i++) {

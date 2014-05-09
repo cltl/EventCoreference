@@ -58,19 +58,23 @@ public class OwlTime {
         return -1;
     }
 
+    static public int getMonthWord (String m) {
+        for (int i = 0; i < MONTHS.length; i++) {
+            String month = MONTHS[i];
+            if (month.equalsIgnoreCase(m)) {
+                return i+1;
+            }
+        }
+        for (int i = 0; i < MONTHSSHORT.length; i++) {
+            String month = MONTHSSHORT[i];
+            if (month.equalsIgnoreCase(m)) {
+                return i+1;
+            }
+        }
+        return -1;
+    }
+
     static int getDay (String day) {
-        for (int i = 0; i < DAYS.length; i++) {
-            String s = DAYS[i];
-            if (s.equalsIgnoreCase(day)) {
-                return i+1;
-            }
-        }
-        for (int i = 0; i < DAYSSHORT.length; i++) {
-            String s = DAYSSHORT[i];
-            if (s.equalsIgnoreCase(day)) {
-                return i+1;
-            }
-        }
         for (int i = 0; i < DAYSINT.length; i++) {
             String s = DAYSINT[i];
             if (s.equalsIgnoreCase(day)) {
@@ -85,7 +89,22 @@ public class OwlTime {
         }
         return -1;
     }
-            //new ArrayList<String>("","");
+
+    static public int getDayWord (String day) {
+        for (int i = 0; i < DAYS.length; i++) {
+            String s = DAYS[i];
+            if (s.equalsIgnoreCase(day)) {
+                return i+1;
+            }
+        }
+        for (int i = 0; i < DAYSSHORT.length; i++) {
+            String s = DAYSSHORT[i];
+            if (s.equalsIgnoreCase(day)) {
+                return i+1;
+            }
+        }
+        return -1;
+    }
 
          /*
              nwr:20010101
@@ -165,25 +184,30 @@ public class OwlTime {
     public void parsePublicationDate (String date) {
         ///2013-01-01
         try {
-            String [] fields = date.split("-");
-            if (fields.length==3) {
-                //System.out.println("date = " + date);
-                this.instance = date;
-                if (fields[0].length()==4) {
-                    this.day = (new Integer(fields[2])).toString();
-                    this.month = (new Integer(fields[1])).toString();
-                    this.year = (new Integer(fields[0])).toString();
-                }
-                else if (fields[2].length()==4) {
-                    this.day = (new Integer(fields[0])).toString();
-                    this.month = (new Integer(fields[1])).toString();
-                    this.year = (new Integer(fields[2])).toString();
-                }
+            if (date.length()==8) {
+                this.year = date.substring(0,4);
+                this.month = date.substring(4,6);
+                this.day = date.substring(6,8);
             }
             else {
-                /// publication dates can have all kinds of formats.
-                // November 18, 2004
-                parseStringDate(date);
+                String[] fields = date.split("-");
+                if (fields.length == 3) {
+                    //System.out.println("date = " + date);
+                    this.instance = date;
+                    if (fields[0].length() == 4) {
+                        this.day = (new Integer(fields[2])).toString();
+                        this.month = (new Integer(fields[1])).toString();
+                        this.year = (new Integer(fields[0])).toString();
+                    } else if (fields[2].length() == 4) {
+                        this.day = (new Integer(fields[0])).toString();
+                        this.month = (new Integer(fields[1])).toString();
+                        this.year = (new Integer(fields[2])).toString();
+                    }
+                } else {
+                    /// publication dates can have all kinds of formats.
+                    // November 18, 2004
+                    parseStringDate(date);
+                }
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -229,20 +253,41 @@ public class OwlTime {
         }
     }
 
+    public int parseTimeExValue (String timeExValue, OwlTime docOwlTime) {
+        int foundTime = -1;
+        if (timeExValue.equalsIgnoreCase("xx-xx-xx")) {
+            return foundTime;
+        }
+        if (timeExValue.equalsIgnoreCase("xxxx-xx-xx")) {
+            return foundTime;
+        }
+        String [] fields = timeExValue.split("-");
+        if (fields.length == 3) {
+            //System.out.println("date = " + date);
+            this.instance = timeExValue;
+            if (fields[0].length() == 4) {
+                if (!fields[2].equalsIgnoreCase("xx")) this.day = (new Integer(fields[2])).toString();
+                if (!fields[1].equalsIgnoreCase("xx")) this.month = (new Integer(fields[1])).toString();
+                if (!fields[0].equalsIgnoreCase("xxxx")) this.year = (new Integer(fields[0])).toString();
+            } else if (fields[2].length() == 4) {
+                if (!fields[0].equalsIgnoreCase("xx")) this.day = (new Integer(fields[0])).toString();
+                if (!fields[1].equalsIgnoreCase("xx")) this.month = (new Integer(fields[1])).toString();
+                if (!fields[2].equalsIgnoreCase("xxxx"))this.year = (new Integer(fields[2])).toString();
+            }
+            foundTime = 1;
+        }
+        return foundTime;
+    }
 
-    public void parseStringDateWithDocTimeYearFallBack (String rawdate, String docTime) {
+    public int parseStringDateWithDocTimeYearFallBack (String rawdate, OwlTime docOwlTime) {
+        int foundTime = -1;
         try {
             String date = removePunctuation(rawdate);
+            //System.out.println("date = " + date);
             String year = getYearFromString(date);
-            if (year.isEmpty()) {
-                /// if empty we steal the docTime year
-                /// Some strings provide month and or day but not the year
-                parsePublicationDate(docTime);
-            }
-            else {
+            if (!year.isEmpty()) {
                 this.year = year;
-            }
-            if (!this.year.isEmpty()) {
+                foundTime = 1;
                 int month = getMonthFromString(date);
                 if (month>-1) {
                     this.month = (new Integer(month)).toString();
@@ -252,10 +297,40 @@ public class OwlTime {
                     }
                 }
             }
+            else {
+                if (!docOwlTime.getYear().isEmpty()) {
+                    int month = getMonthWordFromString(date);
+                    if (month>-1) {
+                        foundTime = 1;
+                        this.year = docOwlTime.getYear();
+                        this.month = (new Integer(month)).toString();
+                        if (this.month.length()==1) {
+                            this.month = "0"+this.month;
+                        }
+                        int day = getDayFromString(date);
+                        if (day>-1) {
+                            this.day = (new Integer(day).toString());
+                            if (this.day.length()==1) {
+                                this.day = "0"+this.day;
+                            }
+                        }
+                    }
+                    else {
+/*                        int day = getDayFromString(date);
+                        if (day>-1) {
+                            foundTime = 1;
+                            this.year = docOwlTime.getYear();
+                            this.month = docOwlTime.getMonth();
+                            this.day = (new Integer(day).toString());
+                        }*/
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("rawdate = " + rawdate);
         }
+        return foundTime;
     }
 
     public void parseStringDate (String rawdate) {
@@ -275,7 +350,7 @@ public class OwlTime {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("rawdate = " + rawdate);
+          //  System.out.println("rawdate = " + rawdate);
         }
     }
 
@@ -286,7 +361,7 @@ public class OwlTime {
             if (word.length()==4) {
                 try {
                     Integer number = Integer.parseInt(word);
-                    if (number>1800 && number<2050) {
+                    if (number>1400 && number<3000) {
                         return word;
                     }
                 } catch (NumberFormatException e) {
@@ -309,11 +384,35 @@ public class OwlTime {
         return -1;
     }
 
+    static public int getMonthWordFromString (String date) {
+        String[] words = date.split(" ");
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            int month = getMonthWord(word);
+            if (month>0) {
+               return month;
+            }
+        }
+        return -1;
+    }
+
     public int getDayFromString (String date) {
         String[] words = date.split(" ");
         for (int i = 0; i < words.length; i++) {
             String word = words[i];
             int day = getDay(word);
+            if (day>0) {
+               return day;
+            }
+        }
+        return -1;
+    }
+
+    static public int getDayWordFromString (String date) {
+        String[] words = date.split(" ");
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            int day = getDayWord(word);
             if (day>0) {
                return day;
             }
@@ -397,6 +496,11 @@ public class OwlTime {
             Property day = model.createProperty(ResourcesUri.owltime+"unitDay");
             resource.addProperty(unit, day);
         }
+    }
+
+    public String toString () {
+        String str = this.year+"-"+this.month+"-"+this.day;
+        return str;
     }
 
 }

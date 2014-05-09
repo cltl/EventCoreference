@@ -3,10 +3,7 @@ package eu.newsreader.eventcoreference.naf;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.coref.ComponentMatch;
-import eu.newsreader.eventcoreference.objects.CompositeEvent;
-import eu.newsreader.eventcoreference.objects.OwlTime;
-import eu.newsreader.eventcoreference.objects.SemObject;
-import eu.newsreader.eventcoreference.objects.SemRelation;
+import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.*;
@@ -79,7 +76,10 @@ public class ClusterEventObjects {
         //System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
-            if (!file.getName().startsWith("59V3-4CT1-JB32-V0V2.xml")) {
+            if (!file.getName().startsWith("56H9-0MG1-J9XT-P1YN.xml")) {
+                //     continue;
+            }
+            if (!file.getName().startsWith("56VW-T8H1-DXCW-D3F2.")) {
                 //     continue;
             }
             if (i % 500 == 0) {
@@ -97,7 +97,6 @@ public class ClusterEventObjects {
 
             // We need to create output objects that are more informative than the Trig output and store these in files per date
 
-            ArrayList<SemObject> times = new ArrayList<SemObject>();
             for (int j = 0; j < semEvents.size(); j++) {
                 SemObject mySemEvent = semEvents.get(j);
                 ArrayList<SemObject> myTimes = ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes);
@@ -133,7 +132,8 @@ public class ClusterEventObjects {
 
                 } else if (myTimes.size() == 1) {
                     /// time: same year or exact?
-                    String timePhrase = "-" + OwlTime.getYearFromString(myTimes.get(0).getPhrase());
+                    SemTime myTime = (SemTime) myTimes.get(0);
+                    String timePhrase = "-" + myTime.getOwlTime().toString();
                     timeFile = new File(folder.getAbsolutePath() + "/" + "events" + timePhrase + ".obj");
                 } else {
                     /// special case if multiple times, what to do? create a period?
@@ -142,10 +142,10 @@ public class ClusterEventObjects {
                     TreeSet<String> treeSet = new TreeSet<String>();
                     String timePhrase = "";
                     for (int k = 0; k < myTimes.size(); k++) {
-                        SemObject semObject = myTimes.get(k);
-                        String year = OwlTime.getYearFromString(semObject.getPhrase());
-                        if (!treeSet.contains(year)) {
-                            treeSet.add(year);
+                        SemTime semTime = (SemTime) myTimes.get(k);
+                        timePhrase = semTime.getOwlTime().toString();
+                        if (!treeSet.contains(timePhrase)) {
+                            treeSet.add(timePhrase);
                         }
                     }
 /*                     /// In case you wanna know what is going on here

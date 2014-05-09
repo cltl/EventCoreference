@@ -1,6 +1,5 @@
 package eu.newsreader.eventcoreference.naf;
 
-import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.objects.CompositeEvent;
 import eu.newsreader.eventcoreference.objects.SourceMeta;
 import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
@@ -45,7 +44,8 @@ public class MatchEventObjects {
                // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
             }
         }
-        processEventFolder( new File(pathToEventFolder),conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap);
+        processEventFiles(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap);
+        //processEventFolder( new File(pathToEventFolder),conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap);
 
     }
 
@@ -62,7 +62,7 @@ public class MatchEventObjects {
                         if (obj instanceof  CompositeEvent) {
                             CompositeEvent compositeEvent = (CompositeEvent) obj;
                           //  System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
-
+                           // System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
                             if (eventMap.containsKey(compositeEvent.getEvent().getPhrase())) {
                                ArrayList<CompositeEvent> events = eventMap.get(compositeEvent.getEvent().getPhrase());
                                events.add(compositeEvent);
@@ -74,6 +74,9 @@ public class MatchEventObjects {
                                 eventMap.put(compositeEvent.getEvent().getPhrase(), events);
                             }
                         }
+                        else {
+                            System.out.println("Unknown object obj.getClass() = " + obj.getClass());
+                        }
                 }
                 ois.close();
             } catch (Exception e) {
@@ -84,13 +87,74 @@ public class MatchEventObjects {
         return eventMap;
     }
 
+    public static void processEventFiles (File pathToEventFolder, double conceptMatchThreshold,
+                                      double phraseMatchThreshold,
+                                      HashMap<String, SourceMeta> sourceMetaHashMap
+
+    ) {
+        ArrayList<File> files = Util.makeRecursiveFileList(pathToEventFolder, ".obj");
+
+        //System.out.println("files.size() = " + files.size());
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+            HashMap<String, ArrayList<CompositeEvent>> finalSemEvents = new HashMap<String, ArrayList<CompositeEvent>>();
+            HashMap<String, ArrayList<CompositeEvent>> eventMap = readLemmaEventHashMapFromObjectFile(file);
+         //   System.out.println("file.getName() = " + file.getName());
+         //   System.out.println("eventMap.size() = " + eventMap.size());
+            Set keySet = eventMap.keySet();
+            Iterator keys = keySet.iterator();
+            while (keys.hasNext()) {
+                String lemma = (String) keys.next();
+                System.out.println("lemma = " + lemma);
+                ArrayList<CompositeEvent> myCompositeEvents = eventMap.get(lemma);
+                if (finalSemEvents.containsKey(lemma)) {
+                    ArrayList<CompositeEvent> finalCompositeEvents = finalSemEvents.get(lemma);
+                    System.out.println("myCompositeEvents.size() = " + myCompositeEvents.size());
+                    System.out.println("finalCompositeEvents.size() = " + finalCompositeEvents.size());
+                    for (int j = 0; j < myCompositeEvents.size(); j++) {
+                        boolean match = false;
+                        CompositeEvent compositeEvent = myCompositeEvents.get(j);
+                        for (int k = 0; k < finalCompositeEvents.size(); k++) {
+                            CompositeEvent event = finalCompositeEvents.get(k);
+                            if (true) {
+                           // if (ComponentMatch.compareCompositeEvent(compositeEvent, event)) {
+                                match = true;
+                                System.out.println("we have got a match event.getEvent().getPhrase() = " + event.getEvent().getPhrase());
+                                event.getEvent().mergeSemObject(compositeEvent.getEvent());
+                                event.mergeRelations(compositeEvent);
+                                event.mergeFactRelations(compositeEvent);
+                                break;
+                            }
+                        }
+                        if (!match) {
+                            finalCompositeEvents.add(compositeEvent);
+                        }
+                    }
+                }
+                else {
+                    finalSemEvents.put(lemma, myCompositeEvents);
+                }
+            }
+            try {
+                    //System.out.println("pathToNafFolder = " + pathToNafFolder);
+                   // System.out.println("final semEvents = " + finalSemEvents.size());
+                    FileOutputStream fos = new FileOutputStream(file+".sem.trig");
+                    GetSemFromNafFile.serializeJenaEvents(fos,  finalSemEvents, sourceMetaHashMap);
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+
+            }
+    }
+
     public static void processEventFolder (File pathToEventFolder, double conceptMatchThreshold,
                                       double phraseMatchThreshold,
                                       HashMap<String, SourceMeta> sourceMetaHashMap
 
     ) {
         HashMap<String, ArrayList<CompositeEvent>> semEvents = new HashMap<String, ArrayList<CompositeEvent>>();
-        ArrayList<File> files = Util.makeRecursiveFileList(pathToEventFolder);
+        ArrayList<File> files = Util.makeRecursiveFileList(pathToEventFolder, ".obj");
 
         //System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
@@ -102,6 +166,7 @@ public class MatchEventObjects {
             }
 
             HashMap<String, ArrayList<CompositeEvent>> eventMap = readLemmaEventHashMapFromObjectFile(file);
+            System.out.println("eventMap.size() = " + eventMap.size());
             Set keySet = eventMap.keySet();
             Iterator keys = keySet.iterator();
             while (keys.hasNext()) {
@@ -114,7 +179,8 @@ public class MatchEventObjects {
                         CompositeEvent compositeEvent = myCompositeEvents.get(j);
                         for (int k = 0; k < compositeEvents.size(); k++) {
                             CompositeEvent event = compositeEvents.get(k);
-                            if (ComponentMatch.compareCompositeEvent(compositeEvent, event)) {
+                            if (true) {
+                           // if (ComponentMatch.compareCompositeEvent(compositeEvent, event)) {
                                 match = true;
                                 System.out.println("we have got a match event.getEvent().getPhrase() = " + event.getEvent().getPhrase());
                                 event.getEvent().mergeSemObject(compositeEvent.getEvent());

@@ -10,6 +10,7 @@ import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.kyotoproject.kaf.KafTerm;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
+import eu.newsreader.eventcoreference.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -25,14 +26,14 @@ import java.util.ArrayList;
  */
 public class SemObject implements Serializable {
 
-    private String id;
-    private String uri;
-    private double score;
-    private ArrayList<KafSense> concepts;
-    private ArrayList<PhraseCount> phraseCounts;
-    private String lcs;
-    private String label;
-    private ArrayList<NafMention> nafMentions;
+    String id;
+    String uri;
+    double score;
+    ArrayList<KafSense> concepts;
+    ArrayList<PhraseCount> phraseCounts;
+    String lcs;
+    String label;
+    ArrayList<NafMention> nafMentions;
 
     public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();
@@ -139,7 +140,7 @@ public class SemObject implements Serializable {
         return id;
     }
 
-    public void setIdByReference() {
+    public void setIdByDBpediaReference() {
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
             if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
@@ -154,6 +155,25 @@ public class SemObject implements Serializable {
                 break;
             }
         }
+    }
+
+    public String getReference() {
+        String reference = "";
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
+                    (kafSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
+                /*
+                (5) DBpedia resources are used as classes via rdf:type triples, while
+                    they should be treated as instances, by either:
+                    - using them as the subject of extracted triples (suggested), or
+                    - linking them to entity/event URIs using owl:sameAs triples
+                 */
+                reference = getNameSpaceTypeReference(kafSense);
+                break;
+            }
+        }
+        return reference;
     }
 
     public String getURI() {
@@ -234,111 +254,7 @@ public class SemObject implements Serializable {
         }
     }
 
-    public void addToJenaModelTimeInstant(Model model, String docTime) {
-        OwlTime owlTime = new OwlTime();
-        owlTime.parseStringDateWithDocTimeYearFallBack(getPhrase(), docTime);
-        owlTime.addToJenaModelOwlTimeInstant(model);
 
-        Resource resource = model.createResource(this.getURI());
-        for (int i = 0; i < phraseCounts.size(); i++) {
-            PhraseCount phraseCount = phraseCounts.get(i);
-            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-        }
-
-        resource.addProperty(RDF.type, Sem.Time);
-
-        Resource aResource = model.createResource(ResourcesUri.owltime + "Instant");
-        resource.addProperty(RDF.type, aResource);
-
-        Resource value = model.createResource(owlTime.getDateString());
-        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
-        resource.addProperty(property, value);
-
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
-            Resource targetResource = model.createResource(nafMention.toString());
-            resource.addProperty(gaf, targetResource);
-
-        }
-
-    }
-
-    public void addToJenaModelDocTimeInstant(Model model) {
-        if (nafMentions.size() > 0) {
-            OwlTime owlTime = new OwlTime();
-            owlTime.parsePublicationDate(phraseCounts.get(0).getPhrase());
-            owlTime.addToJenaModelOwlTimeInstant(model);
-
-            Resource resource = model.createResource(this.getURI());
-            for (int i = 0; i < phraseCounts.size(); i++) {
-                PhraseCount phraseCount = phraseCounts.get(i);
-                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-            }
-
-            resource.addProperty(RDF.type, Sem.Time);
-
-            Resource aResource = model.createResource(ResourcesUri.owltime + "Instant");
-            resource.addProperty(RDF.type, aResource);
-            Resource value = model.createResource(owlTime.getDateString());
-            Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
-            resource.addProperty(property, value);
-
-
-        }
-    }
-
-    public void addToJenaModelTimeInterval(Model model, String docTime) {
-        OwlTime owlTime = new OwlTime();
-        owlTime.parseStringDateWithDocTimeYearFallBack(getPhrase(), docTime);
-        owlTime.addToJenaModelOwlTimeInstant(model);
-
-        Resource resource = model.createResource(this.getURI());
-        for (int i = 0; i < phraseCounts.size(); i++) {
-            PhraseCount phraseCount = phraseCounts.get(i);
-            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-        }
-
-        resource.addProperty(RDF.type, Sem.Time);
-
-        Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
-        resource.addProperty(RDF.type, interval);
-
-        Resource value = model.createResource(owlTime.getDateString());
-        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
-        resource.addProperty(property, value);
-
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
-            Resource targetResource = model.createResource(nafMention.toString());
-            resource.addProperty(gaf, targetResource);
-
-        }
-
-    }
-
-    public void addToJenaModelDocTimeInterval(Model model) {
-        if (phraseCounts.size() > 0) {
-            OwlTime owlTime = new OwlTime();
-            owlTime.parsePublicationDate(getPhrase());
-            owlTime.addToJenaModelOwlTimeInstant(model);
-
-            Resource resource = model.createResource(this.getURI());
-            for (int i = 0; i < phraseCounts.size(); i++) {
-                PhraseCount phraseCount = phraseCounts.get(i);
-                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-            }
-
-            resource.addProperty(RDF.type, Sem.Time);
-            Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
-            resource.addProperty(RDF.type, interval);
-
-            Resource value = model.createResource(owlTime.getDateString());
-            Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
-            resource.addProperty(property, value);
-        }
-    }
 
     public void addToJenaModel(Model model, Resource type) {
         Resource resource = model.createResource(this.getURI());
@@ -507,10 +423,24 @@ public class SemObject implements Serializable {
                 phraseCounts.add(anObjectphraseCount);
             }
         }
+        //System.out.println("this.nafMentions.toString() = " + this.nafMentions.toString());
         for (int i = 0; i < anObject.getNafMentions().size(); i++) {
             NafMention nafMention = anObject.getNafMentions().get(i);
-            this.nafMentions.add(nafMention);
+            if (!Util.hasMention(this.nafMentions, nafMention)) {
+                System.out.println("nafMention.toString() = " + nafMention.toString());
+                this.nafMentions.add(nafMention);
+            }
         }
+    }
+
+    public boolean hasMention (NafMention nafMention) {
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention mention = nafMentions.get(i);
+            if (mention.toString().equals(nafMention.toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Element toXML(Document xmldoc) {

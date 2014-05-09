@@ -44,6 +44,15 @@ public class ComponentMatch {
             for (int j = 0; j < semPlaces.size(); j++) {
                 SemObject semPlace = semPlaces.get(j);
                 if (mySemPlace.getURI().equals(semPlace.getURI())) {
+               //     System.out.println("semPlace.getURI() = " + semPlace.getURI());
+                    return true;
+                }
+                else if (semPlace.getReference().equals(semPlace.getReference()) && !semPlace.getReference().isEmpty()) {
+               //     System.out.println("semPlace.getReference() = " + semPlace.getReference());
+                    return true;
+                }
+                else if (semPlace.getTopPhraseAsLabel().equals(semPlace.getTopPhraseAsLabel())) {
+                    System.out.println("semPlace.getTopPhraseAsLabel() = " + semPlace.getTopPhraseAsLabel());
                     return true;
                 }
             }
@@ -58,14 +67,16 @@ public class ComponentMatch {
             SemObject mySemActor = mySemActors.get(i);
             for (int j = 0; j < semActors.size(); j++) {
                 SemObject semActor = semActors.get(j);
-                System.out.println("semActor.getURI() = " + semActor.getURI());
-                System.out.println("mySemActor.getURI() = " + mySemActor.getURI());
-                System.out.println("semActor.getId() = " + semActor.getId());
-                System.out.println("mySemActor.getId() = " + mySemActor.getId());
                 if (semActor.getURI().equals(mySemActor.getURI())) {
+                   // System.out.println("semActor.getURI() = " + semActor.getURI());
+                    return true;
+                }
+                else if (semActor.getReference().equals(mySemActor.getReference()) && !semActor.getReference().isEmpty()) {
+                  //  System.out.println("semActor.getReference() = " + semActor.getReference());
                     return true;
                 }
                 else if (semActor.getTopPhraseAsLabel().equals(mySemActor.getTopPhraseAsLabel())) {
+                    System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
                       return true;
                 }
             }
