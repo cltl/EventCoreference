@@ -1,5 +1,7 @@
 package eu.newsreader.eventcoreference.naf;
 
+import com.hp.hpl.jena.rdf.model.Model;
+
 /**
  * Created by piek on 12/26/13.
  */
@@ -16,7 +18,7 @@ public class ResourcesUri {
     final static public String vn = "http://www.newsreader-project.eu/verbnet/";
     final static public String pb = "http://www.newsreader-project.eu/propbank/";
     final static public String nb = "http://www.newsreader-project.eu/nombank/";
-    final static public String gaf = "http://groundedannotationframework.org/";
+    final static public String gaf = "http://groundedannotationframework.org/files/2014/01/";
     final static public String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
     final static public String dbp = "http://dbpedia.org/resource/";
     final static public String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -26,5 +28,36 @@ public class ResourcesUri {
     final static public String prov= "http://www.w3.org/ns/prov#";
     final static public String owltime= "http://www.w3.org/TR/owl-time#";
     //final static public String owltime= "http://www.w3.org/2002/07/owl#";
+
+
+    static public void prefixModel (Model model) {
+        model.setNsPrefix("fn", ResourcesUri.fn);
+/*      //REMOVED DUE TO ILLEGAL CHARACTERS
+        model.setNsPrefix("wn", ResourcesUri.wn);
+        model.setNsPrefix("vn", ResourcesUri.vn);
+        model.setNsPrefix("pb", ResourcesUri.pb);
+        model.setNsPrefix("nb", ResourcesUri.nb);
+        model.setNsPrefix("dbp", ResourcesUri.dbp);
+
+*/
+        model.setNsPrefix("gaf", ResourcesUri.gaf);
+        model.setNsPrefix("sem", ResourcesUri.sem);
+        model.setNsPrefix("owl", ResourcesUri.owl);
+        model.setNsPrefix("time", ResourcesUri.owltime);
+        model.setNsPrefix("rdf", ResourcesUri.rdf);
+        model.setNsPrefix("rdfs", ResourcesUri.rdfs);
+    }
+
+    static public void prefixModelNwr (Model model) {
+        model.setNsPrefix("nwr", ResourcesUri.nwr);
+        model.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
+        model.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
+    }
+
+    static public void prefixModelGaf (Model model) {
+        model.setNsPrefix("gaf", ResourcesUri.gaf);
+        model.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
+        model.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
+    }
 
 }

@@ -23,8 +23,9 @@ public class ClusterEventObjects {
     static public void main (String [] args) {
 
         String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
+       // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out";
         String projectName  = "worldcup";
-        String extension = "";
+        String extension = ".naf";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-folder") && args.length>(i+1)) {
@@ -82,7 +83,7 @@ public class ClusterEventObjects {
             if (!file.getName().startsWith("56VW-T8H1-DXCW-D3F2.")) {
                 //     continue;
             }
-            if (i % 500 == 0) {
+            if (i % 100 == 0) {
                 System.out.println("i = " + i);
                 //  System.out.println("file.getName() = " + file.getAbsolutePath());
             }
@@ -92,19 +93,20 @@ public class ClusterEventObjects {
             semPlaces = new ArrayList<SemObject>();
             semRelations = new ArrayList<SemRelation>();
             factRelations = new ArrayList<SemRelation>();
+            System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
             GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
 
             // We need to create output objects that are more informative than the Trig output and store these in files per date
 
             for (int j = 0; j < semEvents.size(); j++) {
-                SemObject mySemEvent = semEvents.get(j);
-                ArrayList<SemObject> myTimes = ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes);
-                ArrayList<SemObject> myPlaces = ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces);
-                ArrayList<SemObject> myActors = ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors);
+                SemEvent mySemEvent = (SemEvent) semEvents.get(j);
+                ArrayList<SemTime> myTimes =  Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
+                ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
+                ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
                 ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
-                CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
+                CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, GetSemFromNafFile.docOwlTime, myActors, myPlaces, myTimes, myRelations, myFacts);
                 File folder = otherFolder;
                 for (int k = 0; k < mySemEvent.getConcepts().size(); k++) {
                     KafSense kafSense = mySemEvent.getConcepts().get(k);
@@ -128,17 +130,24 @@ public class ClusterEventObjects {
                 /// now we need to write the event data and relations to the proper time folder for comparison
                 if (myTimes.size() == 0) {
                     /// timeless
-                    timeFile = new File(folder.getAbsolutePath() + "/" + "events-" + "timeless" + ".obj");
+                    String timePhrase = "-"+compositeEvent.getDocTime().toString();
+                    if (timePhrase.isEmpty()) {
+                        timeFile = new File(folder.getAbsolutePath() + "/" + "events-" + "timeless" + ".obj");
+                    }
+                    else {
+                        timeFile = new File(folder.getAbsolutePath() + "/" + "events" + timePhrase + ".obj");
+                    }
 
-                } else if (myTimes.size() == 1) {
+                }
+                else if (myTimes.size() == 1) {
                     /// time: same year or exact?
                     SemTime myTime = (SemTime) myTimes.get(0);
                     String timePhrase = "-" + myTime.getOwlTime().toString();
                     timeFile = new File(folder.getAbsolutePath() + "/" + "events" + timePhrase + ".obj");
-                } else {
+                }
+                else {
                     /// special case if multiple times, what to do? create a period?
                     //// ?????
-                    //ArrayList<String> coveredYears = new ArrayList<String>();
                     TreeSet<String> treeSet = new TreeSet<String>();
                     String timePhrase = "";
                     for (int k = 0; k < myTimes.size(); k++) {
@@ -148,21 +157,7 @@ public class ClusterEventObjects {
                             treeSet.add(timePhrase);
                         }
                     }
-/*                     /// In case you wanna know what is going on here
-                        if (treeSet.size()>4 && folder.getName().equals("other")) {
-                          //  System.out.println("mySemEvent = " + mySemEvent.getPhrase());
-                            for (int k = 0; k < mySemEvent.getNafMentions().size(); k++) {
-                                NafMention nafMention = mySemEvent.getNafMentions().get(k);
-                             //   System.out.println("nafMention.toString() = " + nafMention.toString());
-                            }
-                            for (int k = 0; k < myTimes.size(); k++) {
-                                SemObject semObject = myTimes.get(k);
-                                for (int l = 0; l < semObject.getNafMentions().size(); l++) {
-                                    NafMention nafMention = semObject.getNafMentions().get(l);
-                              //      System.out.println("time nafMention.toString() = " + nafMention.toString());
-                                }
-                            }
-                        }*/
+                    timePhrase = "";
                     Iterator keys = treeSet.iterator();
                     while (keys.hasNext()) {
                         timePhrase += "-" + keys.next();
@@ -174,8 +169,6 @@ public class ClusterEventObjects {
                         //  System.out.println("appending to timeFile.getName() = " + timeFile.getName());
                         OutputStream os = new FileOutputStream(timeFile, true);
                         Util.AppendableObjectOutputStream eventFos = new Util.AppendableObjectOutputStream(os);
-
-                        //ObjectOutputStream eventFos = new ObjectOutputStream(aos);
                         try {
                             eventFos.writeObject(compositeEvent);
                         } catch (IOException e) {
@@ -184,7 +177,7 @@ public class ClusterEventObjects {
                         os.close();
                         eventFos.close();
                     } else {
-                        //   System.out.println("timeFile.getName() = " + timeFile.getName());
+                       // System.out.println("timeFile.getName() = " + timeFile.getName());
                         OutputStream os = new FileOutputStream(timeFile);
                         ObjectOutputStream eventFos = new ObjectOutputStream(os);
                         try {

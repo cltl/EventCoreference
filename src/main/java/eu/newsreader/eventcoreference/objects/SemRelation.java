@@ -308,4 +308,9 @@ public class SemRelation implements Serializable {
         }
         return true;
     }
+
+    public String toString () {
+        String str = subject+"#"+predicate+"#"+object;
+        return str;
+    }
 }

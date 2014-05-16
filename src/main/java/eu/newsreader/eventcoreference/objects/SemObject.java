@@ -210,7 +210,7 @@ public class SemObject implements Serializable {
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             if (phraseCount.getCount() > top) {
-                label = phraseCount.getPhrase().replace(" ", "-") + ":" + phraseCount.getCount();
+                label = phraseCount.getPhrase().replace(" ", "-");
             }
         }
         return label;
@@ -423,11 +423,12 @@ public class SemObject implements Serializable {
                 phraseCounts.add(anObjectphraseCount);
             }
         }
-        //System.out.println("this.nafMentions.toString() = " + this.nafMentions.toString());
+       // System.out.println("this.nafMentions.toString() = " + this.nafMentions.toString());
+       // System.out.println("anObject.nafMentions.toString() = " + anObject.nafMentions.toString());
         for (int i = 0; i < anObject.getNafMentions().size(); i++) {
             NafMention nafMention = anObject.getNafMentions().get(i);
             if (!Util.hasMention(this.nafMentions, nafMention)) {
-                System.out.println("nafMention.toString() = " + nafMention.toString());
+               // System.out.println("New mention added !!! nafMention.toString() = " + nafMention.toString());
                 this.nafMentions.add(nafMention);
             }
         }

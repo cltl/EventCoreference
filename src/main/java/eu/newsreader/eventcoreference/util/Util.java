@@ -1,8 +1,7 @@
 package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.*;
-import eu.newsreader.eventcoreference.objects.NafMention;
-import eu.newsreader.eventcoreference.objects.SemObject;
+import eu.newsreader.eventcoreference.objects.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,30 +28,6 @@ public class Util {
             reset();
         }
 
-    }
-
-    static public boolean validRole (String role) {
-        if (role.equalsIgnoreCase("a0")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("a1")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("a2")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("a3")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("am-loc")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("am-tmp")) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     static public boolean hasObject(ArrayList<SemObject> objects, SemObject object) {
@@ -152,7 +127,7 @@ public class Util {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
-                if (kafParticipant.getRole().equalsIgnoreCase("AM-TMP")) {
+                if (RoleLabels.isTIME(kafParticipant.getRole())) {
                     kafParticipant.setTokenStrings(kafSaxParser);
                     String uri = Util.cleanUri(kafParticipant.getTokenString());
                     if (mentions.containsKey(uri)) {
@@ -181,7 +156,7 @@ public class Util {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
-                if (kafParticipant.getRole().equalsIgnoreCase("AM-LOC")) {
+                if (RoleLabels.isLOCATION(kafParticipant.getRole())) {
                     //String srl = kafParticipant.getId();
                     kafParticipant.setTokenStrings(kafSaxParser);
                     String uri = Util.cleanUri(kafParticipant.getTokenString());
@@ -212,10 +187,7 @@ public class Util {
                 if (kafParticipant.getSpans().size()>SPANLIMIT) {
                     continue;
                 }
-                if ((kafParticipant.getRole().equalsIgnoreCase("a0")) ||
-                    (kafParticipant.getRole().equalsIgnoreCase("a1")) ||
-                    (kafParticipant.getRole().equalsIgnoreCase("a2")) ||
-                    (kafParticipant.getRole().equalsIgnoreCase("a3"))){
+                if (RoleLabels.isPARTICIPANT(kafParticipant.getRole())) {
                    // String srl = kafParticipant.getId();
                     kafParticipant.setTokenStrings(kafSaxParser);
                     String uri = Util.cleanUri(kafParticipant.getTokenString());
@@ -237,35 +209,6 @@ public class Util {
     }
 
 
-/*    static public ArrayList<KafSense> getExternalReferencesEntities (KafSaxParser kafSaxParser, KafCoreferenceSet kafCoreferenceSet) {
-        ArrayList<KafSense> references = new ArrayList<KafSense>();
-        for (int i = 0; i < kafSaxParser.kafEntityArrayList.size(); i++) {
-            KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(i);
-            boolean match = false;
-            for (int j = 0; j < kafEntity.getSetsOfSpans().size(); j++) {
-                ArrayList<CorefTarget> entityCorefTargets = kafEntity.getSetsOfSpans().get(j);
-                for (int k = 0; k < entityCorefTargets.size(); k++) {
-                    CorefTarget entityCorefTarget = entityCorefTargets.get(k);
-                    for (int l = 0; l < kafCoreferenceSet.getSetsOfSpans().size(); l++) {
-                        ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(l);
-                        for (int m = 0; m < corefTargets.size(); m++) {
-                            CorefTarget corefTarget = corefTargets.get(m);
-                            if (entityCorefTarget.getId().equals(corefTarget.getId())) {
-                                match = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            if (match) {
-                references.addAll(kafEntity.getExternalReferences());
-            }
-        }
-        return references;
-    }*/
-
-
     /**
      * We assume entities can have a range of spans but such a range can be part of a coreference set. If so we extend the spans with the full coreference set
      * @param entitySpans
@@ -285,6 +228,24 @@ public class Util {
                         if (!hasCorefTargetArrayList(targets, corefSet)) {
                             corefSet.add(targets);
                         }
+                    }
+                }
+            }
+        }
+        return corefSet;
+    }
+
+    static public ArrayList<ArrayList<CorefTarget>> getCoreferenceSetForEventSpans (ArrayList<CorefTarget> eventSpan,
+                                                                                     ArrayList<KafCoreferenceSet> coreferenceSets) {
+        ArrayList<ArrayList<CorefTarget>> corefSet = new ArrayList<ArrayList<CorefTarget>>();
+        corefSet.add(eventSpan);
+        for (int j = 0; j < coreferenceSets.size(); j++){
+            KafCoreferenceSet kafCoreferenceSet = coreferenceSets.get(j);
+            if (matchingAtLeastOneSetOfSpans(eventSpan, kafCoreferenceSet.getSetsOfSpans())) {
+                for (int k = 0; k < kafCoreferenceSet.getSetsOfSpans().size(); k++) {
+                    ArrayList<CorefTarget> targets = kafCoreferenceSet.getSetsOfSpans().get(k);
+                    if (!hasCorefTargetArrayList(targets, corefSet)) {
+                        corefSet.add(targets);
                     }
                 }
             }
@@ -554,6 +515,23 @@ public class Util {
         return mentionURIs;
     }
 
+    static public ArrayList<NafMention> getNafMentionArrayListFromPredicatesAndCoreferences (String baseUri,
+                                                                                           KafSaxParser kafSaxParser,
+                                                                                           KafEvent kafEvent) {
+        ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
+        ArrayList<CorefTarget> corefTargetSets = kafEvent.getSpans();
+        ArrayList<ArrayList<CorefTarget>> sets = getCoreferenceSetForEventSpans(corefTargetSets, kafSaxParser.kafCorefenceArrayList);
+        for (int j = 0; j < sets.size(); j++) {
+            ArrayList<CorefTarget> corefTargets = sets.get(j);
+            NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
+            if (!hasMention(mentionURIs, mention)) {
+               // System.out.println("corefTargets.toString() = " + corefTargets.toString());
+                mentionURIs.add(mention);
+            }
+        }
+        return mentionURIs;
+    }
+
     static public boolean hasMention (ArrayList<NafMention> mentions, NafMention nafMention) {
         for (int i = 0; i < mentions.size(); i++) {
             NafMention mention = mentions.get(i);
@@ -657,6 +635,57 @@ public class Util {
         return mention;
     }
 
+    static public NafMention getNafMentionForTermIdArrayList (String baseUri,
+                                                              KafSaxParser kafSaxParser,
+                                                              ArrayList<String> termIds) {
+        NafMention mention = new NafMention();
+        mention.setBaseUri(baseUri);
+        int firstOffSet = -1;
+        int highestOffSet = -1;
+        int lengthOffSet = -1;
+        mention.setBaseUri(baseUri);
+        for (int j = 0; j < termIds.size(); j++) {
+            String termId = termIds.get(j);
+            KafTerm kafTerm = kafSaxParser.getTerm(termId);
+            mention.addTermsId(termId);
+            if (kafTerm==null) {
+                // System.out.println("corefTarget = " + corefTarget.getId());
+            }
+            else {
+                for (int i = 0; i < kafTerm.getSpans().size(); i++) {
+                    String tokenId = kafTerm.getSpans().get(i);
+                    KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
+                    mention.addTokensId(kafWordForm.getWid());
+                    if (!kafWordForm.getCharOffset().isEmpty()) {
+                        int offSet = Integer.parseInt(kafWordForm.getCharOffset());
+                        int length = 0;
+                        try {
+                            length = Integer.parseInt(kafWordForm.getCharLength());
+                        } catch (NumberFormatException e) {
+                            //    e.printStackTrace();
+                        }
+                        if (length==0) {
+                            length = kafWordForm.getWf().length();
+                        }
+                        if (firstOffSet==-1 || firstOffSet>offSet) {
+                            firstOffSet = offSet;
+                        }
+                        if (highestOffSet==-1 ||offSet>highestOffSet) {
+                            highestOffSet = offSet;
+                            lengthOffSet = length;
+                        }
+                    }
+                }
+            }
+        }
+        if (firstOffSet>-1 && highestOffSet>-1) {
+            int end_offset = highestOffSet+lengthOffSet;
+            mention.setOffSetStart(new Integer (firstOffSet).toString());
+            mention.setOffSetEnd(new Integer(end_offset).toString());
+        }
+        return mention;
+    }
+
     /**
      *      Mention URI = News URI + "#char=START_OFFSET,END_OFFSET"
      */
@@ -689,6 +718,46 @@ public class Util {
         return mentionTarget;
     }*/
 
+
+
+    //// casting functions
+    public static ArrayList<SemTime> castToTime (ArrayList<SemObject> semObjects) {
+        ArrayList<SemTime> mySemTimes = new ArrayList<SemTime>();
+        for (int i = 0; i < semObjects.size(); i++) {
+            SemTime semTime = (SemTime) semObjects.get(i);
+            mySemTimes.add(semTime);
+        }
+        return mySemTimes;
+    }
+
+    public static ArrayList<SemEvent> castToEvent (ArrayList<SemObject> semObjects) {
+        ArrayList<SemEvent> mySemEvents = new ArrayList<SemEvent>();
+        for (int i = 0; i < semObjects.size(); i++) {
+            SemEvent event = (SemEvent) semObjects.get(i);
+            mySemEvents.add(event);
+        }
+        return mySemEvents;
+    }
+
+    public static ArrayList<SemActor> castToActor (ArrayList<SemObject> semObjects) {
+        ArrayList<SemActor> mySemActors = new ArrayList<SemActor>();
+        for (int i = 0; i < semObjects.size(); i++) {
+            SemActor actor = (SemActor) semObjects.get(i);
+            mySemActors.add(actor);
+        }
+        return mySemActors;
+    }
+
+    public static ArrayList<SemPlace> castToPlace (ArrayList<SemObject> semObjects) {
+        ArrayList<SemPlace> mySemPlaces = new ArrayList<SemPlace>();
+        for (int i = 0; i < semObjects.size(); i++) {
+            SemPlace place = (SemPlace) semObjects.get(i);
+            mySemPlaces.add(place);
+        }
+        return mySemPlaces;
+    }
+
+    ///////////////////////////////
     static public String cleanDbpediaUri(String uri, String ns) {
         String cleanUri = ns;
         // <http://dbpedia.org/resource/MG_F_/_MG_TF>

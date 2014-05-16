@@ -7,6 +7,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 
+import java.io.Serializable;
+
 /**
  * Created by IntelliJ IDEA.
  * User: kyoto
@@ -14,7 +16,7 @@ import eu.newsreader.eventcoreference.naf.ResourcesUri;
  * Time: 3:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SemTime extends SemObject{
+public class SemTime extends SemObject implements Serializable {
   /*
   <semEvent id="e30" lcs="raid" score="2.4849066497880004" synset="eng-30-02020027-v" label="raid" mentions="2">
 	<mentions>

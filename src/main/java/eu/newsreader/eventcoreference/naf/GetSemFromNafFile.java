@@ -5,6 +5,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.util.RoleLabels;
+import eu.newsreader.eventcoreference.util.TimeLanguage;
 import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
@@ -27,6 +29,12 @@ import java.util.Set;
 public class GetSemFromNafFile {
 
     /* @TODO
+
+    1. mentions for roles
+    2. explicit uris removing prefixes
+    3. if you use names try to differentiate the prefixes instead of using nwr for everything
+
+
     - namespace http://www.newsreader-project.eu/data/cars
     - namespace http://www.newsreader-project.eu/authors
     - namespace http://www.newsreader-project.eu/publishers
@@ -68,6 +76,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                                        ArrayList<SemRelation> factRelations
     ) {
         //String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", URI_SEPARATOR)+ID_SEPARATOR;
+        TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
         if (!baseUrl.toLowerCase().startsWith("http")) {
             baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
@@ -84,6 +93,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                                                   ArrayList<SemObject> semPlaces,
                                                   ArrayList<SemObject> semTimes
     ) {
+        TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
         if (!baseUrl.toLowerCase().startsWith("http"))     {
             baseUrl = ResourcesUri.nwrdata+project+"/"+kafSaxParser.getKafMetaData().getUrl()+ID_SEPARATOR;
@@ -92,7 +102,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
     }
 
-    static public void processNafFileForEventInstances (String baseUrl, KafSaxParser kafSaxParser,
+    static void processNafFileForEventInstances (String baseUrl, KafSaxParser kafSaxParser,
                                                    ArrayList<SemObject> semEvents
 
     ) {
@@ -102,7 +112,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
          * Event instances
          */
 
-        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+/*        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
             //// these mentions are too coarse and need to intersect with the SRL elements!!!!!
             ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayList(baseUrl, kafSaxParser, coreferenceSet.getSetsOfSpans());
@@ -119,12 +129,26 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                 semEvent.setIdByDBpediaReference();
                 semEvents.add(semEvent);
             }
+        }*/
+
+        for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
+            KafEvent event = kafSaxParser.kafEventArrayList.get(i);
+            ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
+            SemEvent semEvent = new SemEvent();
+            semEvent.setNafMentions(mentionArrayList);
+            semEvent.addPhraseCountsForMentions(kafSaxParser);
+            //semEvent.setId(baseUrl+event.getId());
+            semEvent.setId(baseUrl+semEvent.getTopPhraseAsLabel());
+            semEvent.setFactuality(kafSaxParser);
+            semEvent.setConcept(event.getExternalReferences());
+            semEvent.setIdByDBpediaReference();
+            semEvents.add(semEvent);
         }
 
     }
 
 
-    static public void processNafFileForActorPlaceInstances (String baseUrl, KafSaxParser kafSaxParser,
+    static void processNafFileForActorPlaceInstances (String baseUrl, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semActors,
                                        ArrayList<SemObject> semPlaces
     ) {
@@ -223,7 +247,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                 KafEntity kafEntity = entities.get(i);
                 entityId += kafEntity.getId();
             }
-            SemPlace semActor = new SemPlace();
+            SemActor semActor = new SemActor();
 
 /*
             KafSense sense = new KafSense();
@@ -299,7 +323,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
     }
 
 
-    static public void processNafFileForTimeInstances (String baseUrl, KafSaxParser kafSaxParser,
+    static void processNafFileForTimeInstances (String baseUrl, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semTimes
     ) {
 
@@ -369,7 +393,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
 
 
 
-    static public void processNafFileForRelations (String baseUrl, KafSaxParser kafSaxParser,
+    static void processNafFileForRelations (String baseUrl, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semEvents,
                                        ArrayList<SemObject> semActors,
                                        ArrayList<SemObject> semPlaces,
@@ -431,7 +455,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             else {
                     for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
                         KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
-                        if (!Util.validRole(kafParticipant.getRole())) {
+                        if (!RoleLabels.validRole(kafParticipant.getRole())) {
                             continue;
                         }
                         boolean match = false;
@@ -453,8 +477,19 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                                 SemRelation semRelation = new SemRelation();
                                 String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                 semRelation.setId(relationInstanceId);
+
+/*
                                 NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
                                 semRelation.addMention(relNafMention);
+*/
+
+                                ArrayList<String> termsIds = kafEvent.getSpanIds();
+                                for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
+                                    String s = kafParticipant.getSpanIds().get(j);
+                                    termsIds.add(s);
+                                }
+                                NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
+                                semRelation.addMention(mention);
                                 semRelation.setPredicate("hasSemActor");
                                 semRelation.setSubject(semEventId);
                                 semRelation.setObject(semActor.getId());
@@ -489,8 +524,17 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                                     SemRelation semRelation = new SemRelation();
                                     String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                     semRelation.setId(relationInstanceId);
+/*
                                     NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
                                     semRelation.addMention(relNafMention);
+*/
+                                    ArrayList<String> termsIds = kafEvent.getSpanIds();
+                                    for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
+                                        String s = kafParticipant.getSpanIds().get(j);
+                                        termsIds.add(s);
+                                    }
+                                    NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
+                                    semRelation.addMention(mention);
                                     semRelation.setPredicate("hasSemPlace");
                                     semRelation.setSubject(semEventId);
                                     semRelation.setObject(semPlace.getId());
@@ -515,8 +559,17 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                                     SemRelation semRelation = new SemRelation();
                                     String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                     semRelation.setId(relationInstanceId);
+/*
                                     NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
                                     semRelation.addMention(relNafMention);
+*/
+                                    ArrayList<String> termsIds = kafEvent.getSpanIds();
+                                    for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
+                                        String s = kafParticipant.getSpanIds().get(j);
+                                        termsIds.add(s);
+                                    }
+                                    NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
+                                    semRelation.addMention(mention);
                                     semRelation.setPredicate("hasSemTime");
                                     semRelation.setSubject(semEventId);
                                     semRelation.setObject(semTime.getId());
@@ -574,60 +627,27 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
 
         Dataset ds = TDBFactory.createDataset();
         Model defaultModel = ds.getDefaultModel();
-        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
-
-        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        defaultModel.setNsPrefix("fn", ResourcesUri.fn);
-/*      //REMOVED DUE TO ILLEGAL CHARACTERS
-        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
-        defaultModel.setNsPrefix("vn", ResourcesUri.vn);
-        defaultModel.setNsPrefix("pb", ResourcesUri.pb);
-        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
-*/
-        defaultModel.setNsPrefix("sem", ResourcesUri.sem);
-        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
-       // defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);          /// removed because of dot problem in dbpedia URIs
-        defaultModel.setNsPrefix("owl", ResourcesUri.owl);
-        defaultModel.setNsPrefix("time", ResourcesUri.owltime);
-        defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
-        defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
-       // defaultModel.setNsPrefix("tl", ResourcesUri.tl);
+        ResourcesUri.prefixModel(defaultModel);
 
         Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
-        provenanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        provenanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
-        provenanceModel.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
-        provenanceModel.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
+        ResourcesUri.prefixModelGaf(provenanceModel);
 
         Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
-        instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        instanceModel.setNsPrefix("fn", ResourcesUri.fn);
-/*      //REMOVED DUE TO ILLEGAL CHARACTERS
-        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
-        instanceModel.setNsPrefix("vn", ResourcesUri.vn);
-        instanceModel.setNsPrefix("pb", ResourcesUri.pb);
-        instanceModel.setNsPrefix("nb", ResourcesUri.nb);
-*/
-        instanceModel.setNsPrefix("sem", ResourcesUri.sem);
-        instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
-        instanceModel.setNsPrefix("owl", ResourcesUri.owl);
-        //  instanceModel.setNsPrefix("tl", ResourcesUri.tl);
-        instanceModel.setNsPrefix("time", ResourcesUri.owltime);
+        ResourcesUri.prefixModel(instanceModel);
 
-     //   instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);       /// removed because of dot problem in dbpedia URIs
-
+        // System.out.println("EVENTS");
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
             semEvent.addToJenaModel(instanceModel, Sem.Event);
         }
 
-
+      //  System.out.println("ACTORS");
         for (int i = 0; i < semActors.size(); i++) {
             SemObject semActor = semActors.get(i);
             semActor.addToJenaModel(instanceModel, Sem.Actor);
         }
 
+      //  System.out.println("PLACES");
         for (int i = 0; i < semPlaces.size(); i++) {
             SemObject semPlace = semPlaces.get(i);
             semPlace.addToJenaModel(instanceModel, Sem.Place);
@@ -638,12 +658,14 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         else {
             System.out.println("empty phrase for docSemTime = " + docSemTime.getId());
         }
+       // System.out.println("TIMES");
         for (int i = 0; i < semTimes.size(); i++) {
             SemTime semTime = (SemTime) semTimes.get(i);
             //semTime.addToJenaModel(instanceModel, Sem.Time);
             semTime.addToJenaModelTimeInterval(instanceModel);
         }
 
+        //System.out.println("RELATIONS");
         for (int i = 0; i < semRelations.size(); i++) {
             SemRelation semRelation = semRelations.get(i);
             if (sourceMetaHashMap!=null) {
@@ -658,7 +680,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             //semRelation.addToJenaDataSet(ds, relationModel, provenanceModel);
         }
 
-
+       // System.out.println("FACTUALITIES");
         for (int i = 0; i < factRelations.size(); i++) {
             SemRelation semRelation = factRelations.get(i);
             if (sourceMetaHashMap!=null) {
@@ -682,57 +704,53 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
 
         Dataset ds = TDBFactory.createDataset();
         Model defaultModel = ds.getDefaultModel();
-        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
-
-        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        defaultModel.setNsPrefix("fn", ResourcesUri.fn);
-/*      //REMOVED DUE TO ILLEGAL CHARACTERS
-        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
-        defaultModel.setNsPrefix("vn", ResourcesUri.vn);
-        defaultModel.setNsPrefix("pb", ResourcesUri.pb);
-        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
-*/
-        defaultModel.setNsPrefix("sem", ResourcesUri.sem);
-        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
-       // defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);          /// removed because of dot problem in dbpedia URIs
-        defaultModel.setNsPrefix("owl", ResourcesUri.owl);
-        defaultModel.setNsPrefix("time", ResourcesUri.owltime);
-        defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
-        defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
-       // defaultModel.setNsPrefix("tl", ResourcesUri.tl);
+        ResourcesUri.prefixModel(defaultModel);
 
         Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
-        provenanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        provenanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
-        provenanceModel.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
-        provenanceModel.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
+        ResourcesUri.prefixModelGaf(provenanceModel);
 
         Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
-        instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        instanceModel.setNsPrefix("fn", ResourcesUri.fn);
-/*      //REMOVED DUE TO ILLEGAL CHARACTERS
-        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
-        instanceModel.setNsPrefix("vn", ResourcesUri.vn);
-        instanceModel.setNsPrefix("pb", ResourcesUri.pb);
-        instanceModel.setNsPrefix("nb", ResourcesUri.nb);
-*/
-        instanceModel.setNsPrefix("sem", ResourcesUri.sem);
-        instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
-        instanceModel.setNsPrefix("owl", ResourcesUri.owl);
-        //  instanceModel.setNsPrefix("tl", ResourcesUri.tl);
-        instanceModel.setNsPrefix("time", ResourcesUri.owltime);
-
-     //   instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);       /// removed because of dot problem in dbpedia URIs
+        ResourcesUri.prefixModel(instanceModel);
+        //ResourcesUri.prefixModelNwr(instanceModel);
 
         Set keySet = semEvents.keySet();
         Iterator keys = keySet.iterator();
         while (keys.hasNext()) {
             String lemma = (String) keys.next();
             ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
-            for (int i = 0; i < compositeEvents.size(); i++) {
-                CompositeEvent compositeEvent = compositeEvents.get(i);
+            for (int c = 0; c < compositeEvents.size(); c++) {
+                CompositeEvent compositeEvent = compositeEvents.get(c);
                 compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
+
+
+/*
+                //  System.out.println("ACTORS");
+                for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
+                    SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
+                    semActor.addToJenaModel(instanceModel, Sem.Actor);
+                }
+
+                //  System.out.println("PLACES");
+                for (int i = 0; i < compositeEvent.getMySemPlaces().size(); i++) {
+                    SemPlace semPlace = (SemPlace) compositeEvent.getMySemPlaces().get(i);
+                    semPlace.addToJenaModel(instanceModel, Sem.Place);
+                }
+
+                if (!docSemTime.getPhrase().isEmpty()) {
+                    docSemTime.addToJenaModelDocTimeInterval(instanceModel);
+                }
+                else {
+                    System.out.println("empty phrase for docSemTime = " + docSemTime.getId());
+                }
+                // System.out.println("TIMES");
+                for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
+                    SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
+                    //semTime.addToJenaModel(instanceModel, Sem.Time);
+                    semTime.addToJenaModelTimeInterval(instanceModel);
+                }
+*/
+
+
                 for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
                     SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
                     if (sourceMetaHashMap!=null) {
@@ -770,42 +788,10 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
 
         Dataset ds = TDBFactory.createDataset();
         Model defaultModel = ds.getDefaultModel();
-        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
-
-        defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        defaultModel.setNsPrefix("fn", ResourcesUri.fn);
-/*      //REMOVED DUE TO ILLEGAL CHARACTERS
-        defaultModel.setNsPrefix("wn", ResourcesUri.wn);
-        defaultModel.setNsPrefix("vn", ResourcesUri.vn);
-        defaultModel.setNsPrefix("pb", ResourcesUri.pb);
-        defaultModel.setNsPrefix("nb", ResourcesUri.nb);
-*/
-        defaultModel.setNsPrefix("sem", ResourcesUri.sem);
-        defaultModel.setNsPrefix("gaf", ResourcesUri.gaf);
-       // defaultModel.setNsPrefix("dbp", ResourcesUri.dbp);          /// removed because of dot problem in dbpedia URIs
-        defaultModel.setNsPrefix("owl", ResourcesUri.owl);
-        defaultModel.setNsPrefix("time", ResourcesUri.owltime);
-        defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
-        defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
-       // defaultModel.setNsPrefix("tl", ResourcesUri.tl);
+        ResourcesUri.prefixModel(defaultModel);
 
         Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
-        instanceModel.setNsPrefix("nwr", ResourcesUri.nwr);
-        instanceModel.setNsPrefix("fn", ResourcesUri.fn);
-/*      //REMOVED DUE TO ILLEGAL CHARACTERS
-        instanceModel.setNsPrefix("wn", ResourcesUri.wn);
-        instanceModel.setNsPrefix("vn", ResourcesUri.vn);
-        instanceModel.setNsPrefix("pb", ResourcesUri.pb);
-        instanceModel.setNsPrefix("nb", ResourcesUri.nb);
-*/
-        instanceModel.setNsPrefix("sem", ResourcesUri.sem);
-        instanceModel.setNsPrefix("gaf", ResourcesUri.gaf);
-        instanceModel.setNsPrefix("owl", ResourcesUri.owl);
-        //  instanceModel.setNsPrefix("tl", ResourcesUri.tl);
-        instanceModel.setNsPrefix("time", ResourcesUri.owltime);
-
-     //   instanceModel.setNsPrefix("dbp", ResourcesUri.dbp);       /// removed because of dot problem in dbpedia URIs
+        ResourcesUri.prefixModel(instanceModel);
 
 
         for (int i = 0; i < semActors.size(); i++) {

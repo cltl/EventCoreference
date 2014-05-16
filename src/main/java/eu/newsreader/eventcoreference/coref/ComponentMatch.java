@@ -1,9 +1,7 @@
 package eu.newsreader.eventcoreference.coref;
 
-import eu.newsreader.eventcoreference.objects.CompositeEvent;
-import eu.newsreader.eventcoreference.objects.OwlTime;
-import eu.newsreader.eventcoreference.objects.SemObject;
-import eu.newsreader.eventcoreference.objects.SemRelation;
+import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.util.Util;
 
 import java.util.ArrayList;
 
@@ -12,8 +10,8 @@ import java.util.ArrayList;
  */
 public class ComponentMatch {
 
-    public static boolean compareTime (ArrayList<SemObject> mySemTimes,
-                                       ArrayList<SemObject> semTimes) {
+    public static boolean compareTime (ArrayList<SemTime> mySemTimes,
+                                       ArrayList<SemTime> semTimes) {
 
         for (int i = 0; i < mySemTimes.size(); i++) {
             SemObject mySemTime = mySemTimes.get(i);
@@ -36,8 +34,8 @@ public class ComponentMatch {
         return false;
     }
 
-    public static boolean comparePlace (ArrayList<SemObject> mySemPlaces,
-                                        ArrayList<SemObject> semPlaces) {
+    public static boolean comparePlace (ArrayList<SemPlace> mySemPlaces,
+                                        ArrayList<SemPlace> semPlaces) {
 
         for (int i = 0; i < mySemPlaces.size(); i++) {
             SemObject mySemPlace = mySemPlaces.get(i);
@@ -60,8 +58,8 @@ public class ComponentMatch {
         return false;
     }
 
-    public static boolean compareActor (ArrayList<SemObject> mySemActors,
-                                        ArrayList<SemObject> semActors) {
+    public static boolean compareActor (ArrayList<SemActor> mySemActors,
+                                        ArrayList<SemActor> semActors) {
 
         for (int i = 0; i < mySemActors.size(); i++) {
             SemObject mySemActor = mySemActors.get(i);
@@ -76,7 +74,7 @@ public class ComponentMatch {
                     return true;
                 }
                 else if (semActor.getTopPhraseAsLabel().equals(mySemActor.getTopPhraseAsLabel())) {
-                    System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
+                      System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
                       return true;
                 }
             }
@@ -96,7 +94,7 @@ public class ComponentMatch {
         return true;
     }
 
-    public static boolean compareSemRelation (SemRelation semRelation1, SemRelation semRelation2) {
+    public static boolean equalSemRelation(SemRelation semRelation1, SemRelation semRelation2) {
         if (semRelation1.getPredicate().equals(semRelation2.getPredicate())
                 &&
                 semRelation1.getObject().equals(semRelation2.getObject())) {
@@ -117,20 +115,20 @@ public class ComponentMatch {
                                              ArrayList<SemObject> semTimes,
                                              ArrayList<SemRelation> semRelations) {
 
-        ArrayList<SemObject> mySemTimes = getMySemObjects(mySemEvent, mySemRelations, theSemTimes);
-        ArrayList<SemObject> oSemTimes = getMySemObjects(semEvent, semRelations, semTimes);
+        ArrayList<SemTime> mySemTimes = Util.castToTime(getMySemObjects(mySemEvent, mySemRelations, theSemTimes));
+        ArrayList<SemTime> oSemTimes = Util.castToTime(getMySemObjects(semEvent, semRelations, semTimes));
         if (!compareTime(mySemTimes, oSemTimes)) {
             return false;
         }
-        ArrayList<SemObject> mySemPlaces = getMySemObjects(mySemEvent, mySemRelations, theSemPlaces);
-        ArrayList<SemObject> oSemPlaces = getMySemObjects(semEvent, semRelations, semPlaces);
+        ArrayList<SemPlace> mySemPlaces = Util.castToPlace(getMySemObjects(mySemEvent, mySemRelations, theSemPlaces));
+        ArrayList<SemPlace> oSemPlaces = Util.castToPlace(getMySemObjects(semEvent, semRelations, semPlaces));
         if (mySemPlaces.size()>0 && oSemPlaces.size()>0) {
             if (!comparePlace(mySemPlaces, oSemPlaces)) {
                 return false;
             }
         }
-        ArrayList<SemObject> mySemActors = getMySemObjects(mySemEvent, mySemRelations, theSemActors);
-        ArrayList<SemObject> oSemActors = getMySemObjects(semEvent, semRelations, semActors);
+        ArrayList<SemActor> mySemActors = Util.castToActor(getMySemObjects(mySemEvent, mySemRelations, theSemActors));
+        ArrayList<SemActor> oSemActors = Util.castToActor(getMySemObjects(semEvent, semRelations, semActors));
         if (!compareActor(mySemActors, oSemActors)) {
             return false;
         }
