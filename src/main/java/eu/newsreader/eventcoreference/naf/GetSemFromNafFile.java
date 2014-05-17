@@ -5,6 +5,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.util.EntityTypes;
 import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.TimeLanguage;
 import eu.newsreader.eventcoreference.util.Util;
@@ -181,7 +182,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                // System.out.println("uri = " + uri);
             }
             if (!uri.isEmpty()) {
-                if (kafEntity.getType().equalsIgnoreCase("location")) {
+                if (EntityTypes.isLOCATION(kafEntity.getType())) {
                     if (kafEntityLocationUriMap.containsKey(uri)) {
                         ArrayList<KafEntity> entities = kafEntityLocationUriMap.get(uri);
                         entities.add(kafEntity);
@@ -228,11 +229,6 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semPlace.addConcepts(Util.getExternalReferences(entities));
             semPlace.setIdByDBpediaReference();
             Util.addObject(semPlaces, semPlace);
-/*            if (semPlace.getURI().endsWith("Brazil")) {
-                System.out.println("semActor.getId() = " + semPlace.getId());
-                System.out.println("semActor.getNafMentions().toString() = " + semPlace.getNafMentions().toString());
-            }*/
-
         }
 
         keySet = kafEntityActorUriMap.keySet();
@@ -248,25 +244,12 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                 entityId += kafEntity.getId();
             }
             SemActor semActor = new SemActor();
-
-/*
-            KafSense sense = new KafSense();
-            sense.setRefType("corefType");
-            sense.setSensecode("actor");
-            semActor.addConcept(sense);
-*/
-
             semActor.setId(baseUrl + entityId);
             semActor.setNafMentions(mentionArrayList);
             semActor.addPhraseCountsForMentions(kafSaxParser);
             semActor.addConcepts(Util.getExternalReferences(entities));
             semActor.setIdByDBpediaReference();
             Util.addObject(semActors, semActor);
-/*            if (semActor.getURI().endsWith("Brazil")) {
-                System.out.println("semActor.getId() = " + semActor.getId());
-                System.out.println("semActor.getNafMentions().toString() = " + semActor.getNafMentions().toString());
-            }*/
-
         }
 
 

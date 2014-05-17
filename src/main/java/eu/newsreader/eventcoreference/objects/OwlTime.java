@@ -186,13 +186,44 @@ public class OwlTime implements Serializable {
             //System.out.println("date = " + date);
             this.instance = timeExValue;
             if (fields[0].length() == 4) {
-                if (!fields[2].equalsIgnoreCase("xx")) this.day = (new Integer(fields[2])).toString();
-                if (!fields[1].equalsIgnoreCase("xx")) this.month = (new Integer(fields[1])).toString();
-                if (!fields[0].equalsIgnoreCase("xxxx")) this.year = (new Integer(fields[0])).toString();
+                try {
+                    if (!fields[2].equalsIgnoreCase("xx")) {
+                        if (fields[2].length()>2) {
+                             this.day = (new Integer(fields[2].substring(0, 2))).toString();
+                        }
+                        else {
+                            this.day = (new Integer(fields[2])).toString();
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                 //   e.printStackTrace();
+                }
+                try {
+                    if (!fields[1].equalsIgnoreCase("xx")) this.month = (new Integer(fields[1])).toString();
+                } catch (NumberFormatException e) {
+                   // e.printStackTrace();
+                }
+                try {
+                    if (!fields[0].equalsIgnoreCase("xxxx")) this.year = (new Integer(fields[0])).toString();
+                } catch (NumberFormatException e) {
+                  //  e.printStackTrace();
+                }
             } else if (fields[2].length() == 4) {
-                if (!fields[0].equalsIgnoreCase("xx")) this.day = (new Integer(fields[0])).toString();
-                if (!fields[1].equalsIgnoreCase("xx")) this.month = (new Integer(fields[1])).toString();
-                if (!fields[2].equalsIgnoreCase("xxxx"))this.year = (new Integer(fields[2])).toString();
+                try {
+                    if (!fields[0].equalsIgnoreCase("xx")) this.day = (new Integer(fields[0])).toString();
+                } catch (NumberFormatException e) {
+                 //   e.printStackTrace();
+                }
+                try {
+                    if (!fields[1].equalsIgnoreCase("xx")) this.month = (new Integer(fields[1])).toString();
+                } catch (NumberFormatException e) {
+                  //  e.printStackTrace();
+                }
+                try {
+                    if (!fields[2].equalsIgnoreCase("xxxx"))this.year = (new Integer(fields[2])).toString();
+                } catch (NumberFormatException e) {
+                 //   e.printStackTrace();
+                }
             }
             foundTime = 1;
         }

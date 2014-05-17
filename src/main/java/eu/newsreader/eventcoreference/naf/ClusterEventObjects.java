@@ -22,7 +22,8 @@ public class ClusterEventObjects {
 
     static public void main (String [] args) {
 
-        String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
+        String pathToNafFolder = "/Users/piek/Desktop/NWR-DATA/worldcup/ln";
+        //String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
        // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out";
         String projectName  = "worldcup";
         String extension = ".naf";

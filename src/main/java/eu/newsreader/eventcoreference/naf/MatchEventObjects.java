@@ -26,7 +26,8 @@ public class MatchEventObjects {
         HashMap<String, SourceMeta> sourceMetaHashMap = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
-        String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/events/other";
+        String pathToEventFolder = "/Users/piek/Desktop/NWR-DATA/worldcup/ln/events/other";
+        //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/events/other";
        //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out/events/other";
         String pathToSourceDataFile = "";
         for (int i = 0; i < args.length; i++) {

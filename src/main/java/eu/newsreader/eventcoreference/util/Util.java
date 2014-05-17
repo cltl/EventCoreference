@@ -54,6 +54,8 @@ public class Util {
         ArrayList<KafSense> refs = new ArrayList<KafSense>();
         for (int i = 0; i < entities.size(); i++) {
             KafEntity kafEntity = entities.get(i);
+            KafSense entityType = new KafSense();
+            entityType.setSensecode(kafEntity.getType());
             for (int j = 0; j < kafEntity.getExternalReferences().size(); j++) {
                 KafSense kafSense = kafEntity.getExternalReferences().get(j);
                 boolean match = false;
