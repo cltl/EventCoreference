@@ -86,8 +86,12 @@ public class OwlTime implements Serializable {
         String str = "";
         for (int i = 0; i < s.toCharArray().length; i++) {
             String c = s.substring(i, i+1);
-            if (punctuation.contains(c)) str += " ";
-            str += c;
+            if (punctuation.contains(c)) {
+                str += " ";
+            }
+            else {
+                str += c;
+            }
         }
         return str.trim();
     }
@@ -195,11 +199,10 @@ public class OwlTime implements Serializable {
         return foundTime;
     }
 
-    public int parseStringDateWithDocTimeYearFallBack (String rawdate, OwlTime docOwlTime) {
+    public int parseStringDateWithDocTimeYearFallBack(String rawdate, OwlTime docOwlTime) {
         int foundTime = -1;
         try {
             String date = removePunctuation(rawdate);
-            //System.out.println("date = " + date);
             String year = TimeLanguage.getYearFromString(date);
             if (!year.isEmpty()) {
                 this.year = year;

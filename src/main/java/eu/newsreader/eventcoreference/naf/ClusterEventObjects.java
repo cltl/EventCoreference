@@ -96,12 +96,13 @@ public class ClusterEventObjects {
             System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
             GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-
+            System.out.println("semTimes = " + semTimes.size());
             // We need to create output objects that are more informative than the Trig output and store these in files per date
 
             for (int j = 0; j < semEvents.size(); j++) {
                 SemEvent mySemEvent = (SemEvent) semEvents.get(j);
                 ArrayList<SemTime> myTimes =  Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
+                //System.out.println("myTimes.size() = " + myTimes.size());
                 ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
                 ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);

@@ -177,7 +177,6 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
             Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
             Resource targetResource = model.createResource(nafMention.toString());
             resource.addProperty(gaf, targetResource);
-
         }
     }
 
@@ -219,7 +218,7 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
         resource.addProperty(RDF.type, interval);
 
-        Resource value = model.createResource(owlTime.getDateString());
+        Resource value = model.createResource(this.getOwlTime().getDateString());
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 

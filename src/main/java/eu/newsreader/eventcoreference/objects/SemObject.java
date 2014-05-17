@@ -210,7 +210,7 @@ public class SemObject implements Serializable {
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             if (phraseCount.getCount() > top) {
-                label = phraseCount.getPhrase().replace(" ", "-");
+                label = Util.cleanUri(phraseCount.getPhrase().replace(" ", "-"));
             }
         }
         return label;

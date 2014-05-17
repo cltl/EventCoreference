@@ -23,7 +23,7 @@ public class InterDocumentEntityCoref {
         double phraseMatchThreshold = 1;
         String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
         String projectName  = "worldcup";
-        String extension = "";
+        String extension = ".naf";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-folder") && args.length>(i+1)) {
@@ -131,6 +131,9 @@ public class InterDocumentEntityCoref {
                 if (!merge) {
                     semPlaces.add(mySemPlace);
                 }
+            }
+            if (GetSemFromNafFile.docOwlTime.getDateString().isEmpty()) {
+                semTimes.add(GetSemFromNafFile.docSemTime);
             }
 
             for (int j = 0; j < mySemTimes.size(); j++) {

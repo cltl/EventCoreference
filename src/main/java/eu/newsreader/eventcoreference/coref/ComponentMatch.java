@@ -74,7 +74,7 @@ public class ComponentMatch {
                     return true;
                 }
                 else if (semActor.getTopPhraseAsLabel().equals(mySemActor.getTopPhraseAsLabel())) {
-                      System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
+                     // System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
                       return true;
                 }
             }

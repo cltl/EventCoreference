@@ -138,7 +138,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semEvent.setNafMentions(mentionArrayList);
             semEvent.addPhraseCountsForMentions(kafSaxParser);
             //semEvent.setId(baseUrl+event.getId());
-            semEvent.setId(baseUrl+semEvent.getTopPhraseAsLabel());
+            semEvent.setId(baseUrl+semEvent.getTopPhraseAsLabel()+"Event");
             semEvent.setFactuality(kafSaxParser);
             semEvent.setConcept(event.getExternalReferences());
             semEvent.setIdByDBpediaReference();
@@ -227,7 +227,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semPlace.addPhraseCountsForMentions(kafSaxParser);
             semPlace.addConcepts(Util.getExternalReferences(entities));
             semPlace.setIdByDBpediaReference();
-            semPlaces.add(semPlace);
+            Util.addObject(semPlaces, semPlace);
 /*            if (semPlace.getURI().endsWith("Brazil")) {
                 System.out.println("semActor.getId() = " + semPlace.getId());
                 System.out.println("semActor.getNafMentions().toString() = " + semPlace.getNafMentions().toString());
@@ -261,7 +261,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semActor.addPhraseCountsForMentions(kafSaxParser);
             semActor.addConcepts(Util.getExternalReferences(entities));
             semActor.setIdByDBpediaReference();
-            semActors.add(semActor);
+            Util.addObject(semActors, semActor);
 /*            if (semActor.getURI().endsWith("Brazil")) {
                 System.out.println("semActor.getId() = " + semActor.getId());
                 System.out.println("semActor.getNafMentions().toString() = " + semActor.getNafMentions().toString());
@@ -290,13 +290,8 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semPlace.addPhraseCountsForMentions(kafSaxParser);
             semPlace.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
             semPlace.setIdByDBpediaReference();
-            if (!Util.hasObject(semPlaces, semPlace)) {
-             //   System.out.println("adding mentions = " + mentions);
-                semPlaces.add(semPlace);
-            }
-            else {
-             //   System.out.println("skipping mentions = " + mentions);
-            }
+            Util.addObject(semPlaces, semPlace);
+
         }
 
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> actorReferences = Util.getActorMentionsHashMapFromSrl(kafSaxParser);
@@ -312,13 +307,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             semActor.addPhraseCountsForMentions(kafSaxParser);
             semActor.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
             semActor.setIdByDBpediaReference();
-            if (!Util.hasObject(semActors, semActor)) {
-                //System.out.println("adding mentions = " + mentions);
-                semActors.add(semActor);
-            }
-            else {
-                //System.out.println("skipping mentions = " + mentions);
-            }
+            Util.addObject(semActors, semActor);
         }
     }
 
@@ -348,7 +337,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
             KafTimex timex = kafSaxParser.kafTimexLayer.get(i);
             if (!timex.getValue().isEmpty()) {
-               //System.out.println("timex.getValue() = " + timex.getValue());
+             //  System.out.println("timex.getValue() = " + timex.getValue());
                 OwlTime aTime =new OwlTime();
                 if (aTime.parseTimeExValue(timex.getValue(), docOwlTime)>-1) {
                     ArrayList<String> tokenSpanIds = timex.getSpans();
@@ -359,21 +348,21 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                     semTimeRole.setNafMentions(mentions);
                     semTimeRole.addPhraseCountsForMentions(kafSaxParser);
                     semTimeRole.setOwlTime(aTime);
-                    semTimes.add(semTimeRole);
+                    Util.addObject(semTimes, semTimeRole);
                 }
             }
         }
 
 
         //// we get time references from the SRL layer
-        HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = Util.getTimeMentionsHashMapFromSrl (kafSaxParser);
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = Util.getTimeMentionsHashMapFromSrl (kafSaxParser, docOwlTime);
         Set keySet = timeReferences.keySet();
         Iterator keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = (String) keys.next();
             OwlTime aTime =new OwlTime();
+           // System.out.println("key = " + key);
             if (aTime.parseStringDateWithDocTimeYearFallBack(key, docOwlTime)>-1) {
-                // System.out.println("key = " + key);
                 ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = timeReferences.get(key);
                 SemTime semTimeRole = new SemTime();
                 semTimeRole.setId(baseUrl + Util.cleanUri(key));
@@ -381,12 +370,13 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                 semTimeRole.setNafMentions(mentions);
                 semTimeRole.addPhraseCountsForMentions(kafSaxParser);
                 semTimeRole.setOwlTime(aTime);
-                if (!Util.hasObject(semTimes, semTimeRole)) {
-                    semTimes.add(semTimeRole);
-                }
+                Util.addObject(semTimes, semTimeRole);
             }
             else {
+                //// phrase contains no useable info
             }
+
+
             //System.out.println("aTime.toString() = " + aTime.toString());
         }
     }
@@ -695,7 +685,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
     }
 
-    static public void serializeJenaEvents (OutputStream stream,HashMap<String, ArrayList<CompositeEvent>> semEvents,
+    static public void serializeJenaCompositeEvents (OutputStream stream,HashMap<String, ArrayList<CompositeEvent>> semEvents,
                                       HashMap <String, SourceMeta> sourceMetaHashMap) {
 
 
@@ -722,8 +712,6 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                 CompositeEvent compositeEvent = compositeEvents.get(c);
                 compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
 
-
-/*
                 //  System.out.println("ACTORS");
                 for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
                     SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
@@ -736,20 +724,19 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                     semPlace.addToJenaModel(instanceModel, Sem.Place);
                 }
 
-                if (!docSemTime.getPhrase().isEmpty()) {
-                    docSemTime.addToJenaModelDocTimeInterval(instanceModel);
+                if (!compositeEvent.getDocTime().getDateString().isEmpty()) {
+                    compositeEvent.getDocTime().addToJenaModelOwlTimeInstant(instanceModel);
                 }
                 else {
-                    System.out.println("empty phrase for docSemTime = " + docSemTime.getId());
+                    System.out.println("empty phrase for docSemTime = " + compositeEvent.getDocTime().getInstance());
                 }
-                // System.out.println("TIMES");
+               // System.out.println("TIMES");
+               // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
                 for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
                     SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
                     //semTime.addToJenaModel(instanceModel, Sem.Time);
                     semTime.addToJenaModelTimeInterval(instanceModel);
                 }
-*/
-
 
                 for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
                     SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
@@ -818,8 +805,8 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
 
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
-        String pathToNafFile = "/Code/vu/newsreader/EventCoreference/example/56VW-T8H1-DXCW-D3F2.xml_8a28e3b9ede9d243cf55b6db8d41a21c.naf";
-        String project = "cars";
+        String pathToNafFile = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/59XK-YKK1-DXJ4-J1D2.xml_8fcc6fa445aa0b5161d9ead08ebb321a.naf";
+        String project = "worldcup";
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();

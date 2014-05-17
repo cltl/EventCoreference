@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.objects;
 
 import eu.newsreader.eventcoreference.coref.ComponentMatch;
+import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -133,8 +134,11 @@ public class CompositeEvent implements Serializable{
                 SemRelation relation = this.getMySemRelations().get(j);
                 if ((relation.getPredicate().equalsIgnoreCase("hasTime")) && (semRelation.getPredicate().equalsIgnoreCase("hasTime")))  {
                  //   this.getMySemTimes();
-                    if (matchTimeReference(this.getMySemTimes(), event.mySemTimes, relation.getObject(), semRelation.getObject())) {
-                        //// true time match, represent one
+                    if (Util.matchTimeReference(this.getMySemTimes(), event.mySemTimes, relation.getObject(), semRelation.getObject())) {
+                        relation.addMentions(semRelation.getNafMentions());
+                        System.out.println("relation.getNafMentions().toString() = " + relation.getNafMentions().toString());
+                        match = true;
+                        break;
                     }
                 }
                 else if (ComponentMatch.equalSemRelation(semRelation, relation)) {
@@ -155,10 +159,7 @@ public class CompositeEvent implements Serializable{
         }
     }
 
-    public boolean matchTimeReference (ArrayList<SemTime> times1, ArrayList<SemTime> times2, String time1Id, String time2Id) {
-         boolean match = false;
-         return match;
-    }
+
 
     public void mergeFactRelations (CompositeEvent event) {
          for (int i = 0; i < event.getMySemFactRelations().size(); i++) {
@@ -178,6 +179,65 @@ public class CompositeEvent implements Serializable{
                 this.addMySemFactRelation(semRelation);
             }
         }
+    }
+
+    public void mergeObjects (CompositeEvent event) {
+         for (int i = 0; i < event.getMySemActors().size(); i++) {
+            SemActor semActor1 = event.getMySemActors().get(i);
+            boolean match = false;
+            for (int j = 0; j < this.getMySemActors().size(); j++) {
+                SemActor semActor2 = this.getMySemActors().get(j);
+                if (semActor1.getURI().equals(semActor2.getURI())) {
+                    System.out.println("adding semActor1 = " + semActor1.getURI());
+                    System.out.println("adding semActor2 = " + semActor2.getURI());
+                    semActor2.mergeSemObject(semActor1);
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                 System.out.println("adding semActor1 = " + semActor1.getURI());
+                 this.mySemActors.add(semActor1);
+            }
+        }
+
+        for (int i = 0; i < event.getMySemPlaces().size(); i++) {
+            SemPlace semPlace1 = event.getMySemPlaces().get(i);
+            boolean match = false;
+            for (int j = 0; j < this.getMySemPlaces().size(); j++) {
+                SemPlace semPlace2 = this.getMySemPlaces().get(j);
+                if (semPlace1.getURI().equals(semPlace2.getURI())) {
+                    semPlace2.mergeSemObject(semPlace1);
+
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+               //  System.out.println("adding semPlace1 = " + semPlace1.toString());
+                 this.mySemPlaces.add(semPlace1);
+            }
+        }
+        for (int i = 0; i < event.getMySemTimes().size(); i++) {
+            SemTime semTime1 = event.getMySemTimes().get(i);
+            boolean match = false;
+            for (int j = 0; j < this.getMySemTimes().size(); j++) {
+                SemTime semTime2 = this.getMySemTimes().get(j);
+                if (semTime1.getOwlTime().matchTimeExact(semTime2.getOwlTime())) {
+                    System.out.println("semTime1 = " + semTime1.getURI());
+                    System.out.println("semTime2 = " + semTime2.getURI());
+                    semTime2.mergeSemObject(semTime1);
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                 System.out.println("adding semTime1 = " + semTime1.getURI());
+                 this.mySemTimes.add(semTime1);
+            }
+        }
+       // System.out.println("this.getMySemTimes().size() = " + this.getMySemTimes().size());
+
     }
 
 }

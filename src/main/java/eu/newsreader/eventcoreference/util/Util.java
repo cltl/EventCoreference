@@ -30,18 +30,24 @@ public class Util {
 
     }
 
-    static public boolean hasObject(ArrayList<SemObject> objects, SemObject object) {
+
+    static public void addObject(ArrayList<SemObject> objects, SemObject object) {
+        boolean match =false;
         for (int i = 0; i < objects.size(); i++) {
             SemObject semObject = objects.get(i);
-            for (int j = 0; j < object.getNafMentions().size(); j++) {
-                NafMention nafMention = object.getNafMentions().get(j);
-                if (semObject.hasMention(nafMention)) {
-                    return true;
+            if (semObject.getURI().equals(object.getURI())) {
+                match = true;
+                for (int j = 0; j < object.getNafMentions().size(); j++) {
+                    NafMention nafMention = object.getNafMentions().get(j);
+                    if (!semObject.hasMention(nafMention)) {
+                        semObject.addMentionUri(nafMention);
+                    }
                 }
-
             }
         }
-        return false;
+        if (!match) {
+           objects.add(object);
+        }
     }
 
     static public ArrayList<KafSense> getExternalReferences(ArrayList<KafEntity> entities) {
@@ -120,7 +126,7 @@ public class Util {
      * @param kafSaxParser
      * @return
      */
-    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getTimeMentionsHashMapFromSrl (KafSaxParser kafSaxParser) {
+    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getTimeMentionsHashMapFromSrl (KafSaxParser kafSaxParser, OwlTime docOwlTime) {
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentions = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
 
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
@@ -129,20 +135,19 @@ public class Util {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
                 if (RoleLabels.isTIME(kafParticipant.getRole())) {
                     kafParticipant.setTokenStrings(kafSaxParser);
-                    String uri = Util.cleanUri(kafParticipant.getTokenString());
-                    if (mentions.containsKey(uri)) {
-                        ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(uri);
+                    if (mentions.containsKey(kafParticipant.getTokenString())) {
+                        ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(kafParticipant.getTokenString());
                         srlTargets.add(kafParticipant.getSpans());
-                        mentions.put(uri, srlTargets);
-                    }
-                    else {
+                        mentions.put(kafParticipant.getTokenString(), srlTargets);
+                    } else {
                         ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();
                         srlTargets.add(kafParticipant.getSpans());
-                        mentions.put(uri,srlTargets);
+                        mentions.put(kafParticipant.getTokenString(), srlTargets);
                     }
                 }
             }
         }
+       // System.out.println("mentions.size() = " + mentions.size());
         return mentions;
     }
 
@@ -718,7 +723,31 @@ public class Util {
         return mentionTarget;
     }*/
 
-
+    static public boolean matchTimeReference (ArrayList<SemTime> times1, ArrayList<SemTime> times2, String time1Id, String time2Id) {
+        SemTime semTime1 = null;
+        SemTime semTime2 = null;
+        for (int i = 0; i < times1.size(); i++) {
+            SemTime aTime = times1.get(i);
+            if (aTime.getId().equals(time1Id)) {
+                System.out.println("aTime.toString() = " + aTime.toString());
+                semTime1 = aTime;
+                break;
+            }
+        }
+        for (int j = 0; j < times2.size(); j++) {
+            SemTime aTime =  times2.get(j);
+            if (aTime.getId().equals(time2Id)) {
+                System.out.println("aTime.toString() = " + aTime.toString());
+                semTime2 = aTime;
+            }
+        }
+        if (semTime1!=null && semTime2!=null) {
+            if (semTime1.getOwlTime().getDateString().equals(semTime2.getOwlTime().getDateString())){
+                return true;
+            }
+        }
+        return false;
+    }
 
     //// casting functions
     public static ArrayList<SemTime> castToTime (ArrayList<SemObject> semObjects) {

@@ -205,7 +205,7 @@ public class InterDocumentEventCoref {
         System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
-            System.out.println("file.getName() = " + file.getAbsolutePath());
+           // System.out.println("file.getName() = " + file.getAbsolutePath());
 /*
             if (file.getName().equals("57K5-FKK1-DYBW-2534.xml_d55a12cb4c1d383120eab77994a77e88.naf.coref")) {
                 continue;
