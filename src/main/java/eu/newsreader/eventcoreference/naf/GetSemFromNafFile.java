@@ -62,7 +62,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
     */
 
     static SemTime docSemTime = new SemTime();
-    static OwlTime docOwlTime = new OwlTime();
+  //  static OwlTime docOwlTime = new OwlTime();
 
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
@@ -330,8 +330,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             docSemTime.addPhraseCounts(kafSaxParser.getKafMetaData().getCreationtime());
             NafMention mention = new NafMention(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
             docSemTime.addMentionUri(mention);
-            docOwlTime = new OwlTime();
-            docOwlTime.parsePublicationDate(kafSaxParser.getKafMetaData().getCreationtime());
+            docSemTime.getOwlTime().parsePublicationDate(kafSaxParser.getKafMetaData().getCreationtime());
         }
 
         for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
@@ -339,7 +338,7 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             if (!timex.getValue().isEmpty()) {
              //  System.out.println("timex.getValue() = " + timex.getValue());
                 OwlTime aTime =new OwlTime();
-                if (aTime.parseTimeExValue(timex.getValue(), docOwlTime)>-1) {
+                if (aTime.parseTimeExValue(timex.getValue(), docSemTime.getOwlTime())>-1) {
                     ArrayList<String> tokenSpanIds = timex.getSpans();
                     ArrayList<String> termSpanIds = kafSaxParser.covertTokensSpanToTermSPan(tokenSpanIds);
                     ArrayList<NafMention> mentions = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, termSpanIds);
@@ -355,14 +354,14 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
 
 
         //// we get time references from the SRL layer
-        HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = Util.getTimeMentionsHashMapFromSrl (kafSaxParser, docOwlTime);
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = Util.getTimeMentionsHashMapFromSrl (kafSaxParser, docSemTime.getOwlTime());
         Set keySet = timeReferences.keySet();
         Iterator keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = (String) keys.next();
             OwlTime aTime =new OwlTime();
            // System.out.println("key = " + key);
-            if (aTime.parseStringDateWithDocTimeYearFallBack(key, docOwlTime)>-1) {
+            if (aTime.parseStringDateWithDocTimeYearFallBack(key, docSemTime.getOwlTime())>-1) {
                 ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = timeReferences.get(key);
                 SemTime semTimeRole = new SemTime();
                 semTimeRole.setId(baseUrl + Util.cleanUri(key));
@@ -724,11 +723,11 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
                     semPlace.addToJenaModel(instanceModel, Sem.Place);
                 }
 
-                if (!compositeEvent.getDocTime().getDateString().isEmpty()) {
-                    compositeEvent.getDocTime().addToJenaModelOwlTimeInstant(instanceModel);
-                }
-                else {
-                    System.out.println("empty phrase for docSemTime = " + compositeEvent.getDocTime().getInstance());
+                if (compositeEvent.getMyDocTimes().size()>0) {
+                    for (int i = 0; i < compositeEvent.getMyDocTimes().size(); i++) {
+                        SemTime semTime = compositeEvent.getMyDocTimes().get(i);
+                        semTime.addToJenaModelDocTimeInterval(instanceModel);
+                    }
                 }
                // System.out.println("TIMES");
                // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());

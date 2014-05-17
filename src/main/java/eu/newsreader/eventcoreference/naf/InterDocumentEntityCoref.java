@@ -46,7 +46,14 @@ public class InterDocumentEntityCoref {
     }
 
 
-
+    /**
+     * DONT USE THIS FUNCTION, NEEDS TO BE CHECKED
+     * @param project
+     * @param pathToNafFolder
+     * @param extension
+     * @param conceptMatchThreshold
+     * @param phraseMatchThreshold
+     */
     public static void processFolderForEntities (String project, File pathToNafFolder, String extension, double conceptMatchThreshold,
                                       double phraseMatchThreshold
 
@@ -132,7 +139,7 @@ public class InterDocumentEntityCoref {
                     semPlaces.add(mySemPlace);
                 }
             }
-            if (GetSemFromNafFile.docOwlTime.getDateString().isEmpty()) {
+            if (!GetSemFromNafFile.docSemTime.getOwlTime().getDateString().isEmpty()) {
                 semTimes.add(GetSemFromNafFile.docSemTime);
             }
 

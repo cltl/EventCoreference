@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class CompositeEvent implements Serializable{
 
     private SemObject event;
-    private OwlTime docTime;
+    private ArrayList<SemTime> myDocTimes;
     private ArrayList<SemTime> mySemTimes;
     private ArrayList<SemPlace> mySemPlaces;
     private ArrayList<SemActor> mySemActors;
@@ -20,8 +20,8 @@ public class CompositeEvent implements Serializable{
     private ArrayList<SemRelation> mySemFactRelations;
 
     public CompositeEvent() {
-        this.docTime = new OwlTime();
         this.event = new SemObject();
+        this.myDocTimes = new ArrayList<SemTime>();
         this.mySemTimes = new ArrayList<SemTime>();
         this.mySemPlaces = new ArrayList<SemPlace>();
         this.mySemActors = new ArrayList<SemActor>();
@@ -30,14 +30,15 @@ public class CompositeEvent implements Serializable{
     }
 
     public CompositeEvent(SemEvent event,
-                          OwlTime docTime,
+                          SemTime semTime,
                           ArrayList<SemActor> mySemActors,
                           ArrayList<SemPlace> mySemPlaces,
                           ArrayList<SemTime> mySemTimes,
                           ArrayList<SemRelation> mySemRelations,
                           ArrayList<SemRelation> mySemFactRelations
                           ) {
-        this.docTime = docTime;
+        this.myDocTimes = new ArrayList<SemTime>();
+        this.myDocTimes.add(semTime);
         this.event = event;
         this.mySemTimes = mySemTimes;
         this.mySemPlaces = mySemPlaces;
@@ -46,13 +47,6 @@ public class CompositeEvent implements Serializable{
         this.mySemFactRelations = mySemFactRelations;
     }
 
-    public OwlTime getDocTime() {
-        return docTime;
-    }
-
-    public void setDocTime(OwlTime docTime) {
-        this.docTime = docTime;
-    }
 
     public SemObject getEvent() {
         return event;
@@ -72,6 +66,19 @@ public class CompositeEvent implements Serializable{
 
     public void addMySemTime(SemTime mySemTime) {
         this.mySemTimes.add(mySemTime);
+    }
+
+    public void setMyDocTimes(ArrayList<SemTime> mySemTimes) {
+        this.myDocTimes = mySemTimes;
+    }
+
+    public void addMyDocTime(SemTime mySemTime) {
+        this.myDocTimes.add(mySemTime);
+    }
+
+
+    public ArrayList<SemTime> getMyDocTimes() {
+        return myDocTimes;
     }
 
     public ArrayList<SemPlace> getMySemPlaces() {
@@ -97,7 +104,6 @@ public class CompositeEvent implements Serializable{
     public void addMySemActor(SemActor mySemActor) {
         this.mySemActors.add(mySemActor);
     }
-
 
     public ArrayList<SemRelation> getMySemRelations() {
         return mySemRelations;
@@ -133,12 +139,25 @@ public class CompositeEvent implements Serializable{
             for (int j = 0; j < this.getMySemRelations().size(); j++) {
                 SemRelation relation = this.getMySemRelations().get(j);
                 if ((relation.getPredicate().equalsIgnoreCase("hasTime")) && (semRelation.getPredicate().equalsIgnoreCase("hasTime")))  {
-                 //   this.getMySemTimes();
-                    if (Util.matchTimeReference(this.getMySemTimes(), event.mySemTimes, relation.getObject(), semRelation.getObject())) {
+                    //// make sure the doctime is also considered
+                    ArrayList<SemTime> times1 = this.getMySemTimes();
+                    for (int k = 0; k < this.getMyDocTimes().size(); k++) {
+                        SemTime docTime =  this.getMyDocTimes().get(k);
+                        times1.add(docTime);
+                    }
+                    ArrayList<SemTime> times2 = event.getMySemTimes();
+                    for (int k = 0; k < event.getMyDocTimes().size(); k++) {
+                        SemTime docTime = event.getMyDocTimes().get(k);
+                        times2.add(docTime);
+                    }
+                    if (Util.matchTimeReference(times1, times2, relation.getObject(), semRelation.getObject())) {
                         relation.addMentions(semRelation.getNafMentions());
-                        System.out.println("relation.getNafMentions().toString() = " + relation.getNafMentions().toString());
+                       // System.out.println("relation.getNafMentions().toString() = " + relation.getNafMentions().toString());
                         match = true;
                         break;
+                    }
+                    else {
+                        /////
                     }
                 }
                 else if (ComponentMatch.equalSemRelation(semRelation, relation)) {
@@ -188,15 +207,15 @@ public class CompositeEvent implements Serializable{
             for (int j = 0; j < this.getMySemActors().size(); j++) {
                 SemActor semActor2 = this.getMySemActors().get(j);
                 if (semActor1.getURI().equals(semActor2.getURI())) {
-                    System.out.println("adding semActor1 = " + semActor1.getURI());
-                    System.out.println("adding semActor2 = " + semActor2.getURI());
+                  //  System.out.println("adding semActor1 = " + semActor1.getURI());
+                  //  System.out.println("adding semActor2 = " + semActor2.getURI());
                     semActor2.mergeSemObject(semActor1);
                     match = true;
                     break;
                 }
             }
             if (!match) {
-                 System.out.println("adding semActor1 = " + semActor1.getURI());
+               //  System.out.println("adding semActor1 = " + semActor1.getURI());
                  this.mySemActors.add(semActor1);
             }
         }
@@ -224,16 +243,34 @@ public class CompositeEvent implements Serializable{
             for (int j = 0; j < this.getMySemTimes().size(); j++) {
                 SemTime semTime2 = this.getMySemTimes().get(j);
                 if (semTime1.getOwlTime().matchTimeExact(semTime2.getOwlTime())) {
-                    System.out.println("semTime1 = " + semTime1.getURI());
-                    System.out.println("semTime2 = " + semTime2.getURI());
+                 //   System.out.println("semTime1 = " + semTime1.getURI());
+                 //   System.out.println("semTime2 = " + semTime2.getURI());
                     semTime2.mergeSemObject(semTime1);
                     match = true;
                     break;
                 }
             }
             if (!match) {
-                 System.out.println("adding semTime1 = " + semTime1.getURI());
+              //   System.out.println("adding semTime1 = " + semTime1.getURI());
                  this.mySemTimes.add(semTime1);
+            }
+        }
+        for (int i = 0; i < event.getMyDocTimes().size(); i++) {
+            SemTime semTime1 = event.getMyDocTimes().get(i);
+            boolean match = false;
+            for (int j = 0; j < this.getMyDocTimes().size(); j++) {
+                SemTime semTime2 = this.getMyDocTimes().get(j);
+                if (semTime1.getOwlTime().matchTimeExact(semTime2.getOwlTime())) {
+                //    System.out.println("semTime1 = " + semTime1.getURI());
+                //    System.out.println("semTime2 = " + semTime2.getURI());
+                    semTime2.mergeSemObject(semTime1);
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+              //   System.out.println("adding semTime1 = " + semTime1.getURI());
+                 this.getMyDocTimes().add(semTime1);
             }
         }
        // System.out.println("this.getMySemTimes().size() = " + this.getMySemTimes().size());
