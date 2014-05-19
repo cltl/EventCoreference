@@ -32,12 +32,11 @@ public class ClusterEventObjects {
     static public void main (String [] args) {
         if (args.length==0) {
             System.out.println(USAGE);
-            return;
+          //  return;
         }
-        String pathToNafFolder = "/Users/piek/Desktop/NWR-DATA/worldcup/ln";
+        String pathToNafFolder = "/Users/piek/Desktop/NWR-DATA/worldcup/ian-test";
         String pathToEventFolder = "/Users/piek/Desktop/NWR-DATA/worldcup";
-        //String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
-       // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out";
+       // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
         String projectName  = "worldcup";
         String extension = ".naf";
         for (int i = 0; i < args.length; i++) {
@@ -93,7 +92,6 @@ public class ClusterEventObjects {
         if (!grammaticalFolder.exists()) {
             grammaticalFolder.mkdir();
         }
-
         if (!grammaticalFolder.exists()) {
             System.out.println("Cannot create the grammaticalFolder = " + grammaticalFolder);
             return;
@@ -111,12 +109,12 @@ public class ClusterEventObjects {
         System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
-            if (!file.getName().startsWith("56H9-0MG1-J9XT-P1YN.xml")) {
-                //     continue;
+/*            if (!file.getName().startsWith("56H9-0MG1-J9XT-P1YN.xml")) {
+                     continue;
             }
             if (!file.getName().startsWith("56VW-T8H1-DXCW-D3F2.")) {
-                //     continue;
-            }
+                     continue;
+            }*/
             if (i % 100 == 0) {
                 System.out.println("i = " + i);
                 //  System.out.println("file.getName() = " + file.getAbsolutePath());
@@ -127,16 +125,16 @@ public class ClusterEventObjects {
             semPlaces = new ArrayList<SemObject>();
             semRelations = new ArrayList<SemRelation>();
             factRelations = new ArrayList<SemRelation>();
-         //   System.out.println("file.getName() = " + file.getName());
+          //  System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
             GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-            //System.out.println("semTimes = " + semTimes.size());
+           // System.out.println("semTimes = " + semTimes.size());
             // We need to create output objects that are more informative than the Trig output and store these in files per date
 
             for (int j = 0; j < semEvents.size(); j++) {
                 SemEvent mySemEvent = (SemEvent) semEvents.get(j);
                 ArrayList<SemTime> myTimes =  Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
-                //System.out.println("myTimes.size() = " + myTimes.size());
+             //   System.out.println("myTimes.size() = " + myTimes.size());
                 ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
                 ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
@@ -174,7 +172,7 @@ public class ClusterEventObjects {
                 }
                 else if (outputTimes.size() == 1) {
                     /// time: same year or exact?
-                    SemTime myTime = (SemTime) outputTimes.get(0);
+                    SemTime myTime = outputTimes.get(0);
                     String timePhrase = "-" + myTime.getOwlTime().toString();
                     timeFile = new File(folder.getAbsolutePath() + "/" + "events" + timePhrase + ".obj");
                 }
@@ -199,7 +197,7 @@ public class ClusterEventObjects {
                 }
                 if (timeFile != null) {
                     if (timeFile.exists()) {
-                        //  System.out.println("appending to timeFile.getName() = " + timeFile.getName());
+                      //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
                         OutputStream os = new FileOutputStream(timeFile, true);
                         Util.AppendableObjectOutputStream eventFos = new Util.AppendableObjectOutputStream(os);
                         try {
@@ -210,7 +208,7 @@ public class ClusterEventObjects {
                         os.close();
                         eventFos.close();
                     } else {
-                       // System.out.println("timeFile.getName() = " + timeFile.getName());
+                     //  System.out.println("timeFile.getName() = " + timeFile.getName());
                         OutputStream os = new FileOutputStream(timeFile);
                         ObjectOutputStream eventFos = new ObjectOutputStream(os);
                         try {
@@ -221,6 +219,9 @@ public class ClusterEventObjects {
                         os.close();
                         eventFos.close();
                     }
+                }
+                else {
+                 //   System.out.println("timeFile = " + timeFile);
                 }
             }
         }

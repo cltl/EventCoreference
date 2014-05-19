@@ -138,10 +138,11 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             KafEvent event = kafSaxParser.kafEventArrayList.get(i);
             ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
             SemEvent semEvent = new SemEvent();
+            semEvent.setNafMentions(mentionArrayList);
+            semEvent.addPhraseCountsForMentions(kafSaxParser);
             String eventName = semEvent.getTopPhraseAsLabel();
+           // System.out.println("eventName = " + eventName);
             if (Util.hasAlphaNumeric(eventName)) {
-                semEvent.setNafMentions(mentionArrayList);
-                semEvent.addPhraseCountsForMentions(kafSaxParser);
                 //semEvent.setId(baseUrl+event.getId());
                 semEvent.setId(baseUrl+eventName+"Event");
                 semEvent.setFactuality(kafSaxParser);

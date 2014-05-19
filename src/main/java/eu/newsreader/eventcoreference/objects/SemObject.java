@@ -214,10 +214,14 @@ public class SemObject implements Serializable {
             if (phraseCount.getCount() > top) {
                 if (Util.hasAlphaNumeric(phraseCount.getPhrase())) {
                     try {
-                        label = URLEncoder.encode(phraseCount.getPhrase().replace(" ", "-"), "UTF-8");
+                        label = URLEncoder.encode(phraseCount.getPhrase(), "UTF-8");
+                      //  System.out.println("label = " + label);
                     } catch (UnsupportedEncodingException e) {
                       //  e.printStackTrace();
                     }
+                }
+                else {
+                  //  System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
                 }
                // label = Util.alphaNumericUri(phraseCount.getPhrase().replace(" ", "-"));
             }
