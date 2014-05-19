@@ -205,7 +205,7 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
     }
 
     public void addToJenaModelTimeInterval(Model model) {
-        this.getOwlTime().addToJenaModelOwlTimeDuration(model);
+        this.getOwlTime().addToJenaModelOwlTimeInstant(model);
 
         Resource resource = model.createResource(this.getURI());
         for (int i = 0; i < phraseCounts.size(); i++) {

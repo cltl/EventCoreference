@@ -75,7 +75,7 @@ public class ClusterEventObjects {
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
-        //System.out.println("files.size() = " + files.size());
+        System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
             if (!file.getName().startsWith("56H9-0MG1-J9XT-P1YN.xml")) {
@@ -94,7 +94,7 @@ public class ClusterEventObjects {
             semPlaces = new ArrayList<SemObject>();
             semRelations = new ArrayList<SemRelation>();
             factRelations = new ArrayList<SemRelation>();
-            System.out.println("file.getName() = " + file.getName());
+         //   System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
             GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
             //System.out.println("semTimes = " + semTimes.size());

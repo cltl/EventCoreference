@@ -15,6 +15,8 @@ import org.apache.jena.riot.RDFFormat;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -136,14 +138,17 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             KafEvent event = kafSaxParser.kafEventArrayList.get(i);
             ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
             SemEvent semEvent = new SemEvent();
-            semEvent.setNafMentions(mentionArrayList);
-            semEvent.addPhraseCountsForMentions(kafSaxParser);
-            //semEvent.setId(baseUrl+event.getId());
-            semEvent.setId(baseUrl+semEvent.getTopPhraseAsLabel()+"Event");
-            semEvent.setFactuality(kafSaxParser);
-            semEvent.setConcept(event.getExternalReferences());
-            semEvent.setIdByDBpediaReference();
-            semEvents.add(semEvent);
+            String eventName = semEvent.getTopPhraseAsLabel();
+            if (Util.hasAlphaNumeric(eventName)) {
+                semEvent.setNafMentions(mentionArrayList);
+                semEvent.addPhraseCountsForMentions(kafSaxParser);
+                //semEvent.setId(baseUrl+event.getId());
+                semEvent.setId(baseUrl+eventName+"Event");
+                semEvent.setFactuality(kafSaxParser);
+                semEvent.setConcept(event.getExternalReferences());
+                semEvent.setIdByDBpediaReference();
+                semEvents.add(semEvent);
+            }
         }
 
     }
@@ -177,7 +182,14 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
             String uri = kafEntity.getFirstUriReference();
             if (uri.isEmpty()) {
                 kafEntity.setTokenStrings(kafSaxParser);
-                uri = Util.cleanUri(kafEntity.getTokenString());
+                if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
+                    try {
+                        uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // e.printStackTrace();
+                    }
+                }
+                //uri = Util.alphaNumericUri(kafEntity.getTokenString());
 
                // System.out.println("uri = " + uri);
             }
@@ -342,23 +354,31 @@ http://www.newsreader-project.eu/2003/10/10/49RC-4970-018S-21S2.xml	49RC-4970-01
         Iterator keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = (String) keys.next();
-            OwlTime aTime =new OwlTime();
-           // System.out.println("key = " + key);
-            if (aTime.parseStringDateWithDocTimeYearFallBack(key, docSemTime.getOwlTime())>-1) {
-                ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = timeReferences.get(key);
-                SemTime semTimeRole = new SemTime();
-                semTimeRole.setId(baseUrl + Util.cleanUri(key));
-                ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
-                semTimeRole.setNafMentions(mentions);
-                semTimeRole.addPhraseCountsForMentions(kafSaxParser);
-                semTimeRole.setOwlTime(aTime);
-                Util.addObject(semTimes, semTimeRole);
+            if ((Util.hasAlphaNumeric(key))) {
+                OwlTime aTime = new OwlTime();
+                // System.out.println("key = " + key);
+                if (aTime.parseStringDateWithDocTimeYearFallBack(key, docSemTime.getOwlTime()) > -1) {
+                    ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = timeReferences.get(key);
+                    SemTime semTimeRole = new SemTime();
+                    String id = "";
+                    try {
+                        id = URLEncoder.encode(key, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // e.printStackTrace();
+                    }
+                    if (!id.isEmpty()) {
+                        semTimeRole.setId(baseUrl + id);
+                        //semTimeRole.setId(baseUrl + Util.alphaNumericUri(key));
+                        ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+                        semTimeRole.setNafMentions(mentions);
+                        semTimeRole.addPhraseCountsForMentions(kafSaxParser);
+                        semTimeRole.setOwlTime(aTime);
+                        Util.addObject(semTimes, semTimeRole);
+                    }
+                } else {
+                    //// phrase contains no useable info
+                }
             }
-            else {
-                //// phrase contains no useable info
-            }
-
-
             //System.out.println("aTime.toString() = " + aTime.toString());
         }
     }

@@ -15,6 +15,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -210,7 +212,14 @@ public class SemObject implements Serializable {
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             if (phraseCount.getCount() > top) {
-                label = Util.cleanUri(phraseCount.getPhrase().replace(" ", "-"));
+                if (Util.hasAlphaNumeric(phraseCount.getPhrase())) {
+                    try {
+                        label = URLEncoder.encode(phraseCount.getPhrase().replace(" ", "-"), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                      //  e.printStackTrace();
+                    }
+                }
+               // label = Util.alphaNumericUri(phraseCount.getPhrase().replace(" ", "-"));
             }
         }
         return label;

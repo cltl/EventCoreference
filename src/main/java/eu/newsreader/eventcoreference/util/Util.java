@@ -4,6 +4,7 @@ import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
 
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -166,16 +167,25 @@ public class Util {
                 if (RoleLabels.isLOCATION(kafParticipant.getRole())) {
                     //String srl = kafParticipant.getId();
                     kafParticipant.setTokenStrings(kafSaxParser);
-                    String uri = Util.cleanUri(kafParticipant.getTokenString());
-                    if (mentions.containsKey(uri)) {
-                        ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(uri);
-                        srlTargets.add(kafParticipant.getSpans());
-                        mentions.put(uri, srlTargets);
-                    }
-                    else {
-                        ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();
-                        srlTargets.add(kafParticipant.getSpans());
-                        mentions.put(uri,srlTargets);
+                    if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
+                        String uri = "";
+                        try {
+                            uri = URLEncoder.encode(kafParticipant.getTokenString(), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // e.printStackTrace();
+                        }
+                        //String uri = Util.alphaNumericUri(kafParticipant.getTokenString());
+                        if (!uri.isEmpty()) {
+                            if (mentions.containsKey(uri)) {
+                                ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(uri);
+                                srlTargets.add(kafParticipant.getSpans());
+                                mentions.put(uri, srlTargets);
+                            } else {
+                                ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();
+                                srlTargets.add(kafParticipant.getSpans());
+                                mentions.put(uri, srlTargets);
+                            }
+                        }
                     }
                 }
             }
@@ -197,17 +207,26 @@ public class Util {
                 if (RoleLabels.isPARTICIPANT(kafParticipant.getRole())) {
                    // String srl = kafParticipant.getId();
                     kafParticipant.setTokenStrings(kafSaxParser);
-                    String uri = Util.cleanUri(kafParticipant.getTokenString());
-                    if (mentions.containsKey(uri)) {
-                     //   System.out.println("srl = " + srl);
-                        ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(uri);
-                        srlTargets.add(kafParticipant.getSpans());
-                        mentions.put(uri, srlTargets);
-                    }
-                    else {
-                        ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();
-                        srlTargets.add(kafParticipant.getSpans());
-                        mentions.put(uri,srlTargets);
+                    if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
+                        String uri = "";
+                        try {
+                            uri = URLEncoder.encode(kafParticipant.getTokenString(), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            // e.printStackTrace();
+                        }
+                        //String uri = Util.alphaNumericUri(kafParticipant.getTokenString());
+                        if (!uri.isEmpty()) {
+                            if (mentions.containsKey(uri)) {
+                                //   System.out.println("srl = " + srl);
+                                ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(uri);
+                                srlTargets.add(kafParticipant.getSpans());
+                                mentions.put(uri, srlTargets);
+                            } else {
+                                ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();
+                                srlTargets.add(kafParticipant.getSpans());
+                                mentions.put(uri, srlTargets);
+                            }
+                        }
                     }
                 }
             }
@@ -865,6 +884,30 @@ public class Util {
 
         return cleanUri.replace(" ", "");
     }
+
+    static public String alphaNumericUri(String uri) {
+        final String alfanum="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String cleanUri = "";
+        for (int i = 0; i < uri.toCharArray().length; i++) {
+            char c = uri.toCharArray()[i];
+            if (alfanum.indexOf(c)>-1) {
+               cleanUri +=c;
+            }
+        }
+        return cleanUri;
+    }
+
+    static public boolean hasAlphaNumeric(String uri) {
+        final String alfanum="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (int i = 0; i < uri.toCharArray().length; i++) {
+            char c = uri.toCharArray()[i];
+            if (alfanum.indexOf(c)>-1) {
+               return true;
+            }
+        }
+        return false;
+    }
+
 
 /*
     static public String getTermIdFromCorefTarget (CorefTarget corefTarget, String ID_SEPARATOR) {
