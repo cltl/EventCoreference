@@ -13,16 +13,29 @@ import java.util.TreeSet;
 
 /**
  * Created with IntelliJ IDEA.
- * User: kyoto
+ * User: Piek
  * Date: 11/14/13
  * Time: 7:54 PM
  * To change this template use File | Settings | File Templates.
  */
 public class ClusterEventObjects {
 
-    static public void main (String [] args) {
+    static final String USAGE = "This program processes NAF files and stores binary objects for events with all related data in different object files based on the event type and the date\n" +
+            "The program has the following arguments:\n" +
+            "--naf-folder     <Folder with the NAF files to be processed. Reads NAF files recursively>\n" +
+            "--event-folder   <Folder below which the event folders are created that hold the object file. " +
+            "The output structure is event/other, event/grammatical and event/speech.>\n" +
+            "--extension      <File extension to select the NAF files .>\n" +
+            "--project        <The name of the project for creating IRIs>\n";
 
+
+    static public void main (String [] args) {
+        if (args.length==0) {
+            System.out.println(USAGE);
+            return;
+        }
         String pathToNafFolder = "/Users/piek/Desktop/NWR-DATA/worldcup/ln";
+        String pathToEventFolder = "/Users/piek/Desktop/NWR-DATA/worldcup";
         //String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
        // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out";
         String projectName  = "worldcup";
@@ -32,6 +45,9 @@ public class ClusterEventObjects {
             if (arg.equals("--naf-folder") && args.length>(i+1)) {
                 pathToNafFolder = args[i+1];
             }
+            else if (arg.equals("--event-folder") && args.length>(i+1)) {
+                pathToEventFolder = args[i+1];
+            }
             else if (arg.equals("--extension") && args.length>(i+1)) {
                 extension = args[i+1];
             }
@@ -40,30 +56,47 @@ public class ClusterEventObjects {
             }
         }
         try {
-            processFolderEvents(projectName, new File(pathToNafFolder), extension);
+            processFolderEvents(projectName, new File(pathToNafFolder), new File (pathToEventFolder), extension);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void processFolderEvents (String project, File pathToNafFolder, String extension
+    public static void processFolderEvents (String project, File pathToNafFolder, File eventParentFolder, String extension
 
     ) throws IOException {
-        File eventFolder = new File(pathToNafFolder + "/events");
+        File eventFolder = new File(eventParentFolder + "/events");
         if (!eventFolder.exists()) {
             eventFolder.mkdir();
+        }
+        if (!eventFolder.exists()) {
+            System.out.println("Cannot create the eventFolder = " + eventFolder);
+            return;
         }
         File speechFolder = new File(eventFolder + "/" + "speech");
         if (!speechFolder.exists()) {
             speechFolder.mkdir();
         }
+        if (!speechFolder.exists()) {
+            System.out.println("Cannot create the speechFolder = " + speechFolder);
+            return;
+        }
         File otherFolder = new File(eventFolder + "/" + "other");
         if (!otherFolder.exists()) {
             otherFolder.mkdir();
         }
+        if (!otherFolder.exists()) {
+            System.out.println("Cannot create the otherFolder = " + otherFolder);
+            return;
+        }
         File grammaticalFolder = new File(eventFolder + "/" + "grammatical");
         if (!grammaticalFolder.exists()) {
             grammaticalFolder.mkdir();
+        }
+
+        if (!grammaticalFolder.exists()) {
+            System.out.println("Cannot create the grammaticalFolder = " + grammaticalFolder);
+            return;
         }
 
         KafSaxParser kafSaxParser = new KafSaxParser();
