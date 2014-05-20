@@ -40,7 +40,38 @@ public class OwlTime implements Serializable {
     public String getDay() {
         return day;
     }
+    public String getDayValue() {
+        String str = "---";
+        if (day.length()==1) {
+            str += "0";
+        }
+        str += day;
+        return str;
+    }
 
+    public String getMonthValue() {
+        String str = "--";
+        if (month.length()==1) {
+            str += "0";
+        }
+        str += month;
+        return str;
+    }
+    /**
+     * if (!this.month.isEmpty()) {
+     if (this.month.length()==1) {
+     str +="0";
+     }
+     str += month;
+     if (!this.day.isEmpty()) {
+     if (day.length()==1) {
+     str += "0";
+     }
+     str += day;
+     }
+     }
+     * @param day
+     */
     public void setDay(String day) {
         this.day = day;
     }
@@ -337,11 +368,11 @@ public class OwlTime implements Serializable {
 
         if (!this.day.isEmpty()) {
             Property day = model.createProperty(ResourcesUri.owltime+"day");
-            resource.addProperty(day, this.getDay(), XSDDatatype.XSDgDay);
+            resource.addProperty(day, this.getDayValue(), XSDDatatype.XSDgDay);
         }
         if (!this.month.isEmpty()) {
             Property month = model.createProperty(ResourcesUri.owltime+"month");
-            resource.addProperty(month, this.getMonth(),XSDDatatype.XSDgMonth);
+            resource.addProperty(month, this.getMonthValue(),XSDDatatype.XSDgMonth);
         }
         if (!this.year.isEmpty()) {
             Property year = model.createProperty(ResourcesUri.owltime+"year");
@@ -367,11 +398,11 @@ public class OwlTime implements Serializable {
 
         if (!this.day.isEmpty()) {
             Property day = model.createProperty(ResourcesUri.owltime+"day");
-            resource.addProperty(day, this.getDay(), XSDDatatype.XSDgDay);
+            resource.addProperty(day, this.getDayValue(), XSDDatatype.XSDgDay);
         }
         if (!this.month.isEmpty()) {
             Property month = model.createProperty(ResourcesUri.owltime+"month");
-            resource.addProperty(month, this.getMonth(),XSDDatatype.XSDgMonth);
+            resource.addProperty(month, this.getMonthValue(),XSDDatatype.XSDgMonth);
         }
         if (!this.year.isEmpty()) {
             Property year = model.createProperty(ResourcesUri.owltime+"year");
