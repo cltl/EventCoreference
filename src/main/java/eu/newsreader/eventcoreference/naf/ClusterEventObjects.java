@@ -115,7 +115,7 @@ public class ClusterEventObjects {
             if (!file.getName().startsWith("56VW-T8H1-DXCW-D3F2.")) {
                      continue;
             }*/
-            if (i % 100 == 0) {
+            if (i % 500 == 0) {
                 System.out.println("i = " + i);
                 //  System.out.println("file.getName() = " + file.getAbsolutePath());
             }
