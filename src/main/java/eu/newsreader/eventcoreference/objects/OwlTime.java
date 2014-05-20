@@ -258,6 +258,22 @@ public class OwlTime implements Serializable {
             }
             foundTime = 1;
         }
+        else if (fields.length==2) {
+            this.instance = timeExValue;
+            if (fields[0].length() == 4) {
+                try {
+                    if (!fields[1].equalsIgnoreCase("xx")) this.month = (new Integer(fields[1])).toString();
+                } catch (NumberFormatException e) {
+                    // e.printStackTrace();
+                }
+                try {
+                    if (!fields[0].equalsIgnoreCase("xxxx")) this.year = (new Integer(fields[0])).toString();
+                } catch (NumberFormatException e) {
+                    //  e.printStackTrace();
+                }
+            }
+            foundTime = 1;
+        }
         return foundTime;
     }
 
