@@ -18,7 +18,7 @@ public class ResourcesUri {
     final static public String vn = "http://www.newsreader-project.eu/verbnet/";
     final static public String pb = "http://www.newsreader-project.eu/propbank/";
     final static public String nb = "http://www.newsreader-project.eu/nombank/";
-    final static public String gaf = "http://groundedannotationframework.org/files/2014/01/";
+    final static public String gaf = "http://groundedannotationframework.org/gaf#";
     final static public String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
     final static public String dbp = "http://dbpedia.org/resource/";
     final static public String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
