@@ -20,6 +20,18 @@ import java.util.TreeSet;
  */
 public class ClusterEventObjects {
 
+
+    /*
+        @TODO
+        1. proper reference to the ontologies (even if not there yet)
+        2. potential bug in the labels (discussed at meeting and waiting for feedback from EHU)
+        3. very long labels
+        4. excessively long labels
+        5. include the fragment roles in the relations
+        6. exclude excessive event-coreference for high-frequent verbs
+        7. parametrize the module to get high-precision or high-recall TriG
+     */
+
     static final String USAGE = "This program processes NAF files and stores binary objects for events with all related data in different object files based on the event type and the date\n" +
             "The program has the following arguments:\n" +
             "--naf-folder     <Folder with the NAF files to be processed. Reads NAF files recursively>\n" +

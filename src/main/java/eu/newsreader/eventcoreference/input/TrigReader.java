@@ -37,14 +37,16 @@ public class TrigReader {
     static public void main (String[] args) {
       //  String pathToTrigFile = args[0];
         //String pathToTrigFile = "/Users/piek/Desktop/example.trig";
-        String trigfolder = "/Users/piek/Desktop/NWR-DATA/trig/entitycoref/";
-        String datafolder = "/Users/piek/Desktop/NWR-DATA/trig/entitycoref/";
+        String trigfolder = "/Users/piek/Desktop/NWR-DATA/worldcup/events/other/";
+        String datafolder = "/Users/piek/Desktop/NWR-DATA/worldcup/events/dataset/";
+      //  String trigfolder = "/Users/piek/Desktop/NWR-DATA/trig/entitycoref/";
+      //  String datafolder = "/Users/piek/Desktop/NWR-DATA/trig/entitycoref/";
         Dataset dataset = TDBFactory.createDataset(datafolder);
-        Model model = dataset.getDefaultModel();
+        Model m = dataset.getDefaultModel();
         ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
         for (int i = 0; i < trigFiles.size(); i++) {
             File file = trigFiles.get(i);
-            Model m = ModelFactory.createDefaultModel() ;
+            m = ModelFactory.createDefaultModel() ;
             RDFDataMgr.read(m, "D.trig") ;
             RDFDataMgr.write(System.out, m, Lang.TTL) ;
            // System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());

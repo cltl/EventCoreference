@@ -281,15 +281,21 @@ public class SemObject implements Serializable {
 
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
+
+            /// skipping conditions
             if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
-                continue;
-            } else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-                continue;
-            } else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
-                continue;
-            } else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
-                continue;
-            } else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
+             //   continue;
+            }
+            if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+             //   continue;
+            }
+            if (kafSense.getResource().equalsIgnoreCase("propbank")) {
+             //   continue;
+            }
+            if (kafSense.getResource().equalsIgnoreCase("nombank")) {
+              //  continue;
+            }
+            if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
@@ -301,14 +307,15 @@ public class SemObject implements Serializable {
                 resource.addProperty(OWL.sameAs, conceptResource);*/
                 /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
                 continue;
-            } else {
-                String nameSpaceType = getNameSpaceTypeReference(kafSense);
-                Resource conceptResource = model.createResource(nameSpaceType);
-/*                if (!conceptResource.isURIResource()) {
-                    System.out.println("conceptResource.getURI() = " + conceptResource.getURI()); 
-                }*/
-                resource.addProperty(RDF.type, conceptResource);
             }
+/*            if (type.toString().endsWith("Event")) {
+                System.out.println("kafSense.getResource() = " + kafSense.getResource());
+                System.out.println("kafSense.getSensecode() = " + kafSense.getSensecode());
+            }*/
+            String nameSpaceType = getNameSpaceTypeReference(kafSense);
+            Resource conceptResource = model.createResource(nameSpaceType);
+            resource.addProperty(RDF.type, conceptResource);
+
         }
 
         for (int i = 0; i < nafMentions.size(); i++) {
@@ -341,31 +348,31 @@ public class SemObject implements Serializable {
             ref = ResourcesUri.pb + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
             ref = ResourcesUri.nb + kafSense.getSensecode();
-        } else if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
-            ref = ResourcesUri.nwr + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
             ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
-            // ref = ResourcesUri.dbp+kafSense.getSensecode();
-            // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
-        } else {
-            if (kafSense.getSensecode().indexOf(ResourcesUri.dbp) > -1) {
-                // ref = ResourcesUri.dbp+kafSense.getSensecode();
-                ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
-                //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
-            } else {
-                if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
-                    kafSense.setSensecode("SPEECH_COGNITIVE");
-                } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
-                    kafSense.setSensecode("SPEECH_COGNITIVE");
-                } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
-                    kafSense.setSensecode("GRAMMATICAL");
-                } else if (kafSense.getSensecode().equalsIgnoreCase("contextual")) {
-                    kafSense.setSensecode("OTHER");
-                }
-                ref = ResourcesUri.nwr + kafSense.getSensecode();
-            }
+         // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
         }
+        //// checking the senseCode
 
+        else if (kafSense.getSensecode().indexOf(ResourcesUri.dbp) > -1) {
+            ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
+          //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
+        } else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
+            ref = ResourcesUri.nwrontology + "SPEECH_COGNITIVE";
+        } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
+            ref = ResourcesUri.nwrontology + "SPEECH_COGNITIVE";
+        } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
+            ref = ResourcesUri.nwrontology + "GRAMMATICAL";
+        } else if (kafSense.getSensecode().equalsIgnoreCase("contextual")) {
+            ref = ResourcesUri.nwrontology + "OTHER";
+        } else if (kafSense.getSensecode().equalsIgnoreCase("other")) {
+            ref = ResourcesUri.nwrontology + "OTHER";
+        } else {
+            ref = ResourcesUri.nwrontology + kafSense.getSensecode();
+
+        }
+       // System.out.println("kafSense.getSensecode() = " + kafSense.getSensecode());
+       // System.out.println("ref = " + ref);
         return ref;
     }
 

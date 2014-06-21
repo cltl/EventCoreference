@@ -29,15 +29,13 @@ public class SemRelation implements Serializable {
 */
     private String id;
     private String predicate;
+    private ArrayList<String> predicates;
     private String subject;
     private String object;
     //private ArrayList<CorefTarget> corefTargets;
     private ArrayList<NafMention> nafMentions;
 
 
-    public void SemRelation () {
-
-    }
 
     public SemRelation() {
         this.nafMentions = new ArrayList<NafMention>();
@@ -46,6 +44,19 @@ public class SemRelation implements Serializable {
         this.object = "";
         this.predicate = "";
         this.subject = "";
+        this.predicates = new ArrayList<String>();
+    }
+
+    public ArrayList<String> getPredicates() {
+        return predicates;
+    }
+
+    public void setPredicates(ArrayList<String> predicates) {
+        this.predicates = predicates;
+    }
+
+    public void addPredicate(String predicate) {
+        this.predicates.add(predicate);
     }
 
     public ArrayList<NafMention> getNafMentions() {
@@ -163,6 +174,33 @@ public class SemRelation implements Serializable {
         }
     }
 
+    public String getRoleRelation (String role) {
+        String  rel = role;
+        String [] fields = role.split(":");
+        if (fields.length==2) {
+            String source = fields[0].trim();
+            String value = fields[0];
+            if (source.isEmpty()) {
+                rel = ResourcesUri.pb+value;
+            }
+            else if (source.equalsIgnoreCase("propbank")) {
+                rel = ResourcesUri.pb+value;
+            }
+            else if (source.equalsIgnoreCase("framenet")) {
+                rel = ResourcesUri.fn+value;
+            }
+            else if (source.equalsIgnoreCase("verbnet")) {
+                rel = ResourcesUri.vn+value;
+            }
+            else if (source.equalsIgnoreCase("nombank")) {
+                rel = ResourcesUri.nb+value;
+            }
+        }
+        else {
+            rel = ResourcesUri.pb+role;
+        }
+        return rel;
+    }
     public void addToJenaDataSet (Dataset ds, Model provenanceModel) {
 
         Model relationModel = ds.getNamedModel(this.id);
@@ -176,6 +214,11 @@ public class SemRelation implements Serializable {
             Resource object = relationModel.createResource(this.getObject());
             Property semProperty = getSemRelationType(this.getPredicate());
             subject.addProperty(semProperty, object);
+            for (int i = 0; i < predicates.size(); i++) {
+                String s = predicates.get(i);
+                Property fnProperty = relationModel.createProperty(getRoleRelation(s));
+                subject.addProperty(fnProperty, this.getObject());
+            }
         }
 
 
