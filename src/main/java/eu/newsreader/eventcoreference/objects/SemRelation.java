@@ -179,7 +179,7 @@ public class SemRelation implements Serializable {
         String [] fields = role.split(":");
         if (fields.length==2) {
             String source = fields[0].trim();
-            String value = fields[0];
+            String value = fields[1].trim();
             if (source.isEmpty()) {
                 rel = ResourcesUri.pb+value;
             }
@@ -236,32 +236,8 @@ public class SemRelation implements Serializable {
     public void addToJenaDataSet (Dataset ds, Model provenanceModel,
                                   HashMap<String, SourceMeta> sourceMetaHashMap) {
 
-        Model relationModel = ds.getNamedModel(this.id);
-
-        Resource subject = relationModel.createResource(this.getSubject());
-        if (this.getPredicate().equalsIgnoreCase("hasFactBankValue")) {
-            Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue+this.getPredicate());
-            //  Resource object = (Resource) relationModel.createLiteral(this.getObject());
-            subject.addProperty(factProperty, this.getObject());
-        }
-        else {
-            Resource object = relationModel.createResource(this.getObject());
-            Property semProperty = getSemRelationType(this.getPredicate());
-            subject.addProperty(semProperty, object);
-          //  Property owlProperty = OWL.ObjectProperty.getProperty()
-        }
-
-
-
+        addToJenaDataSet(ds, provenanceModel);
         Resource provenanceResource = provenanceModel.createResource(this.id);
-
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
-            Resource targetResource = provenanceModel.createResource(nafMention.toString());
-            provenanceResource.addProperty(property, targetResource);
-
-        }
 
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
@@ -284,58 +260,11 @@ public class SemRelation implements Serializable {
         }
     }
 
-/*
-    public void addToJenaDataSet (Dataset ds, Model relationModel, Model provenanceModel) {
-
-
-
-        Model namedRelation = ds.getNamedModel(this.id);
-
-        Resource subject = namedRelation.createResource(this.getSubject());
-        Resource object = namedRelation.createResource(this.getObject());
-        Property semProperty = getSemRelationType(this.getPredicate());
-        subject.addProperty(semProperty, object);
-        relationModel.add(namedRelation);
-
-        Resource provenanceResource = provenanceModel.createResource(this.id);
-
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
-            Resource targetResource = provenanceModel.createResource(nafMention.toString());
-            provenanceResource.addProperty(property, targetResource);
-
-        }
-    }
-
-
-
-    public void addToJenaDataSet (Model relationModel, Model provenanceModel) {
-
-        Resource subject = relationModel.createResource(this.getSubject());
-        Resource object = relationModel.createResource(this.getObject());
-        Property semProperty = getSemRelationType(this.getPredicate());
-        subject.addProperty(semProperty, object);
-
-
-        Resource provenanceResource = provenanceModel.createResource(this.id);
-
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property property = provenanceModel.createProperty(ResourcesUri.gaf+"denotedBy");
-            Resource targetResource = provenanceModel.createResource(nafMention.toString());
-            provenanceResource.addProperty(property, targetResource);
-
-        }
-    }
-*/
-
 
     public SemRelation (SemRelation semRelation) {
         this.setSubject(semRelation.getSubject());
         this.setObject(semRelation.getObject());
         this.setPredicate(semRelation.getPredicate());
-        //this.setCorefTargets(semRelation.getCorefTarget());
         this.setNafMentions(semRelation.getNafMentions());
     }
 
