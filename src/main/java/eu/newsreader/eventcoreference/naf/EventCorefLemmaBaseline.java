@@ -84,17 +84,8 @@ public class EventCorefLemmaBaseline {
 
 
           static void process(KafSaxParser kafSaxParser) {
-              Calendar date = Calendar.getInstance();
               String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
               String strEndDate = null;
-/*
-              SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-              date.setTimeInMillis(System.currentTimeMillis());
-              if (date != null) {
-                  strBeginDate = sdf.format(date.getTime());
-              }
-*/
-
 
               int corefCounter = 0;
               HashMap<String, KafCoreferenceSet> kafCoreferenceSetHashMap = new HashMap<String, KafCoreferenceSet>();

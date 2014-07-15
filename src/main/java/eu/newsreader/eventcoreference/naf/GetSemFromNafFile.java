@@ -217,7 +217,7 @@ public class GetSemFromNafFile {
 
         /*
             - We are missing actors in predicates and coreference sets that are not entities
-            - iterate over the SRL for roles with particular labels: A0, A1, A2 and LOC
+            - iterate over the SRL for roles with particular labels: A0, A1, A2, LOC, etc..
             - get the span:
             - check all actors for span match or span head match
             - if none create a new actor or place
@@ -261,16 +261,9 @@ public class GetSemFromNafFile {
                                        ArrayList<SemObject> semTimes
     ) {
 
-       // System.out.println("kafSaxParser.getKafMetaData().getCreationtime() = " + kafSaxParser.getKafMetaData().getCreationtime());
         if (!kafSaxParser.getKafMetaData().getCreationtime().isEmpty()) {
             //// we first store the publication date as a time
             docSemTime = new SemTime();
-/*            KafSense dateSense = new KafSense();
-            dateSense.setRefType("publication date");
-            dateSense.setSensecode(kafSaxParser.getKafMetaData().getCreationtime());
-            docSemTime.addConcept(dateSense);*/
-
-
             docSemTime.setId(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
             docSemTime.addPhraseCounts(kafSaxParser.getKafMetaData().getCreationtime());
             NafMention mention = new NafMention(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
@@ -400,30 +393,16 @@ public class GetSemFromNafFile {
                         if (!RoleLabels.validRole(kafParticipant.getRole())) {
                             continue;
                         }
+
                         boolean match = false;
                         for (int l = 0; l < semActors.size(); l++) {
                             SemObject semActor = semActors.get(l);
-                            //if (Util.matchAtLeastASingleSpan(kafParticipant.getSpanIds(), semActor)) {
                             if (Util.matchAllSpansOfAnObjectMentionOrTheRoleHead(kafSaxParser, kafParticipant, semActor)) {
-                                /*if (semActor.getURI().endsWith("Brazil")) {
-                                    System.out.println("semEvent = " + semEventId);
-                                    System.out.println("kafEvent = " + kafEvent.getId());
-                                    System.out.println("semActor.getURI() = " + semActor.getURI());
-                                    System.out.println("kafParticipant.getId() = " + kafParticipant.getId());
-                                    System.out.println("kafParticipant spans = " + kafParticipant.getSpanIds().toString());
-                                    System.out.println("semActor.getNafMentions().toString() = " + semActor.getNafMentions().toString());
-                                    System.out.println("kafParticipant.getHeadId() = " + kafParticipant.getHeadId());
-                                }*/
                                // System.out.println("semActor.getPhrase() = " + semActor.getPhrase());
                                 /// create sem relations
                                 SemRelation semRelation = new SemRelation();
                                 String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                 semRelation.setId(relationInstanceId);
-
-/*
-                                NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
-                                semRelation.addMention(relNafMention);
-*/
 
                                 ArrayList<String> termsIds = kafEvent.getSpanIds();
                                 for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
@@ -452,15 +431,6 @@ public class GetSemFromNafFile {
                                // if (Util.matchAtLeastASingleSpan(kafParticipant.getSpanIds(), semPlace)) {
                                 if (Util.matchAllSpansOfAnObjectMentionOrTheRoleHead(kafSaxParser, kafParticipant, semPlace)) {
                                     /// create sem relations
-/*
-                                    if (semPlace.getURI().endsWith("Brazil")) {
-                                        System.out.println("semPlace.getURI() = " + semPlace.getURI());
-                                        System.out.println("kafParticipant.getId() = " + kafParticipant.getId());
-                                        System.out.println("semPlace.getNafMentions().toString() = " + semPlace.getNafMentions().toString());
-                                        System.out.println("kafParticipant.getHeadId() = " + kafParticipant.getHeadId());
-                                    }
-*/
-
                                     //System.out.println("semPlace.getPhrase() = " + semPlace.getPhrase());
                                     if (semPlace.getPhrase().endsWith("Valcke")) {
                                         System.out.println("semPlace.getURI() = " + semPlace.getURI());
@@ -472,10 +442,7 @@ public class GetSemFromNafFile {
                                     SemRelation semRelation = new SemRelation();
                                     String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                     semRelation.setId(relationInstanceId);
-/*
-                                    NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
-                                    semRelation.addMention(relNafMention);
-*/
+
                                     ArrayList<String> termsIds = kafEvent.getSpanIds();
                                     for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
                                         String s = kafParticipant.getSpanIds().get(j);
@@ -503,19 +470,11 @@ public class GetSemFromNafFile {
                                // if (Util.matchAtLeastASingleSpan(kafParticipant.getSpanIds(), semTime)) {
                                 if (Util.matchAllSpansOfAnObjectMentionOrTheRoleHead(kafSaxParser, kafParticipant, semTime)) {
                                     /// create sem relations
-/*
-                                    System.out.println("semPlace.getURI() = " + semTime.getURI());
-                                    System.out.println("kafParticipant.getId() = " + kafParticipant.getId());
-                                    System.out.println("semTime.getNafMentions().toString() = " + semTime.getNafMentions().toString());
-*/
 
                                     SemRelation semRelation = new SemRelation();
                                     String relationInstanceId = baseUrl+kafEvent.getId()+","+kafParticipant.getId();
                                     semRelation.setId(relationInstanceId);
-/*
-                                    NafMention relNafMention = new NafMention(baseUrl+kafParticipant.getId());
-                                    semRelation.addMention(relNafMention);
-*/
+
                                     ArrayList<String> termsIds = kafEvent.getSpanIds();
                                     for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
                                         String s = kafParticipant.getSpanIds().get(j);

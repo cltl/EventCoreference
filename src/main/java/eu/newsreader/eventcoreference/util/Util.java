@@ -16,7 +16,10 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class Util {
-    static public final int SPANLIMIT = 4;
+    static public final int SPANMAXLOCATION= 10;
+    static public final int SPANMINLOCATION = 2;
+    static public final int SPANMAXPARTICIPANT = 4;
+    static public final int SPANMINPARTICIPANT = 2;
     static public class AppendableObjectOutputStream extends ObjectOutputStream {
 
         public AppendableObjectOutputStream(OutputStream out) throws IOException {
@@ -167,6 +170,13 @@ public class Util {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
+                //// SKIP LARGE PHRASES
+                if (kafParticipant.getSpans().size()>SPANMAXLOCATION) {
+                    continue;
+                }
+                if (kafParticipant.getSpans().size()<SPANMINLOCATION) {
+                    continue;
+                }
                 if (RoleLabels.isLOCATION(kafParticipant.getRole())) {
                     //String srl = kafParticipant.getId();
                     kafParticipant.setTokenStrings(kafSaxParser);
@@ -204,7 +214,10 @@ public class Util {
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
                 //// SKIP LARGE PHRASES
-                if (kafParticipant.getSpans().size()>SPANLIMIT) {
+                if (kafParticipant.getSpans().size()>SPANMAXPARTICIPANT) {
+                    continue;
+                }
+                if (kafParticipant.getSpans().size()<SPANMINPARTICIPANT) {
                     continue;
                 }
                 if (RoleLabels.isPARTICIPANT(kafParticipant.getRole())) {

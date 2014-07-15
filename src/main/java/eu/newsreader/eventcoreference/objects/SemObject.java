@@ -308,10 +308,6 @@ public class SemObject implements Serializable {
                 /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
                 continue;
             }
-/*            if (type.toString().endsWith("Event")) {
-                System.out.println("kafSense.getResource() = " + kafSense.getResource());
-                System.out.println("kafSense.getSensecode() = " + kafSense.getSensecode());
-            }*/
             String nameSpaceType = getNameSpaceTypeReference(kafSense);
             Resource conceptResource = model.createResource(nameSpaceType);
             resource.addProperty(RDF.type, conceptResource);
@@ -329,15 +325,6 @@ public class SemObject implements Serializable {
 
     static public String getNameSpaceTypeReference(KafSense kafSense) {
         String ref = "";
-        /**
-         *         String nwr = "http://www.newsreader-project.eu/";
-         String wn = "http://www.newsreader-project.eu/wordnet3.0/";
-         String fn = "http://www.newsreader-project.eu/framenet/";
-         String vn = "http://www.newsreader-project.eu/verbnet/";
-         String pb = "http://www.newsreader-project.eu/propbank/";
-         String gaf = "http://groundedannotationframework.org/";
-         String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
-         */
         if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
             ref = ResourcesUri.vn + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
