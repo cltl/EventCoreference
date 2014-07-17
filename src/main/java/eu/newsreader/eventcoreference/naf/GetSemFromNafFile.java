@@ -748,7 +748,7 @@ public class GetSemFromNafFile {
         kafSaxParser.parseFile(pathToNafFile);
         processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         try {
-            System.out.println("semEvents = " + semEvents.size());
+           // System.out.println("semEvents = " + semEvents.size());
             String pathToTrigFile = pathToNafFile+".trig";
             FileOutputStream fos = new FileOutputStream(pathToTrigFile);
             serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
