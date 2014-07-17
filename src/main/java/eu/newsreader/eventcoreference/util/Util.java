@@ -914,6 +914,7 @@ public class Util {
     }
 
     static public boolean hasAlphaNumeric(String uri) {
+/*
         final String alfanum="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (int i = 0; i < uri.toCharArray().length; i++) {
             char c = uri.toCharArray()[i];
@@ -922,6 +923,8 @@ public class Util {
             }
         }
         return false;
+*/      /// had to take out this function because of Bulgarian
+        return true;
     }
 
 

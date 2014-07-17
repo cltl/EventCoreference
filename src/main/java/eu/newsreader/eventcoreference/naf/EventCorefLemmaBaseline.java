@@ -120,13 +120,6 @@ public class EventCorefLemmaBaseline {
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
               strEndDate = eu.kyotoproject.util.DateUtil.createTimestamp();
-/*
-              date.setTimeInMillis(System.currentTimeMillis());
-              if (date != null) {
-                  strEndDate = sdf.format(date.getTime());
-              }
-*/
-
               LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
               kafSaxParser.getKafMetaData().addLayer(name, lp);
 

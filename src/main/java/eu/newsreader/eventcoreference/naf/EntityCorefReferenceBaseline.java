@@ -133,7 +133,7 @@ public class EntityCorefReferenceBaseline {
                   }
               }
               //throwing away any possible coreferences we already have
-              kafSaxParser.kafCorefenceArrayList = new ArrayList<KafCoreferenceSet>();
+              //kafSaxParser.kafCorefenceArrayList = new ArrayList<KafCoreferenceSet>();
               Set keySet = kafCoreferenceSetHashMap.keySet();
               Iterator keys = keySet.iterator();
               while (keys.hasNext()) {

@@ -12,10 +12,7 @@ import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,6 +88,7 @@ public class GetSemFromNafFile {
             semEvent.addPhraseCountsForMentions(kafSaxParser);
             String eventName = semEvent.getTopPhraseAsLabel();
            // System.out.println("eventName = " + eventName);
+
             if (Util.hasAlphaNumeric(eventName)) {
                 //semEvent.setId(baseUrl+event.getId());
                 semEvent.setId(baseUrl+eventName+"Event");
@@ -132,6 +130,7 @@ public class GetSemFromNafFile {
             String uri = kafEntity.getFirstUriReference();
             if (uri.isEmpty()) {
                 kafEntity.setTokenStrings(kafSaxParser);
+
                 if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
                     try {
                         uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
@@ -568,7 +567,7 @@ public class GetSemFromNafFile {
             docSemTime.addToJenaModelDocTimeInterval(instanceModel);
         }
         else {
-            System.out.println("empty phrase for docSemTime = " + docSemTime.getId());
+          //  System.out.println("empty phrase for docSemTime = " + docSemTime.getId());
         }
        // System.out.println("TIMES");
         for (int i = 0; i < semTimes.size(); i++) {
@@ -727,8 +726,18 @@ public class GetSemFromNafFile {
 
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
-        String pathToNafFile = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/59XK-YKK1-DXJ4-J1D2.xml_8fcc6fa445aa0b5161d9ead08ebb321a.naf";
+        //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/razni11-01.event-coref.naf";
+        String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
         String project = "worldcup";
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("--naf-file") && args.length>(i+1)) {
+                pathToNafFile = args[i+1];
+            }
+            else if (arg.equals("--project") && args.length>(i+1)) {
+                project = args[i+1];
+            }
+        }
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
@@ -739,6 +748,7 @@ public class GetSemFromNafFile {
         kafSaxParser.parseFile(pathToNafFile);
         processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         try {
+            System.out.println("semEvents = " + semEvents.size());
             String pathToTrigFile = pathToNafFile+".trig";
             FileOutputStream fos = new FileOutputStream(pathToTrigFile);
             serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
@@ -746,7 +756,7 @@ public class GetSemFromNafFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
+
     }
 
 }
