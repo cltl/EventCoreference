@@ -12,7 +12,10 @@ import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -604,6 +607,18 @@ public class GetSemFromNafFile {
         }
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+       // defaultModel.write(stream);
+      //  RDFWriter writer = defaultModel.getWriter();
+       // writer.
+        //writer.setErrorHandler(myErrorHandler);
+/*        writer.setProperty("showXmlDeclaration","true");
+        writer.setProperty("tab","8");
+        writer.setProperty("relativeURIs","same-document,relative");
+        for (int i = 0; i < ds..size(); i++) {
+            Object o =  ds..get(i);
+
+        }
+        writer.write(defaultModel, stream);*/
     }
 
     static public void serializeJenaCompositeEvents (OutputStream stream,HashMap<String, ArrayList<CompositeEvent>> semEvents,
@@ -681,7 +696,10 @@ public class GetSemFromNafFile {
                 }
             }
         }
+
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+
+
     }
 
 
@@ -726,8 +744,8 @@ public class GetSemFromNafFile {
 
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
-        //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/razni11-01.event-coref.naf";
-        String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
+        String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
+        //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
         String project = "worldcup";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -750,7 +768,7 @@ public class GetSemFromNafFile {
         try {
            // System.out.println("semEvents = " + semEvents.size());
             String pathToTrigFile = pathToNafFile+".trig";
-            FileOutputStream fos = new FileOutputStream(pathToTrigFile);
+            OutputStream fos = new FileOutputStream(pathToTrigFile);
             serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
             fos.close();
         } catch (IOException e) {

@@ -7,6 +7,7 @@ import eu.newsreader.eventcoreference.util.Util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 /**
@@ -179,7 +180,7 @@ public class InterDocumentEntityCoref {
             try {
                 //System.out.println("pathToNafFolder = " + pathToNafFolder);
 
-                FileOutputStream fos = new FileOutputStream(entityFolder + "/sem-entities.trig");
+                OutputStream fos = new FileOutputStream(entityFolder + "/sem-entities.trig");
                 GetSemFromNafFile.serializeJenaEntities(fos, semActors, semPlaces, semTimes);
                 fos.close();
             } catch (IOException e) {

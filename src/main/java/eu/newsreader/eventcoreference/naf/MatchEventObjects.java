@@ -132,7 +132,7 @@ public class MatchEventObjects {
                 finalEventMap.put(lemma, finalCompositeEvents);
             }
             try {
-                    FileOutputStream fos = new FileOutputStream(file+".sem.trig");
+                    OutputStream fos = new FileOutputStream(file+".sem.trig");
                     GetSemFromNafFile.serializeJenaCompositeEvents(fos,  finalEventMap, sourceMetaHashMap);
                     fos.close();
 

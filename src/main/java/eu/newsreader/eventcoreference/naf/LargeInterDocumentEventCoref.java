@@ -11,6 +11,7 @@ import eu.newsreader.eventcoreference.util.Util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -355,7 +356,7 @@ public class LargeInterDocumentEventCoref {
         }
         try {
             //System.out.println("pathToNafFolder = " + pathToNafFolder);
-            FileOutputStream fos = new FileOutputStream(pathToNafFolder+"/sem.trig");
+            OutputStream fos = new FileOutputStream(pathToNafFolder+"/sem.trig");
             GetSemFromNafFile.serializeJena(fos,  semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, sourceMetaHashMap);
             fos.close();
         } catch (IOException e) {
