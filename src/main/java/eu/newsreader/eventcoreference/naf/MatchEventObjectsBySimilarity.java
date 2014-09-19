@@ -21,17 +21,17 @@ import java.util.Set;
  * Time: 7:54 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MatchEventObjects {
+public class MatchEventObjectsBySimilarity {
     static public void main (String [] args) {
-        String eventType = "grammatical";
+        String eventType = "speech";
         HashMap<String, SourceMeta> sourceMetaHashMap = null;
          WordnetData wordnetData = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
-       // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/speech";
+        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/speech";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/other";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/other";
-        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/grammatical";
+       // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/grammatical";
         //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/events/other";
        //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out/events/other";
         String pathToSourceDataFile = "";
@@ -76,7 +76,7 @@ public class MatchEventObjects {
         HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
         if (file.exists() ) {
             int cnt = 0;
-         //   System.out.println("file = " + file.getName());
+            System.out.println("file = " + file.getName());
             try {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois =  new ObjectInputStream(fis);
@@ -107,7 +107,7 @@ public class MatchEventObjects {
             } catch (Exception e) {
              //   e.printStackTrace();
             }
-            System.out.println(file.getName()+" nr objects read = " + cnt);
+            System.out.println("nr objects read = " + cnt);
         }
 
         return eventMap;
@@ -148,7 +148,7 @@ public class MatchEventObjects {
                             finalCompositeEvent.mergeRelations(myCompositeEvent);
                             finalCompositeEvent.mergeFactRelations(myCompositeEvent);
                             /// we thus merge with the first matching event and do not consider others that may be bettter!!!!!
-                          //  System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                            System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
                             break;
                         }
                     }
@@ -158,7 +158,37 @@ public class MatchEventObjects {
                 }
                 finalLemmaEventMap.put(lemma, finalCompositeEvents);
             }
-
+/*            HashMap<String, ArrayList<CompositeEvent>> finalConceptEventMap = new HashMap<String, ArrayList<CompositeEvent>>();
+            keySet = finalLemmaEventMap.keySet();
+            keys = keySet.iterator();
+            while (keys.hasNext()) {
+                String lemma = (String) keys.next();
+                ArrayList<CompositeEvent> finalCompositeEvents = new ArrayList<CompositeEvent>();
+                ArrayList<CompositeEvent> myCompositeEvents = finalLemmaEventMap.get(lemma);
+                for (int j = 0; j < myCompositeEvents.size(); j++) {
+                    boolean match = false;
+                    CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
+                    for (int k = 0; k < finalCompositeEvents.size(); k++) {
+                        CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
+                        //if (true) {
+                        if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
+                            nMatches++;
+                            match = true;
+                            finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
+                            finalCompositeEvent.mergeObjects(myCompositeEvent);
+                            finalCompositeEvent.mergeRelations(myCompositeEvent);
+                            finalCompositeEvent.mergeFactRelations(myCompositeEvent);
+                            /// we thus merge with the first matching event and do not consider others that may be bettter!!!!!
+                            System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                            break;
+                        }
+                    }
+                    if (!match) {
+                        finalCompositeEvents.add(myCompositeEvent);
+                    }
+                }
+                finalLemmaEventMap.put(lemma, finalCompositeEvents);
+            }*/
             try {
                     OutputStream fos = new FileOutputStream(file+".sem.trig");
                     GetSemFromNafFile.serializeJenaCompositeEvents(fos,  finalLemmaEventMap, sourceMetaHashMap);

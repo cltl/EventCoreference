@@ -46,11 +46,13 @@ public class ClusterEventObjects {
             System.out.println(USAGE);
           //  return;
         }
-        String pathToNafFolder = "/Users/piek/Desktop/NWR-DATA/worldcup/ian-test";
-        String pathToEventFolder = "/Users/piek/Desktop/NWR-DATA/worldcup";
+        String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-sample";
+        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars";
+        //String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup/ian-test";
+        //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup";
        // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
-        String projectName  = "worldcup";
-        String extension = ".naf";
+        String projectName  = "cars";
+        String extension = ".naf.coref";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-folder") && args.length>(i+1)) {
@@ -127,7 +129,7 @@ public class ClusterEventObjects {
             if (!file.getName().startsWith("56VW-T8H1-DXCW-D3F2.")) {
                      continue;
             }*/
-            if (i % 500 == 0) {
+            if (i % 10 == 0) {
                 System.out.println("i = " + i);
                 //  System.out.println("file.getName() = " + file.getAbsolutePath());
             }

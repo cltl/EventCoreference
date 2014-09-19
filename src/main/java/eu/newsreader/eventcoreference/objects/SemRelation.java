@@ -184,16 +184,16 @@ public class SemRelation implements Serializable {
                 rel = ResourcesUri.pb+value;
             }
             else if (source.equalsIgnoreCase("propbank")) {
-                rel = ResourcesUri.pb+value;
+             //   rel = ResourcesUri.pb+value;
             }
             else if (source.equalsIgnoreCase("framenet")) {
                 rel = ResourcesUri.fn+value;
             }
             else if (source.equalsIgnoreCase("verbnet")) {
-                rel = ResourcesUri.vn+value;
+             //   rel = ResourcesUri.vn+value;
             }
             else if (source.equalsIgnoreCase("nombank")) {
-                rel = ResourcesUri.nb+value;
+             //   rel = ResourcesUri.nb+value;
             }
         }
         else {

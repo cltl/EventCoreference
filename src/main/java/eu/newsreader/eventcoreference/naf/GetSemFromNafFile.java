@@ -744,7 +744,9 @@ public class GetSemFromNafFile {
 
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
-        String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
+        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/scale-test.naf";
+        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
+        //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
         String project = "worldcup";
         for (int i = 0; i < args.length; i++) {

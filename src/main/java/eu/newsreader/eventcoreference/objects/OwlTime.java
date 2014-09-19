@@ -178,7 +178,7 @@ public class OwlTime implements Serializable {
         }
     }
 
-    public boolean matchTimeEmbedded (OwlTime time) {
+    public boolean matchTimeEmbeddedOrg (OwlTime time) {
         if (time.getDateString().isEmpty() || this.getDateString().isEmpty()) {
             return false;
         }
@@ -198,10 +198,50 @@ public class OwlTime implements Serializable {
                         return false;
                     }
                 } else {
+                    if (time.getDay().equals(this.getDay())) {
+                        if (!time.getMonth().isEmpty() && !this.getMonth().isEmpty()) {
+                            if (time.getMonth().equals(this.getMonth())) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                    }
                     return false;
                 }
             }
         }
+    }
+
+    public boolean matchTimeEmbedded (OwlTime time) {
+        if (!time.getYear().equals(this.getYear())) {
+            return false;
+        }
+        if (!time.getMonth().equals(this.getMonth())) {
+            return false;
+        }
+        if (!time.getDay().equals(this.getDay())) {
+           return false;
+        }
+        //// at this point year, month and day are the same but some fields may be empty
+        if (time.getYear().isEmpty()) {
+            //empty years are not acceptable
+            return false;
+        }
+        if (time.getMonth().isEmpty()) {
+            // empty month is acceptable given a matching year, underspecified date or period
+            // at this point we ignore the day???
+            return true;
+        }
+        if (time.getDay().isEmpty()) {
+            // empty day is acceptable given matching year and month
+            return true;
+        }
+        System.out.println("this.getDateString() = " + this.getDateString());
+        System.out.println();
+        return true;  //// all fields match and are non-empty
+
     }
 
     public int parseTimeExValue (String timeExValue, OwlTime docOwlTime) {

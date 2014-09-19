@@ -1,6 +1,8 @@
 package eu.newsreader.eventcoreference.coref;
 
 import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.util.EventTypes;
+import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.util.ArrayList;
@@ -82,7 +84,86 @@ public class ComponentMatch {
         return false;
     }
 
-    public static boolean compareCompositeEvent (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
+    public static boolean sharePrimeActor (ArrayList<SemActor> mySemActors,
+                                        ArrayList<SemActor> semActors) {
+
+        for (int i = 0; i < mySemActors.size(); i++) {
+            SemObject mySemActor = mySemActors.get(i);
+            for (int j = 0; j < semActors.size(); j++) {
+                SemObject semActor = semActors.get(j);
+                if (semActor.getURI().equals(mySemActor.getURI())) {
+                   // System.out.println("semActor.getURI() = " + semActor.getURI());
+                    return true;
+                }
+                else if (semActor.getReference().equals(mySemActor.getReference()) && !semActor.getReference().isEmpty()) {
+                  //  System.out.println("semActor.getReference() = " + semActor.getReference());
+                    return true;
+                }
+                else if (semActor.getTopPhraseAsLabel().equals(mySemActor.getTopPhraseAsLabel())) {
+                     // System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
+                      return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean compareAllActors (ArrayList<SemActor> mySemActors,
+                                        ArrayList<SemActor> semActors) {
+
+        boolean match = true;
+        for (int i = 0; i < mySemActors.size(); i++) {
+            SemObject mySemActor = mySemActors.get(i);
+            for (int j = 0; j < semActors.size(); j++) {
+                SemObject semActor = semActors.get(j);
+                if (!semActor.getURI().equals(mySemActor.getURI())) {
+                   // System.out.println("semActor.getURI() = " + semActor.getURI());
+                    return false;
+                }
+                else if (semActor.getReference().equals(mySemActor.getReference()) && !semActor.getReference().isEmpty()) {
+                  //  System.out.println("semActor.getReference() = " + semActor.getReference());
+                    return true;
+                }
+                else if (semActor.getTopPhraseAsLabel().equals(mySemActor.getTopPhraseAsLabel())) {
+                     // System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
+                      return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public static boolean compareCompositeEvent (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2, String eventType) {
+        if (EventTypes.isOTHER(eventType)) {
+           return compareCompositeEventOther(compositeEvent1, compositeEvent2);
+        }
+        else if (EventTypes.isCOMMUNICATION(eventType)) {
+            return compareCompositeEventCommunicationCognition(compositeEvent1, compositeEvent2);
+        }
+        else if (EventTypes.isGRAMMATICAL(eventType)) {
+                return compareCompositeEventGrammatical(compositeEvent1, compositeEvent2);
+        }
+        return false;
+    }
+
+    public static boolean compareCompositeEventCommunicationCognition (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
+        if (matchingCompositeEventSemActor(compositeEvent1, compositeEvent2, RoleLabels.PRIMEPARTICIPANT)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean compareCompositeEventGrammatical (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
+        if (matchingCompositeEventSemActor(compositeEvent1, compositeEvent2, RoleLabels.PRIMEPARTICIPANT) &&
+            matchingCompositeEventSemActor(compositeEvent1, compositeEvent2, RoleLabels.NONPRIMEPARTICIPANT))
+                {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean compareCompositeEventOther (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
         if (! compareActor (compositeEvent1.getMySemActors(), compositeEvent2.getMySemActors())) {
             return  false;
         }
@@ -92,6 +173,32 @@ public class ComponentMatch {
             }
         }
         return true;
+    }
+
+    /**
+     * Determines of the objects of two predicates are the same
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @param roles
+     * @return
+     */
+    public static boolean matchingCompositeEventSemActor (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2, String[] roles) {
+        for (int i = 0; i < compositeEvent1.getMySemRelations().size(); i++) {
+            SemRelation semRelation1 = compositeEvent1.getMySemRelations().get(i);
+            if (RoleLabels.isROLE(semRelation1.getPredicates(), roles)) {
+              //  System.out.println("semRelation1.getPredicate() = " + semRelation1.getPredicate());
+                for (int j = 0; j < compositeEvent2.getMySemRelations().size(); j++) {
+                    SemRelation semRelation2 = compositeEvent1.getMySemRelations().get(i);
+                    if (RoleLabels.isROLE(semRelation2.getPredicates(), roles)) {
+                        if (semRelation1.getObject().equals(semRelation2.getObject())) {
+                          //  System.out.println("semRelation2.getObject() = " + semRelation2.getObject());
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static boolean equalSemRelation(SemRelation semRelation1, SemRelation semRelation2) {
