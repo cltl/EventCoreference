@@ -58,6 +58,8 @@ public class Sem {
      */
     public static final ObjectProperty hasSubType = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasSubType" );
 
+
+
     /** <p>Has time is used to indicate at which time an Event took place or when a property
      *  under the Temporary Constraint is valid. Has time points to a symbolic representation
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>

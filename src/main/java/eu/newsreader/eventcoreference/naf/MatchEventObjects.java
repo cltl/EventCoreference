@@ -23,15 +23,15 @@ import java.util.Set;
  */
 public class MatchEventObjects {
     static public void main (String [] args) {
-        String eventType = "grammatical";
+        String eventType = "contextual";
         HashMap<String, SourceMeta> sourceMetaHashMap = null;
          WordnetData wordnetData = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/speech";
-       // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/other";
-       // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/other";
-        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/grammatical";
+       // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/contextual";
+        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/contextual";
+       // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/grammatical";
         //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/events/other";
        //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out/events/other";
         String pathToSourceDataFile = "";

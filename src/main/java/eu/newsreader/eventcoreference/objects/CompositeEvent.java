@@ -138,7 +138,7 @@ public class CompositeEvent implements Serializable{
             boolean match = false;
             for (int j = 0; j < this.getMySemRelations().size(); j++) {
                 SemRelation relation = this.getMySemRelations().get(j);
-                if ((relation.getPredicate().equalsIgnoreCase("hasTime")) && (semRelation.getPredicate().equalsIgnoreCase("hasTime")))  {
+                if ((relation.containsPredicateIgnoreCase("hasTime")) && (semRelation.containsPredicateIgnoreCase("hasTime")))  {
                     //// make sure the doctime is also considered
                     ArrayList<SemTime> times1 = this.getMySemTimes();
                     for (int k = 0; k < this.getMyDocTimes().size(); k++) {

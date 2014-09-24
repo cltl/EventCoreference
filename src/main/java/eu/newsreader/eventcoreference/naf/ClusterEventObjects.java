@@ -46,7 +46,7 @@ public class ClusterEventObjects {
             System.out.println(USAGE);
           //  return;
         }
-        String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-sample";
+        String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-sample-naf";
         String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars";
         //String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup/ian-test";
         //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup";
@@ -94,7 +94,7 @@ public class ClusterEventObjects {
             System.out.println("Cannot create the speechFolder = " + speechFolder);
             return;
         }
-        File otherFolder = new File(eventFolder + "/" + "other");
+        File otherFolder = new File(eventFolder + "/" + "contextual");
         if (!otherFolder.exists()) {
             otherFolder.mkdir();
         }

@@ -5,14 +5,14 @@ package eu.newsreader.eventcoreference.util;
  */
 public class EventTypes {
 
-    static public final String [] OTHER = {"other", "contextual"};
+    static public final String [] CONTEXTUAL = {"other", "contextual"};
     static public final String [] COMMUNICATION = {"speech", "communication", "cognition"};
     static public final String [] GRAMMATICAL = {"grammatical"};
 
 
-    static public boolean isOTHER (String role) {
-        for (int i = 0; i < OTHER.length; i++) {
-            String s = OTHER[i];
+    static public boolean isCONTEXTUAL(String role) {
+        for (int i = 0; i < CONTEXTUAL.length; i++) {
+            String s = CONTEXTUAL[i];
             if (s.equalsIgnoreCase(role)) {
                 return true;
             }

@@ -11,7 +11,12 @@ import java.util.ArrayList;
  * Created by piek on 5/2/14.
  */
 public class ComponentMatch {
-
+    /**
+     * Compares two time objects to determine if they exclude each other or not
+     * @param mySemTimes
+     * @param semTimes
+     * @return
+     */
     public static boolean compareTime (ArrayList<SemTime> mySemTimes,
                                        ArrayList<SemTime> semTimes) {
 
@@ -36,6 +41,13 @@ public class ComponentMatch {
         return false;
     }
 
+    /**
+     * Compares two lists of places to determine of they exclude each other. Comparison is based on URIs, external references and the most frequent label found as a mention
+     * If there is a single match across the arrays, the function returns true.
+     * @param mySemPlaces
+     * @param semPlaces
+     * @return
+     */
     public static boolean comparePlace (ArrayList<SemPlace> mySemPlaces,
                                         ArrayList<SemPlace> semPlaces) {
 
@@ -43,7 +55,7 @@ public class ComponentMatch {
             SemObject mySemPlace = mySemPlaces.get(i);
             for (int j = 0; j < semPlaces.size(); j++) {
                 SemObject semPlace = semPlaces.get(j);
-                if (mySemPlace.getURI().equals(semPlace.getURI())) {
+                if (mySemPlace.getURI().equals(semPlace.getURI())&& !semPlace.getURI().isEmpty()) {
                //     System.out.println("semPlace.getURI() = " + semPlace.getURI());
                     return true;
                 }
@@ -60,6 +72,13 @@ public class ComponentMatch {
         return false;
     }
 
+    /**
+     * Compares two lists of actors to determine of they exclude each other. Comparison is based on URIs, external references and the most frequent label found as a mention
+     * If there is a single match across the arrays, the function returns true.
+     * @param mySemActors
+     * @param semActors
+     * @return
+     */
     public static boolean compareActor (ArrayList<SemActor> mySemActors,
                                         ArrayList<SemActor> semActors) {
 
@@ -67,7 +86,7 @@ public class ComponentMatch {
             SemObject mySemActor = mySemActors.get(i);
             for (int j = 0; j < semActors.size(); j++) {
                 SemObject semActor = semActors.get(j);
-                if (semActor.getURI().equals(mySemActor.getURI())) {
+                if (semActor.getURI().equals(mySemActor.getURI()) && !semActor.getURI().isEmpty()) {
                    // System.out.println("semActor.getURI() = " + semActor.getURI());
                     return true;
                 }
@@ -84,31 +103,14 @@ public class ComponentMatch {
         return false;
     }
 
-    public static boolean sharePrimeActor (ArrayList<SemActor> mySemActors,
-                                        ArrayList<SemActor> semActors) {
 
-        for (int i = 0; i < mySemActors.size(); i++) {
-            SemObject mySemActor = mySemActors.get(i);
-            for (int j = 0; j < semActors.size(); j++) {
-                SemObject semActor = semActors.get(j);
-                if (semActor.getURI().equals(mySemActor.getURI())) {
-                   // System.out.println("semActor.getURI() = " + semActor.getURI());
-                    return true;
-                }
-                else if (semActor.getReference().equals(mySemActor.getReference()) && !semActor.getReference().isEmpty()) {
-                  //  System.out.println("semActor.getReference() = " + semActor.getReference());
-                    return true;
-                }
-                else if (semActor.getTopPhraseAsLabel().equals(mySemActor.getTopPhraseAsLabel())) {
-                     // System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
-                      return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public static boolean compareAllActors (ArrayList<SemActor> mySemActors,
+    /**
+     * Compares two list of actors by URIs for full equivalence
+     * @param mySemActors
+     * @param semActors
+     * @return
+     */
+    public static boolean compareAllActorsByURI (ArrayList<SemActor> mySemActors,
                                         ArrayList<SemActor> semActors) {
 
         boolean match = true;
@@ -116,27 +118,75 @@ public class ComponentMatch {
             SemObject mySemActor = mySemActors.get(i);
             for (int j = 0; j < semActors.size(); j++) {
                 SemObject semActor = semActors.get(j);
-                if (!semActor.getURI().equals(mySemActor.getURI())) {
+                if (!semActor.getURI().equals(mySemActor.getURI()) && !semActor.getURI().isEmpty()) {
                    // System.out.println("semActor.getURI() = " + semActor.getURI());
                     return false;
                 }
-                else if (semActor.getReference().equals(mySemActor.getReference()) && !semActor.getReference().isEmpty()) {
-                  //  System.out.println("semActor.getReference() = " + semActor.getReference());
-                    return true;
-                }
-                else if (semActor.getTopPhraseAsLabel().equals(mySemActor.getTopPhraseAsLabel())) {
-                     // System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
-                      return true;
-                }
             }
         }
-        return false;
+        return true;
     }
 
 
+    /**
+     * Compares two list of actors by external references for full equivalence
+     * @param mySemActors
+     * @param semActors
+     * @return
+     */
+    public static boolean compareAllActorsByReferences (ArrayList<SemActor> mySemActors,
+                                        ArrayList<SemActor> semActors) {
+
+        boolean match = true;
+        for (int i = 0; i < mySemActors.size(); i++) {
+            SemObject mySemActor = mySemActors.get(i);
+            for (int j = 0; j < semActors.size(); j++) {
+                SemObject semActor = semActors.get(j);
+                if (!semActor.getReference().equals(mySemActor.getReference()) && !semActor.getReference().isEmpty()) {
+                  //  System.out.println("semActor.getReference() = " + semActor.getReference());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+
+    /**
+     * Compares two list of actors by most frequent labels for full equivalence
+     * @param mySemActors
+     * @param semActors
+     * @return
+     */
+    public static boolean compareAllActorsByTopPhrase (ArrayList<SemActor> mySemActors,
+                                                 ArrayList<SemActor> semActors) {
+
+        boolean match = true;
+        for (int i = 0; i < mySemActors.size(); i++) {
+            SemObject mySemActor = mySemActors.get(i);
+            for (int j = 0; j < semActors.size(); j++) {
+                SemObject semActor = semActors.get(j);
+                if (!semActor.getTopPhraseAsLabel().equals(mySemActor.getTopPhraseAsLabel())) {
+                    // System.out.println("semActor.getTopPhraseAsLabel() = " + semActor.getTopPhraseAsLabel());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Main function for comparing composite events subdivided by the eventType. For each composite event we assume that the event type matches,
+     * the event itself matches given a threshold and matching function and the time matches (possibly also the place)
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @param eventType
+     * @return
+     */
     public static boolean compareCompositeEvent (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2, String eventType) {
-        if (EventTypes.isOTHER(eventType)) {
-           return compareCompositeEventOther(compositeEvent1, compositeEvent2);
+        if (EventTypes.isCONTEXTUAL(eventType)) {
+           return compareCompositeEventContextual(compositeEvent1, compositeEvent2);
         }
         else if (EventTypes.isCOMMUNICATION(eventType)) {
             return compareCompositeEventCommunicationCognition(compositeEvent1, compositeEvent2);
@@ -147,6 +197,13 @@ public class ComponentMatch {
         return false;
     }
 
+    /**
+     * In the case of a communication or cognition event, we require that the PRIMEPARTICIPANT is identical.
+     * The other participants are less well defined and not compared.
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @return
+     */
     public static boolean compareCompositeEventCommunicationCognition (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
         if (matchingCompositeEventSemActor(compositeEvent1, compositeEvent2, RoleLabels.PRIMEPARTICIPANT)) {
             return true;
@@ -154,6 +211,13 @@ public class ComponentMatch {
         return false;
     }
 
+    /**
+     * Grammatical events are more complex expressions and we require that at least two participants match
+     * of which one is the prime participant and one is another participant
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @return
+     */
     public static boolean compareCompositeEventGrammatical (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
         if (matchingCompositeEventSemActor(compositeEvent1, compositeEvent2, RoleLabels.PRIMEPARTICIPANT) &&
             matchingCompositeEventSemActor(compositeEvent1, compositeEvent2, RoleLabels.NONPRIMEPARTICIPANT))
@@ -163,7 +227,13 @@ public class ComponentMatch {
         return false;
     }
 
-    public static boolean compareCompositeEventOther (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
+    /**
+     * Contextual events need at least 1 participant to match and 1 location
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @return
+     */
+    public static boolean compareCompositeEventContextual(CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
         if (! compareActor (compositeEvent1.getMySemActors(), compositeEvent2.getMySemActors())) {
             return  false;
         }
@@ -176,7 +246,8 @@ public class ComponentMatch {
     }
 
     /**
-     * Determines of the objects of two predicates are the same
+     * Determines if the objects of two predicates are the same for a set of relations, where the URI of the object should match
+     * and the role should match a set of roles. The role of a SemRelation is either the predicate or a set of predicates
      * @param compositeEvent1
      * @param compositeEvent2
      * @param roles
@@ -202,13 +273,25 @@ public class ComponentMatch {
     }
 
     public static boolean equalSemRelation(SemRelation semRelation1, SemRelation semRelation2) {
-        if (semRelation1.getPredicate().equals(semRelation2.getPredicate())
+        for (int i = 0; i < semRelation1.getPredicates().size(); i++) {
+            String pred1 = semRelation1.getPredicates().get(i);
+            for (int j = 0; j < semRelation2.getPredicates().size(); j++) {
+                String pred2 =  semRelation2.getPredicates().get(j);
+                if (pred1.equals(pred2)
+                        &&
+                        semRelation1.getObject().equals(semRelation2.getObject())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+/*        if (semRelation1.getPredicate().equals(semRelation2.getPredicate())
                 &&
                 semRelation1.getObject().equals(semRelation2.getObject())) {
             return true;
         } else {
             return false;
-        }
+        }*/
     }
 
     public static boolean compareComponents (SemObject mySemEvent,

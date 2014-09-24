@@ -28,7 +28,7 @@ public class SemRelation implements Serializable {
     </semRelation>
 */
     private String id;
-    private String predicate;
+  //  private String predicate;
     private ArrayList<String> predicates;
     private String subject;
     private String object;
@@ -42,7 +42,7 @@ public class SemRelation implements Serializable {
         //this.corefTargets = new ArrayList<CorefTarget>();
         this.id = "";
         this.object = "";
-        this.predicate = "";
+      //  this.predicate = "";
         this.subject = "";
         this.predicates = new ArrayList<String>();
     }
@@ -57,6 +57,16 @@ public class SemRelation implements Serializable {
 
     public void addPredicate(String predicate) {
         this.predicates.add(predicate);
+    }
+
+    public boolean containsPredicateIgnoreCase (String predicate) {
+        for (int i = 0; i < predicates.size(); i++) {
+            String pred = predicates.get(i);
+            if (pred.equalsIgnoreCase(predicate)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ArrayList<NafMention> getNafMentions() {
@@ -142,13 +152,9 @@ public class SemRelation implements Serializable {
         this.object = object;
     }
 
-    public String getPredicate() {
-        return predicate;
-    }
+  //  public String getPredicate() { return predicate;}
 
-    public void setPredicate(String predicate) {
-        this.predicate = predicate;
-    }
+  //  public void setPredicate(String predicate) { this.predicate = predicate;  }
 
     public String getSubject() {
         return subject;
@@ -157,6 +163,7 @@ public class SemRelation implements Serializable {
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
 
 
     public Property getSemRelationType (String type) {
@@ -184,13 +191,13 @@ public class SemRelation implements Serializable {
                 rel = ResourcesUri.pb+value;
             }
             else if (source.equalsIgnoreCase("propbank")) {
-             //   rel = ResourcesUri.pb+value;
+                rel = ResourcesUri.pb+value;
             }
             else if (source.equalsIgnoreCase("framenet")) {
                 rel = ResourcesUri.fn+value;
             }
             else if (source.equalsIgnoreCase("verbnet")) {
-             //   rel = ResourcesUri.vn+value;
+                rel = ResourcesUri.vn+value;
             }
             else if (source.equalsIgnoreCase("nombank")) {
              //   rel = ResourcesUri.nb+value;
@@ -201,12 +208,35 @@ public class SemRelation implements Serializable {
         }
         return rel;
     }
+
     public void addToJenaDataSet (Dataset ds, Model provenanceModel) {
 
         Model relationModel = ds.getNamedModel(this.id);
 
         Resource subject = relationModel.createResource(this.getSubject());
-        if (this.getPredicate().equalsIgnoreCase("hasFactBankValue")) {
+        for (int i = 0; i < predicates.size(); i++) {
+            String predicate = predicates.get(i);
+            if (predicate.equalsIgnoreCase("hasFactBankValue")) {
+                Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue+predicate);
+                subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
+            }
+            else {
+                Resource object = relationModel.createResource(this.getObject());
+                Property semProperty = getSemRelationType(predicate);
+                if (semProperty != Sem.hasSubType) {
+                    subject.addProperty(semProperty, object);
+                } else {
+                    Property fnProperty = relationModel.createProperty(getRoleRelation(predicate));
+                    subject.addProperty(fnProperty, this.getObject());
+                }
+            }
+/*                for (int i = 0; i < predicates.size(); i++) {
+                    String s = predicates.get(i);
+                    Property fnProperty = relationModel.createProperty(getRoleRelation(s));
+                    subject.addProperty(fnProperty, this.getObject());
+                }*/
+        }
+       /* if (this.getPredicate().equalsIgnoreCase("hasFactBankValue")) {
             Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue+this.getPredicate());
             subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
         }
@@ -219,7 +249,7 @@ public class SemRelation implements Serializable {
                 Property fnProperty = relationModel.createProperty(getRoleRelation(s));
                 subject.addProperty(fnProperty, this.getObject());
             }
-        }
+        }*/
 
 
         Resource provenanceResource = provenanceModel.createResource(this.id);
@@ -264,7 +294,8 @@ public class SemRelation implements Serializable {
     public SemRelation (SemRelation semRelation) {
         this.setSubject(semRelation.getSubject());
         this.setObject(semRelation.getObject());
-        this.setPredicate(semRelation.getPredicate());
+      //  this.setPredicate(semRelation.getPredicate());
+        this.setPredicates(semRelation.getPredicates());
         this.setNafMentions(semRelation.getNafMentions());
     }
 
@@ -275,14 +306,28 @@ public class SemRelation implements Serializable {
         if (!this.getObject().equals(semRelation.getObject())) {
             return  false;
         }
-        if (!this.getPredicate().equals(semRelation.getPredicate())) {
-            return  false;
+       // if (!this.getPredicate().equals(semRelation.getPredicate())) {return  false; }
+        for (int i = 0; i < predicates.size(); i++) {
+            String pred1 =  predicates.get(i);
+            boolean matchPredicate = false;
+            for (int j = 0; j < semRelation.getPredicates().size(); j++) {
+                String pred2 = semRelation.getPredicates().get(j);
+                if (pred1.equalsIgnoreCase(pred2)) {
+                    matchPredicate = true;
+                    break;
+                }
+            }
+            return matchPredicate;
         }
         return true;
     }
 
     public String toString () {
-        String str = subject+"#"+predicate+"#"+object;
+        String str = "";
+        for (int i = 0; i < predicates.size(); i++) {
+            String pred = predicates.get(i);
+            str +=  subject+"#"+pred+"#"+object;
+        }
         return str;
     }
 }

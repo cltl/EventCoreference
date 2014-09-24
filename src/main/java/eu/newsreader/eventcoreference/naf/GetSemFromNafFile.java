@@ -351,10 +351,10 @@ public class GetSemFromNafFile {
                 if (!nafMention.getFactuality().getPrediction().isEmpty()) {
                     factualityCounter++;
                     SemRelation semRelation = new SemRelation();
-                    String relationInstanceId = baseUrl+"facValue_"+factualityCounter;
+                    String relationInstanceId = baseUrl+"factValue_"+factualityCounter;
                     semRelation.setId(relationInstanceId);
                     semRelation.addMention(nafMention);
-                    semRelation.setPredicate("hasFactBankValue");
+                    semRelation.addPredicate("hasFactBankValue");
                     semRelation.setSubject(semObject.getId());
                     semRelation.setObject(nafMention.getFactuality().getPrediction());
                     factRelations.add(semRelation);
@@ -413,7 +413,7 @@ public class GetSemFromNafFile {
                                 }
                                 NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
                                 semRelation.addMention(mention);
-                                semRelation.setPredicate("hasSemActor");
+                                semRelation.addPredicate("hasSemActor");
                                 //// check the source and prefix accordingly
                                 semRelation.addPredicate(kafParticipant.getRole());
                                 for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
@@ -452,7 +452,7 @@ public class GetSemFromNafFile {
                                     }
                                     NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
                                     semRelation.addMention(mention);
-                                    semRelation.setPredicate("hasSemPlace");
+                                    semRelation.addPredicate("hasSemPlace");
                                     semRelation.addPredicate(kafParticipant.getRole());
                                     for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
                                         KafSense kafSense = kafParticipant.getExternalReferences().get(j);
@@ -484,7 +484,7 @@ public class GetSemFromNafFile {
                                     }
                                     NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
                                     semRelation.addMention(mention);
-                                    semRelation.setPredicate("hasSemTime");
+                                    semRelation.addPredicate("hasSemTime");
                                     semRelation.setSubject(semEventId);
                                     semRelation.setObject(semTime.getId());
                                     semRelations.add(semRelation);
@@ -516,7 +516,7 @@ public class GetSemFromNafFile {
                     semRelation.setId(relationInstanceId);
                     //// Since the doctime has no reference in the text, we use the mentions of the events to point to
                     semRelation.setNafMentions(semEvent.getNafMentions());
-                    semRelation.setPredicate("hasSemTime");
+                    semRelation.addPredicate("hasSemTime");
                     semRelation.setSubject(semEvent.getId());
                     semRelation.setObject(docSemTime.getId());
                     semRelations.add(semRelation);
