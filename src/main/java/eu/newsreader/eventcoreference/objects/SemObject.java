@@ -55,7 +55,7 @@ public class SemObject implements Serializable {
             for (int j = 0; j < nafMentions.size(); j++) {
                 NafMention nafMention = nafMentions.get(j);
                 if (nafMention.getTokensIds().contains(kafFactuality.getId())) {
-                    // System.out.println("nafMention.toString() = " + nafMention.toString());
+                  //   System.out.println("nafMention.toString() = " + nafMention.toString());
                     nafMention.setFactuality(kafFactuality);
                 }
             }

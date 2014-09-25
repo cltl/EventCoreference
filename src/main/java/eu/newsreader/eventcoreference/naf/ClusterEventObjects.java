@@ -46,8 +46,8 @@ public class ClusterEventObjects {
             System.out.println(USAGE);
           //  return;
         }
-        String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-sample-naf";
-        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars";
+        String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample/naf";
+        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample";
         //String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup/ian-test";
         //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup";
        // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
@@ -86,7 +86,7 @@ public class ClusterEventObjects {
             System.out.println("Cannot create the eventFolder = " + eventFolder);
             return;
         }
-        File speechFolder = new File(eventFolder + "/" + "speech");
+        File speechFolder = new File(eventFolder + "/" + "source");
         if (!speechFolder.exists()) {
             speechFolder.mkdir();
         }
@@ -118,6 +118,7 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
+        SemTime docSemTime = new SemTime();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
         System.out.println("files.size() = " + files.size());
@@ -141,7 +142,7 @@ public class ClusterEventObjects {
             factRelations = new ArrayList<SemRelation>();
           //  System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
-            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime);
            // System.out.println("semTimes = " + semTimes.size());
             // We need to create output objects that are more informative than the Trig output and store these in files per date
 
@@ -153,7 +154,7 @@ public class ClusterEventObjects {
                 ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
                 ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
-                CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, GetSemFromNafFile.docSemTime, myActors, myPlaces, myTimes, myRelations, myFacts);
+                CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, docSemTime, myActors, myPlaces, myTimes, myRelations, myFacts);
                 File folder = otherFolder;
                 for (int k = 0; k < mySemEvent.getConcepts().size(); k++) {
                     KafSense kafSense = mySemEvent.getConcepts().get(k);

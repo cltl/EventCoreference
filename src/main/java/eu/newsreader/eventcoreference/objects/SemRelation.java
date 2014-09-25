@@ -182,7 +182,7 @@ public class SemRelation implements Serializable {
     }
 
     public String getRoleRelation (String role) {
-        String  rel = role;
+        String  rel = "";
         String [] fields = role.split(":");
         if (fields.length==2) {
             String source = fields[0].trim();
@@ -214,28 +214,42 @@ public class SemRelation implements Serializable {
         Model relationModel = ds.getNamedModel(this.id);
 
         Resource subject = relationModel.createResource(this.getSubject());
+        Resource object = relationModel.createResource(this.getObject());
+        Property semProperty = null;
+
+        boolean subActor = false;
         for (int i = 0; i < predicates.size(); i++) {
             String predicate = predicates.get(i);
             if (predicate.equalsIgnoreCase("hasFactBankValue")) {
-                Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue+predicate);
+                Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue + predicate);
                 subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
-            }
-            else {
-                Resource object = relationModel.createResource(this.getObject());
-                Property semProperty = getSemRelationType(predicate);
-                if (semProperty != Sem.hasSubType) {
+            } else {
+                if (predicate.toLowerCase().startsWith("hassem")) {
+                    semProperty = getSemRelationType(predicate);
                     subject.addProperty(semProperty, object);
                 } else {
-                    Property fnProperty = relationModel.createProperty(getRoleRelation(predicate));
-                    subject.addProperty(fnProperty, this.getObject());
+                    predicate = getRoleRelation(predicate);
+                    if (!predicate.isEmpty()) {
+                        Property fnProperty = relationModel.createProperty(predicate);
+                        subject.addProperty(fnProperty, object);
+                        subActor = true;
+                    }
                 }
             }
+        }
+        if (!subActor && semProperty!=null) {
+            if (semProperty != Sem.hasSubType) {
+                subject.addProperty(semProperty, object);
+            }
+        }
+
+
 /*                for (int i = 0; i < predicates.size(); i++) {
                     String s = predicates.get(i);
                     Property fnProperty = relationModel.createProperty(getRoleRelation(s));
                     subject.addProperty(fnProperty, this.getObject());
                 }*/
-        }
+            //// not specific role was found so we assign the standard actor role
        /* if (this.getPredicate().equalsIgnoreCase("hasFactBankValue")) {
             Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue+this.getPredicate());
             subject.addProperty(factProperty, this.getObject()); /// creates the literal as value

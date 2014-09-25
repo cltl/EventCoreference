@@ -1,10 +1,8 @@
 package eu.newsreader.eventcoreference.naf;
 
 import eu.kyotoproject.kaf.KafSaxParser;
-import eu.newsreader.eventcoreference.objects.OwlTime;
-import eu.newsreader.eventcoreference.objects.SemObject;
-import eu.newsreader.eventcoreference.objects.SemRelation;
-import eu.newsreader.eventcoreference.objects.SourceMeta;
+import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
 import eu.newsreader.eventcoreference.util.Util;
 
@@ -16,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * @Deprecated
  * Created with IntelliJ IDEA.
  * User: kyoto
  * Date: 11/14/13
@@ -201,6 +200,7 @@ public class InterDocumentEventCoref {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
+        SemTime docSemTime = new SemTime();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
         System.out.println("files.size() = " + files.size());
@@ -220,6 +220,7 @@ public class InterDocumentEventCoref {
                 System.out.println("semPlaces = " + semPlaces.size());
                 System.out.println("semRelations = " + semRelations.size());
             }
+            docSemTime = new SemTime();
             ArrayList<SemObject> mySemEvents = new ArrayList<SemObject>();
             ArrayList<SemObject> mySemActors = new ArrayList<SemObject>();
             ArrayList<SemObject> mySemTimes = new ArrayList<SemObject>();
@@ -227,7 +228,7 @@ public class InterDocumentEventCoref {
             ArrayList<SemRelation> mySemRelations = new ArrayList<SemRelation>();
             ArrayList<SemRelation> myFactRelations = new ArrayList<SemRelation>();
             kafSaxParser.parseFile(file.getAbsolutePath());
-            GetSemFromNafFile.processNafFile(project, kafSaxParser, mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations);
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations, docSemTime);
             HashMap<String, String> localToGlobalEventMap = new HashMap<String, String>();
             HashMap<String, String> localToGlobalActorMap = new HashMap<String, String>();
             HashMap<String, String> localToGlobalPlaceMap = new HashMap<String, String>();
@@ -464,7 +465,7 @@ public class InterDocumentEventCoref {
         try {
             //System.out.println("pathToNafFolder = " + pathToNafFolder);
             OutputStream fos = new FileOutputStream(pathToNafFolder+"/sem.trig");
-            GetSemFromNafFile.serializeJena(fos,  semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, sourceMetaHashMap);
+            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime, sourceMetaHashMap);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

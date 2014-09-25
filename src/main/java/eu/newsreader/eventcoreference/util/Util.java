@@ -16,10 +16,12 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class Util {
+    static public final int SPANMAXTIME= 10;
     static public final int SPANMAXLOCATION= 10;
     static public final int SPANMINLOCATION = 2;
     static public final int SPANMAXPARTICIPANT = 4;
     static public final int SPANMINPARTICIPANT = 2;
+
     static public class AppendableObjectOutputStream extends ObjectOutputStream {
 
         public AppendableObjectOutputStream(OutputStream out) throws IOException {
@@ -34,6 +36,40 @@ public class Util {
 
     }
 
+    /**
+     * all mentions are checked against the stored relations if the value and the event are already stored.
+     * If so only the mention is added, otherwise a new fact relation is created
+     * @param nafMention
+     * @param factRelations
+     * @param factValue
+     * @param baseUrl
+     * @param subjectId
+     */
+    static public void addMentionToFactRelations (NafMention nafMention, ArrayList<SemRelation> factRelations, String factValue, String baseUrl, String subjectId) {
+        boolean valueMatch = false;
+        for (int i = 0; i < factRelations.size(); i++) {
+            SemRelation semRelation = factRelations.get(i);
+           // System.out.println("semRelation.getObject() = " + semRelation.getObject());
+           // System.out.println("factValue = " + factValue);
+            if ((semRelation.getObject().equalsIgnoreCase(factValue)) &&
+                 (semRelation.getSubject().equals(subjectId))
+               ){
+                valueMatch = true;
+                semRelation.addMention(nafMention);
+                break;
+            }
+        }
+        if (!valueMatch) {
+            SemRelation semRelation = new SemRelation();
+            String relationInstanceId = baseUrl+"factValue_"+factRelations.size()+1;
+            semRelation.setId(relationInstanceId);
+            semRelation.addMention(nafMention);
+            semRelation.addPredicate("hasFactBankValue");
+            semRelation.setSubject(subjectId);
+            semRelation.setObject(nafMention.getFactuality().getPrediction());
+            factRelations.add(semRelation);
+        }
+    }
 
     static public void addObject(ArrayList<SemObject> objects, SemObject object) {
         boolean match =false;
@@ -142,6 +178,9 @@ public class Util {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
+                if (kafParticipant.getSpans().size()>SPANMAXTIME) {
+                    continue;
+                }
                 if (RoleLabels.isTIME(kafParticipant.getRole())) {
                     kafParticipant.setTokenStrings(kafSaxParser);
                     if (mentions.containsKey(kafParticipant.getTokenString())) {

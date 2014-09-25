@@ -2,6 +2,8 @@ package eu.newsreader.eventcoreference.naf;
 
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.objects.SemObject;
+import eu.newsreader.eventcoreference.objects.SemTime;
+import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.File;
@@ -11,6 +13,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 /**
+ * @Deprecated
  * Created with IntelliJ IDEA.
  * User: kyoto
  * Date: 11/14/13
@@ -63,6 +66,7 @@ public class InterDocumentEntityCoref {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
+        SemTime docSemTime = new SemTime();
         ArrayList<SemObject> mySemActors = new ArrayList<SemObject>();
         ArrayList<SemObject> mySemTimes = new ArrayList<SemObject>();
         ArrayList<SemObject> mySemPlaces = new ArrayList<SemObject>();
@@ -78,11 +82,12 @@ public class InterDocumentEntityCoref {
                 System.out.println("semTimes = " + semTimes.size());
                 System.out.println("semPlaces = " + semPlaces.size());
             }
+            docSemTime = new SemTime();
             mySemActors = new ArrayList<SemObject>();
             mySemTimes = new ArrayList<SemObject>();
             mySemPlaces = new ArrayList<SemObject>();
             kafSaxParser.parseFile(file.getAbsolutePath());
-            GetSemFromNafFile.processNafFileForEntities(project, kafSaxParser, mySemActors, mySemPlaces, mySemTimes);
+            GetSemFromNafFile.processNafFileForEntities(project, kafSaxParser, mySemActors, mySemPlaces, mySemTimes, docSemTime);
 
             for (int j = 0; j < mySemActors.size(); j++) {
                 SemObject mySemActor = mySemActors.get(j);
@@ -140,8 +145,8 @@ public class InterDocumentEntityCoref {
                     semPlaces.add(mySemPlace);
                 }
             }
-            if (!GetSemFromNafFile.docSemTime.getOwlTime().getDateString().isEmpty()) {
-                semTimes.add(GetSemFromNafFile.docSemTime);
+            if (!docSemTime.getOwlTime().getDateString().isEmpty()) {
+                semTimes.add(docSemTime);
             }
 
             for (int j = 0; j < mySemTimes.size(); j++) {
@@ -181,7 +186,7 @@ public class InterDocumentEntityCoref {
                 //System.out.println("pathToNafFolder = " + pathToNafFolder);
 
                 OutputStream fos = new FileOutputStream(entityFolder + "/sem-entities.trig");
-                GetSemFromNafFile.serializeJenaEntities(fos, semActors, semPlaces, semTimes);
+                JenaSerialization.serializeJenaEntities(fos, semActors, semPlaces, semTimes);
                 fos.close();
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

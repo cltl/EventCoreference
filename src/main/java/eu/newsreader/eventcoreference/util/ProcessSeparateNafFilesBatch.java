@@ -4,6 +4,8 @@ import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.naf.GetSemFromNafFile;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
+import eu.newsreader.eventcoreference.objects.SemTime;
+import eu.newsreader.eventcoreference.output.JenaSerialization;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,15 +41,16 @@ public class ProcessSeparateNafFilesBatch {
                 File file = nafFiles.get(i);
                 //System.out.println("file.getName() = " + file.getName());
                 kafSaxParser.parseFile(file);
+                SemTime docSemTime = new SemTime();
                 ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
                 ArrayList<SemObject> semActors = new ArrayList<SemObject>();
                 ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
                 ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
                 ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
                 ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-                GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+                GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime);
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");
-                GetSemFromNafFile.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
+                JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime, null);
                 fos.close();
             }
         } catch (IOException e) {
