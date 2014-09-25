@@ -124,4 +124,38 @@ public class NafMention implements Serializable {
         }
         return str;
     }
+
+    public boolean sameMention (NafMention mention) {
+        if (!this.getOffSetStart().equals(mention.getOffSetStart())) {
+            return false;
+        }
+        if (!this.getOffSetEnd().equals(mention.getOffSetEnd())) {
+            return false;
+        }
+        for (int i = 0; i < tokensIds.size(); i++) {
+            String tokenId = tokensIds.get(i);
+            if (!mention.getTokensIds().contains(tokenId)) {
+                return false;
+            }
+        }
+        for (int i = 0; i < termsIds.size(); i++) {
+            String termId = termsIds.get(i);
+            if (!mention.getTermsIds().contains(termId)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hasMention (ArrayList<NafMention> mentions) {
+        boolean has = false;
+        for (int i = 0; i < mentions.size(); i++) {
+            NafMention nafMention = mentions.get(i);
+            if (this.sameMention(nafMention)) {
+                has = true;
+                break;
+            }
+        }
+        return  has;
+    }
 }

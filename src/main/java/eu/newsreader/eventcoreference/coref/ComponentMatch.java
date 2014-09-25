@@ -330,7 +330,17 @@ public class ComponentMatch {
         for (int i = 0; i < semRelations.size(); i++) {
             SemRelation semRelation = semRelations.get(i);
             if (semRelation.getSubject().equals(event.getId())) {
-                mySemRelations.add(semRelation);
+                boolean has = false;
+                for (int j = 0; j < mySemRelations.size(); j++) {
+                    SemRelation mySemRelation = mySemRelations.get(j);
+                    if (mySemRelation.getObject().equals(semRelation.getObject())) {
+                       has = true;
+                        break;
+                    }
+                }
+                if (!has) {
+                    mySemRelations.add(semRelation);
+                }
             }
         }
         return mySemRelations;
@@ -349,7 +359,17 @@ public class ComponentMatch {
                     System.out.println("semRelation = " + semRelation.getPredicate());
                     System.out.println("semRelation = " + semRelation.getObject());
 */
-                    mySemObjects.add(semObject);
+                    boolean has = false;
+                    for (int k = 0; k < mySemObjects.size(); k++) {
+                        SemObject object = mySemObjects.get(k);
+                        if (object.getId().equals(semObject.getId())) {
+                           has = true;
+                           break;
+                        }
+                    }
+                    if (!has) {
+                        mySemObjects.add(semObject);
+                    }
                 }
             }
         }

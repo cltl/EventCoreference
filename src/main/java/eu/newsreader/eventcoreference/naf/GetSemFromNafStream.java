@@ -3,7 +3,6 @@ package eu.newsreader.eventcoreference.naf;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
-import eu.newsreader.eventcoreference.objects.SemTime;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ public class GetSemFromNafStream {
                 projectName = args[i+1];
             }
         }
-        SemTime docTime = new SemTime();
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
@@ -31,7 +29,7 @@ public class GetSemFromNafStream {
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(System.in);
-        GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docTime);
-        JenaSerialization.serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docTime, null);
+        GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        JenaSerialization.serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
     }
 }

@@ -38,15 +38,17 @@ public class ClusterEventObjects {
             "--event-folder   <Folder below which the event folders are created that hold the object file. " +
             "The output structure is event/other, event/grammatical and event/speech.>\n" +
             "--extension      <File extension to select the NAF files .>\n" +
-            "--project        <The name of the project for creating IRIs>\n";
+            "--project        <The name of the project for creating URIs>\n";
 
 
     static public void main (String [] args) {
         if (args.length==0) {
             System.out.println(USAGE);
+            System.out.println("NOW RUNNING WITH DEFAULT SETTINGS");
           //  return;
         }
         String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample/naf";
+        //String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample/naf-test";
         String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample";
         //String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup/ian-test";
         //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup";
@@ -118,18 +120,15 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-        SemTime docSemTime = new SemTime();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
         System.out.println("files.size() = " + files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
-/*            if (!file.getName().startsWith("56H9-0MG1-J9XT-P1YN.xml")) {
-                     continue;
-            }
-            if (!file.getName().startsWith("56VW-T8H1-DXCW-D3F2.")) {
+/*            if (!file.getName().startsWith("7YXG-CS51-2RYC-J2CN.xml")) {
                      continue;
             }*/
+
             if (i % 10 == 0) {
                 System.out.println("i = " + i);
                 //  System.out.println("file.getName() = " + file.getAbsolutePath());
@@ -142,10 +141,9 @@ public class ClusterEventObjects {
             factRelations = new ArrayList<SemRelation>();
           //  System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
-            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime);
-           // System.out.println("semTimes = " + semTimes.size());
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
             // We need to create output objects that are more informative than the Trig output and store these in files per date
-
+            //System.out.println("semTimes = " + semTimes.size());
             for (int j = 0; j < semEvents.size(); j++) {
                 SemEvent mySemEvent = (SemEvent) semEvents.get(j);
                 ArrayList<SemTime> myTimes =  Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
@@ -153,8 +151,9 @@ public class ClusterEventObjects {
                 ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
                 ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
+
                 ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
-                CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, docSemTime, myActors, myPlaces, myTimes, myRelations, myFacts);
+                CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
                 File folder = otherFolder;
                 for (int k = 0; k < mySemEvent.getConcepts().size(); k++) {
                     KafSense kafSense = mySemEvent.getConcepts().get(k);
@@ -177,10 +176,10 @@ public class ClusterEventObjects {
                 ArrayList<SemTime> outputTimes = myTimes;
                 // eventFos.writeObject(compositeEvent);
                 /// now we need to write the event data and relations to the proper time folder for comparison
-                if (outputTimes.size() == 0) {
+/*                if (outputTimes.size() == 0) {
                     /// we use the doc times as fall back;
                     outputTimes = compositeEvent.getMyDocTimes();
-                }
+                }*/
                 if (outputTimes.size() == 0) {
                     /// timeless
                         timeFile = new File(folder.getAbsolutePath() + "/" + "events-" + "timeless" + ".obj");

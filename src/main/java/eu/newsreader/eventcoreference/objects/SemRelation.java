@@ -78,7 +78,9 @@ public class SemRelation implements Serializable {
     }
 
     public void addMention(NafMention mention) {
+        if (!mention.hasMention(this.getNafMentions())) {
             this.nafMentions.add(mention);
+        }
     }
 
     public void addMentions(ArrayList<NafMention> mentions) {
@@ -200,7 +202,7 @@ public class SemRelation implements Serializable {
                 rel = ResourcesUri.vn+value;
             }
             else if (source.equalsIgnoreCase("nombank")) {
-             //   rel = ResourcesUri.nb+value;
+                rel = ResourcesUri.nb+value;
             }
         }
         else {
@@ -225,8 +227,13 @@ public class SemRelation implements Serializable {
                 subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
             } else {
                 if (predicate.toLowerCase().startsWith("hassem")) {
-                    semProperty = getSemRelationType(predicate);
-                    subject.addProperty(semProperty, object);
+/*                   if (predicate.toLowerCase().startsWith("hassemtime")) {
+                       System.out.println("this.getSubject() = " + this.getSubject());
+                       System.out.println("predicates = " + predicates.toString());
+                       System.out.println("this.getObject() = " + this.getObject());
+                   }*/
+                   semProperty = getSemRelationType(predicate);
+                   subject.addProperty(semProperty, object);
                 } else {
                     predicate = getRoleRelation(predicate);
                     if (!predicate.isEmpty()) {
@@ -237,34 +244,11 @@ public class SemRelation implements Serializable {
                 }
             }
         }
-        if (!subActor && semProperty!=null) {
+/*        if (!subActor && semProperty!=null) {
             if (semProperty != Sem.hasSubType) {
                 subject.addProperty(semProperty, object);
             }
-        }
-
-
-/*                for (int i = 0; i < predicates.size(); i++) {
-                    String s = predicates.get(i);
-                    Property fnProperty = relationModel.createProperty(getRoleRelation(s));
-                    subject.addProperty(fnProperty, this.getObject());
-                }*/
-            //// not specific role was found so we assign the standard actor role
-       /* if (this.getPredicate().equalsIgnoreCase("hasFactBankValue")) {
-            Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue+this.getPredicate());
-            subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
-        }
-        else {
-            Resource object = relationModel.createResource(this.getObject());
-            Property semProperty = getSemRelationType(this.getPredicate());
-            subject.addProperty(semProperty, object);
-            for (int i = 0; i < predicates.size(); i++) {
-                String s = predicates.get(i);
-                Property fnProperty = relationModel.createProperty(getRoleRelation(s));
-                subject.addProperty(fnProperty, this.getObject());
-            }
         }*/
-
 
         Resource provenanceResource = provenanceModel.createResource(this.id);
 

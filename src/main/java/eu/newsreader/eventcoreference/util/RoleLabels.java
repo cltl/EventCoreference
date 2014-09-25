@@ -156,7 +156,8 @@ public class RoleLabels {
             return true;
         }
         else if (role.equalsIgnoreCase("am-tmp")) {
-            return true;
+            ///false since temporal expressions are already dealt with
+            return false;
         }
         else {
             return false;

@@ -16,7 +16,7 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class Util {
-    static public final int SPANMAXTIME= 10;
+    static public final int SPANMAXTIME = 10;
     static public final int SPANMAXLOCATION= 10;
     static public final int SPANMINLOCATION = 2;
     static public final int SPANMAXPARTICIPANT = 4;
@@ -541,6 +541,28 @@ public class Util {
     }
 
 
+    static public boolean sameSentence(KafSaxParser kafSaxParser, SemObject semObject1, SemObject semObject2) {
+        for (int i = 0; i < semObject1.getNafMentions().size(); i++) {
+            NafMention nafMention1 = semObject1.getNafMentions().get(i);
+            for (int j = 0; j < nafMention1.getTokensIds().size(); j++) {
+                String tokenId = nafMention1.getTokensIds().get(j);
+                KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
+                for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
+                    NafMention nafMention2 = semObject2.getNafMentions().get(k);
+                    for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                        String tokenId2 = nafMention2.getTokensIds().get(l);
+                        KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
+                        if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
     /////////////////////////////////////////////////////////////////////////
     //////////
     //////////
@@ -767,45 +789,24 @@ public class Util {
         return mention;
     }
 
-    /**
-     *      Mention URI = News URI + "#char=START_OFFSET,END_OFFSET"
-     */
-/*    static public String getMentionUri (KafSaxParser kafSaxParser, String targetTerm) {
-        String mentionTarget = targetTerm;
-        int firstOffSet = -1;
-        int highestOffSet = -1;
-        int lengthOffSet = -1;
-        KafTerm kafTerm = kafSaxParser.getTerm(targetTerm);
-        for (int i = 0; i < kafTerm.getSpans().size(); i++) {
-            String tokenId = kafTerm.getSpans().get(i);
-            KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
-            if (!kafWordForm.getCharOffset().isEmpty()) {
-                int offSet = Integer.parseInt(kafWordForm.getCharOffset());
-                int length = Integer.parseInt(kafWordForm.getCharLength());
-                if (firstOffSet==-1 || firstOffSet>offSet) {
-                    firstOffSet = offSet;
-                }
-                if (highestOffSet==-1 ||offSet>highestOffSet) {
-                    highestOffSet = offSet;
-                    lengthOffSet = length;
-                }
-            }
-        }
 
-        if (firstOffSet>-1 && highestOffSet>-1) {
-            int end_offset = highestOffSet+lengthOffSet;
-            mentionTarget += "#char="+firstOffSet+","+end_offset;
-        }
-        return mentionTarget;
-    }*/
 
     static public boolean matchTimeReference (ArrayList<SemTime> times1, ArrayList<SemTime> times2, String time1Id, String time2Id) {
         SemTime semTime1 = null;
         SemTime semTime2 = null;
+        /*System.out.println("time1Id = " + time1Id);
+        System.out.println("time2Id = " + time2Id);
+        System.out.println("times1.size() = " + times1.size());
+        System.out.println("times2.size() = " + times2.size());*/
+        if (time1Id.equals(time2Id)) {
+            return true;
+        }
         for (int i = 0; i < times1.size(); i++) {
             SemTime aTime = times1.get(i);
+          //  System.out.println("aTime = " + aTime);
+          //  System.out.println("time1Id = " + time1Id);
             if (aTime.getId().equals(time1Id)) {
-                System.out.println("aTime.toString() = " + aTime.toString());
+              //  System.out.println("aTime.toString() = " + aTime.toString());
                 semTime1 = aTime;
                 break;
             }
@@ -813,7 +814,7 @@ public class Util {
         for (int j = 0; j < times2.size(); j++) {
             SemTime aTime =  times2.get(j);
             if (aTime.getId().equals(time2Id)) {
-                System.out.println("aTime.toString() = " + aTime.toString());
+               // System.out.println("aTime.toString() = " + aTime.toString());
                 semTime2 = aTime;
             }
         }
@@ -824,6 +825,7 @@ public class Util {
         }
         return false;
     }
+
 
     //// casting functions
     public static ArrayList<SemTime> castToTime (ArrayList<SemObject> semObjects) {

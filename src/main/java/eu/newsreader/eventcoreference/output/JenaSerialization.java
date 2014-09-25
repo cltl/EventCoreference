@@ -26,7 +26,6 @@ public class JenaSerialization {
                                       ArrayList<SemObject> semTimes,
                                       ArrayList<SemRelation> semRelations,
                                       ArrayList<SemRelation> factRelations,
-                                      SemTime docSemTime,
                                       HashMap<String, SourceMeta> sourceMetaHashMap) {
 
 
@@ -60,12 +59,13 @@ public class JenaSerialization {
             SemObject semPlace = semPlaces.get(i);
             semPlace.addToJenaModel(instanceModel, Sem.Place);
         }
-        if (!docSemTime.getPhrase().isEmpty()) {
+/*        if (!docSemTime.getPhrase().isEmpty()) {
             docSemTime.addToJenaModelDocTimeInterval(instanceModel);
         }
         else {
             //  System.out.println("empty phrase for docSemTime = " + docSemTime.getId());
-        }
+        }*/
+
         // System.out.println("TIMES");
         for (int i = 0; i < semTimes.size(); i++) {
             SemTime semTime = (SemTime) semTimes.get(i);
@@ -144,12 +144,12 @@ public class JenaSerialization {
                     semPlace.addToJenaModel(instanceModel, Sem.Place);
                 }
 
-                if (compositeEvent.getMyDocTimes().size()>0) {
+/*                if (compositeEvent.getMyDocTimes().size()>0) {
                     for (int i = 0; i < compositeEvent.getMyDocTimes().size(); i++) {
                         SemTime semTime = compositeEvent.getMyDocTimes().get(i);
                         semTime.addToJenaModelDocTimeInterval(instanceModel);
                     }
-                }
+                }*/
                 // System.out.println("TIMES");
                 // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
                 for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {

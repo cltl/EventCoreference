@@ -100,11 +100,10 @@ public class MatchEventObjects {
                         cnt++;
                         if (obj instanceof  CompositeEvent) {
                             CompositeEvent compositeEvent = (CompositeEvent) obj;
-/*                            if (compositeEvent.getEvent().getPhrase().equals("_")) {
-                                System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
+/*                            if (!compositeEvent.getEvent().getPhrase().equals("production")) {
                                 continue;
                             }*/
-                          //  System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
+                           // System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
                             if (eventMap.containsKey(compositeEvent.getEvent().getPhrase())) {
                                ArrayList<CompositeEvent> events = eventMap.get(compositeEvent.getEvent().getPhrase());
                                events.add(compositeEvent);
@@ -167,6 +166,7 @@ public class MatchEventObjects {
                     String lemma = (String) keys.next();
                     ArrayList<CompositeEvent> finalCompositeEvents = new ArrayList<CompositeEvent>();
                     ArrayList<CompositeEvent> myCompositeEvents = localEventMap.get(lemma);
+
                     for (int j = 0; j < myCompositeEvents.size(); j++) {
                         boolean match = false;
                         CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
@@ -193,7 +193,7 @@ public class MatchEventObjects {
                 }
 
                 JenaSerialization.addJenaCompositeEvents(ds, instanceModel, provenanceModel, finalLemmaEventMap, sourceMetaHashMap);
-                System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
+               // System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
                 //  GetSemFromNafFile.serializeJenaCompositeEvents(System.out,  finalEventMap, sourceMetaHashMap);
 
             }

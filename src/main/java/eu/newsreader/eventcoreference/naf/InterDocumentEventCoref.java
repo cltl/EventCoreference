@@ -200,7 +200,6 @@ public class InterDocumentEventCoref {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-        SemTime docSemTime = new SemTime();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
         System.out.println("files.size() = " + files.size());
@@ -220,7 +219,6 @@ public class InterDocumentEventCoref {
                 System.out.println("semPlaces = " + semPlaces.size());
                 System.out.println("semRelations = " + semRelations.size());
             }
-            docSemTime = new SemTime();
             ArrayList<SemObject> mySemEvents = new ArrayList<SemObject>();
             ArrayList<SemObject> mySemActors = new ArrayList<SemObject>();
             ArrayList<SemObject> mySemTimes = new ArrayList<SemObject>();
@@ -228,7 +226,7 @@ public class InterDocumentEventCoref {
             ArrayList<SemRelation> mySemRelations = new ArrayList<SemRelation>();
             ArrayList<SemRelation> myFactRelations = new ArrayList<SemRelation>();
             kafSaxParser.parseFile(file.getAbsolutePath());
-            GetSemFromNafFile.processNafFile(project, kafSaxParser, mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations, docSemTime);
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, mySemEvents, mySemActors, mySemPlaces, mySemTimes, mySemRelations,myFactRelations);
             HashMap<String, String> localToGlobalEventMap = new HashMap<String, String>();
             HashMap<String, String> localToGlobalActorMap = new HashMap<String, String>();
             HashMap<String, String> localToGlobalPlaceMap = new HashMap<String, String>();
@@ -465,7 +463,7 @@ public class InterDocumentEventCoref {
         try {
             //System.out.println("pathToNafFolder = " + pathToNafFolder);
             OutputStream fos = new FileOutputStream(pathToNafFolder+"/sem.trig");
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime, sourceMetaHashMap);
+            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, sourceMetaHashMap);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
