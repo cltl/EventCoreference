@@ -54,8 +54,7 @@ public class RoleLabels {
      */
 
     static public final String [] PRIMEPARTICIPANT = {"a0","arg0", "a-0", "arg-0"};
-    static public final String [] NONPRIMEPARTICIPANT = {"a1", "a2", "a3", "arg1", "arg2", "arg3", "a-1", "a-2", "a-3", "arg-1", "arg-2", "arg-3"};
-    static public final String [] PARTICIPANT = {"a0", "a1", "a2", "a3", "arg0", "arg1", "arg2", "arg3", "a-0", "a-1", "a-2", "a-3", "arg-0", "arg-1", "arg-2", "arg-3"};
+    static public final String [] NONPRIMEPARTICIPANT = {"a1", "a2", "a3", "a4", "arg1", "arg2", "arg3", "a-1", "a-2", "a-3", "a-4", "arg-1", "arg-2", "arg-3", "arg-4"};
     static public final String [] LOCATION = {"AM-LOC"};
     static public final String [] TIME = {"AM-TMP"};
 
@@ -87,9 +86,20 @@ public class RoleLabels {
         return false;
     }
 
+
     static public boolean isPRIMEPARTICIPANT (String role) {
         for (int i = 0; i < PRIMEPARTICIPANT.length; i++) {
             String s = PRIMEPARTICIPANT[i];
+            if (s.equalsIgnoreCase(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+   static public boolean isNONPRIMEPARTICIPANT (String role) {
+        for (int i = 0; i < NONPRIMEPARTICIPANT.length; i++) {
+            String s = NONPRIMEPARTICIPANT[i];
             if (s.equalsIgnoreCase(role)) {
                 return true;
             }
@@ -108,11 +118,8 @@ public class RoleLabels {
     }
 
     static public boolean isPARTICIPANT (String role) {
-        for (int i = 0; i < PARTICIPANT.length; i++) {
-            String s = PARTICIPANT[i];
-            if (s.equalsIgnoreCase(role)) {
-                return true;
-            }
+        if (isPRIMEPARTICIPANT(role) || isNONPRIMEPARTICIPANT(role)) {
+            return true;
         }
         return false;
     }
@@ -128,36 +135,11 @@ public class RoleLabels {
     }
 
     static public boolean validRole (String role) {
-        if (role.equalsIgnoreCase("a0")) {
+        if (isPARTICIPANT(role)) {
             return true;
         }
-        else if (role.equalsIgnoreCase("a1")) {
+        else if (isLOCATION(role)) {
             return true;
-        }
-        else if (role.equalsIgnoreCase("a2")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("a3")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("arg0")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("arg1")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("arg2")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("arg3")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("am-loc")) {
-            return true;
-        }
-        else if (role.equalsIgnoreCase("am-tmp")) {
-            ///false since temporal expressions are already dealt with
-            return false;
         }
         else {
             return false;

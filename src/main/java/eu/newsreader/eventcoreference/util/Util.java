@@ -19,7 +19,7 @@ public class Util {
     static public final int SPANMAXTIME = 10;
     static public final int SPANMAXLOCATION= 10;
     static public final int SPANMINLOCATION = 2;
-    static public final int SPANMAXPARTICIPANT = 4;
+    static public final int SPANMAXPARTICIPANT = 6;
     static public final int SPANMINPARTICIPANT = 2;
 
     static public class AppendableObjectOutputStream extends ObjectOutputStream {
@@ -49,8 +49,6 @@ public class Util {
         boolean valueMatch = false;
         for (int i = 0; i < factRelations.size(); i++) {
             SemRelation semRelation = factRelations.get(i);
-           // System.out.println("semRelation.getObject() = " + semRelation.getObject());
-           // System.out.println("factValue = " + factValue);
             if ((semRelation.getObject().equalsIgnoreCase(factValue)) &&
                  (semRelation.getSubject().equals(subjectId))
                ){
@@ -195,7 +193,6 @@ public class Util {
                 }
             }
         }
-       // System.out.println("mentions.size() = " + mentions.size());
         return mentions;
     }
 
@@ -217,7 +214,6 @@ public class Util {
                     continue;
                 }
                 if (RoleLabels.isLOCATION(kafParticipant.getRole())) {
-                    //String srl = kafParticipant.getId();
                     kafParticipant.setTokenStrings(kafSaxParser);
                     if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
                         String uri = "";
@@ -226,7 +222,6 @@ public class Util {
                         } catch (UnsupportedEncodingException e) {
                             // e.printStackTrace();
                         }
-                        //String uri = Util.alphaNumericUri(kafParticipant.getTokenString());
                         if (!uri.isEmpty()) {
                             if (mentions.containsKey(uri)) {
                                 ArrayList<ArrayList<CorefTarget>> srlTargets = mentions.get(uri);
@@ -245,7 +240,12 @@ public class Util {
         return mentions;
     }
 
-    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getActorMentionsHashMapFromSrl (KafSaxParser kafSaxParser) {
+    /**
+     * Creates a HashMap for actor uri's with an array list of coreftargets
+     * @param kafSaxParser
+     * @return
+     */
+    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getActorCoreftargetSetsHashMapFromSrl(KafSaxParser kafSaxParser) {
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentions = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
 
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
@@ -260,16 +260,14 @@ public class Util {
                     continue;
                 }
                 if (RoleLabels.isPARTICIPANT(kafParticipant.getRole())) {
-                   // String srl = kafParticipant.getId();
                     kafParticipant.setTokenStrings(kafSaxParser);
                     if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
                         String uri = "";
                         try {
                             uri = URLEncoder.encode(kafParticipant.getTokenString(), "UTF-8");
                         } catch (UnsupportedEncodingException e) {
-                            // e.printStackTrace();
+                           //  e.printStackTrace();
                         }
-                        //String uri = Util.alphaNumericUri(kafParticipant.getTokenString());
                         if (!uri.isEmpty()) {
                             if (mentions.containsKey(uri)) {
                                 //   System.out.println("srl = " + srl);
@@ -282,6 +280,14 @@ public class Util {
                                 mentions.put(uri, srlTargets);
                             }
                         }
+                        else {
+                        //    System.out.println("kafParticipant.getRole() = " + kafParticipant.getRole());
+                        //    System.out.println("kafParticipant.getTokenString() = " + kafParticipant.getTokenString());
+                        }
+                    }
+                    else {
+                      //  System.out.println("kafParticipant.getRole() = " + kafParticipant.getRole());
+                     //   System.out.println("kafParticipant.getTokenString() = " + kafParticipant.getTokenString());
                     }
                 }
             }
@@ -296,7 +302,7 @@ public class Util {
      * @param coreferenceSets
      * @return
      */
-    static public ArrayList<ArrayList<CorefTarget>> getCoreferenceSetForEntitySpans (ArrayList<ArrayList<CorefTarget>> entitySpans,
+    static public ArrayList<ArrayList<CorefTarget>> getCorefTargetSetsForEntitySpans(ArrayList<ArrayList<CorefTarget>> entitySpans,
                                                                                      ArrayList<KafCoreferenceSet> coreferenceSets) {
         ArrayList<ArrayList<CorefTarget>> corefSet = entitySpans;
         for (int i = 0; i < entitySpans.size(); i++) {
@@ -316,8 +322,14 @@ public class Util {
         return corefSet;
     }
 
-    static public ArrayList<ArrayList<CorefTarget>> getCoreferenceSetForEventSpans (ArrayList<CorefTarget> eventSpan,
-                                                                                     ArrayList<KafCoreferenceSet> coreferenceSets) {
+    /**
+     *
+     * @param eventSpan
+     * @param coreferenceSets
+     * @return
+     */
+    static public ArrayList<ArrayList<CorefTarget>> getCorefTargetSetsForEventSpans(ArrayList<CorefTarget> eventSpan,
+                                                                                    ArrayList<KafCoreferenceSet> coreferenceSets) {
         ArrayList<ArrayList<CorefTarget>> corefSet = new ArrayList<ArrayList<CorefTarget>>();
         corefSet.add(eventSpan);
         for (int j = 0; j < coreferenceSets.size(); j++){
@@ -334,7 +346,12 @@ public class Util {
         return corefSet;
     }
 
-
+    /**
+     * Checks if a lists of CorefTargets is already include in a list of lists of CorefTargets
+     * @param newSpans
+     * @param oldSpanSets
+     * @return
+     */
     static public boolean hasCorefTargetArrayList (ArrayList<CorefTarget> newSpans, ArrayList<ArrayList<CorefTarget>> oldSpanSets) {
         for (int j = 0; j < oldSpanSets.size(); j++) {
             ArrayList<CorefTarget> corefTargets = oldSpanSets.get(j);
@@ -346,6 +363,12 @@ public class Util {
         return false;
     }
 
+    /**
+     * Checks if a list of CorefTargets has at least one intersecting span with one of the other lists of CorefTargets
+     * @param spans1
+     * @param spans2
+     * @return
+     */
     static public boolean intersectingAtLeastOneSetOfSpans (ArrayList<ArrayList<CorefTarget>> spans1, ArrayList<ArrayList<CorefTarget>> spans2) {
         for (int i = 0; i < spans1.size(); i++) {
             ArrayList<CorefTarget> corefTargets1 = spans1.get(i);
@@ -447,6 +470,70 @@ public class Util {
         return false;
     }
 
+    /**
+     * Returns the span id that is the head of a constituent of a participant in the SRL layer
+     * @param kafParticipant
+     * @return
+     */
+    static public String getHeadId (KafParticipant kafParticipant) {
+        for (int i = 0; i < kafParticipant.getSpans().size(); i++) {
+            CorefTarget corefTarget = kafParticipant.getSpans().get(i);
+            if (!corefTarget.getHead().isEmpty()) {
+                return corefTarget.getId();
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Compares all SemObjects with a KafParticipant from the SRL layer to return the object that has the largest span overlap.
+     * If none of the objects exceeds the treshold, null is returned
+     *
+     * @TODO COUNT OVERLAP FOR POS=N,V,A ONLY
+     * @param kafParticipant
+     * @param semObjects
+     * @param threshold
+     * @return
+     */
+    static public SemObject getTopMatchingObject(KafParticipant kafParticipant,
+                                                                      ArrayList<SemObject> semObjects,
+                                                                      int threshold) {
+
+
+        SemObject topObject = null;
+        int topScore = 0;
+        for (int i = 0; i < semObjects.size(); i++) {
+            SemObject semObject = semObjects.get(i);
+            int matchCount = 0;
+            for (int m = 0; m < semObject.getNafMentions().size(); m++) {
+                NafMention nafMention = semObject.getNafMentions().get(m);
+                for (int k = 0; k < nafMention.getTermsIds().size(); k++) {
+                    String id = nafMention.getTermsIds().get(k);
+                    if (kafParticipant.getSpanIds().contains(id)) {
+                        matchCount++;
+                    }
+                }
+            }
+            int matchScoreObject = ((matchCount * 100) / semObject.getNafMentions().size());
+            int matchScoreParticipant = ((matchCount * 100) / kafParticipant.getSpanIds().size());
+            int matchScoreAverage = (matchScoreObject+matchScoreParticipant)/2;
+            if (matchScoreAverage>threshold) {
+                if (matchScoreAverage > topScore) {
+                    topScore = matchScoreAverage;
+                    topObject = semObject;
+                }
+            }
+        }
+        return topObject;
+    }
+
+    /**
+     * @Deprecated
+     * @param kafSaxParser
+     * @param kafParticipant
+     * @param semObject
+     * @return
+     */
     static public boolean matchAllSpansOfAnObjectMentionOrTheRoleHead(KafSaxParser kafSaxParser, KafParticipant kafParticipant, SemObject semObject) {
         String headSpan = "";
         boolean functionWordPos = false;
@@ -454,7 +541,7 @@ public class Util {
             CorefTarget corefTarget = kafParticipant.getSpans().get(i);
             if (!corefTarget.getHead().isEmpty()) {
 
-               ///// A1, A2 and AM often have a preposition as the head which is mostly not part of the semObject mention
+               ///// A1, A2, A3, A4 and AM often have a preposition as the head which is mostly not part of the semObject mention
                ///// to be sure the head is content word, we check the POS of the term
                 KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
                 if (kafTerm!=null) {
@@ -473,16 +560,14 @@ public class Util {
                 break;
             }
         }
-        // System.out.println("headSpan = " + headSpan);
+
+            // System.out.println("headSpan = " + headSpan);
         ////// Since the head match is empty we need to know if all the mentions in the semObject are part of the span of the role
         if (headSpan.isEmpty()) {
-            /// all spans need to match for one of the mention sets
+            boolean fullmatch = true;
+            boolean submatch = false;
             for (int i = 0; i < semObject.getNafMentions().size(); i++) {
-                ArrayList<NafMention> mentions = semObject.getNafMentions();
-                boolean fullmatch = true;
-                boolean submatch = false;
-                for (int j = 0; j < mentions.size(); j++) {
-                    NafMention nafMention = mentions.get(j);
+                    NafMention nafMention = semObject.getNafMentions().get(i);
                     for (int k = 0; k < nafMention.getTermsIds().size(); k++) {
                         String id = nafMention.getTermsIds().get(k);
                         if (kafParticipant.getSpanIds().contains(id)) {
@@ -493,30 +578,22 @@ public class Util {
                             fullmatch = false;
                         }
                     }
-                }
-                if (fullmatch) {
-                    /// we found all the terms of the semObject mention
-                    /// this is the minimal requirements
-                    return true;
-                }
-                else if (functionWordPos && submatch) {
-                        return true;
-                }
-                else {
-/*                    if (semObject.getURI().equalsIgnoreCase("http://dbpedia.org/resource/Rio_de_Janeiro")) {
-                        if (kafParticipant.getSpanIds().contains("t363")) {
-                            System.out.println("submatch = " + submatch);
-                            System.out.println("functionWordPos = " + functionWordPos);
-                            System.out.println("kafParticipant = " + kafParticipant.getSpanIds());
-                            System.out.println("semObject = " + semObject.getNafMentions());
-                        }
-                    }*/
-                }
             }
-            /// we did not find any full local match so we return false
-            /// if we get here we know there is no match
-            //// to soften this submatch is used but this is risky especially for longer spans of roles (can be complete sentences!)
-            return false;
+
+            if (fullmatch) {
+                /// we found all the terms of the semObject mention
+                /// this is the minimal requirements
+                return true;
+            }
+            else if (functionWordPos && submatch) {
+                    return true;
+            }
+            else {
+                /// we did not find any full local match so we return false
+                /// if we get here we know there is no match
+                //// to soften this submatch is used but this is risky especially for longer spans of roles (can be complete sentences!)
+                return false;
+            }
         }
         else {
             ///// if the head span matches with any of the object spans this is sufficient
@@ -541,6 +618,13 @@ public class Util {
     }
 
 
+    /**
+     * Checks if two SemObject have a mention in the same sentence
+     * @param kafSaxParser
+     * @param semObject1
+     * @param semObject2
+     * @return
+     */
     static public boolean sameSentence(KafSaxParser kafSaxParser, SemObject semObject1, SemObject semObject2) {
         for (int i = 0; i < semObject1.getNafMentions().size(); i++) {
             NafMention nafMention1 = semObject1.getNafMentions().get(i);
@@ -568,6 +652,7 @@ public class Util {
     //////////
     //////////
     //////////
+
 
     static public ArrayList<NafMention> getNafMentionArrayList (String baseUri,
                                                                 KafSaxParser kafSaxParser,
@@ -605,7 +690,7 @@ public class Util {
         for (int i = 0; i < kafEntities.size(); i++) {
             KafEntity kafEntity = kafEntities.get(i);
             ArrayList<ArrayList<CorefTarget>> corefTargetSets = kafEntity.getSetsOfSpans();
-            ArrayList<ArrayList<CorefTarget>> sets = getCoreferenceSetForEntitySpans(corefTargetSets, kafSaxParser.kafCorefenceArrayList);
+            ArrayList<ArrayList<CorefTarget>> sets = getCorefTargetSetsForEntitySpans(corefTargetSets, kafSaxParser.kafCorefenceArrayList);
             for (int j = 0; j < sets.size(); j++) {
                 ArrayList<CorefTarget> corefTargets = sets.get(j);
                 NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
@@ -623,7 +708,7 @@ public class Util {
                                                                                            KafEvent kafEvent) {
         ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
         ArrayList<CorefTarget> corefTargetSets = kafEvent.getSpans();
-        ArrayList<ArrayList<CorefTarget>> sets = getCoreferenceSetForEventSpans(corefTargetSets, kafSaxParser.kafCorefenceArrayList);
+        ArrayList<ArrayList<CorefTarget>> sets = getCorefTargetSetsForEventSpans(corefTargetSets, kafSaxParser.kafCorefenceArrayList);
         for (int j = 0; j < sets.size(); j++) {
             ArrayList<CorefTarget> corefTargets = sets.get(j);
             NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
@@ -794,10 +879,6 @@ public class Util {
     static public boolean matchTimeReference (ArrayList<SemTime> times1, ArrayList<SemTime> times2, String time1Id, String time2Id) {
         SemTime semTime1 = null;
         SemTime semTime2 = null;
-        /*System.out.println("time1Id = " + time1Id);
-        System.out.println("time2Id = " + time2Id);
-        System.out.println("times1.size() = " + times1.size());
-        System.out.println("times2.size() = " + times2.size());*/
         if (time1Id.equals(time2Id)) {
             return true;
         }
@@ -969,48 +1050,6 @@ public class Util {
     }
 
 
-/*
-    static public String getTermIdFromCorefTarget (CorefTarget corefTarget, String ID_SEPARATOR) {
-
-       // http://www.newsreader-project.eu/2004_4_26_4C7M-RB90-01K9-42PW.xml#char=174,182&word=w30&term=t30
-        /// ID-HACK
-        String id = corefTarget.getId();
-        int idx = id.lastIndexOf(ID_SEPARATOR);
-        if (idx>-1) {
-            id = id.substring(idx+1);
-        }
-//        /
-        // char=174,182&word=w30&term=t30
-
-        ///// ofset HACK
-        idx = id.lastIndexOf("=");
-        if (idx>-1) {
-            id = id.substring(idx+1);
-        }
-        return id;
-    }
-*/
-
-    static public String getTermIdFromMention (String mention, String ID_SEPARATOR) {
-
-       // http://www.newsreader-project.eu/2004_4_26_4C7M-RB90-01K9-42PW.xml#char=174,182&word=w30&term=t30
-        /// ID-HACK
-        String id = mention;
-        int idx = id.lastIndexOf(ID_SEPARATOR);
-        if (idx>-1) {
-            id = id.substring(idx+1);
-        }
-//        /
-        // char=174,182&word=w30&term=t30
-
-        ///// ofset HACK
-        idx = id.lastIndexOf("=");
-        if (idx>-1) {
-            id = id.substring(idx+1);
-        }
-        return id;
-    }
-
     static public ArrayList<File> makeRecursiveFileList(File inputFile) {
         ArrayList<File> acceptedFileList = new ArrayList<File>();
         File[] theFileList = null;
@@ -1101,56 +1140,7 @@ public class Util {
         return folderList;
     }
 
-    static String getMentionReferenceFromCorefs(ArrayList<CorefTarget> corefs) {
-        String mentionReference = "";
-        String offset = "";
-        String token = "";
-        String term = "";
-        for (int i = 0; i < corefs.size(); i++) {
-            CorefTarget corefTarget = corefs.get(i);
-            String [] fields = corefTarget.getId().split("&");
-            if (fields.length==3) {
-                String f1 = fields[0];
-                String f2 = fields[1];
-                String f3 = fields[2];
 
-            }
-
-        }
-        return mentionReference;
-    }
-
-    static public HashMap<String, ArrayList<File>> makeFolderGroupList(File inputFile, int length, String filter) {
-        HashMap<String, ArrayList<File>> folderList = new HashMap<String, ArrayList<File>>();
-        File[] theFileList = null;
-        if ((inputFile.canRead()) && inputFile.isDirectory()) {
-            theFileList = inputFile.listFiles();
-            for (int i = 0; i < theFileList.length; i++) {
-                File newFile = theFileList[i];
-                if (newFile.isDirectory()) {
-                    ArrayList<File> files = makeRecursiveFileList(newFile, filter);
-                    String subs = newFile.getName();
-                    if (subs.length()>length) {
-                        subs = subs.substring(0, length);
-                    }
-                    if (folderList.containsKey(subs)) {
-                        ArrayList<File> storedFiles = folderList.get(subs);
-                        storedFiles.addAll(files);
-                        folderList.put(subs, storedFiles);
-                    }
-                    else {
-                        folderList.put(subs, files);
-                    }
-                }
-            }
-        } else {
-            System.out.println("Cannot access file:" + inputFile + "#");
-            if (!inputFile.exists()) {
-                System.out.println("File does not exist!");
-            }
-        }
-        return folderList;
-    }
 
 
     static public HashMap ReadFileToStringHashMap(String fileName) {
@@ -1188,23 +1178,4 @@ public class Util {
         }
         return lineHashMap;
     }
-
-
-    static public int copyFile(File inputFile, File outputFile) {
-        if (!inputFile.exists()) {
-            return -1;
-        }
-        try {
-            DataInputStream in = new DataInputStream(new FileInputStream(inputFile));
-            byte[] buffer = new byte[(int) inputFile.length()];
-            in.readFully(buffer);
-            in.close();
-            DataOutputStream out = new DataOutputStream(new FileOutputStream(outputFile));
-            out.write(buffer);
-        } catch (IOException e) {
-            return -3;
-        }
-        return 0;
-    }
-
 }

@@ -47,8 +47,9 @@ public class ClusterEventObjects {
             System.out.println("NOW RUNNING WITH DEFAULT SETTINGS");
           //  return;
         }
+       // String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/change-of-scale";
+       // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/change-of-scale";
         String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample/naf";
-        //String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample/naf-test";
         String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample";
         //String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup/ian-test";
         //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup";
