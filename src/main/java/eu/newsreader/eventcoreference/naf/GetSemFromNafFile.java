@@ -27,7 +27,6 @@ import java.util.Set;
  */
 public class GetSemFromNafFile {
 
-    static final int SPANMATCHTHRESHOLD = 75;
     static final int MINEVENTLABELSIZE = 3;
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
@@ -479,17 +478,15 @@ public class GetSemFromNafFile {
             if (semEventId.isEmpty()) {
                //// this is an event without SRL representation, which is not allowed
                 // SHOULD NEVER OCCUR
-               // System.out.println("empty kafEvent.getId() = " + kafEvent.getId());
             }
             else {
                 for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
                     KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
-
+                    // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
                     if (!RoleLabels.validRole(kafParticipant.getRole())) {
-                        //System.out.println("kafParticipant.getTokenString() = " + kafParticipant.getTokenString());
                         continue;
                     }
-                    SemObject semObject = Util.getTopMatchingObject(kafParticipant, semActors, SPANMATCHTHRESHOLD);
+                    SemObject semObject = Util.getBestMatchingObject(kafSaxParser, kafParticipant, semActors);
                     if (semObject!=null) {
                         SemRelation semRelation = new SemRelation();
                         String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
@@ -513,7 +510,7 @@ public class GetSemFromNafFile {
                         semRelation.setObject(semObject.getId());
                         semRelations.add(semRelation);
                     }
-                    semObject = Util.getTopMatchingObject(kafParticipant, semPlaces, SPANMATCHTHRESHOLD);
+                    semObject = Util.getBestMatchingObject(kafSaxParser, kafParticipant, semPlaces);
                     if (semObject!=null) {
                         SemRelation semRelation = new SemRelation();
                         String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();

@@ -16,12 +16,16 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class Util {
+    static final int SPANMATCHTHRESHOLD = 75;
     static public final int SPANMAXTIME = 10;
     static public final int SPANMAXLOCATION= 10;
     static public final int SPANMINLOCATION = 2;
     static public final int SPANMAXPARTICIPANT = 6;
     static public final int SPANMINPARTICIPANT = 2;
 
+    /**
+     * Required to be able to write Composite SemEvent Objects to existing object files
+     */
     static public class AppendableObjectOutputStream extends ObjectOutputStream {
 
         public AppendableObjectOutputStream(OutputStream out) throws IOException {
@@ -377,6 +381,12 @@ public class Util {
         return false;
     }
 
+    /**
+     *
+     * @param corefTargets1
+     * @param spans2
+     * @return
+     */
     static public boolean matchingAtLeastOneSetOfSpans (ArrayList<CorefTarget> corefTargets1, ArrayList<ArrayList<CorefTarget>> spans2) {
         for (int k = 0; k < spans2.size(); k++) {
             ArrayList<CorefTarget> corefTargets2 = spans2.get(k);
@@ -389,6 +399,12 @@ public class Util {
         return false;
     }
 
+    /**
+     *
+     * @param spans1
+     * @param spans2
+     * @return
+     */
     static public boolean matchingAllSpansForOneSpanSet (ArrayList<ArrayList<CorefTarget>> spans1, ArrayList<ArrayList<CorefTarget>> spans2) {
         for (int i = 0; i < spans1.size(); i++) {
             ArrayList<CorefTarget> corefTargets1 = spans1.get(i);
@@ -402,6 +418,12 @@ public class Util {
         return false;
     }
 
+    /**
+     *
+     * @param spans1
+     * @param spans2
+     * @return
+     */
     static public boolean matchAllSpans(ArrayList<CorefTarget> spans1, ArrayList<CorefTarget> spans2) {
         for (int i = 0; i < spans1.size(); i++) {
             CorefTarget span1 = spans1.get(i);
@@ -415,6 +437,12 @@ public class Util {
         return true;
     }
 
+    /**
+     *
+     * @param spans
+     * @param semObject
+     * @return
+     */
     static public boolean matchAtLeastASingleSpan(ArrayList<String> spans, SemObject semObject) {
         for (int i = 0; i < semObject.getNafMentions().size(); i++) {
             ArrayList<NafMention> mentions = semObject.getNafMentions();
@@ -431,6 +459,12 @@ public class Util {
         return false;
     }
 
+    /**
+     *
+     * @param spans
+     * @param semObject
+     * @return
+     */
     static public boolean matchAllSpans(ArrayList<String> spans, SemObject semObject) {
         for (int i = 0; i < semObject.getNafMentions().size(); i++) {
             ArrayList<NafMention> mentions = semObject.getNafMentions();
@@ -447,7 +481,12 @@ public class Util {
         return true;
     }
 
-
+    /**
+     *
+     * @param spans
+     * @param semObject
+     * @return
+     */
     static public boolean matchAllOfAnyMentionSpans(ArrayList<String> spans, SemObject semObject) {
         for (int i = 0; i < semObject.getNafMentions().size(); i++) {
             ArrayList<NafMention> mentions = semObject.getNafMentions();
@@ -485,42 +524,63 @@ public class Util {
         return "";
     }
 
+
     /**
-     * Compares all SemObjects with a KafParticipant from the SRL layer to return the object that has the largest span overlap.
-     * If none of the objects exceeds the treshold, null is returned
+     * Compares all SemObjects with a KafParticipant from the SRL layer to return the object that has a mention with the largest span overlap.
+     * If none of the objects exceeds or equal to the SPANMATCHTHRESHOLD, null is returned
      *
-     * @TODO COUNT OVERLAP FOR POS=N,V,A ONLY
+     * KafParticipants (roles in the SRL) have span with a head attribute.
+     * However, very often the preposition or relative clause complement is marked as the head
+     * while these are never part of the entity or coreferece span. We therefore ignore the head attribute
+     * and only consider the content words.
+     * WE COUNT OVERLAP FOR POS=N,V,A,G ONLY
+     *
+     * @param kafSaxParser
      * @param kafParticipant
      * @param semObjects
-     * @param threshold
      * @return
      */
-    static public SemObject getTopMatchingObject(KafParticipant kafParticipant,
-                                                                      ArrayList<SemObject> semObjects,
-                                                                      int threshold) {
+    static public SemObject getBestMatchingObject(KafSaxParser kafSaxParser,
+                                                  KafParticipant kafParticipant,
+                                                  ArrayList<SemObject> semObjects) {
 
 
         SemObject topObject = null;
         int topScore = 0;
+        int nContentWordsKafParticipant = kafSaxParser.getNumberContentWords(kafParticipant.getSpanIds());
         for (int i = 0; i < semObjects.size(); i++) {
             SemObject semObject = semObjects.get(i);
-            int matchCount = 0;
             for (int m = 0; m < semObject.getNafMentions().size(); m++) {
+                // FOR EVERY MENTION, WE CHECK THE OVERLAP WITH THE KAFPARTICIPANT AND KEEP THE BEST
                 NafMention nafMention = semObject.getNafMentions().get(m);
+                int matchCount = 0;
+                int nContentWordsNafMention = 0;
                 for (int k = 0; k < nafMention.getTermsIds().size(); k++) {
                     String id = nafMention.getTermsIds().get(k);
-                    if (kafParticipant.getSpanIds().contains(id)) {
-                        matchCount++;
+                    if (kafSaxParser.contentWord(id)) {
+                        nContentWordsNafMention++;
+                        if (kafParticipant.getSpanIds().contains(id)) {
+                            matchCount++;
+                        }
                     }
                 }
-            }
-            int matchScoreObject = ((matchCount * 100) / semObject.getNafMentions().size());
-            int matchScoreParticipant = ((matchCount * 100) / kafParticipant.getSpanIds().size());
-            int matchScoreAverage = (matchScoreObject+matchScoreParticipant)/2;
-            if (matchScoreAverage>threshold) {
-                if (matchScoreAverage > topScore) {
-                    topScore = matchScoreAverage;
-                    topObject = semObject;
+                if ((nContentWordsNafMention>0) && (nContentWordsKafParticipant>0)) {
+                    int matchScoreObject = ((matchCount * 100) / nContentWordsNafMention);
+                    int matchScoreParticipant = ((matchCount * 100) / nContentWordsKafParticipant);
+                    int matchScoreAverage = (matchScoreObject + matchScoreParticipant) / 2;
+                    if (matchScoreAverage>0) {
+/*                        System.out.println("matchScoreParticipant = " + matchScoreParticipant);
+                        System.out.println("matchScoreObject = " + matchScoreObject);
+                        System.out.println("matchScoreAverage = " + matchScoreAverage);
+                        System.out.println("semObject = " + semObject.getTopPhraseAsLabel());
+                        System.out.println("kafParticipant = " + kafParticipant.getTokenString());*/
+                        if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
+                            if (matchScoreAverage > topScore) {
+                                topScore = matchScoreAverage;
+                                topObject = semObject;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -529,12 +589,16 @@ public class Util {
 
     /**
      * @Deprecated
+     * This function tries to find the head match and either a full match or a partial match.
+     * Replaced by more simple and straight forward function: getBestMatchingObject
      * @param kafSaxParser
      * @param kafParticipant
      * @param semObject
      * @return
      */
-    static public boolean matchAllSpansOfAnObjectMentionOrTheRoleHead(KafSaxParser kafSaxParser, KafParticipant kafParticipant, SemObject semObject) {
+    static public boolean matchAllSpansOfAnObjectMentionOrTheRoleHead(KafSaxParser kafSaxParser,
+                                                                      KafParticipant kafParticipant,
+                                                                      SemObject semObject) {
         String headSpan = "";
         boolean functionWordPos = false;
         for (int i = 0; i < kafParticipant.getSpans().size(); i++) {
@@ -946,7 +1010,8 @@ public class Util {
     }
 
     ///////////////////////////////
-    static public String cleanDbpediaUri(String uri, String ns) {
+
+/*    static public String cleanDbpediaUri(String uri, String ns) {
         String cleanUri = ns;
         // <http://dbpedia.org/resource/MG_F_/_MG_TF>
         if (uri.startsWith(ns)) {
@@ -1021,7 +1086,7 @@ public class Util {
         cleanUri = cleanUri.replaceAll("%22","");
 
         return cleanUri.replace(" ", "");
-    }
+    }*/
 
     static public String alphaNumericUri(String uri) {
         final String alfanum="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
