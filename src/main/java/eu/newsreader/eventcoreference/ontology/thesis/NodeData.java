@@ -1,4 +1,4 @@
-package eu.newsreader.eventcoreference.ontology;
+package eu.newsreader.eventcoreference.ontology.thesis;
 
 /**
  * Created by piek on 9/12/14.

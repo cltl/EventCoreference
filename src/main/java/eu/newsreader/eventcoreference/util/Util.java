@@ -119,9 +119,6 @@ public class Util {
         return refs;
     }
 
-
-
-
     static public ArrayList<KafSense> getExternalReferencesSrlEvents (KafSaxParser kafSaxParser, KafCoreferenceSet kafCoreferenceSet) {
         ArrayList<KafSense> references = new ArrayList<KafSense>();
 

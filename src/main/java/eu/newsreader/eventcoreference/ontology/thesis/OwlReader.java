@@ -1,4 +1,4 @@
-package eu.newsreader.eventcoreference.ontology;
+package eu.newsreader.eventcoreference.ontology.thesis;
 
 import java.util.ArrayList;
 

@@ -28,21 +28,17 @@ public class SemRelation implements Serializable {
     </semRelation>
 */
     private String id;
-  //  private String predicate;
     private ArrayList<String> predicates;
     private String subject;
     private String object;
-    //private ArrayList<CorefTarget> corefTargets;
     private ArrayList<NafMention> nafMentions;
 
 
 
     public SemRelation() {
         this.nafMentions = new ArrayList<NafMention>();
-        //this.corefTargets = new ArrayList<CorefTarget>();
         this.id = "";
         this.object = "";
-      //  this.predicate = "";
         this.subject = "";
         this.predicates = new ArrayList<String>();
     }
@@ -90,54 +86,6 @@ public class SemRelation implements Serializable {
         }
     }
 
-
-    /*    public ArrayList<CorefTarget> getCorefTarget() {
-        return corefTargets;
-    }
-
-    public void setCorefTargets(ArrayList<CorefTarget> corefTargets) {
-        this.corefTargets = corefTargets;
-    }
-
-    public void setCorefTargetsWithMentions(ArrayList<ArrayList<CorefTarget>> mentions) {
-        for (int i = 0; i < mentions.size(); i++) {
-            ArrayList<CorefTarget> targets = mentions.get(i);
-            addCorefTargets(targets);
-        }
-    }
-
-    public void addCorefTarget(CorefTarget corefTarget) {
-        this.corefTargets.add(corefTarget);
-    }
-
-    public void addCorefTargets(ArrayList<CorefTarget> corefTargets) {
-        for (int i = 0; i < corefTargets.size(); i++) {
-            CorefTarget corefTarget = corefTargets.get(i);
-            this.corefTargets.add(corefTarget);
-        }
-    }
-
-    public void setCorefTargets(String baseUrl, ArrayList<CorefTarget> corefTargets) {
-        for (int i = 0; i < corefTargets.size(); i++) {
-            CorefTarget corefTarget = corefTargets.get(i);
-            corefTarget.setId(baseUrl+"/"+corefTarget.getId());
-        }
-        this.corefTargets = corefTargets;
-    }
-
-    public void addCorefTarget(String baseUrl, CorefTarget corefTarget) {
-        corefTarget.setId(baseUrl+"/"+corefTarget.getId());
-        this.corefTargets.add(corefTarget);
-    }
-
-    public void addCorefTargets(String baseUrl, ArrayList<CorefTarget> corefTargets) {
-        for (int i = 0; i < corefTargets.size(); i++) {
-            CorefTarget corefTarget = corefTargets.get(i);
-            corefTarget.setId(baseUrl+"/"+corefTarget.getId());
-            this.corefTargets.add(corefTarget);
-        }
-    }*/
-
     public String getId() {
         return id;
     }
@@ -153,10 +101,6 @@ public class SemRelation implements Serializable {
     public void setObject(String object) {
         this.object = object;
     }
-
-  //  public String getPredicate() { return predicate;}
-
-  //  public void setPredicate(String predicate) { this.predicate = predicate;  }
 
     public String getSubject() {
         return subject;
@@ -233,7 +177,8 @@ public class SemRelation implements Serializable {
                        System.out.println("this.getObject() = " + this.getObject());
                    }*/
                    semProperty = getSemRelationType(predicate);
-                   subject.addProperty(semProperty, object);
+                    // IF YOU ALWAYS WANT TO HAVE A SEMACTOR INCLUDE NEXT LINE
+                   //subject.addProperty(semProperty, object);
                 } else {
                     predicate = getRoleRelation(predicate);
                     if (!predicate.isEmpty()) {
@@ -244,11 +189,12 @@ public class SemRelation implements Serializable {
                 }
             }
         }
-/*        if (!subActor && semProperty!=null) {
+        //// ONLY ADDS SEMACTOR IF NO OTHER PROPERTY GENERATED
+        if (!subActor && semProperty!=null) {
             if (semProperty != Sem.hasSubType) {
                 subject.addProperty(semProperty, object);
             }
-        }*/
+        }
 
         Resource provenanceResource = provenanceModel.createResource(this.id);
 
@@ -292,7 +238,6 @@ public class SemRelation implements Serializable {
     public SemRelation (SemRelation semRelation) {
         this.setSubject(semRelation.getSubject());
         this.setObject(semRelation.getObject());
-      //  this.setPredicate(semRelation.getPredicate());
         this.setPredicates(semRelation.getPredicates());
         this.setNafMentions(semRelation.getNafMentions());
     }
@@ -304,7 +249,6 @@ public class SemRelation implements Serializable {
         if (!this.getObject().equals(semRelation.getObject())) {
             return  false;
         }
-       // if (!this.getPredicate().equals(semRelation.getPredicate())) {return  false; }
         for (int i = 0; i < predicates.size(); i++) {
             String pred1 =  predicates.get(i);
             boolean matchPredicate = false;
