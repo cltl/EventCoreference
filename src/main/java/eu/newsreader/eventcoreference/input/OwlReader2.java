@@ -96,7 +96,7 @@ public class OwlReader2 {
         }
     }
 
-    static public void main (String args) throws OWLException,
+    static public void main (String[] args) throws OWLException,
             InstantiationException, IllegalAccessException,
             ClassNotFoundException {
         String reasonerFactoryClassName = null;
