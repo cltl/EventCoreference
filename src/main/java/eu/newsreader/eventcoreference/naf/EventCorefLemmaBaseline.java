@@ -7,7 +7,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -121,7 +124,7 @@ public class EventCorefLemmaBaseline {
               }
               strEndDate = eu.kyotoproject.util.DateUtil.createTimestamp();
               LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
-              kafSaxParser.getKafMetaData().addLayer(name, lp);
+              kafSaxParser.getKafMetaData().addLayer(layer, lp);
 
           }
 

@@ -10,14 +10,8 @@ import vu.wntools.wnsimilarity.main.WordSim;
 import vu.wntools.wordnet.WordnetData;
 import vu.wntools.wordnet.WordnetLmfSaxParser;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,11 +38,11 @@ public class EventCorefWordnetSim {
 
     //    pathToNafFile = Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04;
     static public void main (String [] args) {
-              if (args.length!=0) {
+              if (args.length==0) {
                   System.out.println("usage = " + usage);
               }
               else
-              if (args.length==3) {
+              if (args.length==4) {
                   String pathToWNLMF = "";
                   for (int i = 0; i < args.length; i++) {
                       String arg = args[i];
@@ -77,15 +71,19 @@ public class EventCorefWordnetSim {
                       WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
                       wordnetLmfSaxParser.parseFile(pathToWNLMF);
                       wordnetData = wordnetLmfSaxParser.wordnetData;
-                      System.out.println("wordnetData = " + wordnetData.hyperRelations.size());
+                      //System.out.println("wordnetData = " + wordnetData.hyperRelations.size());
                       processNafStream(System.in);
                   }
               }
               else {
-                  String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04/57WD-M601-F06S-P370.xml_9af408976df898b707d008cbe1f81372.naf.coref";
-                  String extension = "naf.coref";
-                  String folder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04";
-                  String pathToWNLMF = "/Tools/wordnet-tools.0.1/resources/wneng-30.lmf.xml";
+                  String pathToNafFile = "";
+                  String pathToWNLMF = "";
+                  String extension = "";
+                  String folder = "";
+                  //String pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline2.0/v21_out-no-event-coref.naf";
+                 // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04/57WD-M601-F06S-P370.xml_9af408976df898b707d008cbe1f81372.naf.coref";
+                 // String folder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04";
+                 // String pathToWNLMF = "/Tools/wordnet-tools.0.1/resources/wneng-30.lmf.xml";
                   for (int i = 0; i < args.length; i++) {
                       String arg = args[i];
                       if (arg.equals("--naf-file") && args.length>(i+1)) {
@@ -124,9 +122,7 @@ public class EventCorefWordnetSim {
                       wordnetData = wordnetLmfSaxParser.wordnetData;
                       System.out.println("wordnetData hyperrelations = " + wordnetData.hyperRelations.size());
                       if (!folder.isEmpty()) {
-                          processNafFile(pathToNafFile);
-
-//                      processNafFolder (new File (folder), extension);
+                          processNafFolder (new File (folder), extension);
                       }
                       else {
                           processNafFile(pathToNafFile);
@@ -146,7 +142,13 @@ public class EventCorefWordnetSim {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(pathToNafFile);
               process(kafSaxParser);
-             // kafSaxParser.writeNafToStream(System.out);
+              try {
+                  OutputStream fos = new FileOutputStream(pathToNafFile+".event-coref.naf");
+                  kafSaxParser.writeNafToStream(fos);
+                  fos.close();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
           }
 
           static public void processNafFolder (File pathToNafFolder, String extension) {
@@ -219,6 +221,7 @@ public class EventCorefWordnetSim {
               }
 
               corefMatchList = ChainCorefSets.chainResultSets(corefMatchList);
+/*
               String str ="";
               for (int j = 0; j < corefMatchList.size(); j++) {
                   str = j+":";
@@ -238,58 +241,18 @@ public class EventCorefWordnetSim {
                   str+="\n";
                   System.out.println(str);
               }
+*/
               for (int i = 0; i < corefMatchList.size(); i++) {
                   CorefResultSet corefResultSet = corefMatchList.get(i);
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet();
-                  String corefId = "coevent"+i;
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData);
+                  String corefId = "coevent"+(kafSaxParser.kafCorefenceArrayList.size()+1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event");
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
               strEndDate = eu.kyotoproject.util.DateUtil.createTimestamp();
               LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
-              kafSaxParser.getKafMetaData().addLayer(name, lp);
-
-          }
-
-          static void processOrg(KafSaxParser kafSaxParser, int simThreshold) {
-              String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
-              String strEndDate = null;
-              int corefCounter = 0;
-              HashMap<String, KafCoreferenceSet> kafCoreferenceSetHashMap = new HashMap<String, KafCoreferenceSet>();
-              for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
-                  KafEvent kafEvent = kafSaxParser.kafEventArrayList.get(i);
-                  CorefTarget corefTarget = new CorefTarget();
-                  KafTerm kafTerm = kafSaxParser.getTerm(kafEvent.getSpanIds().get(0));  /// first span reference
-                  corefTarget.setId(kafTerm.getTid());
-                  corefTarget.setTokenString(kafTerm.getLemma());
-                  ArrayList<CorefTarget> corefTargetArrayList = new ArrayList<CorefTarget>();
-                  corefTargetArrayList.add(corefTarget);
-                  if (kafCoreferenceSetHashMap.containsKey(kafTerm.getLemma())) {
-                      KafCoreferenceSet kafCoreferenceSet = kafCoreferenceSetHashMap.get(kafTerm.getLemma());
-                      kafCoreferenceSet.addSetsOfSpans(corefTargetArrayList);
-                      kafCoreferenceSetHashMap.put(kafTerm.getLemma(), kafCoreferenceSet);
-                  }
-                  else {
-                      corefCounter++;
-                      KafCoreferenceSet kafCoreferenceSet = new KafCoreferenceSet();
-                      String corefId = "coevent"+corefCounter;
-                      kafCoreferenceSet.setCoid(corefId);
-                      kafCoreferenceSet.setType("event");
-                      kafCoreferenceSet.addSetsOfSpans(corefTargetArrayList);
-                      kafCoreferenceSetHashMap.put(kafTerm.getLemma(), kafCoreferenceSet);
-                  }
-              }
-              Set keySet = kafCoreferenceSetHashMap.keySet();
-              Iterator keys = keySet.iterator();
-              while (keys.hasNext()) {
-                  String key = (String) keys.next();
-                  KafCoreferenceSet kafCoreferenceSet = kafCoreferenceSetHashMap.get(key);
-                  kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
-              }
-              strEndDate = eu.kyotoproject.util.DateUtil.createTimestamp();
-              LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
-              kafSaxParser.getKafMetaData().addLayer(name, lp);
+              kafSaxParser.getKafMetaData().addLayer(layer, lp);
 
           }
 

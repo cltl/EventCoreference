@@ -2,6 +2,8 @@ package eu.newsreader.eventcoreference.objects;
 
 import eu.kyotoproject.kaf.CorefTarget;
 import eu.kyotoproject.kaf.KafCoreferenceSet;
+import eu.kyotoproject.kaf.KafSense;
+import vu.wntools.wordnet.WordnetData;
 
 import java.util.ArrayList;
 
@@ -44,27 +46,38 @@ public class CorefResultSet {
         return avg;
     }
 
-    public String getLowestSubsumers () {
-        String lcs = "";
+    public ArrayList<String> getLowestSubsumers () {
         ArrayList<String> lcsList = new ArrayList<String>();
         for (int i = 0; i < targets.size(); i++) {
             CorefMatch corefMatch = targets.get(i);
-            if (!lcsList.contains(corefMatch.getLowestCommonSubsumer())) {
-                lcsList.add(corefMatch.getLowestCommonSubsumer());
+            if (!corefMatch.getLowestCommonSubsumer().isEmpty()) {
+                if (!lcsList.contains(corefMatch.getLowestCommonSubsumer())) {
+                    lcsList.add(corefMatch.getLowestCommonSubsumer());
+                }
             }
         }
-        for (int i = 0; i < lcsList.size(); i++) {
-            String s = lcsList.get(i);
-            lcs += s+";";
-
-        }
-        return lcs;
+        return lcsList;
     }
 
-    public KafCoreferenceSet castToKafCoreferenceSet () {
+
+    public KafCoreferenceSet castToKafCoreferenceSet (WordnetData wordnetData) {
         KafCoreferenceSet kafCoreferenceSet = new KafCoreferenceSet();
-        kafCoreferenceSet.setScore(this.getAverageMatchScore());
-        kafCoreferenceSet.setLowestCommonSubsumer(this.getLowestSubsumers());
+        ArrayList<String> lcsList = getLowestSubsumers();
+        KafSense kafSense = null;
+        if (lcsList.size()==1) {
+            //// there is only one subsumer so we trust it
+            kafSense = new KafSense();
+            kafSense.setSensecode(lcsList.get(0));
+            kafSense.setConfidence(1);
+            kafSense.setResource(wordnetData.getResource());
+        }
+        else if (lcsList.size()>1) {
+            /// we need to choose from many
+            kafSense = wordnetData.GetLowestCommonSubsumer(lcsList);
+        }
+        if (kafSense!=null) {
+            kafCoreferenceSet.addExternalReferences(kafSense);
+        }
         kafCoreferenceSet.addSetsOfSpans(source);
         for (int i = 0; i < targets.size(); i++) {
             CorefMatch corefMatch = targets.get(i);

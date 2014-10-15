@@ -150,7 +150,7 @@ public class EntityCorefReferenceBaseline {
 */
 
               LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
-              kafSaxParser.getKafMetaData().addLayer(name, lp);
+              kafSaxParser.getKafMetaData().addLayer(layer, lp);
           }
 
 }
