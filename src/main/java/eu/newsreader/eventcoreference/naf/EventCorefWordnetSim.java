@@ -35,97 +35,110 @@ public class EventCorefWordnetSim {
     static String method = "leacock-chodorow";
     static int proportionalthreshold = 80;
     static double simthreshold = 2.0;
+    static ArrayList<String> relations = new ArrayList<String>();
 
-    //    pathToNafFile = Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04;
     static public void main (String [] args) {
               if (args.length==0) {
                   System.out.println("usage = " + usage);
               }
-              else
-              if (args.length==4) {
-                  String pathToWNLMF = "";
-                  for (int i = 0; i < args.length; i++) {
-                      String arg = args[i];
-                      if (arg.equals("--wn-lmf") && args.length>(i+1)) {
-                          pathToWNLMF = args[i+1];
-                      }
-                      else if (arg.equals("--method") && args.length>(i+1)) {
-                          method = args[i+1];
-                      }
-                      else if (arg.equals("--sim") && args.length>(i+1)) {
-                          try {
-                              simthreshold = Double.parseDouble(args[i + 1]);
-                          } catch (NumberFormatException e) {
-                              // e.printStackTrace();
-                          }
-                      }
-                      else if (arg.equals("--proportion") && args.length>(i+1)) {
-                          try {
-                              proportionalthreshold = Integer.parseInt(args[i+1]);
-                          } catch (NumberFormatException e) {
-                              // e.printStackTrace();
-                          }
-                      }
-                  }
-                  if (!pathToWNLMF.isEmpty()) {
-                      WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
-                      wordnetLmfSaxParser.parseFile(pathToWNLMF);
-                      wordnetData = wordnetLmfSaxParser.wordnetData;
-                      //System.out.println("wordnetData = " + wordnetData.hyperRelations.size());
-                      processNafStream(System.in);
-                  }
-              }
               else {
-                  String pathToNafFile = "";
-                  String pathToWNLMF = "";
-                  String extension = "";
-                  String folder = "";
-                  //String pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline2.0/v21_out-no-event-coref.naf";
-                 // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04/57WD-M601-F06S-P370.xml_9af408976df898b707d008cbe1f81372.naf.coref";
-                 // String folder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04";
-                 // String pathToWNLMF = "/Tools/wordnet-tools.0.1/resources/wneng-30.lmf.xml";
+                  boolean STREAM = true;
                   for (int i = 0; i < args.length; i++) {
                       String arg = args[i];
-                      if (arg.equals("--naf-file") && args.length>(i+1)) {
-                          pathToNafFile = args[i+1];
+                      if (arg.equals("--naf-file") || arg.equals("--naf-folder")) {
+                          STREAM = false;
                       }
-                      else if (arg.equals("--naf-folder") && args.length>(i+1)) {
-                          folder = args[i+1];
-                      }
-                      else if (arg.equals("--extension") && args.length>(i+1)) {
-                          extension = args[i+1];
-                      }
-                      else if (arg.equals("--method") && args.length>(i+1)) {
-                          method = args[i+1];
-                      }
-                      else if (arg.equals("--wn-lmf") && args.length>(i+1)) {
-                          pathToWNLMF = args[i+1];
-                      }
-                      else if (arg.equals("--sim") && args.length>(i+1)) {
-                          try {
-                              simthreshold = Integer.parseInt(args[i+1]);
-                          } catch (NumberFormatException e) {
-                              // e.printStackTrace();
-                          }
-                      }
-                      else if (arg.equals("--proportion") && args.length>(i+1)) {
-                          try {
-                              proportionalthreshold = Integer.parseInt(args[i+1]);
-                          } catch (NumberFormatException e) {
-                              // e.printStackTrace();
-                          }
-                      }
+
                   }
-                  if (!pathToWNLMF.isEmpty()) {
-                      WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
-                      wordnetLmfSaxParser.parseFile(pathToWNLMF);
-                      wordnetData = wordnetLmfSaxParser.wordnetData;
-                      //System.out.println("wordnetData hyperrelations = " + wordnetData.hyperRelations.size());
-                      if (!folder.isEmpty()) {
-                          processNafFolder (new File (folder), extension);
+                  if (STREAM) {
+                      /// input and output stream
+                      String pathToWNLMF = "";
+                      for (int i = 0; i < args.length; i++) {
+                          String arg = args[i];
+                          if (arg.equals("--wn-lmf") && args.length > (i + 1)) {
+                              pathToWNLMF = args[i + 1];
+                          } else if (arg.equals("--method") && args.length > (i + 1)) {
+                              method = args[i + 1];
+                          } else if (arg.equals("--relations") && args.length > (i + 1)) {
+                              String[] relationString = args[i + 1].split("#");
+                              for (int j = 0; j < relationString.length; j++) {
+                                  String s = relationString[j];
+                                  relations.add(s);
+                              }
+                          } else if (arg.equals("--sim") && args.length > (i + 1)) {
+                              try {
+                                  simthreshold = Double.parseDouble(args[i + 1]);
+                              } catch (NumberFormatException e) {
+                                  // e.printStackTrace();
+                              }
+                          } else if (arg.equals("--proportion") && args.length > (i + 1)) {
+                              try {
+                                  proportionalthreshold = Integer.parseInt(args[i + 1]);
+                              } catch (NumberFormatException e) {
+                                  // e.printStackTrace();
+                              }
+                          }
                       }
-                      else {
-                          processNafFile(pathToNafFile);
+                      if (!pathToWNLMF.isEmpty()) {
+                          WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
+                          wordnetLmfSaxParser.setRelations(relations);
+                          wordnetLmfSaxParser.parseFile(pathToWNLMF);
+                          wordnetData = wordnetLmfSaxParser.wordnetData;
+                          //System.out.println("wordnetData = " + wordnetData.hyperRelations.size());
+                          processNafStream(System.in);
+                      }
+                  } else {
+                      String pathToNafFile = "";
+                      String pathToWNLMF = "";
+                      String extension = "";
+                      String folder = "";
+                      //String pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline2.0/v21_out-no-event-coref.naf";
+                      // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04/57WD-M601-F06S-P370.xml_9af408976df898b707d008cbe1f81372.naf.coref";
+                      // String folder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04";
+                      // String pathToWNLMF = "/Tools/wordnet-tools.0.1/resources/wneng-30.lmf.xml";
+                      for (int i = 0; i < args.length; i++) {
+                          String arg = args[i];
+                          if (arg.equals("--naf-file") && args.length > (i + 1)) {
+                              pathToNafFile = args[i + 1];
+                          } else if (arg.equals("--naf-folder") && args.length > (i + 1)) {
+                              folder = args[i + 1];
+                          } else if (arg.equals("--extension") && args.length > (i + 1)) {
+                              extension = args[i + 1];
+                          } else if (arg.equals("--relations") && args.length > (i + 1)) {
+                              String[] relationString = args[i + 1].split(";");
+                              for (int j = 0; j < relationString.length; j++) {
+                                  String s = relationString[j];
+                                  relations.add(s);
+                              }
+                          } else if (arg.equals("--method") && args.length > (i + 1)) {
+                              method = args[i + 1];
+                          } else if (arg.equals("--wn-lmf") && args.length > (i + 1)) {
+                              pathToWNLMF = args[i + 1];
+                          } else if (arg.equals("--sim") && args.length > (i + 1)) {
+                              try {
+                                  simthreshold = Integer.parseInt(args[i + 1]);
+                              } catch (NumberFormatException e) {
+                                  // e.printStackTrace();
+                              }
+                          } else if (arg.equals("--proportion") && args.length > (i + 1)) {
+                              try {
+                                  proportionalthreshold = Integer.parseInt(args[i + 1]);
+                              } catch (NumberFormatException e) {
+                                  // e.printStackTrace();
+                              }
+                          }
+                      }
+                      if (!pathToWNLMF.isEmpty()) {
+                          WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
+                          wordnetLmfSaxParser.setRelations(relations);
+                          wordnetLmfSaxParser.parseFile(pathToWNLMF);
+                          wordnetData = wordnetLmfSaxParser.wordnetData;
+                          //System.out.println("wordnetData hyperrelations = " + wordnetData.hyperRelations.size());
+                          if (!folder.isEmpty()) {
+                              processNafFolder(new File(folder), extension);
+                          } else {
+                              processNafFile(pathToNafFile);
+                          }
                       }
                   }
               }
