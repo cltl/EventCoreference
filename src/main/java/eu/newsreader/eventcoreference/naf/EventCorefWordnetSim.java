@@ -30,7 +30,7 @@ public class EventCorefWordnetSim {
 
     static final String layer = "coreferences";
     static final String name = "vua-event-coref-intradoc-wn-sim";
-    static final String version = "2.0";
+    static final String version = "2.1";
     static WordnetData wordnetData = null;
     static String method = "leacock-chodorow";
     static int proportionalthreshold = 80;
