@@ -17,42 +17,49 @@ public class ChainCorefSets {
     static public ArrayList<CorefResultSet> chainResultSets (ArrayList<CorefResultSet> corefMatchList)  {
         ArrayList<CorefResultSet> condensedSets = new ArrayList<CorefResultSet>();
         for (int i = 0; i < corefMatchList.size(); i++) {
-            CorefResultSet corefResultSet = corefMatchList.get(i);
-            if (corefResultSet != null) {
-                boolean CHAINIT = false;
-                for (int j = 0; j < condensedSets.size(); j++) {
-                    CorefResultSet coreferenceSet = condensedSets.get(j);
-                    for (int k = 0; k < corefResultSet.getTargets().size(); k++) {
-                        CorefMatch corefMatch = corefResultSet.getTargets().get(k);
-                        if (coreferenceSet.hasSpanAndLowestCommonSubsumer(corefMatch)) {
-                            //if (coreferenceSet.hasSpan(corefMatch.getCorefTargets())) {
-                            //// there is a match so start adding the corefResultSet to the KafCoreferenceSet
-                            CHAINIT = true;
-                            break;
-                        }
-                        else {
-                            //if span matches but not the lcs we need to choose one of the other
-                        }
-                    }
-                    if (CHAINIT) {
-                        for (int k = 0; k < corefResultSet.getTargets().size(); k++) {
-                            CorefMatch corefMatch = corefResultSet.getTargets().get(k);
-                            coreferenceSet.addTargetScore(corefMatch);
-                        }
-                        coreferenceSet.addSourceCoref(corefResultSet.getSource());
-                        /// we are done with this set and can break the loop
+            CorefResultSet candidateCorefResultSet = corefMatchList.get(i);
+            boolean CHAINIT = false;
+            for (int j = 0; j < condensedSets.size(); j++) {
+                CorefResultSet coreferenceSet = condensedSets.get(j);
+                /// do we need to do something with the sources???????
+/*                if (coreferenceSet.hasSpanAndLowestCommonSubsumer(corefMatch)) {
+                    //if (coreferenceSet.hasSpan(corefMatch.getCorefTargets())) {
+                    //// there is a match so start adding the corefResultSet to the KafCoreferenceSet
+                    CHAINIT = true;
+                    break;
+                }
+                else {
+                    //if span matches but not the lcs we need to choose one of the other
+                }*/
+                for (int k = 0; k < candidateCorefResultSet.getTargets().size(); k++) {
+                    CorefMatch corefMatch = candidateCorefResultSet.getTargets().get(k);
+                    if (coreferenceSet.hasSpanAndLowestCommonSubsumer(corefMatch)) {
+                        //if (coreferenceSet.hasSpan(corefMatch.getCorefTargets())) {
+                        //// there is a match so start adding the corefResultSet to the KafCoreferenceSet
+                        CHAINIT = true;
                         break;
                     }
+                    else {
+                        //if span matches but not the lcs we need to choose one of the other
+                    }
                 }
-                if (!CHAINIT) {
-                    condensedSets.add(corefResultSet);
+                if (CHAINIT) {
+                    for (int k = 0; k < candidateCorefResultSet.getTargets().size(); k++) {
+                        CorefMatch corefMatch = candidateCorefResultSet.getTargets().get(k);
+                        coreferenceSet.addTargetScore(corefMatch);
+                    }
+                   // coreferenceSet.addSourceCoref(candidateCorefResultSet.getSources());
+                    /// we are done with this set and can break the loop
+                    break;
                 }
             }
-            else {
-               // this one was already merged
+            if (!CHAINIT) {
+                condensedSets.add(candidateCorefResultSet);
             }
         }
         return condensedSets;
     }
+
+
 
 }

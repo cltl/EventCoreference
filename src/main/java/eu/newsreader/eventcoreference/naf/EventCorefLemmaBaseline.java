@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -123,7 +125,13 @@ public class EventCorefLemmaBaseline {
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
               strEndDate = eu.kyotoproject.util.DateUtil.createTimestamp();
-              LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate);
+              String host = "";
+              try {
+                  host = InetAddress.getLocalHost().getHostName();
+              } catch (UnknownHostException e) {
+                  e.printStackTrace();
+              }
+              LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate, host);
               kafSaxParser.getKafMetaData().addLayer(layer, lp);
 
           }

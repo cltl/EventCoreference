@@ -12,16 +12,23 @@ import java.util.ArrayList;
  */
 public class CorefResultSet {
 
-    private ArrayList<CorefTarget> source;
+    private String sourceLemma;
+    private ArrayList<ArrayList<CorefTarget>> sources;
     private ArrayList<CorefMatch> targets;
 
-    public CorefResultSet(ArrayList<CorefTarget> source) {
-        this.source = source;
+    public CorefResultSet(String sourceLemma,ArrayList<CorefTarget> source) {
+        this.sourceLemma = sourceLemma;
+        this.sources = new ArrayList<ArrayList<CorefTarget>>();
+        this.sources.add(source);
         this.targets = new ArrayList<CorefMatch>();
     }
 
-    public ArrayList<CorefTarget> getSource() {
-        return source;
+    public String getSourceLemma() {
+        return sourceLemma;
+    }
+
+    public ArrayList<ArrayList<CorefTarget>> getSources() {
+        return sources;
     }
 
     public ArrayList<CorefMatch> getTargets() {
@@ -34,6 +41,9 @@ public class CorefResultSet {
 
     public void addTarget(CorefMatch target) {
         this.targets.add(target);
+    }
+    public void addSource(ArrayList<CorefTarget> corefSets) {
+            sources.add(corefSets);
     }
 
     public double getAverageMatchScore () {
@@ -51,9 +61,12 @@ public class CorefResultSet {
         for (int i = 0; i < targets.size(); i++) {
             CorefMatch corefMatch = targets.get(i);
             if (!corefMatch.getLowestCommonSubsumer().isEmpty()) {
+                lcsList.add(corefMatch.getLowestCommonSubsumer());
+/*
                 if (!lcsList.contains(corefMatch.getLowestCommonSubsumer())) {
                     lcsList.add(corefMatch.getLowestCommonSubsumer());
                 }
+*/
             }
         }
         return lcsList;
@@ -64,6 +77,7 @@ public class CorefResultSet {
         KafCoreferenceSet kafCoreferenceSet = new KafCoreferenceSet();
         ArrayList<String> lcsList = getLowestSubsumers();
         KafSense kafSense = null;
+        //System.out.println("lcsList = " + lcsList.toString());
         if (lcsList.size()==1) {
             //// there is only one subsumer so we trust it
             kafSense = new KafSense();
@@ -75,71 +89,112 @@ public class CorefResultSet {
             /// we need to choose from many
             kafSense = wordnetData.GetLowestCommonSubsumer(lcsList);
         }
+        /// we add all the lemma sources
+        for (int i = 0; i < sources.size(); i++) {
+            ArrayList<CorefTarget> corefTargets = sources.get(i);
+            kafCoreferenceSet.addSetsOfSpans(corefTargets);
+        }
         if (kafSense!=null) {
             kafCoreferenceSet.addExternalReferences(kafSense);
+            for (int i = 0; i < targets.size(); i++) {
+                CorefMatch corefMatch = targets.get(i);
+                for (int j = 0; j < corefMatch.getCorefTargets().size(); j++) {
+                    ArrayList<CorefTarget> corefTargets = corefMatch.getCorefTargets().get(j);
+                    kafCoreferenceSet.addSetsOfSpans(corefTargets);
+                }
+            }
         }
-        kafCoreferenceSet.addSetsOfSpans(source);
+        else {
+            /// no subsumers so only lemma matches are kept
+        }
+        return kafCoreferenceSet;
+    }
+
+    public KafCoreferenceSet castToKafCoreferenceSet (String wnResource) {
+        KafCoreferenceSet kafCoreferenceSet = new KafCoreferenceSet();
+        /// we add all the lemma sources
+        for (int i = 0; i < sources.size(); i++) {
+            ArrayList<CorefTarget> corefTargets = sources.get(i);
+            kafCoreferenceSet.addSetsOfSpans(corefTargets);
+        }
         for (int i = 0; i < targets.size(); i++) {
             CorefMatch corefMatch = targets.get(i);
-            kafCoreferenceSet.addSetsOfSpans(corefMatch.getCorefTargets());
+            for (int j = 0; j < corefMatch.getCorefTargets().size(); j++) {
+                ArrayList<CorefTarget> corefTargets = corefMatch.getCorefTargets().get(j);
+                kafCoreferenceSet.addSetsOfSpans(corefTargets);
+            }
+            if (!corefMatch.getLowestCommonSubsumer().isEmpty()) {
+                KafSense kafSense = new KafSense();
+                kafSense.setSensecode(corefMatch.getLowestCommonSubsumer());
+                kafSense.setConfidence(corefMatch.getScore());
+                kafSense.setResource(wnResource);
+                boolean hasSense = false;
+                for (int j = 0; j < kafCoreferenceSet.getExternalReferences().size(); j++) {
+                    KafSense sense = kafCoreferenceSet.getExternalReferences().get(j);
+                    if (sense.getSensecode().equals(kafSense.getSensecode())) {
+                        hasSense = true;
+                        if (kafSense.getConfidence()>sense.getConfidence()) {
+                            sense.setConfidence(kafSense.getConfidence());
+                        }
+                    }
+                }
+                if (!hasSense) {
+                    kafCoreferenceSet.addExternalReferences(kafSense);
+                }
+            }
         }
         return kafCoreferenceSet;
     }
 
     public boolean hasSpan (ArrayList<CorefTarget> spans) {
-        if (CorefTarget.hasSpan(spans, source)) {
-            return true;
+        for (int i = 0; i < sources.size(); i++) {
+            ArrayList<CorefTarget> corefTargets = sources.get(i);
+            if (CorefTarget.hasSpan(spans, corefTargets)) {
+                return true;
+            }
         }
         for (int i = 0; i < targets.size(); i++) {
             CorefMatch corefMatch = targets.get(i);
-            if (CorefTarget.hasSpan(spans, corefMatch.getCorefTargets())) {
-                return true;
+            for (int j = 0; j < corefMatch.getCorefTargets().size(); j++) {
+                ArrayList<CorefTarget> corefTargets = corefMatch.getCorefTargets().get(j);
+                if (CorefTarget.hasSpan(spans, corefTargets)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     public boolean hasSpanAndLowestCommonSubsumer (CorefMatch match) {
-            for (int i = 0; i < targets.size(); i++) {
-                CorefMatch corefMatch = targets.get(i);
-                if ((CorefTarget.hasSpan(match.getCorefTargets(), corefMatch.getCorefTargets()))
-                     &&
-                    (corefMatch.getLowestCommonSubsumer().equals(match.getLowestCommonSubsumer()))){
-                    return true;
-                }
-            }
-            return false;
-    }
-
-    public boolean hasSpanAndLowestCommonSubsumer (ArrayList<CorefMatch> matches) {
-            for (int i = 0; i < targets.size(); i++) {
-                CorefMatch corefMatch = targets.get(i);
-                for (int j = 0; j < matches.size(); j++) {
-                    CorefMatch match = matches.get(j);
-                    if ((CorefTarget.hasSpan(match.getCorefTargets(), corefMatch.getCorefTargets()))
-                         &&
-                        (corefMatch.getLowestCommonSubsumer().equals(match.getLowestCommonSubsumer()))){
+        for (int i = 0; i < targets.size(); i++) {
+            CorefMatch corefMatch = targets.get(i);
+            for (int j = 0; j < corefMatch.getCorefTargets().size(); j++) {
+                ArrayList<CorefTarget> corefTargets = corefMatch.getCorefTargets().get(j);
+                if (match.hasSpan(corefTargets)) {
+                    if (corefMatch.getLowestCommonSubsumer().equals(match.getLowestCommonSubsumer())) {
                         return true;
                     }
                 }
             }
-            return false;
+        }
+        return false;
     }
+
 
     public void addTargetScore (CorefMatch target) {
         boolean NEW = true;
         for (int i = 0; i < targets.size(); i++) {
             CorefMatch corefMatch = targets.get(i);
-            if (corefMatch.hasSpan(target.getCorefTargets())) {
-                NEW = false;
-                if (target.getScore()>corefMatch.getScore()) {
-                    corefMatch.setScore(target.getScore());
-                    corefMatch.setLowestCommonSubsumer(target.getLowestCommonSubsumer());
+            for (int j = 0; j < corefMatch.getCorefTargets().size(); j++) {
+                ArrayList<CorefTarget> corefTargets = corefMatch.getCorefTargets().get(j);
+                if (corefMatch.hasSpan(corefTargets)) {
+                    NEW = false;
+                    if (target.getScore()>corefMatch.getScore()) {
+                        corefMatch.setScore(target.getScore());
+                        corefMatch.setLowestCommonSubsumer(target.getLowestCommonSubsumer());
+                    }
+                    break;
                 }
-                break;
-            }
-            else {
-             //////
             }
         }
         if (NEW) {
@@ -147,22 +202,5 @@ public class CorefResultSet {
         }
     }
 
-    public void addSourceCoref (ArrayList<CorefTarget> source) {
-        boolean NEW = true;
-        for (int i = 0; i < targets.size(); i++) {
-            CorefMatch corefMatch = targets.get(i);
-            if (CorefTarget.hasSpan(corefMatch.getCorefTargets(), source)) {
-                NEW = false;
-                break;
-            }
-            else {
-             //////
-            }
-        }
-        if (NEW) {
-            CorefMatch corefMatch = new CorefMatch();
-            corefMatch.setCorefTargets(source);
-            targets.add(corefMatch);
-        }
-    }
+
 }

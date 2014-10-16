@@ -10,12 +10,22 @@ import java.util.ArrayList;
 public class CorefMatch {
     private double score;
     private String lowestCommonSubsumer;
-    private ArrayList<CorefTarget> corefTargets;
+    private String targetLemma;
+    private ArrayList<ArrayList<CorefTarget>> corefTargets;
 
     public CorefMatch() {
         this.score = -1;
         this.lowestCommonSubsumer = "";
-        this.corefTargets = new ArrayList<CorefTarget>();
+        this.targetLemma = "";
+        this.corefTargets = new ArrayList<ArrayList<CorefTarget>>();
+    }
+
+    public String getTargetLemma() {
+        return targetLemma;
+    }
+
+    public void setTargetLemma(String targetLemma) {
+        this.targetLemma = targetLemma;
     }
 
     public double getScore() {
@@ -38,29 +48,38 @@ public class CorefMatch {
         this.lowestCommonSubsumer = lowestCommonSubsumer;
     }
 
-    public ArrayList<CorefTarget> getCorefTargets() {
+    public ArrayList<ArrayList<CorefTarget>> getCorefTargets() {
         return corefTargets;
     }
 
-    public void setCorefTargets(ArrayList<CorefTarget> corefTargets) {
+    public void addCorefTargets(ArrayList<CorefTarget> corefTargets) {
+        this.corefTargets.add(corefTargets);
+    }
+
+    public void setCorefTargets(ArrayList<ArrayList<CorefTarget>> corefTargets) {
         this.corefTargets = corefTargets;
     }
 
-
     public boolean hasSpan (ArrayList<CorefTarget> spans) {
-        int overlap = CorefTarget.overlapSetOfSpans(corefTargets, spans);
-        if (overlap==corefTargets.size() && (overlap==spans.size())) {
-            /// exact match
-            return true;
+        for (int i = 0; i < corefTargets.size(); i++) {
+            ArrayList<CorefTarget> targets = corefTargets.get(i);
+            int overlap = CorefTarget.overlapSetOfSpans(targets, spans);
+            if (overlap==corefTargets.size() && (overlap==spans.size())) {
+                /// exact match
+                return true;
+            }
         }
         return false;
     }
 
     public boolean hasIntersection (ArrayList<CorefTarget> spans) {
-        int overlap = CorefTarget.overlapSetOfSpans(corefTargets, spans);
-        if (overlap>0) {
-            /// exact match
-            return true;
+        for (int i = 0; i < corefTargets.size(); i++) {
+            ArrayList<CorefTarget> targets = corefTargets.get(i);
+            int overlap = CorefTarget.overlapSetOfSpans(targets, spans);
+            if (overlap>0) {
+                /// exact match
+                return true;
+            }
         }
         return false;
     }
