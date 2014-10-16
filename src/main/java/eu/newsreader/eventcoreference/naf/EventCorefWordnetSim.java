@@ -24,9 +24,9 @@ public class EventCorefWordnetSim {
     static final String usage = "\nCompares predicates using one of the WN similarity function.\n"+
             "   --wn-lmf        <path to wordnet file in lmf format\n" +
             "   --method        <one of the following methods can be used leacock-chodorow, path, wu-palmer>\n"+
-            "   --sim           <similarity threshold below which no coreference is no coreference relation is determined >\n";
-//    "   --subsumers     <path to a file with subsumer frequencies, required for resnik, lin, jiang-conrath or all>\n"+
-//    "   --method        <one of the following methods can be used leacock-chodorow, resnik, path, wu-palmer, jiang-conrath, lin>\n"+
+            "   --sim           <similarity threshold below which no coreference is no coreference relation is determined >\n" +
+            "   --relations     <synsets relations that are used for the distance measurement >\n"
+            ;
 
     static final String layer = "coreferences";
     static final String name = "vua-event-coref-intradoc-wn-sim";
