@@ -54,6 +54,7 @@ public class RoleLabels {
      */
 
     static public final String [] PRIMEPARTICIPANT = {"a0","arg0", "a-0", "arg-0"};
+    static public final String [] SECONDPARTICIPANT = {"a1","arg1", "a-1", "arg-1"};
     static public final String [] NONPRIMEPARTICIPANT = {"a1", "a2", "a3", "a4", "arg1", "arg2", "arg3", "a-1", "a-2", "a-3", "a-4", "arg-1", "arg-2", "arg-3", "arg-4"};
     static public final String [] LOCATION = {"AM-LOC"};
     static public final String [] TIME = {"AM-TMP"};
@@ -92,6 +93,42 @@ public class RoleLabels {
             String s = PRIMEPARTICIPANT[i];
             if (s.equalsIgnoreCase(role)) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    static public boolean hasPRIMEPARTICIPANT (ArrayList<String> roles) {
+        for (int i = 0; i < PRIMEPARTICIPANT.length; i++) {
+            String s = PRIMEPARTICIPANT[i];
+            for (int j = 0; j < roles.size(); j++) {
+                String role = roles.get(j);
+                if (s.equalsIgnoreCase(role)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static public boolean isSECONDPARTICIPANT (String role) {
+        for (int i = 0; i < SECONDPARTICIPANT.length; i++) {
+            String s = SECONDPARTICIPANT[i];
+            if (s.equalsIgnoreCase(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static public boolean hasSECONDPARTICIPANT (ArrayList<String> roles) {
+        for (int i = 0; i < SECONDPARTICIPANT.length; i++) {
+            String s = SECONDPARTICIPANT[i];
+            for (int j = 0; j < roles.size(); j++) {
+                String role = roles.get(j);
+                if (s.equalsIgnoreCase(role)) {
+                    return true;
+                }
             }
         }
         return false;

@@ -305,12 +305,20 @@ public class Util {
      */
     static public ArrayList<ArrayList<CorefTarget>> getCorefTargetSetsForEntitySpans(ArrayList<ArrayList<CorefTarget>> entitySpans,
                                                                                      ArrayList<KafCoreferenceSet> coreferenceSets) {
-        ArrayList<ArrayList<CorefTarget>> corefSet = entitySpans;
+        ArrayList<ArrayList<CorefTarget>> corefSet = new ArrayList<ArrayList<CorefTarget>>();
+        //ArrayList<ArrayList<CorefTarget>> corefSet = entitySpans;
+        //System.out.println("entitySpans = " + entitySpans.size());
         for (int i = 0; i < entitySpans.size(); i++) {
+            //System.out.println(i+": corefSet.size() = " + corefSet.size());
             ArrayList<CorefTarget> corefTargets = entitySpans.get(i);
+            corefSet.add(corefTargets);
+           // System.out.println("corefTargets.toString() = " + corefTargets.toString());
             for (int j = 0; j < coreferenceSets.size(); j++){
                 KafCoreferenceSet kafCoreferenceSet = coreferenceSets.get(j);
-                if (matchingAtLeastOneSetOfSpans(corefTargets, kafCoreferenceSet.getSetsOfSpans())) {
+                //System.out.println("kafCoreferenceSet.getCoid() = " + kafCoreferenceSet.getCoid());
+                //System.out.println("kafCoreferenceSet.getCoid()+\":\"+kafCoreferenceSet.getSetsOfSpans().size() = " + kafCoreferenceSet.getCoid()+":"+kafCoreferenceSet.getSetsOfSpans().size());
+                if (intersectingWithAtLeastOneSetOfSpans(corefTargets, kafCoreferenceSet.getSetsOfSpans())) {
+               // if (matchingAtLeastOneSetOfSpans(corefTargets, kafCoreferenceSet.getSetsOfSpans())) {
                     for (int k = 0; k < kafCoreferenceSet.getSetsOfSpans().size(); k++) {
                         ArrayList<CorefTarget> targets = kafCoreferenceSet.getSetsOfSpans().get(k);
                         if (!hasCorefTargetArrayList(targets, corefSet)) {
@@ -318,8 +326,12 @@ public class Util {
                         }
                     }
                 }
+                else {
+                    ////
+                }
             }
         }
+       // System.out.println("corefSet.size() = " + corefSet.size());
         return corefSet;
     }
 
@@ -398,6 +410,23 @@ public class Util {
 
     /**
      *
+     * @param corefTargets1
+     * @param spans2
+     * @return
+     */
+    static public boolean intersectingWithAtLeastOneSetOfSpans (ArrayList<CorefTarget> corefTargets1, ArrayList<ArrayList<CorefTarget>> spans2) {
+        for (int k = 0; k < spans2.size(); k++) {
+            ArrayList<CorefTarget> corefTargets2 = spans2.get(k);
+            //// for each set we check if there is a sufficient match
+            if (intersectingThresholdSpans(corefTargets1, corefTargets2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
      * @param spans1
      * @param spans2
      * @return
@@ -432,6 +461,54 @@ public class Util {
             }
         }
         return true;
+    }
+
+    static public boolean intersectingSpans(ArrayList<CorefTarget> spans1, ArrayList<CorefTarget> spans2) {
+        for (int i = 0; i < spans1.size(); i++) {
+            CorefTarget span1 = spans1.get(i);
+            for (int j = 0; j < spans2.size(); j++) {
+                CorefTarget span2 =  spans2.get(j);
+                if (span1.getId().equals(span2.getId())) {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    static public boolean intersectingThresholdSpans(ArrayList<CorefTarget> spans1, ArrayList<CorefTarget> spans2) {
+        int matchCount = 0;
+        for (int i = 0; i < spans1.size(); i++) {
+            CorefTarget span1 = spans1.get(i);
+            for (int j = 0; j < spans2.size(); j++) {
+                CorefTarget span2 =  spans2.get(j);
+                if (span1.getId().equals(span2.getId())) {
+                    matchCount++;
+                    break;
+                }
+            }
+        }
+        int span1MatchScore = ((matchCount * 100) / spans1.size());
+        int span2MatchScore = ((matchCount * 100) / spans2.size());
+        int matchScoreAverage = (span1MatchScore + span2MatchScore) / 2;
+        if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
+/*
+            System.out.println("matchScoreAverage = " + matchScoreAverage);
+            for (int i = 0; i < spans1.size(); i++) {
+                CorefTarget corefTarget = spans1.get(i);
+                System.out.print(corefTarget.getId());
+            }
+            System.out.println();
+            for (int i = 0; i < spans2.size(); i++) {
+                CorefTarget corefTarget = spans2.get(i);
+                System.out.print(corefTarget.getId());
+            }
+            System.out.println();
+*/
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -541,9 +618,14 @@ public class Util {
                                                   KafParticipant kafParticipant,
                                                   ArrayList<SemObject> semObjects) {
 
-
+        boolean DEBUG = false;
         SemObject topObject = null;
         int topScore = 0;
+/*
+        if (kafParticipant.getId().equals("rl19")) {
+            DEBUG = true;
+        }
+*/
         int nContentWordsKafParticipant = kafSaxParser.getNumberContentWords(kafParticipant.getSpanIds());
         for (int i = 0; i < semObjects.size(); i++) {
             SemObject semObject = semObjects.get(i);
@@ -581,7 +663,51 @@ public class Util {
                 }
             }
         }
+
         return topObject;
+    }
+
+    static public ArrayList<SemObject> getAllMatchingObject(KafSaxParser kafSaxParser,
+                                                  KafParticipant kafParticipant,
+                                                  ArrayList<SemObject> semObjects) {
+
+        ArrayList<SemObject> topObjects = new ArrayList<SemObject>();
+        int nContentWordsKafParticipant = kafSaxParser.getNumberContentWords(kafParticipant.getSpanIds());
+        for (int i = 0; i < semObjects.size(); i++) {
+            SemObject semObject = semObjects.get(i);
+            for (int m = 0; m < semObject.getNafMentions().size(); m++) {
+                // FOR EVERY MENTION, WE CHECK THE OVERLAP WITH THE KAFPARTICIPANT AND KEEP THE BEST
+                NafMention nafMention = semObject.getNafMentions().get(m);
+                int matchCount = 0;
+                int nContentWordsNafMention = 0;
+                for (int k = 0; k < nafMention.getTermsIds().size(); k++) {
+                    String id = nafMention.getTermsIds().get(k);
+                    if (kafSaxParser.contentWord(id)) {
+                        nContentWordsNafMention++;
+                        if (kafParticipant.getSpanIds().contains(id)) {
+                            matchCount++;
+                        }
+                    }
+                }
+                if ((nContentWordsNafMention>0) && (nContentWordsKafParticipant>0)) {
+                    int matchScoreObject = ((matchCount * 100) / nContentWordsNafMention);
+                    int matchScoreParticipant = ((matchCount * 100) / nContentWordsKafParticipant);
+                    int matchScoreAverage = (matchScoreObject + matchScoreParticipant) / 2;
+                    if (matchScoreAverage>0) {
+/*                        System.out.println("matchScoreParticipant = " + matchScoreParticipant);
+                        System.out.println("matchScoreObject = " + matchScoreObject);
+                        System.out.println("matchScoreAverage = " + matchScoreAverage);
+                        System.out.println("semObject = " + semObject.getTopPhraseAsLabel());
+                        System.out.println("kafParticipant = " + kafParticipant.getTokenString());*/
+                        if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
+                            topObjects.add(semObject);
+                        }
+                    }
+                }
+            }
+        }
+
+        return topObjects;
     }
 
     /**

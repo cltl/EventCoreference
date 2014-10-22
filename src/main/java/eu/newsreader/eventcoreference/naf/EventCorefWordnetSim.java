@@ -34,7 +34,7 @@ public class EventCorefWordnetSim {
     static WordnetData wordnetData = null;
     static String method = "leacock-chodorow";
     static int proportionalthreshold = 80;
-    static double simthreshold = 2.0;
+    static double simthreshold = 2.2;
     static ArrayList<String> relations = new ArrayList<String>();
 
     static public void main (String [] args) {

@@ -1,6 +1,8 @@
 package eu.newsreader.eventcoreference.objects;
 
 import eu.kyotoproject.kaf.KafFactuality;
+import eu.kyotoproject.kaf.KafSaxParser;
+import eu.kyotoproject.kaf.KafWordForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,6 +37,18 @@ public class NafMention implements Serializable {
         this.factuality = new KafFactuality();
     }
 
+    public String getPhraseFromMention (KafSaxParser kafSaxParser) {
+        String str = "";
+        for (int i = 0; i < tokensIds.size(); i++) {
+            String s = tokensIds.get(i);
+            KafWordForm kafWordForm = kafSaxParser.getWordForm(s);
+            if (kafWordForm!=null) {
+                str += kafWordForm.getWf()+" ";
+            }
+        }
+        return str.trim();
+    }
+
     public KafFactuality getFactuality() {
         return factuality;
     }
@@ -56,6 +70,16 @@ public class NafMention implements Serializable {
             return baseUri;
         }
     }
+
+    public String getIdFromBaseUri() {
+            int idx = baseUri.lastIndexOf("#");
+            if (idx>-1) {
+                return baseUri.substring(idx+1);
+            }
+            else {
+                return baseUri;
+            }
+        }
 
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
