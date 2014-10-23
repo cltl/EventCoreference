@@ -30,8 +30,8 @@ public class GetTimeLinesFromNaf {
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
         // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/scale-test.naf";
-        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_NAF_output/corpus_airbus_boeing/" +
-                "1173_Internal_emails_expose_Boeing-Air_Force_contract_discussions.naf";
+        //String pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialNWR20.naf";
+        String pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialPiekCoref.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
@@ -54,7 +54,7 @@ public class GetTimeLinesFromNaf {
         kafSaxParser.parseFile(pathToNafFile);
         String timeLines = processNafFile(new File(pathToNafFile).getName(), project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
-            OutputStream fos = new FileOutputStream(pathToNafFile+"tml");
+            OutputStream fos = new FileOutputStream(pathToNafFile+".tml");
             fos.write(timeLines.getBytes());
             fos.close();
         } catch (IOException e) {
@@ -131,7 +131,7 @@ public class GetTimeLinesFromNaf {
                                                             KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
                                                             sentenceId += kafWordForm.getSent();
                                                         }
-                                                        timeLine += "\t" + fileName + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel();
+                                                        timeLine += "\t" + fileName + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
                                                     }
                                                     timeLine += "\n";
                                                     break;
@@ -151,7 +151,7 @@ public class GetTimeLinesFromNaf {
                                         KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
                                         sentenceId += kafWordForm.getSent();
                                     }
-                                    timeLine += "\t" + fileName + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel();
+                                    timeLine += "\t" + fileName + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
                                 }
                                 timeLine += "\n";
                             }
