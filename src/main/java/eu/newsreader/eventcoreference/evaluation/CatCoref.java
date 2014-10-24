@@ -78,14 +78,14 @@ public class CatCoref extends DefaultHandler {
     ArrayList<CorefTarget> corefTargetArrayList;
     KafCoreferenceSet kafCoreferenceSet;
     CorefTarget corefTarget;
-    HashMap<String, ArrayList<String>> eventTokenMap;
+    HashMap<String, String> eventMentionTypeMap;
     KafWordForm  kafWordForm;
     ArrayList<KafWordForm> kafWordFormArrayList;
     KafTerm kafTerm;
     ArrayList<KafTerm> kafTermArrayList;
     ArrayList<String> spans;
     String span = "";
-    String source = "";
+    String target = "";
     boolean REFERSTO = false;
 
     void init() {
@@ -94,13 +94,14 @@ public class CatCoref extends DefaultHandler {
         corefTargetArrayList = new ArrayList<CorefTarget>();
         kafCoreferenceSet = new KafCoreferenceSet();
         corefTarget = new CorefTarget();
-        eventTokenMap = new HashMap<String, ArrayList<String>>();
+        eventMentionTypeMap = new HashMap<String, String>();
         kafWordForm = new KafWordForm();
         kafWordFormArrayList = new ArrayList<KafWordForm>();
         kafCoreferenceSetArrayList = new ArrayList<KafCoreferenceSet>();
         kafTerm = new KafTerm();
         kafTermArrayList = new ArrayList<KafTerm>();
         REFERSTO = false;
+        target = "";
     }
 
     public void parseFile(String filePath) {
@@ -143,6 +144,13 @@ public class CatCoref extends DefaultHandler {
             kafWordForm.setWid(attributes.getValue("t_id"));
             kafWordForm.setSent(attributes.getValue("sentence"));
         }
+        else if (qName.equalsIgnoreCase("EVENT")) {
+            String type = attributes.getValue("class");
+            String mention = attributes.getValue("m_id");
+            if (type!=null && mention!=null && !type.isEmpty() && !mention.isEmpty()) {
+                eventMentionTypeMap.put(mention, type);
+            }
+        }
         else if (qName.equalsIgnoreCase("EVENT_MENTION")) {
             kafTerm = new KafTerm();
             kafTerm.setType("EVENT");
@@ -158,6 +166,11 @@ public class CatCoref extends DefaultHandler {
                 corefTarget = new CorefTarget();
                 corefTarget.setId(attributes.getValue("m_id"));
                 corefTargetArrayList.add(corefTarget);
+            }
+        }
+        else if (qName.equalsIgnoreCase("target")) {
+            if (REFERSTO) {
+                target = attributes.getValue("m_id");
             }
         }
         else if (qName.equalsIgnoreCase("token_anchor")) {
@@ -194,9 +207,15 @@ public class CatCoref extends DefaultHandler {
         else if (qName.equalsIgnoreCase("REFERS_TO")) {
             REFERSTO = false;
             kafCoreferenceSet.addSetsOfSpans(corefTargetArrayList);
+            String type = "";
+            if (eventMentionTypeMap.containsKey(target)) {
+                type = eventMentionTypeMap.get(target);
+            }
+            kafCoreferenceSet.setType(type);
             corefTargetArrayList = new ArrayList<CorefTarget>();
             kafCoreferenceSetArrayList.add(kafCoreferenceSet);
             kafCoreferenceSet = new KafCoreferenceSet();
+            target = "";
         }
     }
 
@@ -215,8 +234,8 @@ public class CatCoref extends DefaultHandler {
                             for (int w = 0; w < kafWordFormArrayList.size(); w++) {
                                 KafWordForm wordForm = kafWordFormArrayList.get(w);
                                 if (wordForm.getWid().equals(tokenId)) {
-                                    target.setId(tokenId);
-                                    type = term.getType();
+                                    target.setId("w"+tokenId);
+                                    type = term.getType()+"-"+coreferenceSet.getType();
                                     break;
                                 }
                             }
@@ -235,7 +254,7 @@ public class CatCoref extends DefaultHandler {
         // System.out.println("tagValue:"+value);
     }
 
-    public void serializeToCorefSet (OutputStream stream, String corpus) {
+    public void serializeToCorefSet (OutputStream stream, String corpus, String type) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -249,8 +268,11 @@ public class CatCoref extends DefaultHandler {
                 Element coreferences = xmldoc.createElement("coreferences");
                 for (int i = 0; i < this.kafCoreferenceSetArrayList.size(); i++) {
                     KafCoreferenceSet kaf  = kafCoreferenceSetArrayList.get(i);
-                    if (kaf.getType().equals("EVENT")) {
+                    if (kaf.getType().equalsIgnoreCase(type)) {
                         coreferences.appendChild(kaf.toNafXML(xmldoc));
+                    }
+                    else {
+                      //  System.out.println("coref.getType() = " + kaf.getType());
                     }
                 }
                 root.appendChild(coreferences);
@@ -273,23 +295,45 @@ public class CatCoref extends DefaultHandler {
     }
 
     static public void main (String[] args) {
-        String pathToCatFile = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_CAT_ref/corpus_apple/30414_Apple_unveils_new_Intel-based_Mac.txt.xml";
-        CatCoref catCoref = new CatCoref();
-
-        //catCoref.parseFile(pathToCatFile);
-        //catCoref.serializeToCorefSet(System.out, "test");
-
+        //String type = "EVENT-GRAMMATICAL";
+        //String type = "EVENT-SPEECH_COGNITIVE";
+        String type = "EVENT-OTHER";
+        String pathToCatFile = "";
+        //String pathToCatFile = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_CAT_ref/corpus_apple/30414_Apple_unveils_new_Intel-based_Mac.txt.xml";
         String folder = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_CAT_ref/corpus_apple/";
-        ArrayList<File> files = Util.makeFlatFileList(new File(folder), ".xml");
-        for (int i = 0; i < files.size(); i++) {
-            File file = files.get(i);
-            catCoref.parseFile(file.getAbsolutePath());
-            try {
-                OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".coref");
-                catCoref.serializeToCorefSet(fos, "test");
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        String fileExtension = ".xml";
+        CatCoref catCoref = new CatCoref();
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equalsIgnoreCase("--cat-file") && args.length>(i+1)) {
+                pathToCatFile = args[i+1];
+            }
+            else if (arg.equalsIgnoreCase("--folder") && args.length>(i+1)) {
+                folder = args[i+1];
+            }
+            else if (arg.equalsIgnoreCase("--file-extension") && args.length>(i+1)) {
+                fileExtension = args[i+1];
+            }
+            else if (arg.equalsIgnoreCase("--coref-type") && args.length>(i+1)) {
+                type = args[i+1];
+            }
+        }
+        if (!pathToCatFile.isEmpty()) {
+            catCoref.parseFile(pathToCatFile);
+            catCoref.serializeToCorefSet(System.out, "test", type);
+        }
+        else if (!folder.isEmpty()){
+            ArrayList<File> files = Util.makeFlatFileList(new File(folder), ".xml");
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.get(i);
+                catCoref.parseFile(file.getAbsolutePath());
+                try {
+                    OutputStream fos = new FileOutputStream(file.getAbsolutePath()+"."+type+".coref");
+                    catCoref.serializeToCorefSet(fos, "test", type);
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
