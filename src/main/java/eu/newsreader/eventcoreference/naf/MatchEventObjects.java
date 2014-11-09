@@ -117,7 +117,7 @@ public class MatchEventObjects {
                             }
                         }
                         else {
-                            System.out.println("Unknown object obj.getClass() = " + obj.getClass());
+                         //   System.out.println("Unknown object obj.getClass() = " + obj.getClass());
                         }
                 }
                 ois.reset();
@@ -126,7 +126,7 @@ public class MatchEventObjects {
             } catch (Exception e) {
              //   e.printStackTrace();
             }
-            System.out.println(file.getName()+" nr objects read = " + cnt);
+         //   System.out.println(file.getName()+" nr objects read = " + cnt);
         }
 
         return eventMap;
@@ -153,7 +153,6 @@ public class MatchEventObjects {
             ResourcesUri.prefixModel(instanceModel);
 
 
-            int nMatches = 0;
             ArrayList<File> files = Util.makeRecursiveFileList(pathToEventFolder, ".obj");
             for (int i = 0; i < files.size(); i++) {
                 File file = files.get(i);
@@ -175,7 +174,6 @@ public class MatchEventObjects {
                             CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
                             //if (true) {
                             if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
-                                nMatches++;
                                 match = true;
                                 finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                                 finalCompositeEvent.mergeObjects(myCompositeEvent);

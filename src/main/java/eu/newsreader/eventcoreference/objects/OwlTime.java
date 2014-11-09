@@ -162,7 +162,7 @@ public class OwlTime implements Serializable {
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            System.out.println("date = " + date);
+           // System.out.println("date = " + date);
         }
     }
 

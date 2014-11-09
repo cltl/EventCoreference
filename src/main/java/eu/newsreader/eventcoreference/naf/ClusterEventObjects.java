@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,6 +40,9 @@ public class ClusterEventObjects {
             "The output structure is event/other, event/grammatical and event/speech.>\n" +
             "--extension      <File extension to select the NAF files .>\n" +
             "--project        <The name of the project for creating URIs>\n";
+    static Vector<String> communicationVector = null;
+    static Vector<String> grammaticalVector = null;
+    static Vector<String> contextualVector = null;
 
 
     static public void main (String [] args) {
@@ -56,6 +60,10 @@ public class ClusterEventObjects {
        // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
         String projectName  = "cars";
         String extension = ".naf.coref";
+        String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
+        String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/contextual.txt";
+        String grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/grammatical.txt";
+
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-folder") && args.length>(i+1)) {
@@ -70,12 +78,67 @@ public class ClusterEventObjects {
             else if (arg.equals("--project") && args.length>(i+1)) {
                 projectName = args[i+1];
             }
+            else if (arg.equals("--communication-frames") && args.length>(i+1)) {
+                comFrameFile = args[i+1];
+            }
+            else if (arg.equals("--grammatical-frames") && args.length>(i+1)) {
+                grammaticalFrameFile = args[i+1];
+            }
+            else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
+                contextualFrameFile = args[i+1];
+            }
         }
+        //// read resources
+        communicationVector = Util.ReadFileToStringVector(comFrameFile);
+        grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
+        contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
+
         try {
             processFolderEvents(projectName, new File(pathToNafFolder), new File (pathToEventFolder), extension);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    static String getEventTypeString (SemEvent semEvent) {
+        String eventType = "";
+        for (int k = 0; k < semEvent.getConcepts().size(); k++) {
+            KafSense kafSense = semEvent.getConcepts().get(k);
+            if (kafSense.getResource().equalsIgnoreCase("framenet")) {
+                //eventTypes += "fn:"+kafSense.getSensecode()+";";
+                if (communicationVector!=null && communicationVector.contains(kafSense.getSensecode().toLowerCase())) {
+                    eventType ="source";
+                    break;
+                }
+                else if (grammaticalVector!=null && grammaticalVector.contains(kafSense.getSensecode().toLowerCase())) {
+                    eventType ="grammatical";
+                    break;
+                }
+                else if (contextualVector!=null && contextualVector.contains(kafSense.getSensecode().toLowerCase())) {
+                    eventType ="contextual";
+                    break;
+                }
+            }
+            else if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
+                if (kafSense.getSensecode().equalsIgnoreCase("speech-cognition")) {
+                    eventType ="source";
+                    break;
+                } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
+                    eventType ="source";
+                    break;
+                } else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
+                    eventType ="source";
+                    break;
+                } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
+                    eventType ="grammatical";
+                    break;
+                } else {
+                    eventType ="contextual";
+                    break;
+                }
+            }
+        }
+        return eventType;
     }
 
     public static void processFolderEvents (String project, File pathToNafFolder, File eventParentFolder, String extension
@@ -130,7 +193,7 @@ public class ClusterEventObjects {
                      continue;
             }*/
 
-            if (i % 10 == 0) {
+            if (i % 500 == 0) {
                 System.out.println("i = " + i);
                 //  System.out.println("file.getName() = " + file.getAbsolutePath());
             }
@@ -156,20 +219,13 @@ public class ClusterEventObjects {
                 ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
                 CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
                 File folder = otherFolder;
-                for (int k = 0; k < mySemEvent.getConcepts().size(); k++) {
-                    KafSense kafSense = mySemEvent.getConcepts().get(k);
-                    if (kafSense.getSensecode().equalsIgnoreCase("speech-cognition")) {
+                String eventType = getEventTypeString(mySemEvent);
+                if (!eventType.isEmpty())  {
+                    if (eventType.equalsIgnoreCase("source")) {
                         folder = speechFolder;
-                        break;
-                    } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
-                        folder = speechFolder;
-                        break;
-                    } else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
-                        folder = speechFolder;
-                        break;
-                    } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
+                    }
+                    else if (eventType.equalsIgnoreCase("grammatical")) {
                         folder = grammaticalFolder;
-                        break;
                     }
                 }
                 File timeFile = null;
