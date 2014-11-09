@@ -274,6 +274,7 @@ public class GetSemFromNafFile {
             Util.addObject(semTimes, docSemTime);
         }
 
+
         for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
             KafTimex timex = kafSaxParser.kafTimexLayer.get(i);
             if (!timex.getValue().isEmpty()) {
@@ -389,8 +390,15 @@ public class GetSemFromNafFile {
             for (int l = 0; l < semTimes.size(); l++) {
                 SemObject semTime = semTimes.get(l);
                 //System.out.println("semTime.toString() = " + semTime.toString());
+
                 // if (Util.matchAtLeastASingleSpan(kafParticipant.getSpanIds(), semTime)) {
-                if (Util.sameSentence(kafSaxParser, semTime, semEvent)) {
+                //if (Util.sameSentence(kafSaxParser, semTime, semEvent)) {
+                boolean HASTIME = Util.rangemin2plus1Sentence(kafSaxParser, semTime, semEvent);
+                if (!HASTIME) {
+                    // HASTIME = Util.rangemin5Sentence(kafSaxParser, semTime, semEvent);
+                }
+                if (HASTIME) {
+
                     /// create sem relations
                     timexRelationCount++;
                     SemRelation semRelation = new SemRelation();
@@ -486,6 +494,66 @@ public class GetSemFromNafFile {
                     if (!RoleLabels.validRole(kafParticipant.getRole())) {
                         continue;
                     }
+                    //// we take all objects above threshold
+                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+                    for (int l = 0; l < semObjects.size(); l++) {
+                        SemObject semObject = semObjects.get(l);
+                        if (semObject!=null) {
+                            SemRelation semRelation = new SemRelation();
+                            String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
+                            semRelation.setId(relationInstanceId);
+/*
+                            if (kafParticipant.getId().equals("rl130")) {
+                                System.out.println(semObject.getId());
+                            }
+*/
+                            ArrayList<String> termsIds = kafEvent.getSpanIds();
+                            for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
+                                String s = kafParticipant.getSpanIds().get(j);
+                                termsIds.add(s);
+                            }
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
+                            semRelation.addMention(mention);
+                            semRelation.addPredicate("hasSemActor");
+                            //// check the source and prefix accordingly
+                            semRelation.addPredicate(kafParticipant.getRole());
+                            for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
+                                KafSense kafSense = kafParticipant.getExternalReferences().get(j);
+                                semRelation.addPredicate(kafSense.getResource() + ":" + kafSense.getSensecode());
+                            }
+                            semRelation.setSubject(semEventId);
+                            semRelation.setObject(semObject.getId());
+                            semRelations.add(semRelation);
+                        }
+                    }
+                    semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semPlaces);
+                    for (int l = 0; l < semObjects.size(); l++) {
+                        SemObject semObject = semObjects.get(l);
+                        if (semObject!=null) {
+                            SemRelation semRelation = new SemRelation();
+                            String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
+                            semRelation.setId(relationInstanceId);
+
+                            ArrayList<String> termsIds = kafEvent.getSpanIds();
+                            for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
+                                String s = kafParticipant.getSpanIds().get(j);
+                                termsIds.add(s);
+                            }
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
+                            semRelation.addMention(mention);
+                            semRelation.addPredicate("hasSemPlace");
+                            semRelation.addPredicate(kafParticipant.getRole());
+                            for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
+                                KafSense kafSense = kafParticipant.getExternalReferences().get(j);
+                                semRelation.addPredicate(kafSense.getResource() + ":" + kafSense.getSensecode());
+                            }
+                            semRelation.setSubject(semEventId);
+                            semRelation.setObject(semObject.getId());
+                            semRelations.add(semRelation);
+                        }
+
+                    }
+                    /*
                     SemObject semObject = Util.getBestMatchingObject(kafSaxParser, kafParticipant, semActors);
                     if (semObject!=null) {
                         SemRelation semRelation = new SemRelation();
@@ -533,6 +601,7 @@ public class GetSemFromNafFile {
                         semRelation.setObject(semObject.getId());
                         semRelations.add(semRelation);
                     }
+                    */
                 }
             }
         }
@@ -774,11 +843,13 @@ public class GetSemFromNafFile {
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/scale-test.naf";
-        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/increase-example/57VV-5311-F111-G0HJ.xml_7684191f264a9e21af56de7ec51cf2d5.naf.coref";
+        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/increase-example/57VV-5311-F111-G0HJ.xml_7684191f264a9e21af56de7ec51cf2d5.naf.coref";
+        //String pathToNafFile = "/Users/piek/newsreader-deliverables/papers/maplex/47P9-DCM0-0092-K267.xml";
+        String pathToNafFile = "/Users/piek/Desktop/MapLex/47T0-YSP0-018S-20DV.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
-        String project = "worldcup";
+        String project = "cars";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-file") && args.length>(i+1)) {

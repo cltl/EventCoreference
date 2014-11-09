@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -833,6 +834,80 @@ public class Util {
         return false;
     }
 
+    /**
+     * Checks if two SemObject have a mention within 4 sentences span 2 before and 1 after
+     * @param kafSaxParser
+     * @param semObject1
+     * @param semObject2
+     * @return
+     */
+    static public boolean rangemin2plus1Sentence(KafSaxParser kafSaxParser, SemObject semObject1, SemObject semObject2) {
+        for (int i = 0; i < semObject1.getNafMentions().size(); i++) {
+            NafMention nafMention1 = semObject1.getNafMentions().get(i);
+            for (int j = 0; j < nafMention1.getTokensIds().size(); j++) {
+                String tokenId = nafMention1.getTokensIds().get(j);
+                KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
+                for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
+                    NafMention nafMention2 = semObject2.getNafMentions().get(k);
+                    for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                        String tokenId2 = nafMention2.getTokensIds().get(l);
+                        KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
+                        if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
+                            return true;
+                        }
+                        try {
+                            int s1 = Integer.parseInt(kafWordForm1.getSent());
+                            int s2 = Integer.parseInt(kafWordForm2.getSent());
+                            if (s1==s2 || s1-1==s2 || s1-2==s2 || s1+1==s2) {
+                                return true;
+                            }
+                        } catch (NumberFormatException e) {
+                           // e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if two SemObject have a mention within 4 sentences span 2 before and 1 after
+     * @param kafSaxParser
+     * @param semObject1
+     * @param semObject2
+     * @return
+     */
+    static public boolean rangemin5Sentence(KafSaxParser kafSaxParser, SemObject semObject1, SemObject semObject2) {
+        for (int i = 0; i < semObject1.getNafMentions().size(); i++) {
+            NafMention nafMention1 = semObject1.getNafMentions().get(i);
+            for (int j = 0; j < nafMention1.getTokensIds().size(); j++) {
+                String tokenId = nafMention1.getTokensIds().get(j);
+                KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
+                for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
+                    NafMention nafMention2 = semObject2.getNafMentions().get(k);
+                    for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                        String tokenId2 = nafMention2.getTokensIds().get(l);
+                        KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
+                        if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
+                            return true;
+                        }
+                        try {
+                            int s1 = Integer.parseInt(kafWordForm1.getSent());
+                            int s2 = Integer.parseInt(kafWordForm2.getSent());
+                            if (s1==s2 || s1-1==s2 || s1-2==s2 || s1-3==s2 ||s1-4==s2 ||s1-5==s2) {
+                                return true;
+                            }
+                        } catch (NumberFormatException e) {
+                           // e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     /////////////////////////////////////////////////////////////////////////
     //////////
@@ -967,6 +1042,7 @@ public class Util {
             mention.setOffSetStart(new Integer (firstOffSet).toString());
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
+        mention.setPhraseFromMention(kafSaxParser);
         return mention;
     }
 
@@ -1007,6 +1083,7 @@ public class Util {
             mention.setOffSetStart(new Integer (firstOffSet).toString());
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
+        mention.setPhraseFromMention(kafSaxParser);
         return mention;
     }
 
@@ -1058,6 +1135,7 @@ public class Util {
             mention.setOffSetStart(new Integer (firstOffSet).toString());
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
+        mention.setPhraseFromMention(kafSaxParser);
         return mention;
     }
 
@@ -1365,5 +1443,27 @@ public class Util {
             }
         }
         return lineHashMap;
+    }
+
+    static public Vector<String> ReadFileToStringVector(String fileName) {
+        Vector<String> vector = new Vector<String>();
+        if (new File(fileName).exists() ) {
+            try {
+                FileInputStream fis = new FileInputStream(fileName);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                while (in.ready()&&(inputLine = in.readLine()) != null) {
+                    //System.out.println(inputLine);
+                    if (inputLine.trim().length()>0) {
+                        vector.add(inputLine.trim().toLowerCase());
+                    }
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return vector;
     }
 }

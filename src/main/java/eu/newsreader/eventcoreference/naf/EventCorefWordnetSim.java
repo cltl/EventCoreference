@@ -12,6 +12,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,11 +32,13 @@ public class EventCorefWordnetSim {
     static final String layer = "coreferences";
     static final String name = "vua-event-coref-intradoc-wn-sim";
     static final String version = "2.1";
+    static Vector<String> communicationFrame = new Vector<String>();
     static WordnetData wordnetData = null;
     static String method = "leacock-chodorow";
     static int proportionalthreshold = 80;
     static double simthreshold = 2.2;
     static ArrayList<String> relations = new ArrayList<String>();
+
 
     static public void main (String [] args) {
               if (args.length==0) {
@@ -77,6 +80,9 @@ public class EventCorefWordnetSim {
                               } catch (NumberFormatException e) {
                                   // e.printStackTrace();
                               }
+                          } else if (arg.equals("--com-frames") && args.length > (i + 1)) {
+                                  String frameFilePath = args[i+1];
+                                  communicationFrame =Util.ReadFileToStringVector(frameFilePath);
                           }
                       }
                       if (!pathToWNLMF.isEmpty()) {
@@ -126,6 +132,9 @@ public class EventCorefWordnetSim {
                               } catch (NumberFormatException e) {
                                   // e.printStackTrace();
                               }
+                          } else if (arg.equals("--com-frames") && args.length > (i + 1)) {
+                              String frameFilePath = args[i+1];
+                              communicationFrame =Util.ReadFileToStringVector(frameFilePath);
                           }
                       }
                       if (!pathToWNLMF.isEmpty()) {

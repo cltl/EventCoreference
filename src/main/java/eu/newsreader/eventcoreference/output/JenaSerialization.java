@@ -88,15 +88,16 @@ public class JenaSerialization {
             //semRelation.addToJenaDataSet(ds, relationModel, provenanceModel);
         }
 
-        // System.out.println("FACTUALITIES");
-        for (int i = 0; i < factRelations.size(); i++) {
-            SemRelation semRelation = factRelations.get(i);
-            if (sourceMetaHashMap!=null) {
-                semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
+        if (factRelations!=null && factRelations.size()>0) {
+            // System.out.println("FACTUALITIES");
+            for (int i = 0; i < factRelations.size(); i++) {
+                SemRelation semRelation = factRelations.get(i);
+                if (sourceMetaHashMap != null) {
+                    semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
 
-            }
-            else {
-                semRelation.addToJenaDataSet(ds, provenanceModel);
+                } else {
+                    semRelation.addToJenaDataSet(ds, provenanceModel);
+                }
             }
         }
 
