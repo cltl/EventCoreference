@@ -34,7 +34,7 @@ public class MatchEventObjects {
         WordnetData wordnetData = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
-        boolean singleOutput = true;
+        boolean singleOutput = false;
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/speech";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/contextual";
         String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample/events/contextual";
@@ -70,7 +70,7 @@ public class MatchEventObjects {
             else if (arg.equals("--event-type") && args.length>(i+1)) {
                 eventType = args[i+1];
             }
-            else if (arg.equals("--single-out")) {
+            else if (arg.equals("--single-output")) {
                 singleOutput = true;
             }
             else if (arg.equals("--source-data") && args.length>(i+1)) {
@@ -254,7 +254,7 @@ public class MatchEventObjects {
                     }
                     finalLemmaEventMap.put(lemma, finalCompositeEvents);
                 }
-                OutputStream fos = new FileOutputStream(file.getAbsolutePath()+"/sem.trig");
+                OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");
                 JenaSerialization.serializeJenaCompositeEvents(fos, finalLemmaEventMap, sourceMetaHashMap);
                 fos.close();
             }

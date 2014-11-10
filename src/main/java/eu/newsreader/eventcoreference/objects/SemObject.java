@@ -126,6 +126,13 @@ public class SemObject implements Serializable {
         this.nafMentions = nafMentions;
     }
 
+    public void addNafMentions(ArrayList<NafMention> nafMentions) {
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            this.nafMentions.add(nafMention);
+        }
+    }
+
     public void addMentionUri(NafMention mentionUri) {
         this.nafMentions.add(mentionUri);
     }
@@ -143,6 +150,15 @@ public class SemObject implements Serializable {
     }
 
     public void setIdByDBpediaReference() {
+        //// we are getting the highest scoring external reference now, which is the first
+        /*
+              <externalReferences>
+        <externalRef resource="spotlight_v1" reference="http://dbpedia.org/resource/Michigan" confidence="1.0" reftype="en"/>
+        <externalRef resource="spotlight_v1" reference="http://dbpedia.org/resource/List_of_United_States_Senators_from_Michigan" confidence="9.9521784E-14" reftype="en"/>
+      </externalReferences>
+
+         */
+
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
             if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
@@ -284,16 +300,16 @@ public class SemObject implements Serializable {
 
             /// skipping conditions
             if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
-             //   continue;
+                continue;
             }
             if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-             //   continue;
+                continue;
             }
             if (kafSense.getResource().equalsIgnoreCase("propbank")) {
-             //   continue;
+                continue;
             }
             if (kafSense.getResource().equalsIgnoreCase("nombank")) {
-              //  continue;
+                continue;
             }
             if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
                 /*
@@ -344,6 +360,8 @@ public class SemObject implements Serializable {
         else if (kafSense.getSensecode().indexOf(ResourcesUri.dbp) > -1) {
             ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
           //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
+        } else if (kafSense.getSensecode().equalsIgnoreCase("source")) {
+            ref = ResourcesUri.nwrontology + "SPEECH_COGNITIVE";
         } else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
             ref = ResourcesUri.nwrontology + "SPEECH_COGNITIVE";
         } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
@@ -356,7 +374,6 @@ public class SemObject implements Serializable {
             ref = ResourcesUri.nwrontology + "OTHER";
         } else {
             ref = ResourcesUri.nwrontology + kafSense.getSensecode();
-
         }
        // System.out.println("kafSense.getSensecode() = " + kafSense.getSensecode());
        // System.out.println("ref = " + ref);

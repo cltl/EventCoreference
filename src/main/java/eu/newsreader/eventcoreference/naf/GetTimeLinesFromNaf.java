@@ -38,7 +38,7 @@ public class GetTimeLinesFromNaf {
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
         String pathToNafFile = "";
-        //pathToNafFile = "/Users/piek/Desktop/NWR/timeline/naf_file_raw_out/4678-Apple_releases_program.xml.naf.coref";
+        // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/naf_file_raw_out-2/17174-Apple_executive_leaves.xml.naf";
         // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialNWR20.naf";
         // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialPiekCoref.naf";
         // pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
@@ -47,6 +47,7 @@ public class GetTimeLinesFromNaf {
         String pathToFolder = "";
         // pathToFolder = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_NAF_output/corpus_gm_chrysler_ford";
         pathToFolder = "/Users/piek/Desktop/NWR/timeline/naf_file_raw_out-2";
+        pathToFolder = "/Users/piek/Desktop/NWR/timeline/test";
         String query = "apple";
         String extension = ".naf";
         String eventType = "CONTEXTUAL";
@@ -127,6 +128,7 @@ public class GetTimeLinesFromNaf {
                     String key = keys.next();
                     if (key.toLowerCase().indexOf(query.toLowerCase())!=-1) {
                         EntityTimeLine entityTimeLine = entityTimeLineHashMap.get(key);
+                        /// we add the timelines to the query entry data
                         if (entitiesTimeLineHashMap.containsKey(query)) {
                             EntityTimeLine timeLine = entitiesTimeLineHashMap.get(query);
                             timeLine.addTimeLine(entityTimeLine);
@@ -148,12 +150,9 @@ public class GetTimeLinesFromNaf {
                 Iterator<String> keys = keySet.iterator();
                 while (keys.hasNext()) {
                     String key = keys.next();
-                    if (key.toLowerCase().indexOf(query.toLowerCase())!=-1) {
-
-                        EntityTimeLine entityTimeLine = entitiesTimeLineHashMap.get(key);
-                        String timeLine = entityTimeLine.toString();
-                        fos.write(timeLine.getBytes());
-                    }
+                    EntityTimeLine entityTimeLine = entitiesTimeLineHashMap.get(key);
+                    String timeLine = entityTimeLine.toString();
+                    fos.write(timeLine.getBytes());
                 }
                 fos.close();
             } catch (IOException e) {
@@ -217,7 +216,8 @@ public class GetTimeLinesFromNaf {
         }
         GetSemFromNafFile.processNafFileForActorPlaceInstances(baseUrl, kafSaxParser, semActors, semPlaces);
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-        GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
+        //GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
+        GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");

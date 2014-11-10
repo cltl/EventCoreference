@@ -161,7 +161,7 @@ public class OwlTime implements Serializable {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
            // System.out.println("date = " + date);
         }
     }
@@ -365,7 +365,7 @@ public class OwlTime implements Serializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("rawdate = " + rawdate);
+          //  System.out.println("rawdate = " + rawdate);
         }
         return foundTime;
     }

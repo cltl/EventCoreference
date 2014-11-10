@@ -47,7 +47,8 @@ public class GetSemFromNafFile {
         }
         processNafFileForActorPlaceInstances(baseUrl, kafSaxParser, semActors, semPlaces);
         SemTime docSemTime = processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-        processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
+        //processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
+        processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime);
     }
 
@@ -98,6 +99,45 @@ public class GetSemFromNafFile {
             }
         }
 
+    }
+    static void processNafFileForEventCoreferenceSets (String baseUrl, KafSaxParser kafSaxParser,
+                                                   ArrayList<SemObject> semEvents
+
+    ) {
+
+
+        /**
+         * Event instances
+         */
+
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                //// this is an event coreference set
+                //// no we get all the predicates for this set.
+                SemEvent semEvent = new SemEvent();
+                for (int j = 0; j < kafSaxParser.getKafEventArrayList().size(); j++) {
+                    KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
+                    if (Util.hasCorefTargetArrayList(event.getSpans(), kafCoreferenceSet.getSetsOfSpans())) {
+                        /// we want the event data
+                        ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
+                        semEvent.addNafMentions(mentionArrayList);
+                        semEvent.addConcepts(event.getExternalReferences());
+                    }
+
+                }
+                semEvent.addPhraseCountsForMentions(kafSaxParser);
+                String eventName = semEvent.getTopPhraseAsLabel();
+                //if (Util.hasAlphaNumeric(eventName)) {
+                if (eventName.length()>=MINEVENTLABELSIZE) {
+                    //semEvent.setId(baseUrl+event.getId());
+                    semEvent.setId(baseUrl+eventName+"Event");
+                    semEvent.setFactuality(kafSaxParser);
+                    semEvent.setIdByDBpediaReference();
+                    semEvents.add(semEvent);
+                }
+            }
+        }
     }
 
 
@@ -188,6 +228,7 @@ public class GetSemFromNafFile {
             semPlace.setNafMentions(mentionArrayList);
             semPlace.addPhraseCountsForMentions(kafSaxParser);
             semPlace.addConcepts(Util.getExternalReferences(entities));
+            /// next function replaces the id by the dbSpotLight URI if there is any
             semPlace.setIdByDBpediaReference();
             Util.addObject(semPlaces, semPlace);
         }
@@ -845,7 +886,8 @@ public class GetSemFromNafFile {
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/scale-test.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/increase-example/57VV-5311-F111-G0HJ.xml_7684191f264a9e21af56de7ec51cf2d5.naf.coref";
         //String pathToNafFile = "/Users/piek/newsreader-deliverables/papers/maplex/47P9-DCM0-0092-K267.xml";
-        String pathToNafFile = "/Users/piek/Desktop/MapLex/47T0-YSP0-018S-20DV.xml";
+        //String pathToNafFile = "/Users/piek/Desktop/MapLex/47T0-YSP0-018S-20DV.xml";
+        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/47T0-B4V0-01D6-Y3WM.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";

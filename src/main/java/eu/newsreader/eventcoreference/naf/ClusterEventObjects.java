@@ -102,40 +102,45 @@ public class ClusterEventObjects {
 
     static String getEventTypeString (SemEvent semEvent) {
         String eventType = "";
+        //// we prefer the frames listed in the external resources
         for (int k = 0; k < semEvent.getConcepts().size(); k++) {
             KafSense kafSense = semEvent.getConcepts().get(k);
             if (kafSense.getResource().equalsIgnoreCase("framenet")) {
                 //eventTypes += "fn:"+kafSense.getSensecode()+";";
-                if (communicationVector!=null && communicationVector.contains(kafSense.getSensecode().toLowerCase())) {
-                    eventType ="source";
+                if (communicationVector != null && communicationVector.contains(kafSense.getSensecode().toLowerCase())) {
+                    eventType = "source";
                     break;
-                }
-                else if (grammaticalVector!=null && grammaticalVector.contains(kafSense.getSensecode().toLowerCase())) {
-                    eventType ="grammatical";
+                } else if (grammaticalVector != null && grammaticalVector.contains(kafSense.getSensecode().toLowerCase())) {
+                    eventType = "grammatical";
                     break;
-                }
-                else if (contextualVector!=null && contextualVector.contains(kafSense.getSensecode().toLowerCase())) {
-                    eventType ="contextual";
+                } else if (contextualVector != null && contextualVector.contains(kafSense.getSensecode().toLowerCase())) {
+                    eventType = "contextual";
                     break;
                 }
             }
-            else if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
-                if (kafSense.getSensecode().equalsIgnoreCase("speech-cognition")) {
-                    eventType ="source";
-                    break;
-                } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
-                    eventType ="source";
-                    break;
-                } else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
-                    eventType ="source";
-                    break;
-                } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
-                    eventType ="grammatical";
-                    break;
-                } else {
-                    eventType ="contextual";
-                    break;
-                }
+        }
+        //// if none of the frames matched, we check the eventtype value that was given
+        if (eventType.isEmpty()) {
+            for (int k = 0; k < semEvent.getConcepts().size(); k++) {
+                 KafSense kafSense = semEvent.getConcepts().get(k);
+                 if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
+                     if (kafSense.getSensecode().equalsIgnoreCase("speech-cognition")) {
+                         eventType = "source";
+                         break;
+                     } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
+                         eventType = "source";
+                         break;
+                     } else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
+                         eventType = "source";
+                         break;
+                     } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
+                         eventType = "grammatical";
+                         break;
+                     } else {
+                         eventType = "contextual";
+                         break;
+                     }
+                 }
             }
         }
         return eventType;

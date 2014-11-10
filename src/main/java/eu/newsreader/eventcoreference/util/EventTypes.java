@@ -6,7 +6,7 @@ package eu.newsreader.eventcoreference.util;
 public class EventTypes {
 
     static public final String [] CONTEXTUAL = {"other", "contextual"};
-    static public final String [] COMMUNICATION = {"speech", "communication", "cognition"};
+    static public final String [] COMMUNICATION = {"speech", "communication", "cognition", "source"};
     static public final String [] GRAMMATICAL = {"grammatical"};
 
 

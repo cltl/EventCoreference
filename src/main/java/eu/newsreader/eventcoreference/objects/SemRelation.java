@@ -52,7 +52,9 @@ public class SemRelation implements Serializable {
     }
 
     public void addPredicate(String predicate) {
-        this.predicates.add(predicate);
+        if (!containsPredicateIgnoreCase(predicate)) {
+            this.predicates.add(predicate);
+        }
     }
 
     public boolean containsPredicateIgnoreCase (String predicate) {
@@ -137,7 +139,10 @@ public class SemRelation implements Serializable {
                 rel = ResourcesUri.pb+value;
             }
             else if (source.equalsIgnoreCase("propbank")) {
-                rel = ResourcesUri.pb+value;
+                if (value.indexOf("@")==-1) {
+                    /// skipping propbank/say.01@1
+                    rel = ResourcesUri.pb + value;
+                }
             }
             else if (source.equalsIgnoreCase("framenet")) {
                 rel = ResourcesUri.fn+value;
@@ -153,7 +158,10 @@ public class SemRelation implements Serializable {
             }
         }
         else {
-            rel = ResourcesUri.pb+role;
+            if (role.indexOf("@")==-1) {
+                /// skipping propbank/say.01@1
+                rel = ResourcesUri.pb + role;
+            }
         }
         return rel;
     }
