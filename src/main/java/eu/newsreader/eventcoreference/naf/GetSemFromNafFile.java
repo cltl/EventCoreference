@@ -100,6 +100,61 @@ public class GetSemFromNafFile {
         }
 
     }
+
+    static void fixEventCoreferenceSets (KafSaxParser kafSaxParser) {
+        ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                if (kafCoreferenceSet.getExternalReferences().size()>3) {
+                    HashMap<String, KafCoreferenceSet> corefMap = new HashMap<String, KafCoreferenceSet>();
+                    int nSubSets = 0;
+                    for (int j = 0; j < kafCoreferenceSet.getSetsOfSpans().size(); j++) {
+                        ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(j);
+                        String lemma = "";
+                        for (int k = 0; k < corefTargets.size(); k++) {
+                            CorefTarget corefTarget = corefTargets.get(k);
+                            KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
+                            if (kafTerm!=null) {
+                                lemma += kafTerm.getLemma()+" ";
+                            }
+                        }
+                        lemma = lemma.trim();
+                        if (corefMap.containsKey(lemma)) {
+                            KafCoreferenceSet kafCoreferenceSetNew = corefMap.get(lemma);
+                            kafCoreferenceSetNew.addSetsOfSpans(corefTargets);
+                            corefMap.put(lemma, kafCoreferenceSetNew);
+                        }
+                        else {
+                            nSubSets++;
+                            KafCoreferenceSet kafCoreferenceSetNew = new KafCoreferenceSet();
+                            String corefId = kafCoreferenceSet.getCoid()+"_"+nSubSets;
+                            kafCoreferenceSetNew.setCoid(corefId);
+                            kafCoreferenceSetNew.setType(kafCoreferenceSet.getType());
+                            kafCoreferenceSetNew.addSetsOfSpans(corefTargets);
+                            corefMap.put(lemma, kafCoreferenceSetNew);
+                        }
+                    }
+                    Set keySet = corefMap.keySet();
+                    Iterator<String> keys = keySet.iterator();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                        KafCoreferenceSet kafCoreferenceSetNew = corefMap.get(key);
+                        fixedSets.add(kafCoreferenceSetNew);
+                    }
+                }
+                else {
+                    fixedSets.add(kafCoreferenceSet);
+                }
+            }
+            else {
+                fixedSets.add(kafCoreferenceSet);
+            }
+        }
+        kafSaxParser.kafCorefenceArrayList = fixedSets;
+    }
+
+
     static void processNafFileForEventCoreferenceSets (String baseUrl, KafSaxParser kafSaxParser,
                                                    ArrayList<SemObject> semEvents
 
@@ -109,6 +164,8 @@ public class GetSemFromNafFile {
         /**
          * Event instances
          */
+        //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
+        fixEventCoreferenceSets(kafSaxParser);
 
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
@@ -131,7 +188,7 @@ public class GetSemFromNafFile {
                 //if (Util.hasAlphaNumeric(eventName)) {
                 if (eventName.length()>=MINEVENTLABELSIZE) {
                     //semEvent.setId(baseUrl+event.getId());
-                    semEvent.setId(baseUrl+eventName+"Event");
+                    semEvent.setId(baseUrl + eventName + "Event");
                     semEvent.setFactuality(kafSaxParser);
                     semEvent.setIdByDBpediaReference();
                     semEvents.add(semEvent);
@@ -887,7 +944,8 @@ public class GetSemFromNafFile {
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/increase-example/57VV-5311-F111-G0HJ.xml_7684191f264a9e21af56de7ec51cf2d5.naf.coref";
         //String pathToNafFile = "/Users/piek/newsreader-deliverables/papers/maplex/47P9-DCM0-0092-K267.xml";
         //String pathToNafFile = "/Users/piek/Desktop/MapLex/47T0-YSP0-018S-20DV.xml";
-        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/47T0-B4V0-01D6-Y3WM.xml";
+       // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/47T0-B4V0-01D6-Y3WM.xml";
+        String pathToNafFile = "/Users/piek/Desktop/naf_and_trig/5C37-HGT1-JBJ4-2472.xml_fb5a69273e6b8028fa2b9796eb62483b.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";

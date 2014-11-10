@@ -347,6 +347,8 @@ public class SemObject implements Serializable {
             ref = ResourcesUri.wn + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("framenet")) {
             ref = ResourcesUri.fn + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("eso")) {
+            ref = ResourcesUri.eso + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
             ref = ResourcesUri.pb + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("nombank")) {

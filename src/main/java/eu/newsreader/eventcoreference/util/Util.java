@@ -307,19 +307,12 @@ public class Util {
     static public ArrayList<ArrayList<CorefTarget>> getCorefTargetSetsForEntitySpans(ArrayList<ArrayList<CorefTarget>> entitySpans,
                                                                                      ArrayList<KafCoreferenceSet> coreferenceSets) {
         ArrayList<ArrayList<CorefTarget>> corefSet = new ArrayList<ArrayList<CorefTarget>>();
-        //ArrayList<ArrayList<CorefTarget>> corefSet = entitySpans;
-        //System.out.println("entitySpans = " + entitySpans.size());
         for (int i = 0; i < entitySpans.size(); i++) {
-            //System.out.println(i+": corefSet.size() = " + corefSet.size());
             ArrayList<CorefTarget> corefTargets = entitySpans.get(i);
             corefSet.add(corefTargets);
-           // System.out.println("corefTargets.toString() = " + corefTargets.toString());
             for (int j = 0; j < coreferenceSets.size(); j++){
                 KafCoreferenceSet kafCoreferenceSet = coreferenceSets.get(j);
-                //System.out.println("kafCoreferenceSet.getCoid() = " + kafCoreferenceSet.getCoid());
-                //System.out.println("kafCoreferenceSet.getCoid()+\":\"+kafCoreferenceSet.getSetsOfSpans().size() = " + kafCoreferenceSet.getCoid()+":"+kafCoreferenceSet.getSetsOfSpans().size());
                 if (intersectingWithAtLeastOneSetOfSpans(corefTargets, kafCoreferenceSet.getSetsOfSpans())) {
-               // if (matchingAtLeastOneSetOfSpans(corefTargets, kafCoreferenceSet.getSetsOfSpans())) {
                     for (int k = 0; k < kafCoreferenceSet.getSetsOfSpans().size(); k++) {
                         ArrayList<CorefTarget> targets = kafCoreferenceSet.getSetsOfSpans().get(k);
                         if (!hasCorefTargetArrayList(targets, corefSet)) {
@@ -494,19 +487,6 @@ public class Util {
         int span2MatchScore = ((matchCount * 100) / spans2.size());
         int matchScoreAverage = (span1MatchScore + span2MatchScore) / 2;
         if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
-/*
-            System.out.println("matchScoreAverage = " + matchScoreAverage);
-            for (int i = 0; i < spans1.size(); i++) {
-                CorefTarget corefTarget = spans1.get(i);
-                System.out.print(corefTarget.getId());
-            }
-            System.out.println();
-            for (int i = 0; i < spans2.size(); i++) {
-                CorefTarget corefTarget = spans2.get(i);
-                System.out.print(corefTarget.getId());
-            }
-            System.out.println();
-*/
             return true;
         }
         return false;
@@ -677,7 +657,7 @@ public class Util {
         for (int i = 0; i < semObjects.size(); i++) {
             SemObject semObject = semObjects.get(i);
             for (int m = 0; m < semObject.getNafMentions().size(); m++) {
-                // FOR EVERY MENTION, WE CHECK THE OVERLAP WITH THE KAFPARTICIPANT AND KEEP THE BEST
+                // FOR EVERY MENTION, WE CHECK THE OVERLAP WITH THE KAFPARTICIPANT AND KEEP THE ONE ABOVE THE SPANMATCHTHRESHOLD
                 NafMention nafMention = semObject.getNafMentions().get(m);
                 int matchCount = 0;
                 int nContentWordsNafMention = 0;

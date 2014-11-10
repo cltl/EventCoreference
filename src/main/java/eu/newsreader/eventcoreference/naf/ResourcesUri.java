@@ -34,6 +34,8 @@ public class ResourcesUri {
 
     static public void prefixModel (Model model) {
         model.setNsPrefix("fn", ResourcesUri.fn);
+        model.setNsPrefix("nwrdata", ResourcesUri.nwrdata);
+        model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
         model.setNsPrefix("eso", ResourcesUri.eso);
 /*      //REMOVED DUE TO ILLEGAL CHARACTERS
         model.setNsPrefix("wn", ResourcesUri.wn);
