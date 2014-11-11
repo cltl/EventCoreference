@@ -45,32 +45,28 @@ public class JenaSerialization {
         // System.out.println("EVENTS");
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
-            semEvent.addToJenaModel(instanceModel, Sem.Event);
+            //semEvent.addToJenaModel(instanceModel, Sem.Event);
+            semEvent.addToJenaModelCondensed(instanceModel, Sem.Event);
         }
 
         //  System.out.println("ACTORS");
         for (int i = 0; i < semActors.size(); i++) {
             SemObject semActor = semActors.get(i);
-            semActor.addToJenaModel(instanceModel, Sem.Actor);
+           // semActor.addToJenaModel(instanceModel, Sem.Actor);
+            semActor.addToJenaModelCondensed(instanceModel, Sem.Actor);
         }
 
         //  System.out.println("PLACES");
         for (int i = 0; i < semPlaces.size(); i++) {
             SemObject semPlace = semPlaces.get(i);
-            semPlace.addToJenaModel(instanceModel, Sem.Place);
+           // semPlace.addToJenaModel(instanceModel, Sem.Place);
+            semPlace.addToJenaModelCondensed(instanceModel, Sem.Place);
         }
-/*        if (!docSemTime.getPhrase().isEmpty()) {
-            docSemTime.addToJenaModelDocTimeInterval(instanceModel);
-        }
-        else {
-            //  System.out.println("empty phrase for docSemTime = " + docSemTime.getId());
-        }*/
-
         // System.out.println("TIMES");
         for (int i = 0; i < semTimes.size(); i++) {
             SemTime semTime = (SemTime) semTimes.get(i);
             //semTime.addToJenaModel(instanceModel, Sem.Time);
-            semTime.addToJenaModelTimeInterval(instanceModel);
+            semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
         }
 
         //System.out.println("RELATIONS");
@@ -131,32 +127,30 @@ public class JenaSerialization {
             ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
             for (int c = 0; c < compositeEvents.size(); c++) {
                 CompositeEvent compositeEvent = compositeEvents.get(c);
-                compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
+                //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
+                compositeEvent.getEvent().addToJenaModelCondensed(instanceModel, Sem.Event);
 
                 //  System.out.println("ACTORS");
                 for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
                     SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
-                    semActor.addToJenaModel(instanceModel, Sem.Actor);
+                   // semActor.addToJenaModel(instanceModel, Sem.Actor);
+                    semActor.addToJenaModelCondensed(instanceModel, Sem.Actor);
                 }
 
                 //  System.out.println("PLACES");
                 for (int i = 0; i < compositeEvent.getMySemPlaces().size(); i++) {
                     SemPlace semPlace = (SemPlace) compositeEvent.getMySemPlaces().get(i);
-                    semPlace.addToJenaModel(instanceModel, Sem.Place);
+                    //semPlace.addToJenaModel(instanceModel, Sem.Place);
+                    semPlace.addToJenaModelCondensed(instanceModel, Sem.Place);
                 }
 
-/*                if (compositeEvent.getMyDocTimes().size()>0) {
-                    for (int i = 0; i < compositeEvent.getMyDocTimes().size(); i++) {
-                        SemTime semTime = compositeEvent.getMyDocTimes().get(i);
-                        semTime.addToJenaModelDocTimeInterval(instanceModel);
-                    }
-                }*/
                 // System.out.println("TIMES");
                 // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
                 for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
                     SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
                     //semTime.addToJenaModel(instanceModel, Sem.Time);
-                    semTime.addToJenaModelTimeInterval(instanceModel);
+                    //semTime.addToJenaModelTimeInterval(instanceModel);
+                    semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                 }
 
                 for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {

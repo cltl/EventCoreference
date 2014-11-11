@@ -151,6 +151,12 @@ public class SemRelation implements Serializable {
              //   rel = ResourcesUri.vn+value;
             }
             else if (source.equalsIgnoreCase("eso")) {
+                //// IN CASE THE ESO CONSTRAINTS DO NOT INCLUDE THE VERB TYPE
+                int idx = value.indexOf("@");
+                //Removing@translocation-theme
+                if (idx>-1) {
+                    value = value.substring(idx);
+                }
                 rel = ResourcesUri.eso+value;
             }
             else if (source.equalsIgnoreCase("nombank")) {
@@ -182,14 +188,7 @@ public class SemRelation implements Serializable {
                 subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
             } else {
                 if (predicate.toLowerCase().startsWith("hassem")) {
-/*                   if (predicate.toLowerCase().startsWith("hassemtime")) {
-                       System.out.println("this.getSubject() = " + this.getSubject());
-                       System.out.println("predicates = " + predicates.toString());
-                       System.out.println("this.getObject() = " + this.getObject());
-                   }*/
                    semProperty = getSemRelationType(predicate);
-                    // IF YOU ALWAYS WANT TO HAVE A SEMACTOR INCLUDE NEXT LINE
-                   //subject.addProperty(semProperty, object);
                 } else {
                     predicate = getRoleRelation(predicate);
                     if (!predicate.isEmpty()) {
@@ -200,8 +199,18 @@ public class SemRelation implements Serializable {
                 }
             }
         }
+
+        //// CHOOSE ONE OF THE TWO OPTIONS A. or B.
+        //// A.
         //// ONLY ADDS SEMACTOR IF NO OTHER PROPERTY GENERATED
-        if (!subActor && semProperty!=null) {
+/*        if (!subActor && semProperty!=null) {
+            if (semProperty != Sem.hasSubType) {
+                subject.addProperty(semProperty, object);
+            }
+        }*/
+        ///// B.
+        //// ALWAYS ADDS SEMACTOR IF NOT NULL
+        if (semProperty!=null) {
             if (semProperty != Sem.hasSubType) {
                 subject.addProperty(semProperty, object);
             }

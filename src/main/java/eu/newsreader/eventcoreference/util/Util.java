@@ -23,6 +23,7 @@ public class Util {
     static public final int SPANMINLOCATION = 2;
     static public final int SPANMAXPARTICIPANT = 6;
     static public final int SPANMINPARTICIPANT = 2;
+    static public final int SPANMAXCOREFERENTSET = 5;
 
     /**
      * Required to be able to write Composite SemEvent Objects to existing object files
@@ -64,7 +65,8 @@ public class Util {
         }
         if (!valueMatch) {
             SemRelation semRelation = new SemRelation();
-            String relationInstanceId = baseUrl+"factValue_"+factRelations.size()+1;
+            //String relationInstanceId = baseUrl+"factValue_"+factRelations.size()+1;
+            String relationInstanceId = baseUrl+"fv"+factRelations.size()+1;  // shorter form for triple store
             semRelation.setId(relationInstanceId);
             semRelation.addMention(nafMention);
             semRelation.addPredicate("hasFactBankValue");
@@ -315,8 +317,11 @@ public class Util {
                 if (intersectingWithAtLeastOneSetOfSpans(corefTargets, kafCoreferenceSet.getSetsOfSpans())) {
                     for (int k = 0; k < kafCoreferenceSet.getSetsOfSpans().size(); k++) {
                         ArrayList<CorefTarget> targets = kafCoreferenceSet.getSetsOfSpans().get(k);
-                        if (!hasCorefTargetArrayList(targets, corefSet)) {
-                            corefSet.add(targets);
+                        if (targets.size()<=SPANMAXCOREFERENTSET) {
+                            //// WE SKIP ABSURD SPANS FOR COREFERENCE
+                            if (!hasCorefTargetArrayList(targets, corefSet)) {
+                                corefSet.add(targets);
+                            }
                         }
                     }
                 }

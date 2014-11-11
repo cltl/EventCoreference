@@ -101,15 +101,6 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
             NafMention s = this.getNafMentions().get(i);
             str += s.toString()+"\n";
         }
-/*
-        for (int i = 0; i < this.getMentions().size(); i++) {
-            ArrayList<eu.kyotoproject.kaf.CorefTarget> mentions = this.getMentions().get(i);
-            for (int j = 0; j < mentions.size(); j++) {
-                eu.kyotoproject.kaf.CorefTarget corefTarget = mentions.get(j);
-                str += corefTarget.toString();
-            }
-        }
-*/
         str += "</mentions>\n";
         str += "</semEvent>\n";
         return str;
@@ -214,6 +205,36 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         }
 
         resource.addProperty(RDF.type, Sem.Time);
+
+        Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
+        resource.addProperty(RDF.type, interval);
+
+        Resource value = model.createResource(this.getOwlTime().getDateString());
+        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+        resource.addProperty(property, value);
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
+            Resource targetResource = model.createResource(nafMention.toString());
+            resource.addProperty(gaf, targetResource);
+
+        }
+
+    }
+
+    public void addToJenaModelTimeIntervalCondensed(Model model) {
+        this.getOwlTime().addToJenaModelOwlTimeInstant(model);
+
+        Resource resource = model.createResource(this.getURI());
+        resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+
+        /*for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+        }*/
+
+        //resource.addProperty(RDF.type, Sem.Time);
 
         Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
         resource.addProperty(RDF.type, interval);

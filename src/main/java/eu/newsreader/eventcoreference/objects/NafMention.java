@@ -148,6 +148,14 @@ public class NafMention implements Serializable {
         if (!offSetStart.isEmpty() && !offSetEnd.isEmpty())  {
             str +="char="+this.offSetStart+","+this.offSetEnd;
         }
+        return str;
+    }
+
+    public String toStringFull () {
+        String str = baseUri;
+        if (!offSetStart.isEmpty() && !offSetEnd.isEmpty())  {
+            str +="char="+this.offSetStart+","+this.offSetEnd;
+        }
         if (tokensIds.size()>0) {
             str += "&word=";
             for (int i = 0; i < tokensIds.size(); i++) {
