@@ -118,8 +118,8 @@ public class JenaSerialization {
 
     static public void addJenaCompositeEvents (
             Dataset ds ,
-            Model provenanceModel ,
             Model instanceModel,
+            Model provenanceModel ,
             HashMap<String, ArrayList<CompositeEvent>> semEvents,
             HashMap <String, SourceMeta> sourceMetaHashMap) {
 

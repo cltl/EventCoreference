@@ -92,6 +92,9 @@ public class ClusterEventObjects {
         communicationVector = Util.ReadFileToStringVector(comFrameFile);
         grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
         contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
+        System.out.println("communicationVector = " + communicationVector.size());
+        System.out.println("contextualVector = " + contextualVector.size());
+        System.out.println("grammaticalVector = " + grammaticalVector.size());
 
         try {
             processFolderEvents(projectName, new File(pathToNafFolder), new File (pathToEventFolder), extension);
@@ -101,30 +104,45 @@ public class ClusterEventObjects {
     }
 
     static String getEventTypeString (SemEvent semEvent) {
+        boolean DEBUG = false;
         String eventType = "";
         //// we prefer the frames listed in the external resources
         for (int k = 0; k < semEvent.getConcepts().size(); k++) {
             KafSense kafSense = semEvent.getConcepts().get(k);
             if (kafSense.getResource().equalsIgnoreCase("framenet")) {
-                //eventTypes += "fn:"+kafSense.getSensecode()+";";
-                if (communicationVector != null && communicationVector.contains(kafSense.getSensecode().toLowerCase())) {
+/*                if (kafSense.getSensecode().equalsIgnoreCase("Cause_change_of_position_on_a_scale")) {
+                    DEBUG = true;
+                }
+                else {
+                    DEBUG = false;
+                }*/
+
+                if (contextualVector != null && contextualVector.contains(kafSense.getSensecode().toLowerCase())) {
+                    eventType = "contextual";
+                    break;
+                }
+                else if (communicationVector != null && communicationVector.contains(kafSense.getSensecode().toLowerCase())) {
                     eventType = "source";
                     break;
                 } else if (grammaticalVector != null && grammaticalVector.contains(kafSense.getSensecode().toLowerCase())) {
                     eventType = "grammatical";
                     break;
-                } else if (contextualVector != null && contextualVector.contains(kafSense.getSensecode().toLowerCase())) {
-                    eventType = "contextual";
-                    break;
                 }
             }
         }
+        if (DEBUG) System.out.println("eventType = " + eventType);
         //// if none of the frames matched, we check the eventtype value that was given
         if (eventType.isEmpty()) {
             for (int k = 0; k < semEvent.getConcepts().size(); k++) {
                  KafSense kafSense = semEvent.getConcepts().get(k);
                  if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
                      if (kafSense.getSensecode().equalsIgnoreCase("speech-cognition")) {
+                         eventType = "source";
+                         break;
+                     } else if (kafSense.getSensecode().equalsIgnoreCase("speech_cognition")) {
+                         eventType = "source";
+                         break;
+                     } else if (kafSense.getSensecode().equalsIgnoreCase("speech")) {
                          eventType = "source";
                          break;
                      } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
@@ -143,6 +161,17 @@ public class ClusterEventObjects {
                  }
             }
         }
+        else {
+            ///// we are going to overwrite any event type since the frame mapping is more trustworthy
+            for (int k = 0; k < semEvent.getConcepts().size(); k++) {
+                KafSense kafSense = semEvent.getConcepts().get(k);
+                if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
+                    kafSense.setSensecode(eventType);
+                        break;
+                }
+            }
+        }
+        if (DEBUG) System.out.println("final eventType = " + eventType);
         return eventType;
     }
 
