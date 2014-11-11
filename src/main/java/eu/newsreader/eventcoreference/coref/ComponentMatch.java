@@ -257,15 +257,50 @@ public class ComponentMatch {
         for (int i = 0; i < compositeEvent1.getMySemRelations().size(); i++) {
             SemRelation semRelation1 = compositeEvent1.getMySemRelations().get(i);
             if (RoleLabels.isROLE(semRelation1.getPredicates(), roles)) {
-              //  System.out.println("semRelation1.getPredicate() = " + semRelation1.getPredicate());
                 for (int j = 0; j < compositeEvent2.getMySemRelations().size(); j++) {
-                    SemRelation semRelation2 = compositeEvent1.getMySemRelations().get(i);
+                    SemRelation semRelation2 = compositeEvent2.getMySemRelations().get(j);
                     if (RoleLabels.isROLE(semRelation2.getPredicates(), roles)) {
                         if (semRelation1.getObject().equals(semRelation2.getObject())) {
-                          //  System.out.println("semRelation2.getObject() = " + semRelation2.getObject());
                             return true;
                         }
                     }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determines if all objects of two predicates are the same for a set of relations, where the URI of the object should match
+     * and the role should match a set of roles. The role of a SemRelation is either the predicate or a set of predicates
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @param roles
+     * @return
+     */
+    public static boolean matchingCompositeEventSemActorAll (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2, String[] roles) {
+        boolean ALLMATCH = false;
+        for (int i = 0; i < compositeEvent1.getMySemRelations().size(); i++) {
+            SemRelation semRelation1 = compositeEvent1.getMySemRelations().get(i);
+            if (RoleLabels.isROLE(semRelation1.getPredicates(), roles)) {
+              //  System.out.println("semRelation1.getPredicate() = " + semRelation1.getPredicate());
+                for (int j = 0; j < compositeEvent2.getMySemRelations().size(); j++) {
+                    SemRelation semRelation2 = compositeEvent2.getMySemRelations().get(j);
+                    if (RoleLabels.isROLE(semRelation2.getPredicates(), roles)) {
+                        //// both events have the role that is required and can potentially match
+                        if (!semRelation1.getObject().equals(semRelation2.getObject())) {
+                          //  System.out.println("semRelation2.getObject() = " + semRelation2.getObject());
+                            /// all objects should match so if there one that does not then we can bail out.
+                            return false;
+                        }
+                        else {
+                            ALLMATCH = true;
+                        }
+                    }
+                }
+                if (ALLMATCH) {
+                    /// there is at least one matching role and all the objects match
+                    return true;
                 }
             }
         }
@@ -285,13 +320,6 @@ public class ComponentMatch {
             }
         }
         return false;
-/*        if (semRelation1.getPredicate().equals(semRelation2.getPredicate())
-                &&
-                semRelation1.getObject().equals(semRelation2.getObject())) {
-            return true;
-        } else {
-            return false;
-        }*/
     }
 
     public static boolean compareComponents (SemObject mySemEvent,

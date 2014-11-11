@@ -169,6 +169,9 @@ public class NafMention implements Serializable {
     }
 
     public boolean sameMention (NafMention mention) {
+        if (!this.getBaseUri().equals(mention.getBaseUri())) {
+            return false;
+        }
         if (!this.getOffSetStart().equals(mention.getOffSetStart())) {
             return false;
         }
@@ -181,24 +184,76 @@ public class NafMention implements Serializable {
                 return false;
             }
         }
+        for (int i = 0; i < mention.getTokensIds().size(); i++) {
+            String tokenId = mention.getTokensIds().get(i);
+            if (!this.getTokensIds().contains(tokenId)) {
+                return false;
+            }
+        }
         for (int i = 0; i < termsIds.size(); i++) {
             String termId = termsIds.get(i);
             if (!mention.getTermsIds().contains(termId)) {
                 return false;
             }
         }
+        for (int i = 0; i < mention.getTermsIds().size(); i++) {
+            String termId = mention.getTermsIds().get(i);
+            if (!this.getTermsIds().contains(termId)) {
+                return false;
+            }
+        }
         return true;
     }
 
+    public boolean sameMentionForDifferentSource (NafMention mention) {
+        if (!this.getBaseUri().equals(mention.getBaseUri())) {
+         //   System.out.println("mention.toString() = " + mention.toString());
+         //   System.out.println("this.toString() = " + this.toString());
+            if (!this.getOffSetStart().equals(mention.getOffSetStart())) {
+                return false;
+            }
+            if (!this.getOffSetEnd().equals(mention.getOffSetEnd())) {
+                return false;
+            }
+            for (int i = 0; i < tokensIds.size(); i++) {
+                String tokenId = tokensIds.get(i);
+                if (!mention.getTokensIds().contains(tokenId)) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < mention.getTokensIds().size(); i++) {
+                String tokenId = mention.getTokensIds().get(i);
+                if (!this.getTokensIds().contains(tokenId)) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < termsIds.size(); i++) {
+                String termId = termsIds.get(i);
+                if (!mention.getTermsIds().contains(termId)) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < mention.getTermsIds().size(); i++) {
+                String termId = mention.getTermsIds().get(i);
+                if (!this.getTermsIds().contains(termId)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else {
+       //     System.out.println("mention.getBaseUri() = " + mention.getBaseUri());
+            return false;
+        }
+    }
+
     public boolean hasMention (ArrayList<NafMention> mentions) {
-        boolean has = false;
         for (int i = 0; i < mentions.size(); i++) {
             NafMention nafMention = mentions.get(i);
             if (this.sameMention(nafMention)) {
-                has = true;
-                break;
+                return true;
             }
         }
-        return  has;
+        return  false;
     }
 }

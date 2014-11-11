@@ -5,6 +5,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.objects.CompositeEvent;
+import eu.newsreader.eventcoreference.objects.NafMention;
 import eu.newsreader.eventcoreference.objects.SourceMeta;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
@@ -29,15 +30,15 @@ import java.util.Set;
  */
 public class MatchEventObjects {
     static public void main (String [] args) {
-        String eventType = "contextual";
+        String eventType = "source";
         HashMap<String, SourceMeta> sourceMetaHashMap = null;
         WordnetData wordnetData = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
-        boolean singleOutput = false;
+        boolean singleOutput = true;
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/speech";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/contextual";
-        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/car-work-sample/events/contextual";
+        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/events/source";
         //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/change-of-scale/events/contextual";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/grammatical";
         //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/events/other";
@@ -169,11 +170,17 @@ public class MatchEventObjects {
 
                     for (int j = 0; j < myCompositeEvents.size(); j++) {
                         boolean match = false;
+                        boolean same = false;
                         CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
                         for (int k = 0; k < finalCompositeEvents.size(); k++) {
                             CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
+                           // checkCompositeEvents(myCompositeEvent, finalCompositeEvent);
+
+                            if (myCompositeEvent.getEvent().getId().equals(finalCompositeEvent.getEvent().getId())) {
+                                same = true;
+                            }
                             //if (true) {
-                            if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
+                            else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
                                 match = true;
                                 finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                                 finalCompositeEvent.mergeObjects(myCompositeEvent);
@@ -184,7 +191,7 @@ public class MatchEventObjects {
                                 break;
                             }
                         }
-                        if (!match) {
+                        if (!match && !same) {
                             finalCompositeEvents.add(myCompositeEvent);
                         }
                     }
@@ -232,23 +239,29 @@ public class MatchEventObjects {
                     ArrayList<CompositeEvent> myCompositeEvents = localEventMap.get(lemma);
                     for (int j = 0; j < myCompositeEvents.size(); j++) {
                         boolean match = false;
+                        boolean same = false;
                         CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
                         for (int k = 0; k < finalCompositeEvents.size(); k++) {
                             CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
+                           // checkCompositeEvents(myCompositeEvent, finalCompositeEvent);
+
+                            if (myCompositeEvent.getEvent().getId().equals(finalCompositeEvent.getEvent().getId())) {
+                                same = true;
+                            }
                             //if (true) {
-                            if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
-                                nMatches++;
-                                match = true;
-                                finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
-                                finalCompositeEvent.mergeObjects(myCompositeEvent);
-                                finalCompositeEvent.mergeRelations(myCompositeEvent);
-                                finalCompositeEvent.mergeFactRelations(myCompositeEvent);
-                                /// we thus merge with the first matching event and do not consider others that may be bettter!!!!!
-                                //  System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
-                                break;
+                            else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
+                                   nMatches++;
+                                   match = true;
+                                   finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
+                                   finalCompositeEvent.mergeObjects(myCompositeEvent);
+                                   finalCompositeEvent.mergeRelations(myCompositeEvent);
+                                   finalCompositeEvent.mergeFactRelations(myCompositeEvent);
+                                   /// we thus merge with the first matching event and do not consider others that may be bettter!!!!!
+                                   //  System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                                   break;
                             }
                         }
-                        if (!match) {
+                        if (!match && !same) {
                             finalCompositeEvents.add(myCompositeEvent);
                         }
                     }
@@ -266,6 +279,19 @@ public class MatchEventObjects {
        // System.out.println("nMatches = " + nMatches);
     }
 
+    static void checkCompositeEvents (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
+        for (int m = 0; m < compositeEvent1.getEvent().getNafMentions().size(); m++) {
+            NafMention nafMention = compositeEvent1.getEvent().getNafMentions().get(m);
+            for (int l = 0; l < compositeEvent2.getEvent().getNafMentions().size(); l++) {
+                NafMention mention = compositeEvent2.getEvent().getNafMentions().get(l);
+                if (mention.sameMentionForDifferentSource(nafMention)) {
+                    String fileName1 =  nafMention.getBaseUriWithoutId().substring(nafMention.getBaseUriWithoutId().lastIndexOf("/"));
+                    String fileName2 =  mention.getBaseUriWithoutId().substring(mention.getBaseUriWithoutId().lastIndexOf("/"));
+                    System.out.println("diff "+fileName1+" "+fileName2);
+                }
+            }
+        }
 
+    }
 
 }

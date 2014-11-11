@@ -140,16 +140,6 @@ public class CompositeEvent implements Serializable{
                 SemRelation relation = this.getMySemRelations().get(j);
                 if ((relation.containsPredicateIgnoreCase("hassemTime")) && (semRelation.containsPredicateIgnoreCase("hassemTime")))  {
                     //// make sure the doctime is also considered
-/*                    ArrayList<SemTime> times1 = this.getMySemTimes();
-                    for (int k = 0; k < this.getMyDocTimes().size(); k++) {
-                        SemTime docTime =  this.getMyDocTimes().get(k);
-                        times1.add(docTime);
-                    }
-                    ArrayList<SemTime> times2 = event.getMySemTimes();
-                    for (int k = 0; k < event.getMyDocTimes().size(); k++) {
-                        SemTime docTime = event.getMyDocTimes().get(k);
-                        times2.add(docTime);
-                    }*/
                     if (Util.matchTimeReference(this.getMySemTimes(), event.getMySemTimes(), relation.getObject(), semRelation.getObject())) {
                         relation.addMentions(semRelation.getNafMentions());
                        // System.out.println("relation.getNafMentions().toString() = " + relation.getNafMentions().toString());
@@ -162,9 +152,7 @@ public class CompositeEvent implements Serializable{
                 }
                 else if (ComponentMatch.equalSemRelation(semRelation, relation)) {
                     /// we already have this relation so we add the mentions
-                   // System.out.println("relation.getNafMentions().size() = " + relation.getNafMentions().size());
                     relation.addMentions(semRelation.getNafMentions());
-                   // System.out.println("relation.getNafMentions().size() = " + relation.getNafMentions().size());
                     match = true;
                     break;
                 }
