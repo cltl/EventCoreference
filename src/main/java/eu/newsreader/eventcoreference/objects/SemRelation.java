@@ -235,7 +235,12 @@ public class SemRelation implements Serializable {
 
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
+
+            //http://www.newsreader-project.eu/data/cars/2003/10/10/49RC-C8V0-01D6-W1FX.xml
+            //http://www.newsreader-project.eu/data/cars/2003/01/01/47KF-XY70-010F-G3GG.xml
             if (sourceMetaHashMap.containsKey(nafMention.getBaseUriWithoutId())) {
+               // System.out.println("nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
+
                 SourceMeta sourceMeta = sourceMetaHashMap.get(nafMention.getBaseUriWithoutId());
                 Property property = provenanceModel.createProperty(ResourcesUri.prov+"wasAttributedTo");
                 if (!sourceMeta.getAuthor().isEmpty()) {

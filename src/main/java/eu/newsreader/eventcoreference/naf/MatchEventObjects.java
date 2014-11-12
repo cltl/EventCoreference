@@ -43,7 +43,7 @@ public class MatchEventObjects {
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/grammatical";
         //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/events/other";
        //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out/events/other";
-        String pathToSourceDataFile = "";
+        String pathToSourceDataFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v1_2014/resources/LN-coremetadata.txt";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--event-folder") && args.length>(i+1)) {
@@ -76,9 +76,11 @@ public class MatchEventObjects {
             }
             else if (arg.equals("--source-data") && args.length>(i+1)) {
                 pathToSourceDataFile = args[i+1];
-                sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
-               // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
             }
+        }
+        if (!pathToSourceDataFile.isEmpty()) {
+            sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
+            System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
         }
         if (singleOutput) {
             processEventFilesSingleOutputFile(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
