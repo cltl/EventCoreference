@@ -149,8 +149,8 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         this.getOwlTime().addToJenaModelOwlTimeInstant(model);
 
         Resource resource = model.createResource(this.getURI());
-        for (int i = 0; i < phraseCounts.size(); i++) {
-            PhraseCount phraseCount = phraseCounts.get(i);
+        for (int i = 0; i < this.getPhraseCounts().size(); i++) {
+            PhraseCount phraseCount = this.getPhraseCounts().get(i);
             resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
         }
 
@@ -163,8 +163,8 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
+        for (int i = 0; i < this.getNafMentions().size(); i++) {
+            NafMention nafMention = this.getNafMentions().get(i);
             Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
             Resource targetResource = model.createResource(nafMention.toString());
             resource.addProperty(gaf, targetResource);
@@ -172,14 +172,14 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
     }
 
     public void addToJenaModelDocTimeInstant(Model model) {
-        if (nafMentions.size() > 0) {
+        if (this.getNafMentions().size() > 0) {
             OwlTime owlTime = new OwlTime();
-            owlTime.parsePublicationDate(phraseCounts.get(0).getPhrase());
+            owlTime.parsePublicationDate(this.getPhraseCounts().get(0).getPhrase());
             owlTime.addToJenaModelOwlTimeInstant(model);
 
             Resource resource = model.createResource(this.getURI());
-            for (int i = 0; i < phraseCounts.size(); i++) {
-                PhraseCount phraseCount = phraseCounts.get(i);
+            for (int i = 0; i < this.getPhraseCounts().size(); i++) {
+                PhraseCount phraseCount = this.getPhraseCounts().get(i);
                 resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
             }
 
@@ -199,8 +199,8 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         this.getOwlTime().addToJenaModelOwlTimeInstant(model);
 
         Resource resource = model.createResource(this.getURI());
-        for (int i = 0; i < phraseCounts.size(); i++) {
-            PhraseCount phraseCount = phraseCounts.get(i);
+        for (int i = 0; i < this.getPhraseCounts().size(); i++) {
+            PhraseCount phraseCount = this.getPhraseCounts().get(i);
             resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
         }
 
@@ -213,8 +213,8 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
+        for (int i = 0; i < this.getNafMentions().size(); i++) {
+            NafMention nafMention = this.getNafMentions().get(i);
             Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
             Resource targetResource = model.createResource(nafMention.toString());
             resource.addProperty(gaf, targetResource);
@@ -243,8 +243,8 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
+        for (int i = 0; i < this.getNafMentions().size(); i++) {
+            NafMention nafMention = this.getNafMentions().get(i);
             Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
             Resource targetResource = model.createResource(nafMention.toString());
             resource.addProperty(gaf, targetResource);
@@ -254,14 +254,14 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
     }
 
     public void addToJenaModelDocTimeInterval(Model model) {
-        if (phraseCounts.size() > 0) {
+        if (this.getPhraseCounts().size() > 0) {
             OwlTime owlTime = new OwlTime();
             owlTime.parsePublicationDate(getPhrase());
             owlTime.addToJenaModelOwlTimeInstant(model);
 
             Resource resource = model.createResource(this.getURI());
-            for (int i = 0; i < phraseCounts.size(); i++) {
-                PhraseCount phraseCount = phraseCounts.get(i);
+            for (int i = 0; i < this.getPhraseCounts().size(); i++) {
+                PhraseCount phraseCount = this.getPhraseCounts().get(i);
                 resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
             }
 

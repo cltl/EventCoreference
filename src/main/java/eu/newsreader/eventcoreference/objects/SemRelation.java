@@ -155,7 +155,7 @@ public class SemRelation implements Serializable {
                 int idx = value.indexOf("@");
                 //Removing@translocation-theme
                 if (idx>-1) {
-                    value = value.substring(idx);
+                    value = value.substring(idx+1);
                 }
                 rel = ResourcesUri.eso+value;
             }

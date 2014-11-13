@@ -43,7 +43,7 @@ public class ClusterEventObjects {
     static Vector<String> communicationVector = null;
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
-
+    static final int TIMEEXPRESSIONMAX = 5;
 
     static public void main (String [] args) {
         if (args.length==0) {
@@ -143,6 +143,9 @@ public class ClusterEventObjects {
                          eventType = "source";
                          break;
                      } else if (kafSense.getSensecode().equalsIgnoreCase("speech")) {
+                         eventType = "source";
+                         break;
+                     } else if (kafSense.getSensecode().equalsIgnoreCase("source")) {
                          eventType = "source";
                          break;
                      } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
@@ -283,7 +286,7 @@ public class ClusterEventObjects {
                     String timePhrase = "-" + myTime.getOwlTime().toString();
                     timeFile = new File(folder.getAbsolutePath() + "/" + "events" + timePhrase + ".obj");
                 }
-                else {
+                else if (outputTimes.size()<= TIMEEXPRESSIONMAX){
                     /// special case if multiple times, what to do? create a period?
                     //// ?????
                     TreeSet<String> treeSet = new TreeSet<String>();

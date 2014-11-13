@@ -15,8 +15,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -28,14 +26,14 @@ import java.util.ArrayList;
  */
 public class SemObject implements Serializable {
 
-    String id;
-    String uri;
-    double score;
-    ArrayList<KafSense> concepts;
-    ArrayList<PhraseCount> phraseCounts;
-    String lcs;
-    String label;
-    ArrayList<NafMention> nafMentions;
+    private String id;
+    private String uri;
+    private double score;
+    private ArrayList<KafSense> concepts;
+    private ArrayList<PhraseCount> phraseCounts;
+    private String lcs;
+    private String label;
+    private ArrayList<NafMention> nafMentions;
 
     public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();
@@ -150,27 +148,41 @@ public class SemObject implements Serializable {
     }
 
     public void setIdByDBpediaReference() {
-        //// we are getting the highest scoring external reference now, which is the first
-        /*
+        //// We first check if there has been a rerank of the references if not
+        //// then we are getting the highest scoring external reference, which is the first
+        /*                                                                             -
               <externalReferences>
         <externalRef resource="spotlight_v1" reference="http://dbpedia.org/resource/Michigan" confidence="1.0" reftype="en"/>
         <externalRef resource="spotlight_v1" reference="http://dbpedia.org/resource/List_of_United_States_Senators_from_Michigan" confidence="9.9521784E-14" reftype="en"/>
+              <externalRef resource="vua-type-reranker-v1.0" reference="http://dbpedia.org/resource/North_Dakota" confidence="17"/>
+
       </externalReferences>
 
          */
 
+        boolean RERANK = false;
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
-            if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
-                    (kafSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
+            if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
+                id = getNameSpaceTypeReference(kafSense);
+                RERANK = true;
+                break;
+            }
+        }
+        if (!RERANK) {
+            for (int i = 0; i < concepts.size(); i++) {
+                KafSense kafSense = concepts.get(i);
+                if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
+                        (kafSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
                     - using them as the subject of extracted triples (suggested), or
                     - linking them to entity/event URIs using owl:sameAs triples
                  */
-                id = getNameSpaceTypeReference(kafSense);
-                break;
+                    id = getNameSpaceTypeReference(kafSense);
+                    break;
+                }
             }
         }
     }
@@ -231,12 +243,13 @@ public class SemObject implements Serializable {
                 if (goodPhrase(phraseCount)) {
                     if (phraseCount.getCount() > top) {
                         if (Util.hasAlphaNumeric(phraseCount.getPhrase())) {
-                            try {
+                            label = phraseCount.getPhrase();
+/*                            try {
                                 label = URLEncoder.encode(phraseCount.getPhrase(), "UTF-8");
                                 //  System.out.println("label = " + label);
                             } catch (UnsupportedEncodingException e) {
                                 //  e.printStackTrace();
-                            }
+                            }*/
                         } else {
                             //  System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
                         }
