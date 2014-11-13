@@ -178,7 +178,45 @@ public class SemRelation implements Serializable {
 
         Resource subject = relationModel.createResource(this.getSubject());
         Resource object = relationModel.createResource(this.getObject());
+
         Property semProperty = null;
+        boolean place = false;
+        for (int i = 0; i < predicates.size(); i++) {
+            String predicate = predicates.get(i);
+            if (predicate.equalsIgnoreCase("hasFactBankValue")) {
+                Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue + predicate);
+                subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
+            } else {
+                if (predicate.toLowerCase().startsWith("hassem")) {
+                    semProperty = getSemRelationType(predicate);
+                } else {
+                    predicate = getRoleRelation(predicate);
+                    if (!predicate.isEmpty()) {
+                        Property fnProperty = relationModel.createProperty(predicate);
+                        subject.addProperty(fnProperty, object);
+                        if (predicate.toLowerCase().endsWith("am-loc")) {
+                            place = true;
+                        }
+                    }
+                }
+            }
+        }
+        if (place) {
+            semProperty = relationModel.createProperty(ResourcesUri.sem + "hasPlace");
+            if (semProperty != Sem.hasSubType) {
+                subject.addProperty(semProperty, object);
+            }
+        }
+        else {
+            if (semProperty!=null) {
+                if (semProperty != Sem.hasSubType) {
+                    subject.addProperty(semProperty, object);
+                }
+            }
+        }
+
+/*
+         Property semProperty = null;
 
         boolean subActor = false;
         for (int i = 0; i < predicates.size(); i++) {
@@ -198,16 +236,16 @@ public class SemRelation implements Serializable {
                     }
                 }
             }
-        }
+        }*/
 
         //// CHOOSE ONE OF THE TWO OPTIONS A. or B.
         //// A.
         //// ONLY ADDS SEMACTOR IF NO OTHER PROPERTY GENERATED
-       if (!subActor && semProperty!=null) {
+/*       if (!subActor && semProperty!=null) {
             if (semProperty != Sem.hasSubType) {
                 subject.addProperty(semProperty, object);
             }
-        }
+        }*/
         ///// B.
         //// ALWAYS ADDS SEMACTOR IF NOT NULL
 /*

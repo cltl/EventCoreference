@@ -228,22 +228,46 @@ public class SemObject implements Serializable {
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             if (phraseCount.getPhrase().length()>2 || label.isEmpty()) {
-                if (phraseCount.getCount() > top) {
-                    if (Util.hasAlphaNumeric(phraseCount.getPhrase())) {
-                        try {
-                            label = URLEncoder.encode(phraseCount.getPhrase(), "UTF-8");
-                            //  System.out.println("label = " + label);
-                        } catch (UnsupportedEncodingException e) {
-                            //  e.printStackTrace();
+                if (goodPhrase(phraseCount)) {
+                    if (phraseCount.getCount() > top) {
+                        if (Util.hasAlphaNumeric(phraseCount.getPhrase())) {
+                            try {
+                                label = URLEncoder.encode(phraseCount.getPhrase(), "UTF-8");
+                                //  System.out.println("label = " + label);
+                            } catch (UnsupportedEncodingException e) {
+                                //  e.printStackTrace();
+                            }
+                        } else {
+                            //  System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
                         }
-                    } else {
-                        //  System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
+                        // label = Util.alphaNumericUri(phraseCount.getPhrase().replace(" ", "-"));
                     }
-                    // label = Util.alphaNumericUri(phraseCount.getPhrase().replace(" ", "-"));
                 }
             }
         }
         return label;
+    }
+
+
+    public boolean goodPhrase (PhraseCount phraseCount) {
+        if (phraseCount.getPhrase().equals("him") ||
+                phraseCount.getPhrase().equals("her") ||
+                phraseCount.getPhrase().equals("they") ||
+                phraseCount.getPhrase().equals("who") ||
+                phraseCount.getPhrase().equals("which") ||
+                phraseCount.getPhrase().equals("whom") ||
+                phraseCount.getPhrase().equals("that") ||
+                phraseCount.getPhrase().equals("its") ||
+                phraseCount.getPhrase().equals("she")
+                ) {
+            return false;
+        }
+        else if (phraseCount.getPhrase().length()<=2) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     public void setId(String id) {
@@ -345,17 +369,14 @@ public class SemObject implements Serializable {
 
 
         //// Top phrase
-        resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
-        //// instead of
-        for (int i = 0; i < phraseCounts.size(); i++) {
-            PhraseCount phraseCount = phraseCounts.get(i);
-            // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
-            if (!phraseCount.getPhrase().equalsIgnoreCase(getTopPhraseAsLabel()) && phraseCount.getPhrase().length()>2) {
-                if (!phraseCount.getPhrase().equals("him") &&
-                    !phraseCount.getPhrase().equals("her") &&
-                    !phraseCount.getPhrase().equals("they") &&
-                    !phraseCount.getPhrase().equals("she")
-                   ) {
+        String topLabel = this.getTopPhraseAsLabel();
+        if (!topLabel.isEmpty()) {
+            resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+            //// instead of
+            for (int i = 0; i < phraseCounts.size(); i++) {
+                PhraseCount phraseCount = phraseCounts.get(i);
+                // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
+                if (!phraseCount.getPhrase().equalsIgnoreCase(getTopPhraseAsLabel()) && goodPhrase(phraseCount)) {
                     resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
                 }
             }
