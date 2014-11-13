@@ -45,7 +45,8 @@ public class GetSemFromNafFile {
         if (!baseUrl.toLowerCase().startsWith("http")) {
             baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
         }
-        processNafFileForActorPlaceInstances(baseUrl, kafSaxParser, semActors, semPlaces);
+        //processNafFileForActorPlaceInstances(baseUrl, kafSaxParser, semActors, semPlaces);
+        processNafFileForActorInstances(baseUrl, kafSaxParser, semActors);
         SemTime docSemTime = processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
         processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
@@ -358,6 +359,321 @@ public class GetSemFromNafFile {
        // System.out.println("semActors = " + semActors.size());
     }
 
+    static void processNafFileForActorInstances (String baseUrl, KafSaxParser kafSaxParser,
+                                       ArrayList<SemObject> semActors
+    ) {
+
+
+   /*    DONE
+          - iterate over all entities
+            - merge entities with the same URI: entity recognition is mention based
+          - iterate over all sets of entities
+            - expand the spans using the coreference sets
+          - create a single SemObject for an entity set with extended spans. All the spans are used for creating mentions
+          - add the URIs
+          - later we add the URIs from the SRLs
+            */
+        /*
+           - We first create a HashMap for each URI in the entity layer pointing to all the entities that have the same URI.
+           - If the URI is not there as an external reference, we take the tokenString reference
+           - Note that the same URI can be typed as a location, person, organization or misc. If it is a location we store it in the location HashMap
+             otherwise it is stored in the actor HashMap
+         */
+        HashMap<String, ArrayList<KafEntity>> kafEntityLocationUriMap = new HashMap<String, ArrayList<KafEntity>>();
+        HashMap<String, ArrayList<KafEntity>> kafEntityActorUriMap = new HashMap<String, ArrayList<KafEntity>>();
+        for (int j = 0; j < kafSaxParser.kafEntityArrayList.size(); j++) {
+            KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
+            String uri = kafEntity.getFirstUriReference();
+          //  System.out.println("uri = " + uri);
+            if (uri.isEmpty()) {
+                kafEntity.setTokenStrings(kafSaxParser);
+
+                if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
+                    try {
+                        uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                       //  e.printStackTrace();
+                    }
+                }
+                //uri = Util.alphaNumericUri(kafEntity.getTokenString());
+
+               // System.out.println("uri = " + uri);
+            }
+            if (!uri.isEmpty()) {
+                    /// type is person, organisation, or misc. New types may be added by the NERC module in the future
+                    if (kafEntityActorUriMap.containsKey(uri)) {
+                        ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
+                        entities.add(kafEntity);
+                        kafEntityActorUriMap.put(uri, entities);
+                    }
+                    else {
+                        ArrayList<KafEntity> entities = new ArrayList<KafEntity>();
+                        entities.add(kafEntity);
+                        kafEntityActorUriMap.put(uri, entities);
+                    }
+            }
+        }
+
+
+        Set keySet  = kafEntityActorUriMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String uri =  keys.next();
+         //   System.out.println("actor uri = " + uri);
+            ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
+            ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferences(baseUrl, kafSaxParser, entities);
+            String entityId = "";
+            for (int i = 0; i < entities.size(); i++) {
+                KafEntity kafEntity = entities.get(i);
+                entityId += kafEntity.getId();
+            }
+            SemActor semActor = new SemActor();
+            semActor.setId(baseUrl + entityId);
+            semActor.setNafMentions(mentionArrayList);
+            semActor.addPhraseCountsForMentions(kafSaxParser);
+            semActor.addConcepts(Util.getExternalReferences(entities));
+            semActor.setIdByDBpediaReference();
+            Util.addObject(semActors, semActor);
+        }
+
+
+        /*
+            - We are missing actors in predicates and coreference sets that are not entities
+            - iterate over the SRL for roles with particular labels: A0, A1, A2, LOC, etc..
+            - get the span:
+            - check all actors for span match or span head match
+            - if none create a new actor or place
+         */
+        /*HashMap<String, ArrayList<ArrayList<CorefTarget>>> locationReference = Util.getLocationMentionsHashMapFromSrl(kafSaxParser);
+        keySet = locationReference.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();  /// role id from srl
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = locationReference.get(key);
+            SemPlace semPlace = new SemPlace();
+            semPlace.setId(baseUrl + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semPlace.setNafMentions(mentions);
+            semPlace.addPhraseCountsForMentions(kafSaxParser);
+            semPlace.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
+            semPlace.setIdByDBpediaReference();
+            Util.addObject(semPlaces, semPlace);
+
+        }*/
+
+       // System.out.println("semActors = " + semActors.size());
+        /*HashMap<String, ArrayList<ArrayList<CorefTarget>>> actorReferences = Util.getActorCoreftargetSetsHashMapFromSrl(kafSaxParser);
+        keySet = actorReferences.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();  /// role id from srl
+
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = actorReferences.get(key);
+            SemActor semActor = new SemActor();
+            semActor.setId(baseUrl + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semActor.setNafMentions(mentions);
+            semActor.addPhraseCountsForMentions(kafSaxParser);
+            semActor.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
+            semActor.setIdByDBpediaReference();
+            Util.addObject(semActors, semActor);
+        }*/
+       // System.out.println("semActors = " + semActors.size());
+    }
+
+
+
+    static void processNafFileForActorPlaceCoreferenceSets (String baseUrl, KafSaxParser kafSaxParser,
+                                       ArrayList<SemObject> semActors,
+                                       ArrayList<SemObject> semPlaces
+    ) {
+
+
+   /*    DONE
+          - iterate over all coreference sets for entities
+            - merge entities with the same URI: entity recognition is mention based
+          - iterate over all sets of entities
+            - expand the spans using the coreference sets
+          - create a single SemObject for an entity set with extended spans. All the spans are used for creating mentions
+          - add the URIs
+          - later we add the URIs from the SRLs
+            */
+        /*
+           - We first create a HashMap for each URI in the entity layer pointing to all the entities that have the same URI.
+           - If the URI is not there as an external reference, we take the tokenString reference
+           - Note that the same URI can be typed as a location, person, organization or misc. If it is a location we store it in the location HashMap
+             otherwise it is stored in the actor HashMap
+         */
+
+        HashMap<String, ArrayList<KafEntity>> kafEntityUriMap = new HashMap<String, ArrayList<KafEntity>>();
+        HashMap<String, ArrayList<KafEntity>> kafEntityLocationUriMap = new HashMap<String, ArrayList<KafEntity>>();
+        HashMap<String, ArrayList<KafEntity>> kafEntityActorUriMap = new HashMap<String, ArrayList<KafEntity>>();
+
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                //// this is an entity coreference set
+                //// no we get all the predicates for this set.
+                SemObject semObject = new SemObject();
+                for (int j = 0; j < kafSaxParser.getKafEventArrayList().size(); j++) {
+                    KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
+                    if (Util.hasCorefTargetArrayList(event.getSpans(), kafCoreferenceSet.getSetsOfSpans())) {
+                        /// we want the event data
+                        ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
+                        semObject.addNafMentions(mentionArrayList);
+                        semObject.addConcepts(event.getExternalReferences());
+                    }
+
+                }
+                semObject.addPhraseCountsForMentions(kafSaxParser);
+                String eventName = semObject.getTopPhraseAsLabel();
+                //if (Util.hasAlphaNumeric(eventName)) {
+                if (eventName.length()>=MINEVENTLABELSIZE) {
+                    //semEvent.setId(baseUrl+event.getId());
+                    //semEvent.setId(baseUrl + eventName + "Event");
+                    String eventId = kafCoreferenceSet.getCoid() ;
+                    semObject.setId(baseUrl + eventId);   // shorter form for triple store
+                    semObject.setFactuality(kafSaxParser);
+                    semObject.setIdByDBpediaReference();
+                    semActors.add(semObject);
+                }
+            }
+        }
+        for (int j = 0; j < kafSaxParser.kafEntityArrayList.size(); j++) {
+            KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
+            String uri = kafEntity.getFirstUriReference();
+          //  System.out.println("uri = " + uri);
+            if (uri.isEmpty()) {
+                kafEntity.setTokenStrings(kafSaxParser);
+
+                if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
+                    try {
+                        uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                       //  e.printStackTrace();
+                    }
+                }
+                //uri = Util.alphaNumericUri(kafEntity.getTokenString());
+
+               // System.out.println("uri = " + uri);
+            }
+            if (!uri.isEmpty()) {
+                if (EntityTypes.isLOCATION(kafEntity.getType())) {
+                    if (kafEntityLocationUriMap.containsKey(uri)) {
+                        ArrayList<KafEntity> entities = kafEntityLocationUriMap.get(uri);
+                        entities.add(kafEntity);
+                        kafEntityLocationUriMap.put(uri, entities);
+                    }
+                    else {
+                        ArrayList<KafEntity> entities = new ArrayList<KafEntity>();
+                        entities.add(kafEntity);
+                        kafEntityLocationUriMap.put(uri, entities);
+                    }
+                }
+                else {
+                    /// type is person, organisation, or misc. New types may be added by the NERC module in the future
+                    if (kafEntityActorUriMap.containsKey(uri)) {
+                        ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
+                        entities.add(kafEntity);
+                        kafEntityActorUriMap.put(uri, entities);
+                    }
+                    else {
+                        ArrayList<KafEntity> entities = new ArrayList<KafEntity>();
+                        entities.add(kafEntity);
+                        kafEntityActorUriMap.put(uri, entities);
+                    }
+                }
+            }
+        }
+
+
+        Set keySet = kafEntityLocationUriMap.keySet();
+        Iterator keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String uri = (String) keys.next();
+            ArrayList<KafEntity> entities = kafEntityLocationUriMap.get(uri);
+            ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferences(baseUrl, kafSaxParser, entities);
+            String entityId = "";
+            for (int i = 0; i < entities.size(); i++) {
+                KafEntity kafEntity = entities.get(i);
+                entityId += kafEntity.getId();
+            }
+            SemPlace semPlace = new SemPlace();
+            semPlace.setId(baseUrl + entityId);
+            semPlace.setNafMentions(mentionArrayList);
+            semPlace.addPhraseCountsForMentions(kafSaxParser);
+            semPlace.addConcepts(Util.getExternalReferences(entities));
+            /// next function replaces the id by the dbSpotLight URI if there is any
+            semPlace.setIdByDBpediaReference();
+            Util.addObject(semPlaces, semPlace);
+        }
+
+        keySet = kafEntityActorUriMap.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String uri = (String) keys.next();
+         //   System.out.println("actor uri = " + uri);
+            ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
+            ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferences(baseUrl, kafSaxParser, entities);
+            String entityId = "";
+            for (int i = 0; i < entities.size(); i++) {
+                KafEntity kafEntity = entities.get(i);
+                entityId += kafEntity.getId();
+            }
+            SemActor semActor = new SemActor();
+            semActor.setId(baseUrl + entityId);
+            semActor.setNafMentions(mentionArrayList);
+            semActor.addPhraseCountsForMentions(kafSaxParser);
+            semActor.addConcepts(Util.getExternalReferences(entities));
+            semActor.setIdByDBpediaReference();
+            Util.addObject(semActors, semActor);
+        }
+
+
+        /*
+            - We are missing actors in predicates and coreference sets that are not entities
+            - iterate over the SRL for roles with particular labels: A0, A1, A2, LOC, etc..
+            - get the span:
+            - check all actors for span match or span head match
+            - if none create a new actor or place
+         */
+        /*HashMap<String, ArrayList<ArrayList<CorefTarget>>> locationReference = Util.getLocationMentionsHashMapFromSrl(kafSaxParser);
+        keySet = locationReference.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();  /// role id from srl
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = locationReference.get(key);
+            SemPlace semPlace = new SemPlace();
+            semPlace.setId(baseUrl + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semPlace.setNafMentions(mentions);
+            semPlace.addPhraseCountsForMentions(kafSaxParser);
+            semPlace.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
+            semPlace.setIdByDBpediaReference();
+            Util.addObject(semPlaces, semPlace);
+
+        }*/
+
+       // System.out.println("semActors = " + semActors.size());
+        /*HashMap<String, ArrayList<ArrayList<CorefTarget>>> actorReferences = Util.getActorCoreftargetSetsHashMapFromSrl(kafSaxParser);
+        keySet = actorReferences.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();  /// role id from srl
+
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = actorReferences.get(key);
+            SemActor semActor = new SemActor();
+            semActor.setId(baseUrl + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semActor.setNafMentions(mentions);
+            semActor.addPhraseCountsForMentions(kafSaxParser);
+            semActor.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
+            semActor.setIdByDBpediaReference();
+            Util.addObject(semActors, semActor);
+        }*/
+       // System.out.println("semActors = " + semActors.size());
+    }
+
 
     static SemTime processNafFileForTimeInstances (String baseUrl, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semTimes
@@ -369,18 +685,20 @@ public class GetSemFromNafFile {
             //docSemTime.setId(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
             docSemTime.setId(baseUrl + "dct"); // shorter form for triple store
             docSemTime.addPhraseCounts(kafSaxParser.getKafMetaData().getCreationtime());
-            //NafMention mention = new NafMention(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
-            NafMention mention = new NafMention(baseUrl + "dct"); // shorter form for triple store
-            docSemTime.addMentionUri(mention);
-            docSemTime.getOwlTime().parsePublicationDate(kafSaxParser.getKafMetaData().getCreationtime());
-            Util.addObject(semTimes, docSemTime);
+            if (!docSemTime.getOwlTime().getDateString().isEmpty()) {
+                //NafMention mention = new NafMention(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
+                NafMention mention = new NafMention(baseUrl + "dct"); // shorter form for triple store
+                docSemTime.addMentionUri(mention);
+                docSemTime.getOwlTime().parsePublicationDate(kafSaxParser.getKafMetaData().getCreationtime());
+                Util.addObject(semTimes, docSemTime);
+            }
         }
 
 
         for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
             KafTimex timex = kafSaxParser.kafTimexLayer.get(i);
-            if (!timex.getValue().isEmpty()) {
-             //  System.out.println("timex.getValue() = " + timex.getValue());
+            if (!timex.getValue().trim().isEmpty() && !timex.getValue().startsWith("XXXX-")) {
+               //System.out.println("timex.getValue() = " + timex.getId()+":"+timex.getValue());
                 OwlTime aTime =new OwlTime();
                 if (aTime.parseTimeExValue(timex.getValue(), docSemTime.getOwlTime())>-1) {
                     ArrayList<String> tokenSpanIds = timex.getSpans();
@@ -398,7 +716,7 @@ public class GetSemFromNafFile {
 
         //// WE CAN TAKE THIS OUT IF TIMEX COVERS ALL
         //// we get time references from the SRL layer
-        HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = Util.getTimeMentionsHashMapFromSrl (kafSaxParser, docSemTime.getOwlTime());
+/*        HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = Util.getTimeMentionsHashMapFromSrl (kafSaxParser, docSemTime.getOwlTime());
         Set keySet = timeReferences.keySet();
         Iterator keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -429,7 +747,7 @@ public class GetSemFromNafFile {
                 }
             }
             //System.out.println("aTime.toString() = " + aTime.toString());
-        }
+        }*/
 
         return docSemTime;
     }
@@ -488,44 +806,32 @@ public class GetSemFromNafFile {
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
             boolean timeAnchor = false;
-            //// separate check for time that can be and should be derived from the timex layer....
+
             for (int l = 0; l < semTimes.size(); l++) {
                 SemObject semTime = semTimes.get(l);
                 //System.out.println("semTime.toString() = " + semTime.toString());
-
                 // if (Util.matchAtLeastASingleSpan(kafParticipant.getSpanIds(), semTime)) {
                 //if (Util.sameSentence(kafSaxParser, semTime, semEvent)) {
-                boolean HASTIME = Util.rangemin2plus1Sentence(kafSaxParser, semTime, semEvent);
-                if (!HASTIME) {
-                    // HASTIME = Util.rangemin5Sentence(kafSaxParser, semTime, semEvent);
+                ArrayList<String> termIds = Util.sameSentenceRange(kafSaxParser, semTime, semEvent);
+                if (termIds.size()==0) {
+                     termIds = Util.rangemin2plus1SentenceRange(kafSaxParser, semTime, semEvent);
                 }
-                if (HASTIME) {
-
+                if (termIds.size()>0) {
                     /// create sem relations
                     timexRelationCount++;
                     SemRelation semRelation = new SemRelation();
                     //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                    String relationInstanceId = baseUrl+"tr_"+timexRelationCount;  // shorter form for triple store
+                    String relationInstanceId = baseUrl + "tr_" + timexRelationCount;  // shorter form for triple store
                     semRelation.setId(relationInstanceId);
-
-                    ArrayList<String> termsIds = new ArrayList<String>();
-                    for (int j = 0; j < semEvent.getNafMentions().size(); j++) {
-                        NafMention nafMention = semEvent.getNafMentions().get(j);
-                        termsIds.addAll(nafMention.getTermsIds());
-                    }
-                    for (int j = 0; j < semTime.getNafMentions().size(); j++) {
-                        NafMention nafMention = semTime.getNafMentions().get(j);
-                        termsIds.addAll(nafMention.getTermsIds());
-                    }
-
-                    NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
+                   // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
+                    NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
                     semRelation.addMention(mention);
                     semRelation.addPredicate("hasSemTime");
                     semRelation.setSubject(semEvent.getId());
                     semRelation.setObject(semTime.getId());
                     semRelations.add(semRelation);
-                   // System.out.println("semRelation = " + semRelation.getSubject());
-                   // System.out.println("semRelation.getObject() = " + semRelation.getObject());
+                    // System.out.println("semRelation = " + semRelation.getSubject());
+                    // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                     timeAnchor = true;
                 }
             }
@@ -540,7 +846,7 @@ public class GetSemFromNafFile {
                     /// in all cases there is no time relations we link it to the docTime
                     docTimeRelationCount++;
                     SemRelation semRelation = new SemRelation();
-                   // String relationInstanceId = baseUrl + "docTime_" + docTimeRelationCount;
+                    // String relationInstanceId = baseUrl + "docTime_" + docTimeRelationCount;
                     String relationInstanceId = baseUrl + "dt" + docTimeRelationCount; // shorter form for triple store
                     semRelation.setId(relationInstanceId);
                     //// Since the doctime has no reference in the text, we use the mentions of the events to point to
@@ -901,7 +1207,9 @@ public class GetSemFromNafFile {
         //String pathToNafFile = "/Users/piek/newsreader-deliverables/papers/maplex/47P9-DCM0-0092-K267.xml";
         //String pathToNafFile = "/Users/piek/Desktop/MapLex/47T0-YSP0-018S-20DV.xml";
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/47T0-B4V0-01D6-Y3WM.xml";
-        String pathToNafFile = "/Users/piek/Desktop/naf_and_trig/5C37-HGT1-JBJ4-2472.xml_fb5a69273e6b8028fa2b9796eb62483b.naf";
+       // String pathToNafFile = "/Code/vu/newsreader/EventCoreference/example/naf_and_trig/5C37-HGT1-JBJ4-2472.xml_fb5a69273e6b8028fa2b9796eb62483b.naf";
+       // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
+        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47R9-0JG0-015B-31P6.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";

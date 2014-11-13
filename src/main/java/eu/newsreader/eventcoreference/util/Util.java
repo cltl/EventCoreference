@@ -77,21 +77,76 @@ public class Util {
     }
 
     static public void addObject(ArrayList<SemObject> objects, SemObject object) {
+        boolean DEBUG = false;
+        /*if ((object.getId().equals("http://www.newsreader-project.eu/data/cars/2003/01/01/47KD-4MN0-009F-S2JG.xml#e6"))) {
+            System.out.println("TODEBUG");
+            DEBUG = true;
+        }
+        if ((object.getId().equals("http://dbpedia.org/resource/Deep_foundation"))) {
+            System.out.println("TODEBUG");
+            DEBUG = true;
+        }
+        if (DEBUG) {
+            System.out.println("object.getId() = " + object.getId());
+            for (int i = 0; i < object.getNafMentions().size(); i++) {
+                NafMention nafMention = object.getNafMentions().get(i);
+                System.out.println("object nafMention.toString() = " + nafMention.toString());
+            }
+        }*/
+
         boolean match =false;
         for (int i = 0; i < objects.size(); i++) {
             SemObject semObject = objects.get(i);
+/*            if (DEBUG) {
+                System.out.println("semObject = " + semObject.getId());
+                for (int j = 0; j < semObject.getNafMentions().size(); j++) {
+                    NafMention nafMention = semObject.getNafMentions().get(j);
+                    System.out.println("semObject nafMention.toString() = " + nafMention.toString());
+                }
+            }*/
             if (semObject.getURI().equals(object.getURI())) {
                 match = true;
+              //  if (DEBUG) System.out.println("URI MATCH");
                 for (int j = 0; j < object.getNafMentions().size(); j++) {
                     NafMention nafMention = object.getNafMentions().get(j);
                     if (!semObject.hasMention(nafMention)) {
                         semObject.addMentionUri(nafMention);
                     }
                 }
+                break;
+            }
+            else {
+                for (int j = 0; j < object.getNafMentions().size(); j++) {
+                    NafMention nafMention = object.getNafMentions().get(j);
+                    if (semObject.hasMention(nafMention)) {
+                        //// there is a mention overlap!
+                      //  if (DEBUG) System.out.println("MENTION MATCH");
+                        match = true;
+                        break;
+                    }
+                }
+                if (match) {
+                    for (int j = 0; j < object.getNafMentions().size(); j++) {
+                        NafMention nafMention = object.getNafMentions().get(j);
+                        if (!semObject.hasMention(nafMention)) {
+                           // if (DEBUG) System.out.println("to be added Object nafMention.toString() = " + nafMention.toString());
+                            semObject.addMentionUri(nafMention);
+                        }
+                    }
+                    break;
+                }
             }
         }
         if (!match) {
            objects.add(object);
+          /* if (DEBUG) {
+               System.out.println("new object = " + object.getId());
+           }*/
+        }
+        else {
+            /*if (DEBUG) {
+                System.out.println("matched object = " + object.getId());
+            }*/
         }
     }
 
@@ -820,6 +875,94 @@ public class Util {
     }
 
     /**
+     * Checks if two SemObject have a mention in the same sentence
+     * @param kafSaxParser
+     * @param semObject1
+     * @param semObject2
+     * @return
+     */
+    static public ArrayList<String> sameSentenceRange(KafSaxParser kafSaxParser, SemObject semObject1, SemObject semObject2) {
+        ArrayList<String> ids = new ArrayList<String>();
+        for (int i = 0; i < semObject1.getNafMentions().size(); i++) {
+            NafMention nafMention1 = semObject1.getNafMentions().get(i);
+            for (int j = 0; j < nafMention1.getTokensIds().size(); j++) {
+                String tokenId = nafMention1.getTokensIds().get(j);
+                KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
+                for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
+                    NafMention nafMention2 = semObject2.getNafMentions().get(k);
+                    for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                        String tokenId2 = nafMention2.getTokensIds().get(l);
+                        KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
+                        if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
+                            for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
+                                String id = nafMention1.getTermsIds().get(m);
+                                if (!ids.contains(id)) {
+                                    ids.add(id);
+                                }
+                            }
+                            for (int m = 0; m < nafMention2.getTermsIds().size(); m++) {
+                                String id = nafMention2.getTermsIds().get(m);
+                                if (!ids.contains(id)) {
+                                    ids.add(id);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * Checks if two SemObject have a mention within 4 sentences span 2 before and 1 after
+     * @param kafSaxParser
+     * @param semObject1
+     * @param semObject2
+     * @return
+     */
+    static public ArrayList<String> rangemin2plus1SentenceRange(KafSaxParser kafSaxParser, SemObject semObject1, SemObject semObject2) {
+        ArrayList<String> ids = new ArrayList<String>();
+        for (int i = 0; i < semObject1.getNafMentions().size(); i++) {
+            NafMention nafMention1 = semObject1.getNafMentions().get(i);
+            for (int j = 0; j < nafMention1.getTokensIds().size(); j++) {
+                String tokenId = nafMention1.getTokensIds().get(j);
+                KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
+                for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
+                    NafMention nafMention2 = semObject2.getNafMentions().get(k);
+                    for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                        String tokenId2 = nafMention2.getTokensIds().get(l);
+                        KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
+                        try {
+                            int s1 = Integer.parseInt(kafWordForm1.getSent());
+                            int s2 = Integer.parseInt(kafWordForm2.getSent());
+                            if (s1==s2 || s1-1==s2 || s1-2==s2 || s1+1==s2) {
+                                for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
+                                    String id = nafMention1.getTermsIds().get(m);
+                                    if (!ids.contains(id)) {
+                                        ids.add(id);
+                                    }
+                                }
+                                for (int m = 0; m < nafMention2.getTermsIds().size(); m++) {
+                                    String id = nafMention2.getTermsIds().get(m);
+                                    if (!ids.contains(id)) {
+                                        ids.add(id);
+                                    }
+                                }
+                                break;
+                            }
+                        } catch (NumberFormatException e) {
+                           // e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return ids;
+    }
+
+    /**
      * Checks if two SemObject have a mention within 4 sentences span 2 before and 1 after
      * @param kafSaxParser
      * @param semObject1
@@ -849,6 +992,40 @@ public class Util {
                         } catch (NumberFormatException e) {
                            // e.printStackTrace();
                         }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if two mentions within 4 sentences span 2 before and 1 after
+     * @param kafSaxParser
+     * @param semObject1
+     * @param nafMention2
+     * @return
+     */
+    static public boolean rangemin2plus1Sentence(KafSaxParser kafSaxParser, SemObject semObject1, NafMention nafMention2) {
+        for (int i = 0; i < semObject1.getNafMentions().size(); i++) {
+            NafMention nafMention1 = semObject1.getNafMentions().get(i);
+            for (int j = 0; j < nafMention1.getTokensIds().size(); j++) {
+                String tokenId = nafMention1.getTokensIds().get(j);
+                KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
+                for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                    String tokenId2 = nafMention2.getTokensIds().get(l);
+                    KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
+                    if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
+                        return true;
+                    }
+                    try {
+                        int s1 = Integer.parseInt(kafWordForm1.getSent());
+                        int s2 = Integer.parseInt(kafWordForm2.getSent());
+                        if (s1==s2 || s1-1==s2 || s1-2==s2 || s1+1==s2) {
+                            return true;
+                        }
+                    } catch (NumberFormatException e) {
+                       // e.printStackTrace();
                     }
                 }
             }

@@ -47,7 +47,7 @@ public class GetTimeLinesFromNaf {
         String pathToFolder = "";
         // pathToFolder = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_NAF_output/corpus_gm_chrysler_ford";
         pathToFolder = "/Users/piek/Desktop/NWR/timeline/naf_file_raw_out-2";
-        pathToFolder = "/Users/piek/Desktop/NWR/timeline/test";
+       // pathToFolder = "/Users/piek/Desktop/NWR/timeline/test";
         String query = "apple";
         String extension = ".naf";
         String eventType = "CONTEXTUAL";

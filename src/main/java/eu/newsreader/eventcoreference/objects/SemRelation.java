@@ -203,18 +203,20 @@ public class SemRelation implements Serializable {
         //// CHOOSE ONE OF THE TWO OPTIONS A. or B.
         //// A.
         //// ONLY ADDS SEMACTOR IF NO OTHER PROPERTY GENERATED
-/*        if (!subActor && semProperty!=null) {
+       if (!subActor && semProperty!=null) {
             if (semProperty != Sem.hasSubType) {
                 subject.addProperty(semProperty, object);
             }
-        }*/
+        }
         ///// B.
         //// ALWAYS ADDS SEMACTOR IF NOT NULL
+/*
         if (semProperty!=null) {
             if (semProperty != Sem.hasSubType) {
                 subject.addProperty(semProperty, object);
             }
         }
+*/
 
         Resource provenanceResource = provenanceModel.createResource(this.id);
 

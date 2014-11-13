@@ -345,12 +345,20 @@ public class SemObject implements Serializable {
 
 
         //// Top phrase
-       // resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+        resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
         //// instead of
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
-            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+            if (!phraseCount.getPhrase().equalsIgnoreCase(getTopPhraseAsLabel()) && phraseCount.getPhrase().length()>2) {
+                if (!phraseCount.getPhrase().equals("him") &&
+                    !phraseCount.getPhrase().equals("her") &&
+                    !phraseCount.getPhrase().equals("they") &&
+                    !phraseCount.getPhrase().equals("she")
+                   ) {
+                    resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+                }
+            }
         }
         if (type.getLocalName().equalsIgnoreCase("Event")) {
             resource.addProperty(RDF.type, type);
