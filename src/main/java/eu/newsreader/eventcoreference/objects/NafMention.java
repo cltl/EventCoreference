@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class NafMention implements Serializable {
     private String baseUri;
     private String phrase;
+    private String sentence;
     private String offSetStart;
     private String offSetEnd;
     private ArrayList<String> tokensIds;
@@ -25,6 +26,7 @@ public class NafMention implements Serializable {
         this.phrase = "";
         this.offSetStart = "";
         this.offSetEnd = "";
+        this.sentence = "";
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
         this.factuality = new KafFactuality();
@@ -35,6 +37,7 @@ public class NafMention implements Serializable {
         this.phrase = "";
         this.offSetStart = "";
         this.offSetEnd = "";
+        this.sentence = "";
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
         this.factuality = new KafFactuality();
@@ -62,6 +65,22 @@ public class NafMention implements Serializable {
             }
         }
         this.phrase = str.trim();
+    }
+
+    public String getSentence() {
+        return sentence;
+    }
+
+    public void setSentence(KafSaxParser kafSaxParser) {
+        for (int i = 0; i < tokensIds.size(); i++) {
+            String s = tokensIds.get(i);
+            KafWordForm kafWordForm = kafSaxParser.getWordForm(s);
+            if (kafWordForm!=null) {
+                //System.out.println(kafWordForm.getSent()+" = " + kafWordForm.getWf());
+                sentence = kafWordForm.getSent();
+                break;
+            }
+        }
     }
 
     public String getPhrase() {
