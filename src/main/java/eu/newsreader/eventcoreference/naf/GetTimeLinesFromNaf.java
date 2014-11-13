@@ -267,6 +267,7 @@ public class GetTimeLinesFromNaf {
                                                 String timeString = semTime.getOwlTime().toString();
                                                 if (!coveredTimes.contains(timeString)) {
                                                     coveredTimes.add(timeString);
+                                                    ArrayList<String> coveredEventMentions = new ArrayList<String>();
                                                     timeLine += "\t" + timeString;
                                                     String eventTypes = getEventTypeString(semEvent);
                                                     for (int o = 0; o < semEvent.getNafMentions().size(); o++) {
@@ -277,8 +278,12 @@ public class GetTimeLinesFromNaf {
                                                             KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
                                                             sentenceId += kafWordForm.getSent();
                                                         }
-                                                      //  timeLine += "\t" + file.getName() + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
-                                                        timeLine += "\t" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                                        String value = "\t" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                                        if (!coveredEventMentions.contains(value)) {
+                                                            //  timeLine += "\t" + file.getName() + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                                            timeLine += value;
+                                                            coveredEventMentions.add(value);
+                                                        }
                                                     }
                                                     timeLine +="\tTYPES:"+eventTypes+ "\n";
                                                     break;
@@ -291,6 +296,7 @@ public class GetTimeLinesFromNaf {
                             if (coveredTimes.size()==0) {
                                 timeLine += "\tNOTIMEX";
                                 String eventTypes = getEventTypeString(semEvent);
+                                ArrayList<String> coveredEventMentions = new ArrayList<String>();
                                 for (int o = 0; o < semEvent.getNafMentions().size(); o++) {
                                     NafMention nafMention = semEvent.getNafMentions().get(o);
                                     String sentenceId = "";
@@ -300,7 +306,11 @@ public class GetTimeLinesFromNaf {
                                         sentenceId += kafWordForm.getSent();
                                     }
                                    // timeLine += "\t" + file.getName() + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
-                                    timeLine += "\t"  + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                    String value = "\t"  + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                    if (!coveredEventMentions.contains(value)) {
+                                        timeLine += value;
+                                        coveredEventMentions.add(value);
+                                    }
                                 }
                                 timeLine +="\tTYPES:"+eventTypes+ "\n";
                             }

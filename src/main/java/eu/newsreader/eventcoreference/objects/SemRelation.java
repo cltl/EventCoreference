@@ -179,6 +179,9 @@ public class SemRelation implements Serializable {
         Resource subject = relationModel.createResource(this.getSubject());
         Resource object = relationModel.createResource(this.getObject());
 
+
+        /// since we no longer distinghuish places from actors, we now check the predicates for propbank AM-LOC
+        /// if so we use sem:hasPlace otherwise we take the semType value from the hassem predicate
         Property semProperty = null;
         boolean place = false;
         for (int i = 0; i < predicates.size(); i++) {
