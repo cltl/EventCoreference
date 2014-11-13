@@ -815,7 +815,7 @@ public class GetSemFromNafFile {
                     timexRelationCount++;
                     SemRelation semRelation = new SemRelation();
                     //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                    String relationInstanceId = baseUrl + "tr_" + timexRelationCount;  // shorter form for triple store
+                    String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
                     semRelation.setId(relationInstanceId);
                    // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                     NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
@@ -834,12 +834,11 @@ public class GetSemFromNafFile {
                     SemObject semTime = semTimes.get(l);
                     ArrayList<String> termIds = Util.range1SentenceRange(semEvent, semTime);
                     if (termIds.size() > 0) {
-                        if (semTime.getId().endsWith("tmx7"))
                         /// create sem relations
                         timexRelationCount++;
                         SemRelation semRelation = new SemRelation();
                         //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                        String relationInstanceId = baseUrl + "tr_" + timexRelationCount;  // shorter form for triple store
+                        String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
                         semRelation.setId(relationInstanceId);
                         // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                         NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
@@ -859,12 +858,11 @@ public class GetSemFromNafFile {
                     SemObject semTime = semTimes.get(l);
                     ArrayList<String> termIds = Util.rangemin2plus1SentenceRange(semEvent, semTime);
                     if (termIds.size() > 0) {
-                        if (semTime.getId().endsWith("tmx7"))
                         /// create sem relations
                         timexRelationCount++;
                         SemRelation semRelation = new SemRelation();
                         //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                        String relationInstanceId = baseUrl + "tr_" + timexRelationCount;  // shorter form for triple store
+                        String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
                         semRelation.setId(relationInstanceId);
                         // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                         NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
