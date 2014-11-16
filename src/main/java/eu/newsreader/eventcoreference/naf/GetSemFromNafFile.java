@@ -39,6 +39,12 @@ public class GetSemFromNafFile {
                                        ArrayList<SemRelation> semRelations,
                                        ArrayList<SemRelation> factRelations
     ) {
+
+        //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
+        fixEventCoreferenceSets(kafSaxParser);
+        //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
+        fixExternalReferencesSrl(kafSaxParser);
+
         //String baseUrl = ResourcesUri.nwr+kafSaxParser.getKafMetaData().getUrl().replace("/", URI_SEPARATOR)+ID_SEPARATOR;
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
@@ -69,6 +75,12 @@ public class GetSemFromNafFile {
         processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
     }
 
+    /**
+     * @Deprecated: News function takes coreference sets as starting point
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semEvents
+     */
     static void processNafFileForEventInstances (String baseUrl, KafSaxParser kafSaxParser,
                                                    ArrayList<SemObject> semEvents
 
@@ -155,6 +167,47 @@ public class GetSemFromNafFile {
         kafSaxParser.kafCorefenceArrayList = fixedSets;
     }
 
+    static void fixExternalReferencesSrl (KafSaxParser kafSaxParser) {
+        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+            KafEvent event = kafSaxParser.getKafEventArrayList().get(i);
+            fixExternalReferences(event);
+            for (int j = 0; j < event.getParticipants().size(); j++) {
+                KafParticipant kafParticipant = event.getParticipants().get(j);
+                fixExternalReferences(kafParticipant);
+            }
+        }
+    }
+
+    static void fixExternalReferences(KafEvent kafEvent) {
+        ArrayList<KafSense> newKafSenses = new ArrayList<KafSense>();
+        for (int i = 0; i < kafEvent.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEvent.getExternalReferences().get(i);
+            if (kafSense.getResource().endsWith("+")) {
+                kafSense.setResource(kafSense.getResource().substring(0, kafSense.getResource().length() - 1));
+                // System.out.println("kafSense.getResource() = " + kafSense.getResource());
+            }
+            if (!kafSense.getResource().endsWith("-")) {
+               newKafSenses.add(kafSense);
+            }
+        }
+        kafEvent.setExternalReferences(newKafSenses);
+    }
+
+
+    static void fixExternalReferences(KafParticipant kafParticipant) {
+        ArrayList<KafSense> newKafSenses = new ArrayList<KafSense>();
+        for (int i = 0; i < kafParticipant.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafParticipant.getExternalReferences().get(i);
+            if (kafSense.getResource().endsWith("+")) {
+                kafSense.setResource(kafSense.getResource().substring(0, kafSense.getResource().length() - 1));
+                // System.out.println("kafSense.getResource() = " + kafSense.getResource());
+            }
+            if (!kafSense.getResource().endsWith("-")) {
+               newKafSenses.add(kafSense);
+            }
+        }
+        kafParticipant.setExternalReferences(newKafSenses);
+    }
 
     static void processNafFileForEventCoreferenceSets (String baseUrl, KafSaxParser kafSaxParser,
                                                    ArrayList<SemObject> semEvents
@@ -165,9 +218,6 @@ public class GetSemFromNafFile {
         /**
          * Event instances
          */
-        //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
-        fixEventCoreferenceSets(kafSaxParser);
-
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
             if (kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
@@ -200,7 +250,13 @@ public class GetSemFromNafFile {
         }
     }
 
-
+    /**
+     * @Deprecated: locations and actors are no longer separated
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semActors
+     * @param semPlaces
+     */
     static void processNafFileForActorPlaceInstances (String baseUrl, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semActors,
                                        ArrayList<SemObject> semPlaces
@@ -359,6 +415,12 @@ public class GetSemFromNafFile {
        // System.out.println("semActors = " + semActors.size());
     }
 
+    /**
+     *
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semActors
+     */
     static void processNafFileForActorInstances (String baseUrl, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semActors
     ) {
@@ -482,7 +544,13 @@ public class GetSemFromNafFile {
     }
 
 
-
+    /**
+     * @Deprecated: locations and actors are no longer separated
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semActors
+     * @param semPlaces
+     */
     static void processNafFileForActorPlaceCoreferenceSets (String baseUrl, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semActors,
                                        ArrayList<SemObject> semPlaces
@@ -1251,7 +1319,8 @@ public class GetSemFromNafFile {
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/47T0-B4V0-01D6-Y3WM.xml";
        // String pathToNafFile = "/Code/vu/newsreader/EventCoreference/example/naf_and_trig/5C37-HGT1-JBJ4-2472.xml_fb5a69273e6b8028fa2b9796eb62483b.naf";
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
-        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47R9-0JG0-015B-31P6.xml";
+        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47R9-0JG0-015B-31P6.xml";
+        String pathToNafFile = "/Users/piek/Desktop/result.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
