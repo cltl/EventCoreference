@@ -747,13 +747,15 @@ public class GetSemFromNafFile {
                                        ArrayList<SemObject> semTimes
     ) {
         SemTime docSemTime = new SemTime();
-        if (!kafSaxParser.getKafMetaData().getCreationtime().isEmpty()) {
+        if (!kafSaxParser.getKafMetaData().getCreationtime().isEmpty() &&
+            !kafSaxParser.getKafMetaData().getCreationtime().equals("T000-00-0ZT00:00:00")) {
             //// we first store the publication date as a time
             docSemTime = new SemTime();
             //docSemTime.setId(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
             docSemTime.setId(baseUrl + "dct"); // shorter form for triple store
             docSemTime.addPhraseCounts(kafSaxParser.getKafMetaData().getCreationtime());
             if (!docSemTime.getOwlTime().getDateString().isEmpty()) {
+               // System.out.println("docSemTime.getOwlTime().getDateString() = " + docSemTime.getOwlTime().getDateString());
                 //NafMention mention = new NafMention(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
                 NafMention mention = new NafMention(baseUrl + "dct"); // shorter form for triple store
                 docSemTime.addMentionUri(mention);
@@ -1320,7 +1322,7 @@ public class GetSemFromNafFile {
        // String pathToNafFile = "/Code/vu/newsreader/EventCoreference/example/naf_and_trig/5C37-HGT1-JBJ4-2472.xml_fb5a69273e6b8028fa2b9796eb62483b.naf";
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47R9-0JG0-015B-31P6.xml";
-        String pathToNafFile = "/Users/piek/Desktop/result.naf";
+        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/4PG2-TTJ0-TXVX-P0FV.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
