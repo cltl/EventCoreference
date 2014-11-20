@@ -155,20 +155,20 @@ public class SemObject implements Serializable {
         <externalRef resource="spotlight_v1" reference="http://dbpedia.org/resource/Michigan" confidence="1.0" reftype="en"/>
         <externalRef resource="spotlight_v1" reference="http://dbpedia.org/resource/List_of_United_States_Senators_from_Michigan" confidence="9.9521784E-14" reftype="en"/>
               <externalRef resource="vua-type-reranker-v1.0" reference="http://dbpedia.org/resource/North_Dakota" confidence="17"/>
-
+             vua-type-reranker
       </externalReferences>
 
          */
 
         boolean RERANK = false;
-        for (int i = 0; i < concepts.size(); i++) {
+/*        for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
             if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
                 id = getNameSpaceTypeReference(kafSense);
                 RERANK = true;
                 break;
             }
-        }
+        }*/
         if (!RERANK) {
             for (int i = 0; i < concepts.size(); i++) {
                 KafSense kafSense = concepts.get(i);
@@ -192,6 +192,7 @@ public class SemObject implements Serializable {
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
             if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
+                    (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) ||
                     (kafSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
@@ -349,6 +350,9 @@ public class SemObject implements Serializable {
             if (kafSense.getResource().equalsIgnoreCase("nombank")) {
                 continue;
             }
+            if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
+                continue;
+            }
             if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
@@ -414,6 +418,9 @@ public class SemObject implements Serializable {
             if (kafSense.getResource().equalsIgnoreCase("nombank")) {
                 continue;
             }
+            if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
+                continue;
+            }
             if (kafSense.getResource().isEmpty() && this.getURI().startsWith("http://dbpedia.org")) {
                 continue;
             }
@@ -461,7 +468,10 @@ public class SemObject implements Serializable {
             ref = ResourcesUri.pb + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
             ref = ResourcesUri.nb + kafSense.getSensecode();
-        } else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
+        } else if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")
+                   ||
+                   kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")
+                  ) {
             ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
          // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
         }

@@ -78,11 +78,7 @@ public class Util {
 
     static public void addObject(ArrayList<SemObject> objects, SemObject object) {
         boolean DEBUG = false;
-        /*if ((object.getId().equals("http://www.newsreader-project.eu/data/cars/2003/01/01/47KD-4MN0-009F-S2JG.xml#e6"))) {
-            System.out.println("TODEBUG");
-            DEBUG = true;
-        }
-        if ((object.getId().equals("http://dbpedia.org/resource/Deep_foundation"))) {
+/*        if ((object.getId().equals("http://dbpedia.org/resource/Micky_Adams"))) {
             System.out.println("TODEBUG");
             DEBUG = true;
         }
@@ -94,7 +90,7 @@ public class Util {
             }
         }*/
 
-        boolean match =false;
+        boolean objectmatch =false;
         for (int i = 0; i < objects.size(); i++) {
             SemObject semObject = objects.get(i);
 /*            if (DEBUG) {
@@ -105,8 +101,8 @@ public class Util {
                 }
             }*/
             if (semObject.getURI().equals(object.getURI())) {
-                match = true;
-              //  if (DEBUG) System.out.println("URI MATCH");
+                objectmatch = true;
+                //if (DEBUG) System.out.println("URI MATCH");
                 for (int j = 0; j < object.getNafMentions().size(); j++) {
                     NafMention nafMention = object.getNafMentions().get(j);
                     if (!semObject.hasMention(nafMention)) {
@@ -116,37 +112,40 @@ public class Util {
                 break;
             }
             else {
+                //// Next check absorbs an object if there is a mention overlap despite the URI mismatch!!!!
+/*                boolean mentionMatch = false;
                 for (int j = 0; j < object.getNafMentions().size(); j++) {
                     NafMention nafMention = object.getNafMentions().get(j);
                     if (semObject.hasMention(nafMention)) {
                         //// there is a mention overlap!
-                      //  if (DEBUG) System.out.println("MENTION MATCH");
-                        match = true;
+                        if (DEBUG) System.out.println("MENTION MATCH");
+                        mentionMatch = true;
                         break;
                     }
                 }
-                if (match) {
+
+                if (mentionMatch) {
                     for (int j = 0; j < object.getNafMentions().size(); j++) {
                         NafMention nafMention = object.getNafMentions().get(j);
                         if (!semObject.hasMention(nafMention)) {
-                           // if (DEBUG) System.out.println("to be added Object nafMention.toString() = " + nafMention.toString());
+                            if (DEBUG) System.out.println("to be added Object nafMention.toString() = " + nafMention.toString());
                             semObject.addMentionUri(nafMention);
                         }
                     }
                     break;
-                }
+                }*/
             }
         }
-        if (!match) {
+        if (!objectmatch) {
            objects.add(object);
-          /* if (DEBUG) {
+           if (DEBUG) {
                System.out.println("new object = " + object.getId());
-           }*/
+           }
         }
         else {
-            /*if (DEBUG) {
+            if (DEBUG) {
                 System.out.println("matched object = " + object.getId());
-            }*/
+            }
         }
     }
 
@@ -445,6 +444,23 @@ public class Util {
     }
 
     /**
+     * Counts intersecting spans across lists of CorefTargets
+     * @param spans1
+     * @param spans2
+     * @return
+     */
+    static public int countIntersectingSetOfSpans (ArrayList<ArrayList<CorefTarget>> spans1, ArrayList<ArrayList<CorefTarget>> spans2) {
+        int cnt = 0;
+        for (int i = 0; i < spans1.size(); i++) {
+            ArrayList<CorefTarget> corefTargets1 = spans1.get(i);
+            if (matchingAtLeastOneSetOfSpans(corefTargets1, spans2)) {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+
+    /**
      *
      * @param corefTargets1
      * @param spans2
@@ -624,6 +640,43 @@ public class Util {
         return false;
     }
 
+    static public String getBestEntityUri (KafEntity kafEntity) {
+        String uri="";
+        boolean RERANK = false;
+        for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEntity.getExternalReferences().get(i);
+            if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
+                uri = kafSense.getSensecode();
+                RERANK = true;
+                break;
+            }
+        }
+        if (!RERANK) {
+            uri = kafEntity.getFirstUriReference();
+        }
+        return uri;
+    }
+
+    static public String getEntityLabelUriFromEntities (ArrayList<KafEntity> entities) {
+        String uri = "";
+        SemObject semObject = new SemObject();
+        for (int i = 0; i < entities.size(); i++) {
+            KafEntity kafEntity = entities.get(i);
+            String aUri = null;
+            try {
+                String cleanLabel = kafEntity.getTokenString().replaceAll(" ", "_");
+                //cleanLabel = cleanLabel.replaceAll("\'", "");
+                aUri = URLEncoder.encode(cleanLabel, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            if (aUri!=null) {
+                semObject.addPhraseCounts(aUri);
+            }
+        }
+        uri = semObject.getTopPhraseAsLabel();
+        return uri;
+    }
     /**
      * Returns the span id that is the head of a constituent of a participant in the SRL layer
      * @param kafParticipant
@@ -1143,6 +1196,24 @@ public class Util {
                 NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
                 if (!hasMention(mentionURIs, mention)) {
                    // System.out.println("corefTargets.toString() = " + corefTargets.toString());
+                    mentionURIs.add(mention);
+                }
+            }
+        }
+        return mentionURIs;
+    }
+
+    static public ArrayList<NafMention> getNafMentionArrayListFromEntities (String baseUri,
+                                                                                           KafSaxParser kafSaxParser,
+                                                                                           ArrayList<KafEntity> kafEntities) {
+        ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
+        for (int i = 0; i < kafEntities.size(); i++) {
+            KafEntity kafEntity = kafEntities.get(i);
+            ArrayList<ArrayList<CorefTarget>> corefTargetSets = kafEntity.getSetsOfSpans();
+            for (int j = 0; j < corefTargetSets.size(); j++) {
+                ArrayList<CorefTarget> corefTargets = corefTargetSets.get(j);
+                NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
+                if (!hasMention(mentionURIs, mention)) {
                     mentionURIs.add(mention);
                 }
             }

@@ -121,6 +121,7 @@ public class GetTimeLinesFromNaf {
                 GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
                 //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
                 GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
+                GetSemFromNafFile.fixExternalReferencesEntities(kafSaxParser);
 
                 String timeLines = processNafFile(file, project, kafSaxParser);
                 try {
@@ -215,6 +216,7 @@ public class GetTimeLinesFromNaf {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         String baseUrl = "";
+        String entityUri = ResourcesUri.nwrdata+project+"/entities/";
         if (!kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
             baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
             if (!baseUrl.toLowerCase().startsWith("http")) {
@@ -224,7 +226,8 @@ public class GetTimeLinesFromNaf {
         else {
             baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName() + ID_SEPARATOR;
         }
-        GetSemFromNafFile.processNafFileForActorPlaceInstances(baseUrl, kafSaxParser, semActors, semPlaces);
+        //GetSemFromNafFile.processNafFileForActorPlaceInstances(baseUrl, kafSaxParser, semActors, semPlaces);
+        GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
         GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
@@ -345,6 +348,8 @@ public class GetTimeLinesFromNaf {
 
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = "";
+        String entityUri = ResourcesUri.nwrdata+project+"/entities/";
+
         if (!kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
             baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
             if (!baseUrl.toLowerCase().startsWith("http")) {
@@ -357,6 +362,7 @@ public class GetTimeLinesFromNaf {
         }
         //GetSemFromNafFile.processNafFileForActorPlaceInstances(baseUrl, kafSaxParser, semActors, semPlaces);
         GetSemFromNafFile.processNafFileForActorInstances(baseUrl, kafSaxParser, semActors);
+        GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
         GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
