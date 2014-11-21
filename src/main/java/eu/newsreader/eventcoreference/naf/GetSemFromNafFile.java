@@ -59,9 +59,33 @@ public class GetSemFromNafFile {
         SemTime docSemTime = processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
         processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        //System.out.println("before semEvents = " + semEvents.size());
+        filterOverlapEventsEntities(semEvents, semActors);
+        //System.out.println("after semEvents = " + semEvents.size());
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime);
     }
 
+
+    /**
+     * Needed because SRL and NERC can independently claim a mention as an entity or event. In that case, we give preference to the entity status
+     * @param semEvents
+     * @param semActors
+     */
+    static void filterOverlapEventsEntities (ArrayList<SemObject> semEvents, ArrayList<SemObject> semActors) {
+        for (int i = 0; i < semEvents.size(); i++) {
+            SemObject semEvent = semEvents.get(i);
+            for (int j = 0; j < semActors.size(); j++) {
+                SemObject semActor = semActors.get(j);
+                for (int k = 0; k < semEvent.getNafMentions().size(); k++) {
+                    NafMention nafMention = semEvent.getNafMentions().get(k);
+                    if (Util.hasMention(semActor.getNafMentions(), nafMention)) {
+                        semEvents.remove(semEvent);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * @Deprecated: News function takes coreference sets as starting point
@@ -1238,7 +1262,7 @@ public class GetSemFromNafFile {
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47R9-0JG0-015B-31P6.xml";
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/4PG2-TTJ0-TXVX-P0FV.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
-        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47K6-YDT0-014V-R08D.xml";
+        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47JW-VP90-01H0-F4NW.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NEDRerankedTest/51Y9-WY41-DYVC-J27G_reranked.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";

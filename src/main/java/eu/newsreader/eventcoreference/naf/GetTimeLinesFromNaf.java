@@ -231,6 +231,7 @@ public class GetTimeLinesFromNaf {
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
         GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
@@ -366,6 +367,7 @@ public class GetTimeLinesFromNaf {
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
         GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         for (int i = 0; i < semActors.size(); i++) {
             SemObject semObject = semActors.get(i);
