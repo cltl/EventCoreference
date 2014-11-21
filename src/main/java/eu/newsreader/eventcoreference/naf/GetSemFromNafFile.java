@@ -904,7 +904,7 @@ public class GetSemFromNafFile {
             if (!docSemTime.getOwlTime().getDateString().isEmpty()) {
                // System.out.println("docSemTime.getOwlTime().getDateString() = " + docSemTime.getOwlTime().getDateString());
                 //NafMention mention = new NafMention(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
-                NafMention mention = new NafMention(baseUrl + "dct"); // shorter form for triple store
+                NafMention mention = new NafMention(baseUrl + "dctm"); // shorter form for triple store
                 docSemTime.addMentionUri(mention);
                 docSemTime.getOwlTime().parsePublicationDate(kafSaxParser.getKafMetaData().getCreationtime());
                 Util.addObject(semTimes, docSemTime);
@@ -1237,8 +1237,9 @@ public class GetSemFromNafFile {
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47R9-0JG0-015B-31P6.xml";
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/4PG2-TTJ0-TXVX-P0FV.xml";
-        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-R8J0-00GD-D2WD.xml";
-        String pathToNafFile = "/Users/piek/Desktop/NEDRerankedTest/51Y9-WY41-DYVC-J27G_reranked.naf";
+        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
+        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47K6-YDT0-014V-R08D.xml";
+        //String pathToNafFile = "/Users/piek/Desktop/NEDRerankedTest/51Y9-WY41-DYVC-J27G_reranked.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";

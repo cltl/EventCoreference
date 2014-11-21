@@ -91,6 +91,7 @@ public class Util {
         }*/
 
         boolean objectmatch =false;
+        boolean mentionMatch = false;
         for (int i = 0; i < objects.size(); i++) {
             SemObject semObject = objects.get(i);
 /*            if (DEBUG) {
@@ -113,7 +114,6 @@ public class Util {
             }
             else {
                 //// Next check absorbs an object if there is a mention overlap despite the URI mismatch!!!!
-/*                boolean mentionMatch = false;
                 for (int j = 0; j < object.getNafMentions().size(); j++) {
                     NafMention nafMention = object.getNafMentions().get(j);
                     if (semObject.hasMention(nafMention)) {
@@ -133,10 +133,10 @@ public class Util {
                         }
                     }
                     break;
-                }*/
+                }
             }
         }
-        if (!objectmatch) {
+        if (!objectmatch && !mentionMatch) {
            objects.add(object);
            if (DEBUG) {
                System.out.println("new object = " + object.getId());
