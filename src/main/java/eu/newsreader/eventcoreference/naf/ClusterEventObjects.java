@@ -40,6 +40,7 @@ public class ClusterEventObjects {
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
     static final int TIMEEXPRESSIONMAX = 5;
+    static String done = "";
 
     static public void main (String [] args) {
         if (args.length==0) {
@@ -82,6 +83,9 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
                 contextualFrameFile = args[i+1];
+            }
+            else if (arg.equals("--rename") && args.length>(i+1)) {
+                done = args[i+1];
             }
         }
         //// read resources
@@ -250,6 +254,10 @@ public class ClusterEventObjects {
             processKafSaxParser(project,
                     kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
                     semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+            if (!done.isEmpty()) {
+                File doneFile = new File(file.getAbsolutePath() + done);
+                file.renameTo(doneFile);
+            }
 
         }
 

@@ -29,21 +29,27 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class MatchEventObjects {
+
+    static boolean DEBUG = false;
+
     static public void main (String [] args) {
-        String eventType = "source";
+
+        String eventType = "";
         HashMap<String, SourceMeta> sourceMetaHashMap = null;
         WordnetData wordnetData = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
-        boolean singleOutput = true;
+        boolean singleOutput = false;
+        String pathToEventFolder = "";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/speech";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/contextual";
-        String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/events/source";
+       // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/events/source";
         //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/change-of-scale/events/contextual";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/grammatical";
         //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny/events/other";
        //String pathToEventFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out/events/other";
-        String pathToSourceDataFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v1_2014/resources/LN-coremetadata.txt";
+        String pathToSourceDataFile = "";
+        //String pathToSourceDataFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v1_2014/resources/LN-coremetadata.txt";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--event-folder") && args.length>(i+1)) {
@@ -77,6 +83,9 @@ public class MatchEventObjects {
             else if (arg.equals("--source-data") && args.length>(i+1)) {
                 pathToSourceDataFile = args[i+1];
             }
+            else if (arg.equals("--debug")) {
+                DEBUG = true;
+            }
         }
         if (!pathToSourceDataFile.isEmpty()) {
             sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
@@ -95,7 +104,7 @@ public class MatchEventObjects {
         HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
         if (file.exists() ) {
             int cnt = 0;
-         //   System.out.println("file = " + file.getName());
+            if (DEBUG) System.out.println("file = " + file.getName());
             try {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois =  new ObjectInputStream(fis);
@@ -107,7 +116,7 @@ public class MatchEventObjects {
 /*                            if (!compositeEvent.getEvent().getPhrase().equals("production")) {
                                 continue;
                             }*/
-                           // System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
+                            if (DEBUG) System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
                             if (eventMap.containsKey(compositeEvent.getEvent().getPhrase())) {
                                ArrayList<CompositeEvent> events = eventMap.get(compositeEvent.getEvent().getPhrase());
                                events.add(compositeEvent);
@@ -120,16 +129,16 @@ public class MatchEventObjects {
                             }
                         }
                         else {
-                         //   System.out.println("Unknown object obj.getClass() = " + obj.getClass());
+                            if (DEBUG) System.out.println("Unknown object obj.getClass() = " + obj.getClass());
                         }
                 }
                 ois.reset();
                 ois.close();
                 fis.close();
             } catch (Exception e) {
-             //   e.printStackTrace();
+                e.printStackTrace();
             }
-         //   System.out.println(file.getName()+" nr objects read = " + cnt);
+            if (DEBUG) System.out.println(file.getName()+" nr objects read = " + cnt);
         }
 
         return eventMap;
