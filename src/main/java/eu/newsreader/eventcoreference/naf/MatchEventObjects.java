@@ -92,7 +92,8 @@ public class MatchEventObjects {
             System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
         }
         if (singleOutput) {
-            processEventFilesSingleOutputFile(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+            //processEventFilesSingleOutputFile(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+            processEventFoldersSingleOutputFile(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
         }
         else {
             processEventFilesSeparateOutputFiles(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
@@ -102,6 +103,51 @@ public class MatchEventObjects {
 
     public static HashMap<String, ArrayList<CompositeEvent>> readLemmaEventHashMapFromObjectFile (File file) {
         HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
+        if (file.exists() ) {
+            int cnt = 0;
+            if (DEBUG) System.out.println("file = " + file.getName());
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois =  new ObjectInputStream(fis);
+                Object obj = null;
+                while (fis.available()>0) {
+                    while ((obj = ois.readObject()) != null) {
+                        cnt++;
+                        if (obj instanceof CompositeEvent) {
+                            CompositeEvent compositeEvent = (CompositeEvent) obj;
+/*                            if (!compositeEvent.getEvent().getPhrase().equals("production")) {
+                                continue;
+                            }*/
+                            if (DEBUG)
+                                System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
+                            if (eventMap.containsKey(compositeEvent.getEvent().getPhrase())) {
+                                ArrayList<CompositeEvent> events = eventMap.get(compositeEvent.getEvent().getPhrase());
+                                events.add(compositeEvent);
+                                eventMap.put(compositeEvent.getEvent().getPhrase(), events);
+                            } else {
+                                ArrayList<CompositeEvent> events = new ArrayList<CompositeEvent>();
+                                events.add(compositeEvent);
+                                eventMap.put(compositeEvent.getEvent().getPhrase(), events);
+                            }
+                        } else {
+                            if (DEBUG) System.out.println("Unknown object obj.getClass() = " + obj.getClass());
+                        }
+                    }
+                    ois.reset();
+                    ois.close();
+                    fis.close();
+                }
+            } catch (Exception e) {
+               //  System.out.println("file = " + file.getAbsolutePath());
+              //   e.printStackTrace();
+            }
+            if (DEBUG) System.out.println(file.getName()+" nr objects read = " + cnt);
+        }
+
+        return eventMap;
+    }
+
+    public static void addLemmaEventHashMapFromObjectFile (File file,  HashMap<String, ArrayList<CompositeEvent>> eventMap) {
         if (file.exists() ) {
             int cnt = 0;
             if (DEBUG) System.out.println("file = " + file.getName());
@@ -140,8 +186,6 @@ public class MatchEventObjects {
             }
             if (DEBUG) System.out.println(file.getName()+" nr objects read = " + cnt);
         }
-
-        return eventMap;
     }
 
     public static void processEventFilesSingleOutputFile (File pathToEventFolder, double conceptMatchThreshold,
@@ -219,6 +263,87 @@ public class MatchEventObjects {
         } catch (IOException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+
+
+       // System.out.println("nMatches = " + nMatches);
+    }
+
+
+    public static void processEventFoldersSingleOutputFile (File pathToEventFolder, double conceptMatchThreshold,
+                                      double phraseMatchThreshold,
+                                      HashMap<String, SourceMeta> sourceMetaHashMap,
+                                      WordnetData wordnetData,
+                                      String eventType
+
+    ) {
+        ArrayList<File> eventFolders = Util.makeFolderList(pathToEventFolder);
+        for (int f = 0; f < eventFolders.size(); f++) {
+            File nextEventFolder =  eventFolders.get(f);
+            try {
+                OutputStream fos = new FileOutputStream(nextEventFolder.getAbsolutePath()+"/sem.trig");
+
+                Dataset ds = TDBFactory.createDataset();
+                Model defaultModel = ds.getDefaultModel();
+                ResourcesUri.prefixModel(defaultModel);
+
+                Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
+                ResourcesUri.prefixModelGaf(provenanceModel);
+
+                Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
+                ResourcesUri.prefixModel(instanceModel);
+
+                HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap = new HashMap<String, ArrayList<CompositeEvent>>();
+
+                ArrayList<File> files = Util.makeRecursiveFileList(nextEventFolder, ".obj");
+                for (int i = 0; i < files.size(); i++) {
+                    File file = files.get(i);
+                    // System.out.println("file.getName() = " + file.getName());
+                    HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
+                    // System.out.println("localEventMap.size() = " + localEventMap.size());
+                    Set keySet = localEventMap.keySet();
+                    Iterator keys = keySet.iterator();
+                    while (keys.hasNext()) {
+                        String lemma = (String) keys.next();
+                        ArrayList<CompositeEvent> finalCompositeEvents = new ArrayList<CompositeEvent>();
+                        ArrayList<CompositeEvent> myCompositeEvents = localEventMap.get(lemma);
+
+                        for (int j = 0; j < myCompositeEvents.size(); j++) {
+                            boolean match = false;
+                            boolean same = false;
+                            CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
+                            for (int k = 0; k < finalCompositeEvents.size(); k++) {
+                                CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
+                                // checkCompositeEvents(myCompositeEvent, finalCompositeEvent);
+
+                                if (myCompositeEvent.getEvent().getId().equals(finalCompositeEvent.getEvent().getId())) {
+                                    same = true;
+                                }
+                                else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
+                                    match = true;
+                                    finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
+                                    finalCompositeEvent.mergeObjects(myCompositeEvent);
+                                    finalCompositeEvent.mergeRelations(myCompositeEvent);
+                                    finalCompositeEvent.mergeFactRelations(myCompositeEvent);
+                                    /// we thus merge with the first matching event and do not consider others that may be bettter!!!!!
+                                    //  System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                                    break;
+                                }
+                            }
+                            if (!match && !same) {
+                                finalCompositeEvents.add(myCompositeEvent);
+                            }
+                        }
+                        finalLemmaEventMap.put(lemma, finalCompositeEvents);
+                    }
+                }
+                JenaSerialization.addJenaCompositeEvents(ds, instanceModel, provenanceModel, finalLemmaEventMap, sourceMetaHashMap);
+                RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
 
 
        // System.out.println("nMatches = " + nMatches);

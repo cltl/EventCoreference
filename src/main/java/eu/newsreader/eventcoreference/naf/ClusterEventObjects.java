@@ -251,7 +251,10 @@ public class ClusterEventObjects {
             factRelations = new ArrayList<SemRelation>();
           //  System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
-            processKafSaxParser(project,
+           /* processKafSaxParser(project,
+                    kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
+                    semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);*/
+            processKafSaxParserOutputFolder(file.getName(), project,
                     kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
                     semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
             if (!done.isEmpty()) {
@@ -313,7 +316,7 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-        processKafSaxParser(project, kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
+        processKafSaxParserOutputFolder("", project, kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
                 semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
     }
 
@@ -410,6 +413,124 @@ public class ClusterEventObjects {
                     }
                     os.close();
                     eventFos.close();
+                }
+            } else {
+                //   System.out.println("timeFile = " + timeFile);
+            }
+        }
+    }
+
+
+    static void processKafSaxParserOutputFolder(String nafFileName, String project, KafSaxParser kafSaxParser,
+                                    File speechFolder, File otherFolder, File grammaticalFolder,
+                                    ArrayList<SemObject> semEvents ,
+                                    ArrayList<SemObject> semActors,
+                                    ArrayList<SemObject> semPlaces,
+                                    ArrayList<SemObject> semTimes,
+                                    ArrayList<SemRelation> semRelations,
+                                    ArrayList<SemRelation> factRelations
+    ) throws IOException {
+
+        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        // We need to create output objects that are more informative than the Trig output and store these in files per date
+        //System.out.println("semTimes = " + semTimes.size());
+        for (int j = 0; j < semEvents.size(); j++) {
+            SemEvent mySemEvent = (SemEvent) semEvents.get(j);
+            ArrayList<SemTime> myTimes = Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
+            //   System.out.println("myTimes.size() = " + myTimes.size());
+            ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
+            ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
+            ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
+            if (myRelations.size() == 0) {
+                continue;
+            }
+            ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
+            CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
+            File folder = otherFolder;
+            String eventType = getEventTypeString(mySemEvent);
+            if (!eventType.isEmpty()) {
+                if (eventType.equalsIgnoreCase("source")) {
+                    folder = speechFolder;
+                } else if (eventType.equalsIgnoreCase("grammatical")) {
+                    folder = grammaticalFolder;
+                }
+            }
+            File timeFile = null;
+
+            ArrayList<SemTime> outputTimes = myTimes;
+            // eventFos.writeObject(compositeEvent);
+            /// now we need to write the event data and relations to the proper time folder for comparison
+/*                if (outputTimes.size() == 0) {
+                    /// we use the doc times as fall back;
+                    outputTimes = compositeEvent.getMyDocTimes();
+                }*/
+            if (outputTimes.size() == 0) {
+                /// timeless
+                timeFile = new File(folder.getAbsolutePath() + "/" + "e-" + "timeless");
+            } else if (outputTimes.size() == 1) {
+                /// time: same year or exact?
+                SemTime myTime = outputTimes.get(0);
+                String timePhrase = "-" + myTime.getOwlTime().toString();
+                timeFile = new File(folder.getAbsolutePath() + "/" + "e" + timePhrase);
+            } else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
+                /// special case if multiple times, what to do? create a period?
+                //// ?????
+                TreeSet<String> treeSet = new TreeSet<String>();
+                String timePhrase = "";
+                for (int k = 0; k < outputTimes.size(); k++) {
+                    SemTime semTime = (SemTime) outputTimes.get(k);
+                    timePhrase = semTime.getOwlTime().toString();
+                    if (!treeSet.contains(timePhrase)) {
+                        treeSet.add(timePhrase);
+                    }
+                }
+                timePhrase = "";
+                Iterator keys = treeSet.iterator();
+                while (keys.hasNext()) {
+                    timePhrase += "-" + keys.next();
+                }
+                timeFile = new File(folder.getAbsolutePath() + "/" + "e" + timePhrase);
+            }
+            if (timeFile != null) {
+                if (!timeFile.exists()) {
+                    timeFile.mkdir();
+                }
+                if (timeFile.exists()) {
+                    //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
+                    File randomFile = null;
+                    if (!nafFileName.isEmpty()) {
+                        randomFile = new File(timeFile.getAbsolutePath() + "/" + nafFileName + ".obj");
+                    }
+                    else {
+                        randomFile = File.createTempFile("event", ".obj", timeFile);
+                    }
+                    if (randomFile!=null && randomFile.exists()) {
+                        //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
+                        OutputStream os = new FileOutputStream(randomFile, true);
+                        Util.AppendableObjectOutputStream eventFos = new Util.AppendableObjectOutputStream(os);
+                        try {
+                            eventFos.writeObject(compositeEvent);
+                        } catch (IOException e) {
+                            //e.printStackTrace();
+                        }
+                        os.flush();
+                        os.close();
+                        eventFos.flush();
+                        eventFos.close();
+                    } else {
+                        //  System.out.println("timeFile.getName() = " + timeFile.getName());
+                        OutputStream os = new FileOutputStream(randomFile);
+                        ObjectOutputStream eventFos = new ObjectOutputStream(os);
+                        try {
+                            eventFos.writeObject(compositeEvent);
+                        } catch (IOException e) {
+                            // e.printStackTrace();
+                        }
+                        os.flush();
+                        os.close();
+                        eventFos.flush();
+                        eventFos.close();
+                    }
                 }
             } else {
                 //   System.out.println("timeFile = " + timeFile);
