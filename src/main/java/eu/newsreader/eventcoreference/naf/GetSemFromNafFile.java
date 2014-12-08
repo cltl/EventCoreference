@@ -914,6 +914,68 @@ public class GetSemFromNafFile {
     }
 
 
+    /**
+     * We get the actors from the SRL layer that are not represented
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semActors
+     */
+    static void processNafFileForRemainingSrlActors (String entityUri, String baseUrl, KafSaxParser kafSaxParser,
+                                       ArrayList<SemObject> semActors
+    ) {
+
+
+       // System.out.println("semActors = " + semActors.size());
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> actorReferences = Util.getActorCoreftargetSetsHashMapFromSrl(kafSaxParser);
+        Set keySet = actorReferences.keySet();
+        Iterator keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();  /// role id from srl
+
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = actorReferences.get(key);
+            SemActor semActor = new SemActor();
+            semActor.setId(entityUri + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semActor.setNafMentions(mentions);
+            semActor.addPhraseCountsForMentions(kafSaxParser);
+            semActor.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
+            semActor.setIdByDBpediaReference();
+            Util.addObject(semActors, semActor);
+        }
+       // System.out.println("semActors = " + semActors.size());
+    }
+
+    /**
+     * We get the actors from the SRL layer that are not represented
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semActors
+     */
+    static void processNafFileForRemainingSrlPlaces (String entityUri, String baseUrl, KafSaxParser kafSaxParser,
+                                       ArrayList<SemObject> semActors
+    ) {
+
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> locationReference = Util.getLocationMentionsHashMapFromSrl(kafSaxParser);
+        Set keySet = locationReference.keySet();
+        Iterator keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();  /// role id from srl
+            ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = locationReference.get(key);
+            SemPlace semPlace = new SemPlace();
+            //semPlace.setId(baseUrl + key);
+            semPlace.setId(entityUri + key);
+            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+            semPlace.setNafMentions(mentions);
+            semPlace.addPhraseCountsForMentions(kafSaxParser);
+            semPlace.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
+            semPlace.setIdByDBpediaReference();
+            Util.addObject(semActors, semPlace);
+
+        }
+       // System.out.println("semActors = " + semActors.size());
+    }
+
+
     static SemTime processNafFileForTimeInstances (String baseUrl, KafSaxParser kafSaxParser,
                                        ArrayList<SemObject> semTimes
     ) {
