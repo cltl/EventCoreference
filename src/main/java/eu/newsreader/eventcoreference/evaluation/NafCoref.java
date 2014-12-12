@@ -21,13 +21,24 @@ import java.util.ArrayList;
  */
 public class NafCoref {
     static public void main (String[] args) {
-        //String type = "EVENT-GRAMMATICAL";
-        //String type = "EVENT-SPEECH_COGNITIVE";
-        String type = "EVENT-OTHER";
-        //String pathToNafFile = "";
-        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_NAF_output/corpus_apple/10450_Apple_Computer_CEO_Steve_Jobs_gives_opening_keynote_to_WWDC_2005.naf";
-        String folder = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_NAF_output/corpus_apple/";
-        String fileExtension = ".xml";
+        String type = "";
+        String fileExtension = "";
+        String format = "";
+        String pathToNafFile = "";
+        String folder = "";
+
+        /*** test parameters to run without setting parameters
+        ///  COMMENT OUT BEFORE RELEASE
+         ***/
+        // type = "EVENT-GRAMMATICAL";
+        // type = "EVENT-SPEECH_COGNITIVE";
+        //type = "EVENT-OTHER";
+        type= "event";
+        format = "conll";
+        //format = "coref";
+       // pathToNafFile = "/Users/piek/Desktop/NWR/corpus_NAF_output_281114/corpus_apple_event_based/9549_Reactions_to_Apple.naf";
+        folder = "/Users/piek/Desktop/NWR/corpus_NAF_output_281114/corpus_apple";
+        fileExtension = ".naf";
         KafSaxParser kafSaxParser = new KafSaxParser();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -39,22 +50,40 @@ public class NafCoref {
                 fileExtension = args[i + 1];
             } else if (arg.equalsIgnoreCase("--coref-type") && args.length > (i + 1)) {
                 type = args[i + 1];
+            } else if (arg.equalsIgnoreCase("--format") && args.length > (i + 1)) {
+                format = args[i + 1];
             }
         }
         if (!pathToNafFile.isEmpty()) {
             kafSaxParser.parseFile(pathToNafFile);
             switchToTokenIds(kafSaxParser);
-            serializeToCorefSet(System.out, kafSaxParser, "test", type);
+            if (format.equalsIgnoreCase("coref")) {
+                serializeToCorefSet(System.out, kafSaxParser, new File (pathToNafFile).getName(), type);
+            }
+            else if (format.equalsIgnoreCase("conll")) {
+                serializeToCoNLL(System.out, kafSaxParser, new File (pathToNafFile).getName(), type);
+            }
+            else {
+                System.out.println("Unknown format:"+ format);
+            }
         }
         else if (!folder.isEmpty()) {
-            ArrayList<File> files = Util.makeFlatFileList(new File(folder), ".xml");
+            ArrayList<File> files = Util.makeFlatFileList(new File(folder), fileExtension);
             for (int i = 0; i < files.size(); i++) {
                 File file = files.get(i);
                 kafSaxParser.parseFile(file.getAbsolutePath());
                 try {
-                    OutputStream fos = new FileOutputStream(file.getAbsolutePath() + "." + type + ".coref");
+                    OutputStream fos = new FileOutputStream(file.getAbsolutePath() + "." + type + ".response");
                     switchToTokenIds(kafSaxParser);
-                    serializeToCorefSet(fos, kafSaxParser, "test", type);
+                    if (format.equalsIgnoreCase("coref")) {
+                        serializeToCorefSet(fos, kafSaxParser, file.getName(), type);
+                    }
+                    else if (format.equalsIgnoreCase("conll")) {
+                        serializeToCoNLL(fos, kafSaxParser, file.getName(), type);
+                    }
+                    else {
+                        System.out.println("Unknown format:"+ format);
+                    }
                     fos.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -64,6 +93,32 @@ public class NafCoref {
     }
 
     public static void switchToTokenIds (KafSaxParser kafSaxParser) {
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+           // System.out.println("coreferenceSet.getType() = " + coreferenceSet.getType());
+            for (int j = 0; j < coreferenceSet.getSetsOfSpans().size(); j++) {
+                ArrayList<CorefTarget> corefTargets = coreferenceSet.getSetsOfSpans().get(j);
+                for (int k = 0; k < corefTargets.size(); k++) {
+                    CorefTarget target = corefTargets.get(k);
+                    for (int l = 0; l < kafSaxParser.kafTermList.size(); l++) {
+                        KafTerm term = kafSaxParser.kafTermList.get(l);
+                        if (term.getTid().equals(target.getId())) {
+                            String tokenId = term.getSpans().get(0);
+                            for (int w = 0; w < kafSaxParser.kafWordFormList.size(); w++) {
+                                KafWordForm wordForm = kafSaxParser.kafWordFormList.get(w);
+                                if (wordForm.getWid().equals(tokenId)) {
+                                    target.setId(tokenId);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static void switchToTokenIdsAndEventTypes (KafSaxParser kafSaxParser) {
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
             String type = "";
@@ -163,5 +218,155 @@ public class NafCoref {
         {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * #begin document (LuoTestCase);
+     test1	0	0	a1	(0
+     test1	0	1	a2	0)
+     test1	0	2	junk	-
+     test1	0	3	b1	(1
+     test1	0	4	b2	-
+     test1	0	5	b3	-
+     test1	0	6	b4	1)
+     test1	0	7	jnk	-
+     test1	0	8	.	-
+
+     test2	0	0	c	(1)
+     test2	0	1	jnk	-
+     test2	0	2	d1	(2
+     test2	0	3	d2	2)
+     test2	0	4	jnk	-
+     test2	0	5	e	(2)
+     test2	0	6	jnk	-
+     test2	0	7	f1	(2
+     test2	0	8	f2	-
+     test2	0	9	f3	2)
+     test2	0	10	.	-
+     #end document
+     */
+
+
+    /**
+     *
+     * @param stream
+     * @param kafSaxParser
+     * @param fileName
+     * @param type
+     */
+    static public void serializeToCoNLL (OutputStream stream, KafSaxParser kafSaxParser, String fileName, String type) {
+        try {
+            String str = "#begin document ("+fileName+");";
+            stream.write(str.getBytes());
+            str  = "";
+            boolean COREFERRING = false;
+            boolean NEWSENTENCE = false;
+            String currentSentence = "";
+
+            for (int i = 0; i < kafSaxParser.getKafWordFormList().size(); i++) {
+                KafWordForm kafWordForm = kafSaxParser.getKafWordFormList().get(i);
+                /// insert sentence separator
+                if (!currentSentence.isEmpty() && !currentSentence.equals(kafWordForm.getSent()))  {
+                    NEWSENTENCE = true;
+                    currentSentence = kafWordForm.getSent();
+                }
+                else if (currentSentence.isEmpty()) {
+                    /// first sentence
+                    currentSentence = kafWordForm.getSent();
+                }
+                else {
+                    NEWSENTENCE = false;
+                }
+                String corefId = getCoreferenceSetId(kafSaxParser, kafWordForm.getWid(), type);
+                //// First we need to handle the previous line if any
+                //// After that we can process the current
+                /// check previous conditions and terminate properly
+
+                if (corefId.isEmpty()) {
+                    //// current is not a coreferring token
+                    if (COREFERRING) {
+                       //// previous was coreferring so we need to terminate the previous with ")"
+                       str += ")";
+                    }
+                    /// always terminate the previous token
+                    str += "\n";
+                    COREFERRING = false;
+                    /// we started a new sentence so we insert a blank line
+                    if (NEWSENTENCE) str+= "\n";
+                    /// add the info for the current token
+                    str += fileName+"\t"+kafWordForm.getSent()+"\t"+kafWordForm.getWid()+"\t"+kafWordForm.getWf() +"\t"+"-";
+                }
+                else {
+                    if (NEWSENTENCE) {
+                        /// we started a new sentence so we insert a blank line
+                        if (COREFERRING) {
+                            /// end of sentence implies ending coreference as well
+                            str += ")\n";
+                        }
+                        else {
+                            str += "\n";
+                        }
+                        str+= "\n";
+                    }
+                    else {
+                        str+= "\n";
+                    }
+                    /// add the info for the current token
+                    str += fileName+"\t"+kafWordForm.getSent()+"\t"+kafWordForm.getWid()+"\t"+kafWordForm.getWf() +"\t";
+                    if (!COREFERRING) {
+                        str += "("+corefId;
+                        COREFERRING = true;
+                    }
+                    else {
+                        str += corefId;
+                    }
+                }
+            }
+            ///check the status of the last token
+            if (COREFERRING) {
+                str += ")\n";
+            }
+            else {
+                str += "\n";
+            }
+            stream.write(str.getBytes());
+            str = "#end document\n";
+            stream.write(str.getBytes());
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    static public String getCoreferenceSetId (KafSaxParser kafSaxParser, String tokenId, String type) {
+        String corefId = "";
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet corefSet  = kafSaxParser.kafCorefenceArrayList.get(i);
+           // System.out.println("coref.getType() = " + corefSet.getType());
+            if (type.isEmpty() || corefSet.getType().equalsIgnoreCase(type)) {
+                for (int j = 0; j < corefSet.getSetsOfSpans().size(); j++) {
+                    ArrayList<CorefTarget> corefTargets = corefSet.getSetsOfSpans().get(j);
+                    for (int k = 0; k < corefTargets.size(); k++) {
+                        CorefTarget corefTarget = corefTargets.get(k);
+                        if (corefTarget.getId().equals(tokenId)) {
+                            corefId = corefSet.getCoid();
+                            break;
+                        }
+                    }
+                    if (!corefId.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+            else {
+              //  if (!corefSet.getType().isEmpty()) System.out.println("coref.getType() = " + corefSet.getType());
+            }
+            if (!corefId.isEmpty()) {
+                break;
+            }
+        }
+        return corefId;
     }
 }

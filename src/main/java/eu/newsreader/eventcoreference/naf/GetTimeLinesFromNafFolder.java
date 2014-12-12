@@ -11,13 +11,16 @@ import eu.newsreader.eventcoreference.util.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
  * Created by piek on 10/22/14.
  */
-public class GetTimeLinesFromNaf {
+public class GetTimeLinesFromNafFolder {
     /**
      * TimeLine:
      Steve Jobs
@@ -35,37 +38,22 @@ public class GetTimeLinesFromNaf {
     static Vector<String> contextualVector = null;
 
     static public void main (String [] args) {
-        //String pathToNafFile = args[0];
-        String pathToNafFile = "";
         String processType = "";
-        String extension = "";
-        String project = "";
+        processType = "event";
+       // processType = "entity";
         String pathToFolder = "";
-
-        //processType = "entity";
-        processType = "entity";
-        // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/naf_file_raw_out-2/17174-Apple_executive_leaves.xml.naf";
-        // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialNWR20.naf";
-        // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialPiekCoref.naf";
-        // pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
-        // pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
-        // pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
-        //pathToNafFile = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_281114/corpus_apple_event_based/9549_Reactions_to_Apple.naf";
-        pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_281114/corpus_airbus_event_based";
+        pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_281114/corpus_apple_event_based";
        // pathToFolder = "/Users/piek/Desktop/NWR/timeline/test";
-        extension = ".naf";
-        project = "wikinews";
-
+        String query = "apple";
+        String extension = ".naf";
+        String eventType = "CONTEXTUAL";
+        String project = "apple";
         String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
         String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/contextual.txt";
         String grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/grammatical.txt";
-
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.equals("--naf-file") && args.length>(i+1)) {
-                pathToNafFile = args[i+1];
-            }
-            else if (arg.equals("--project") && args.length>(i+1)) {
+            if (arg.equals("--project") && args.length>(i+1)) {
                 project = args[i+1];
             }
             else if (arg.equals("--folder") && args.length>(i+1)) {
@@ -74,8 +62,11 @@ public class GetTimeLinesFromNaf {
             else if (arg.equals("--extension") && args.length>(i+1)) {
                 extension = args[i+1];
             }
-            else if (arg.equals("--process-type") && args.length>(i+1)) {
-                processType = args[i+1];
+            else if (arg.equals("--query") && args.length>(i+1)) {
+                query = args[i+1];
+            }
+            else if (arg.equals("--event-type") && args.length>(i+1)) {
+                eventType = args[i+1];
             }
             else if (arg.equals("--communication-frames") && args.length>(i+1)) {
                 comFrameFile = args[i+1];
@@ -93,48 +84,64 @@ public class GetTimeLinesFromNaf {
         grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
         contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
 
-        if (!pathToNafFile.isEmpty()) {
-            KafSaxParser kafSaxParser = new KafSaxParser();
-            kafSaxParser.parseFile(pathToNafFile);
-            //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
-            GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
-            //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
-            GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
+        if (!pathToFolder.isEmpty()) {
+            entityTimeLineHashMap = new HashMap<String, EntityTimeLine>();
+            entitiesTimeLineHashMap = new HashMap<String, EntityTimeLine>();
 
-            String timeLines = processNafFile(new File(pathToNafFile), project, kafSaxParser, processType);
+            KafSaxParser kafSaxParser = new KafSaxParser();
+            ArrayList<File> files = Util.makeFlatFileList(new File(pathToFolder), extension);
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.get(i);
+                // System.out.println("file.getName() = " + file.getName());
+                kafSaxParser.parseFile(file);
+                //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
+                GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
+                //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
+                GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
+                GetSemFromNafFile.fixExternalReferencesEntities(kafSaxParser);
+
+
+
+                //// get single time lines for whole folder
+                processNafFileFromFolder(file.getName(), project, kafSaxParser, eventType);
+                Set keySet = entityTimeLineHashMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    if (key.toLowerCase().indexOf(query.toLowerCase()) != -1) {
+                        EntityTimeLine entityTimeLine = entityTimeLineHashMap.get(key);
+                        /// we add the timelines to the query entry data
+                        if (entitiesTimeLineHashMap.containsKey(query)) {
+                            EntityTimeLine timeLine = entitiesTimeLineHashMap.get(query);
+                            timeLine.addTimeLine(entityTimeLine);
+                            entitiesTimeLineHashMap.put(query, timeLine);
+                        } else {
+                            EntityTimeLine timeLine = new EntityTimeLine();
+                            timeLine.setEntityId(query);
+                            timeLine.addTimeLine(entityTimeLine);
+                            entitiesTimeLineHashMap.put(query, timeLine);
+                        }
+                    }
+                }
+            }
+            entityTimeLineHashMap = new HashMap<String, EntityTimeLine>();
+
+
+            /// OUTPUT TIMELINE FOR ALL FILES
             try {
-                OutputStream fos = new FileOutputStream(pathToNafFile + ".tml");
-                fos.write(timeLines.getBytes());
+                OutputStream fos = new FileOutputStream(pathToFolder+"/" + query+"-"+eventType+".html");
+                Set keySet = entitiesTimeLineHashMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    EntityTimeLine entityTimeLine = entitiesTimeLineHashMap.get(key);
+                    String timeLine = entityTimeLine.toString();
+                    fos.write(timeLine.getBytes());
+                }
                 fos.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else if (!pathToFolder.isEmpty()) {
-
-                    KafSaxParser kafSaxParser = new KafSaxParser();
-                    ArrayList<File> files = Util.makeFlatFileList(new File(pathToFolder), extension);
-                    for (int i = 0; i < files.size(); i++) {
-                        File file = files.get(i);
-                        // System.out.println("file.getName() = " + file.getName());
-                        kafSaxParser.parseFile(file);
-                        //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
-                        GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
-                        //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
-                        GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
-                        GetSemFromNafFile.fixExternalReferencesEntities(kafSaxParser);
-
-                        /// process single filew
-                        String timeLines = processNafFile(file, project, kafSaxParser, processType);
-                        // String timeLines = processNafFileEventBased(file, project, kafSaxParser);
-                        try {
-                            OutputStream fos = new FileOutputStream(file + ".tml");
-                            fos.write(timeLines.getBytes());
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
 
         }
