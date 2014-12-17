@@ -37,7 +37,7 @@ public class EventCorefWordnetSim {
     static int proportionalthreshold = 80;
     static double simthreshold = 2.2;
     static ArrayList<String> relations = new ArrayList<String>();
-
+    static final int DRIFTMAX = 3;
 
     static public void main (String [] args) {
               if (args.length==0) {
@@ -315,7 +315,7 @@ public class EventCorefWordnetSim {
             for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
                 KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
                 if (kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
-                    if (kafCoreferenceSet.getExternalReferences().size()>3) {
+                    if (kafCoreferenceSet.getExternalReferences().size()>DRIFTMAX) {
                         HashMap<String, KafCoreferenceSet> corefMap = new HashMap<String, KafCoreferenceSet>();
                         int nSubSets = 0;
                         for (int j = 0; j < kafCoreferenceSet.getSetsOfSpans().size(); j++) {
