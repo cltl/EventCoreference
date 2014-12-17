@@ -1,6 +1,9 @@
 package eu.newsreader.eventcoreference.evaluation;
 
-import eu.kyotoproject.kaf.*;
+import eu.kyotoproject.kaf.CorefTarget;
+import eu.kyotoproject.kaf.KafCoreferenceSet;
+import eu.kyotoproject.kaf.KafTerm;
+import eu.kyotoproject.kaf.KafWordForm;
 import eu.newsreader.eventcoreference.util.Util;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -23,6 +26,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by piek on 10/23/14.
@@ -53,10 +58,12 @@ public class CatCoref extends DefaultHandler {
 
 <token t_id="44" sentence="3" number="43">be</token>
 
-<EVENT_MENTION m_id="31" time="NON_FUTURE" special_cases="GEN" aspect="NONE" certainty="POSSIBLE" polarity="POS" tense="INFINITIVE" modality="" pred="be" comment="" pos="VERB"  >
+<EVENT_MENTION m_id="31" time="NON_FUTURE" special_cases="GEN" aspect="NONE"
+certainty="POSSIBLE" polarity="POS" tense="INFINITIVE" modality="" pred="be" comment="" pos="VERB"  >
 <token_anchor t_id="44"/>
 </EVENT_MENTION>
-<EVENT_MENTION m_id="69" time="NON_FUTURE" special_cases="NONE" aspect="NONE" certainty="CERTAIN" polarity="POS" tense="PRESENT" modality="" pred="unveil" comment="" pos="VERB"  >
+<EVENT_MENTION m_id="69" time="NON_FUTURE" special_cases="NONE" aspect="NONE"
+certainty="CERTAIN" polarity="POS" tense="PRESENT" modality="" pred="unveil" comment="" pos="VERB"  >
 <token_anchor t_id="2"/>
 </EVENT_MENTION>
 
@@ -71,6 +78,7 @@ public class CatCoref extends DefaultHandler {
 
      */
     String value = "";
+    static public HashMap<String, KafCoreferenceSet> coreferenceHashMap;
     static public ArrayList<KafCoreferenceSet> kafCoreferenceSetArrayList;
     ArrayList<CorefTarget> corefTargetArrayList;
     KafCoreferenceSet kafCoreferenceSet;
@@ -87,6 +95,7 @@ public class CatCoref extends DefaultHandler {
 
     void init() {
         value = "";
+        coreferenceHashMap = new HashMap<String, KafCoreferenceSet>();
         kafCoreferenceSetArrayList = new ArrayList<KafCoreferenceSet>();
         corefTargetArrayList = new ArrayList<CorefTarget>();
         kafCoreferenceSet = new KafCoreferenceSet();
@@ -94,7 +103,6 @@ public class CatCoref extends DefaultHandler {
         eventMentionTypeMap = new HashMap<String, String>();
         kafWordForm = new KafWordForm();
         kafWordFormArrayList = new ArrayList<KafWordForm>();
-        kafCoreferenceSetArrayList = new ArrayList<KafCoreferenceSet>();
         kafTerm = new KafTerm();
         kafTermArrayList = new ArrayList<KafTerm>();
         REFERSTO = false;
@@ -111,6 +119,7 @@ public class CatCoref extends DefaultHandler {
             InputSource inp = new InputSource (new FileReader(filePath));
             parser.parse(inp, this);
             switchToTokenIds();
+
         } catch (SAXParseException err) {
             myerror = "\n** Parsing error" + ", line " + err.getLineNumber()
                     + ", uri " + err.getSystemId();
@@ -139,7 +148,9 @@ public class CatCoref extends DefaultHandler {
         if (qName.equalsIgnoreCase("token")) {
             kafWordForm = new KafWordForm();
             kafWordForm.setWid(attributes.getValue("t_id"));
-            kafWordForm.setSent(attributes.getValue("sentence"));
+            Integer sentenceInt = Integer.parseInt(attributes.getValue("sentence"));
+            sentenceInt++;
+            kafWordForm.setSent(sentenceInt.toString());
         }
         else if (qName.equalsIgnoreCase("EVENT")) {
             String type = attributes.getValue("class");
@@ -159,7 +170,9 @@ public class CatCoref extends DefaultHandler {
             kafTerm.setTid(attributes.getValue("m_id"));
         }
         else if (qName.equalsIgnoreCase("source")) {
+            //// sources are mentions that match with the same target. The same target can occur in different refers to mappings
             if (REFERSTO) {
+                /// sources and targets can also occur for other relations than refersto
                 corefTarget = new CorefTarget();
                 corefTarget.setId(attributes.getValue("m_id"));
                 corefTargetArrayList.add(corefTarget);
@@ -167,16 +180,26 @@ public class CatCoref extends DefaultHandler {
         }
         else if (qName.equalsIgnoreCase("target")) {
             if (REFERSTO) {
+                /// sources and targets can also occur for other relations than refersto
                 target = attributes.getValue("m_id");
+/*
+                corefTarget = new CorefTarget();
+                corefTarget.setId(attributes.getValue("m_id"));
+                corefTargetArrayList.add(corefTarget);
+*/
             }
         }
         else if (qName.equalsIgnoreCase("token_anchor")) {
             span = attributes.getValue("t_id");
+            kafTerm.addSpans(span);
         }
         else if (qName.equalsIgnoreCase("REFERS_TO")) {
             REFERSTO = true;
-            kafCoreferenceSet = new KafCoreferenceSet();
-            kafCoreferenceSet.setCoid(attributes.getValue("r_id"));
+            corefTargetArrayList = new ArrayList<CorefTarget>();
+            target = "";
+            /// it appears that these do not make a unique coreference set
+           // kafCoreferenceSet = new KafCoreferenceSet();
+           // kafCoreferenceSet.setCoid(attributes.getValue("r_id"));
         }
         value = "";
     }//--startElement
@@ -190,58 +213,90 @@ public class CatCoref extends DefaultHandler {
             kafWordForm = new KafWordForm();
         }
         else if (qName.equalsIgnoreCase("EVENT_MENTION")) {
-            kafTerm.addSpans(span);
-            span = "";
             kafTermArrayList.add(kafTerm);
             kafTerm = new KafTerm();
         }
         else if (qName.equalsIgnoreCase("ENTITY_MENTION")) {
-            kafTerm.addSpans(span);
-            span = "";
             kafTermArrayList.add(kafTerm);
             kafTerm = new KafTerm();
         }
         else if (qName.equalsIgnoreCase("REFERS_TO")) {
             REFERSTO = false;
-            kafCoreferenceSet.addSetsOfSpans(corefTargetArrayList);
             String type = "";
             if (eventMentionTypeMap.containsKey(target)) {
                 type = eventMentionTypeMap.get(target);
             }
-            kafCoreferenceSet.setType(type);
+            if (!target.isEmpty()) {
+                if (coreferenceHashMap.containsKey(target)) {
+                    KafCoreferenceSet set = coreferenceHashMap.get(target);
+                    set.addSetsOfSpans(corefTargetArrayList);
+                    coreferenceHashMap.put(target, set);
+                }
+                else {
+                    KafCoreferenceSet set = new KafCoreferenceSet();
+                    set.setCoid(target);
+                    set.setType(type);
+                    set.addSetsOfSpans(corefTargetArrayList);
+                    coreferenceHashMap.put(target, set);
+                }
+            }
+
+//            corefTargetArrayList = new ArrayList<CorefTarget>();
+//            kafCoreferenceSetArrayList.add(kafCoreferenceSet);
             corefTargetArrayList = new ArrayList<CorefTarget>();
-            kafCoreferenceSetArrayList.add(kafCoreferenceSet);
             kafCoreferenceSet = new KafCoreferenceSet();
             target = "";
         }
     }
 
+
     public void switchToTokenIds () {
-        for (int i = 0; i < kafCoreferenceSetArrayList.size(); i++) {
-            KafCoreferenceSet coreferenceSet = kafCoreferenceSetArrayList.get(i);
-            String type = "";
+        Set keySet = coreferenceHashMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            KafCoreferenceSet coreferenceSet = coreferenceHashMap.get(key);
+            KafCoreferenceSet newCorefSet = new KafCoreferenceSet();
+            newCorefSet.setCoid(key);
+         //   System.out.println("newCorefSet.getCoid() = " + newCorefSet.getCoid());
             for (int j = 0; j < coreferenceSet.getSetsOfSpans().size(); j++) {
                 ArrayList<CorefTarget> corefTargets = coreferenceSet.getSetsOfSpans().get(j);
+                ArrayList<CorefTarget> newCorefTargets = new ArrayList<CorefTarget>();
                 for (int k = 0; k < corefTargets.size(); k++) {
                     CorefTarget target = corefTargets.get(k);
+                   // System.out.println("target.getId() = " + target.getId());
                     for (int l = 0; l < kafTermArrayList.size(); l++) {
                         KafTerm term = kafTermArrayList.get(l);
                         if (term.getTid().equals(target.getId())) {
-                            String tokenId = term.getSpans().get(0);
-                            for (int w = 0; w < kafWordFormArrayList.size(); w++) {
-                                KafWordForm wordForm = kafWordFormArrayList.get(w);
-                                if (wordForm.getWid().equals(tokenId)) {
-                                    target.setId(tokenId);
-                                    type = term.getType()+"-"+coreferenceSet.getType();
-                                    break;
+                            /// we found the term that includes the target id
+                            /// now we should take all the tokens of the term to create the span
+                            for (int m = 0; m < term.getSpans().size(); m++) {
+                                String span = term.getSpans().get(m);
+                                CorefTarget newTarget = new CorefTarget();
+                                newTarget.setId(span);
+                                /// just to get the word
+                                for (int w = 0; w < kafWordFormArrayList.size(); w++) {
+                                    KafWordForm wordForm = kafWordFormArrayList.get(w);
+                                    if (wordForm.getWid().equals(span)) {
+                                        newTarget.setTokenString(wordForm.getWf());
+                                        break;
+                                    }
+                                }
+                                newCorefTargets.add(newTarget);
+                            }
+                            if (newCorefSet.getType().isEmpty()) {
+                                if (!term.getType().isEmpty())  {
+                                    newCorefSet.setType(term.getType());
                                 }
                             }
                         }
                     }
 
                 }
+               // System.out.println("newCorefSet.getType() = " + newCorefSet.getType());
+                newCorefSet.addSetsOfSpans(newCorefTargets);
             }
-            coreferenceSet.setType(type);
+            kafCoreferenceSetArrayList.add(newCorefSet);
         }
     }
 
@@ -300,12 +355,12 @@ public class CatCoref extends DefaultHandler {
         // type = "EVENT-GRAMMATICAL";
         // type = "EVENT-SPEECH_COGNITIVE";
         // type = "EVENT-OTHER";
-        type = "EVENT";
-        // pathToCatFile = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_CAT_ref/corpus_apple/30414_Apple_unveils_new_Intel-based_Mac.txt.xml";
-         folder = "/Users/piek/Desktop/NWR/NWR-Annotation/corpus_CAT_ref/corpus_apple/";
+       // type = "ENTITY";
+        //pathToCatFile = "/Users/piek/Desktop/NWR/NWR-benchmark/coreference/corpus_CAT_GS_201412/corpus_apple/9549_Reactions_to_Apple.xml";
+        //folder = "/Users/piek/Desktop/NWR/NWR-benchmark/coreference/corpus_CAT_GS_201412/corpus_apple/";
         ///Users/piek/Desktop/NWR/NWR-Annotation/corpus_CAT_ref/corpus_apple
-        fileExtension = ".xml";
-        format = "conll";
+        //fileExtension = ".xml";
+        //format = "conll";
         CatCoref catCoref = new CatCoref();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -320,162 +375,74 @@ public class CatCoref extends DefaultHandler {
             }
             else if (arg.equalsIgnoreCase("--coref-type") && args.length>(i+1)) {
                 type = args[i+1];
+
+            } else if (arg.equalsIgnoreCase("--format") && args.length > (i + 1)) {
+                format = args[i + 1];
             }
         }
+        System.out.println("format = " + format);
+        System.out.println("type = " + type);
+        System.out.println("fileExtension = " + fileExtension);
+        System.out.println("folder = " + folder);
         if (!pathToCatFile.isEmpty()) {
             catCoref.parseFile(pathToCatFile);
+            OutputStream fos = null;
+            try {
+                fos = new FileOutputStream(pathToCatFile+"."+type+".key");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            String fileName = new File (pathToCatFile).getName();
+            int idx = fileName.indexOf(".");
+            if (idx>-1) {
+                fileName = fileName.substring(0, idx);
+            }
+
             if (format.equals("coref")) {
-                catCoref.serializeToCorefSet(System.out, new File (pathToCatFile).getName(), type);
+                catCoref.serializeToCorefSet(fos, fileName, type);
+                //catCoref.serializeToCorefSet(System.out, new File (pathToCatFile).getName(), type);
             }
             else if (format.equals("conll")) {
-                serializeToCoNLL(System.out, new File (pathToCatFile).getName(), type);
+                CoNLL.serializeToCoNLL(fos, fileName, type, kafWordFormArrayList, kafCoreferenceSetArrayList);
+               // CoNLL.serializeToCoNLL(System.out, new File(pathToCatFile).getName(), type, kafWordFormArrayList, kafCoreferenceSetArrayList);
+            }
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         else if (!folder.isEmpty()){
             ArrayList<File> files = Util.makeFlatFileList(new File(folder), fileExtension);
             for (int i = 0; i < files.size(); i++) {
                 File file = files.get(i);
+                //System.out.println("file.getName() = " + file.getName());
                 catCoref.parseFile(file.getAbsolutePath());
+
+                String fileName = file.getName();
+                int idx = fileName.indexOf(".");
+                if (idx>-1) {
+                    fileName = fileName.substring(0, idx);
+                }
+               // System.out.println("fileName = " + fileName);
                 try {
                     OutputStream fos = new FileOutputStream(file.getAbsolutePath()+"."+type+".key");
                     if (format.equals("coref")) {
-                        catCoref.serializeToCorefSet(fos, file.getName(), type);
+                        catCoref.serializeToCorefSet(fos, fileName, type);
                     }
                     else if (format.equals("conll")) {
-                        serializeToCoNLL(fos, file.getName(), type);
+                        CoNLL.serializeToCoNLL(fos, fileName, type, kafWordFormArrayList, kafCoreferenceSetArrayList);
                     }
 
                     fos.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                //break;
             }
         }
     }
 
-    /**
-     *
-     * @param stream
-     * @param fileName
-     * @param type
-     */
-    static public void serializeToCoNLL (OutputStream stream,  String fileName, String type) {
-        try {
-            String str = "#begin document ("+fileName+");";
-            stream.write(str.getBytes());
-            str  = "";
-            boolean COREFERRING = false;
-            boolean NEWSENTENCE = false;
-            String currentSentence = "";
 
-            for (int i = 0; i < kafWordFormArrayList.size(); i++) {
-                KafWordForm kafWordForm = kafWordFormArrayList.get(i);
-                /// insert sentence separator
-                if (!currentSentence.isEmpty() && !currentSentence.equals(kafWordForm.getSent()))  {
-                    NEWSENTENCE = true;
-                    currentSentence = kafWordForm.getSent();
-                }
-                else if (currentSentence.isEmpty()) {
-                    /// first sentence
-                    currentSentence = kafWordForm.getSent();
-                }
-                else {
-                    NEWSENTENCE = false;
-                }
-                String corefId = getCoreferenceSetId(kafWordForm.getWid(), type);
-                //// First we need to handle the previous line if any
-                //// After that we can process the current
-                /// check previous conditions and terminate properly
-
-                if (corefId.isEmpty()) {
-                    //// current is not a coreferring token
-                    if (COREFERRING) {
-                        //// previous was coreferring so we need to terminate the previous with ")"
-                        str += ")";
-                    }
-                    /// always terminate the previous token
-                    str += "\n";
-                    COREFERRING = false;
-                    /// we started a new sentence so we insert a blank line
-                    if (NEWSENTENCE) str+= "\n";
-                    /// add the info for the current token
-                    str += fileName+"\t"+kafWordForm.getSent()+"\t"+"w"+kafWordForm.getWid()+"\t"+kafWordForm.getWf() +"\t"+"-";
-                }
-                else {
-                    if (NEWSENTENCE) {
-                        /// we started a new sentence so we insert a blank line
-                        if (COREFERRING) {
-                            /// end of sentence implies ending coreference as well
-                            str += ")\n";
-                        }
-                        else {
-                            str += "\n";
-                        }
-                        str+= "\n";
-                    }
-                    else {
-                        str+= "\n";
-                    }
-                    /// add the info for the current token
-                    str += fileName+"\t"+kafWordForm.getSent()+"\t"+"w"+kafWordForm.getWid()+"\t"+kafWordForm.getWf() +"\t";
-                    if (!COREFERRING) {
-                        str += "("+corefId;
-                        COREFERRING = true;
-                    }
-                    else {
-                        str += corefId;
-                    }
-                }
-            }
-            ///check the status of the last token
-            if (COREFERRING) {
-                str += ")\n";
-            }
-            else {
-                str += "\n";
-            }
-            stream.write(str.getBytes());
-            str = "#end document\n";
-            stream.write(str.getBytes());
-
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    static public String getCoreferenceSetId (String tokenId, String type) {
-        String corefId = "";
-        for (int i = 0; i < kafCoreferenceSetArrayList.size(); i++) {
-            KafCoreferenceSet corefSet  = kafCoreferenceSetArrayList.get(i);
-            // System.out.println("coref.getType() = " + corefSet.getType());
-            if (type.isEmpty() || corefSet.getType().toLowerCase().startsWith(type.toLowerCase())) {
-                for (int j = 0; j < corefSet.getSetsOfSpans().size(); j++) {
-                    ArrayList<CorefTarget> corefTargets = corefSet.getSetsOfSpans().get(j);
-                    for (int k = 0; k < corefTargets.size(); k++) {
-                        CorefTarget corefTarget = corefTargets.get(k);
-                        if (corefTarget.getId().equals(tokenId)) {
-                            corefId = corefSet.getCoid();
-                            //System.out.println("corefTarget.getId() = " + corefTarget.getId());
-                            //System.out.println("tokenId = " + tokenId);
-                            break;
-                        }
-                    }
-                    if (!corefId.isEmpty()) {
-                        break;
-                    }
-                }
-            }
-            else {
-                //  if (!corefSet.getType().isEmpty()) System.out.println("coref.getType() = " + corefSet.getType());
-            }
-            if (!corefId.isEmpty()) {
-                break;
-            }
-        }
-       // if (!corefId.isEmpty()) System.out.println("corefId = " + corefId);
-        return corefId;
-    }
 
 }

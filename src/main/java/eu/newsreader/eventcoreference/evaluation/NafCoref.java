@@ -33,12 +33,12 @@ public class NafCoref {
         // type = "EVENT-GRAMMATICAL";
         // type = "EVENT-SPEECH_COGNITIVE";
         //type = "EVENT-OTHER";
-        type= "event";
-        format = "conll";
+        // type= "event";
+        // format = "conll";
         //format = "coref";
        // pathToNafFile = "/Users/piek/Desktop/NWR/corpus_NAF_output_281114/corpus_apple_event_based/9549_Reactions_to_Apple.naf";
-        folder = "/Users/piek/Desktop/NWR/corpus_NAF_output_281114/corpus_apple";
-        fileExtension = ".naf";
+        // folder = "/Users/piek/Desktop/NWR/corpus_NAF_output_281114/corpus_apple";
+        //fileExtension = ".naf";
         KafSaxParser kafSaxParser = new KafSaxParser();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -57,11 +57,16 @@ public class NafCoref {
         if (!pathToNafFile.isEmpty()) {
             kafSaxParser.parseFile(pathToNafFile);
             switchToTokenIds(kafSaxParser);
+            String fileName = new File (pathToNafFile).getName();
+            int idx = fileName.indexOf(".");
+            if (idx>-1) {
+                fileName = fileName.substring(0, idx);
+            }
             if (format.equalsIgnoreCase("coref")) {
-                serializeToCorefSet(System.out, kafSaxParser, new File (pathToNafFile).getName(), type);
+                serializeToCorefSet(System.out, kafSaxParser, fileName , type);
             }
             else if (format.equalsIgnoreCase("conll")) {
-                serializeToCoNLL(System.out, kafSaxParser, new File (pathToNafFile).getName(), type);
+                CoNLL.serializeToCoNLL(System.out, fileName, type, kafSaxParser.kafWordFormList, kafSaxParser.kafCorefenceArrayList);
             }
             else {
                 System.out.println("Unknown format:"+ format);
@@ -75,11 +80,17 @@ public class NafCoref {
                 try {
                     OutputStream fos = new FileOutputStream(file.getAbsolutePath() + "." + type + ".response");
                     switchToTokenIds(kafSaxParser);
+                    String fileName = file.getName();
+                    int idx = fileName.indexOf(".");
+                    if (idx>-1) {
+                        fileName = fileName.substring(0, idx);
+                    }
+
                     if (format.equalsIgnoreCase("coref")) {
-                        serializeToCorefSet(fos, kafSaxParser, file.getName(), type);
+                        serializeToCorefSet(fos, kafSaxParser, fileName, type);
                     }
                     else if (format.equalsIgnoreCase("conll")) {
-                        serializeToCoNLL(fos, kafSaxParser, file.getName(), type);
+                        CoNLL.serializeToCoNLL(fos, fileName, type, kafSaxParser.kafWordFormList, kafSaxParser.kafCorefenceArrayList);
                     }
                     else {
                         System.out.println("Unknown format:"+ format);
@@ -95,6 +106,16 @@ public class NafCoref {
     public static void switchToTokenIds (KafSaxParser kafSaxParser) {
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet coreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (coreferenceSet.getType().isEmpty()) {
+                coreferenceSet.setType("ENTITY");
+            }
+            String coid = coreferenceSet.getCoid();
+            if (coid.startsWith("coevent")) {
+               coreferenceSet.setCoid(coid.substring(7));
+            }
+            else if (coid.startsWith("co")) {
+                coreferenceSet.setCoid(coid.substring(3));
+            }
            // System.out.println("coreferenceSet.getType() = " + coreferenceSet.getType());
             for (int j = 0; j < coreferenceSet.getSetsOfSpans().size(); j++) {
                 ArrayList<CorefTarget> corefTargets = coreferenceSet.getSetsOfSpans().get(j);
@@ -220,31 +241,7 @@ public class NafCoref {
         }
     }
 
-    /**
-     * #begin document (LuoTestCase);
-     test1	0	0	a1	(0
-     test1	0	1	a2	0)
-     test1	0	2	junk	-
-     test1	0	3	b1	(1
-     test1	0	4	b2	-
-     test1	0	5	b3	-
-     test1	0	6	b4	1)
-     test1	0	7	jnk	-
-     test1	0	8	.	-
 
-     test2	0	0	c	(1)
-     test2	0	1	jnk	-
-     test2	0	2	d1	(2
-     test2	0	3	d2	2)
-     test2	0	4	jnk	-
-     test2	0	5	e	(2)
-     test2	0	6	jnk	-
-     test2	0	7	f1	(2
-     test2	0	8	f2	-
-     test2	0	9	f3	2)
-     test2	0	10	.	-
-     #end document
-     */
 
 
     /**
@@ -254,7 +251,7 @@ public class NafCoref {
      * @param fileName
      * @param type
      */
-    static public void serializeToCoNLL (OutputStream stream, KafSaxParser kafSaxParser, String fileName, String type) {
+/*    static public void serializeToCoNLL (OutputStream stream, KafSaxParser kafSaxParser, String fileName, String type) {
         try {
             String str = "#begin document ("+fileName+");";
             stream.write(str.getBytes());
@@ -368,5 +365,5 @@ public class NafCoref {
             }
         }
         return corefId;
-    }
+    }*/
 }
