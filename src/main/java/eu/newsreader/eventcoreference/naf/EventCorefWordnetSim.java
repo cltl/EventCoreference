@@ -141,7 +141,7 @@ public class EventCorefWordnetSim {
                           wordnetLmfSaxParser.setRelations(relations);
                           wordnetLmfSaxParser.parseFile(pathToWNLMF);
                           wordnetData = wordnetLmfSaxParser.wordnetData;
-                          System.out.println("wordnetData hyperrelations = " + wordnetData.hyperRelations.size());
+                         // System.out.println("wordnetData hyperrelations = " + wordnetData.hyperRelations.size());
                           if (!folder.isEmpty()) {
                               processNafFolder(new File(folder), extension);
                           } else {
