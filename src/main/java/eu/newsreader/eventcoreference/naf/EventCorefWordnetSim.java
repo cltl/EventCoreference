@@ -110,7 +110,7 @@ public class EventCorefWordnetSim {
                           } else if (arg.equals("--extension") && args.length > (i + 1)) {
                               extension = args[i + 1];
                           } else if (arg.equals("--relations") && args.length > (i + 1)) {
-                              String[] relationString = args[i + 1].split(";");
+                              String[] relationString = args[i + 1].split("#");
                               for (int j = 0; j < relationString.length; j++) {
                                   String s = relationString[j];
                                   relations.add(s);
@@ -141,7 +141,7 @@ public class EventCorefWordnetSim {
                           wordnetLmfSaxParser.setRelations(relations);
                           wordnetLmfSaxParser.parseFile(pathToWNLMF);
                           wordnetData = wordnetLmfSaxParser.wordnetData;
-                          //System.out.println("wordnetData hyperrelations = " + wordnetData.hyperRelations.size());
+                          System.out.println("wordnetData hyperrelations = " + wordnetData.hyperRelations.size());
                           if (!folder.isEmpty()) {
                               processNafFolder(new File(folder), extension);
                           } else {
