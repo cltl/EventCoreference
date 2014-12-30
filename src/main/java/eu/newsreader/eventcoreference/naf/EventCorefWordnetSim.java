@@ -25,7 +25,8 @@ public class EventCorefWordnetSim {
             "   --wn-lmf        <path to wordnet file in lmf format\n" +
             "   --method        <one of the following methods can be used leacock-chodorow, path, wu-palmer>\n"+
             "   --sim           <similarity threshold below which no coreference is no coreference relation is determined >\n" +
-            "   --relations     <synsets relations that are used for the distance measurement >\n"
+            "   --relations     <synsets relations that are used for the distance measurement >\n"+
+            "   --drift-max     <maximum number of lowest-common-subsumers allowed >\n"
             ;
 
     static final String layer = "coreferences";
@@ -111,39 +112,48 @@ public class EventCorefWordnetSim {
                           String arg = args[i];
                           if (arg.equals("--naf-file") && args.length > (i + 1)) {
                               pathToNafFile = args[i + 1];
-                          } else if (arg.equals("--naf-folder") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--naf-folder") && args.length > (i + 1)) {
                               folder = args[i + 1];
-                          } else if (arg.equals("--extension") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--extension") && args.length > (i + 1)) {
                               extension = args[i + 1];
-                          } else if (arg.equals("--relations") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--relations") && args.length > (i + 1)) {
                               String[] relationString = args[i + 1].split("#");
                               for (int j = 0; j < relationString.length; j++) {
                                   String s = relationString[j];
                                   relations.add(s);
                               }
-                          } else if (arg.equals("--method") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--method") && args.length > (i + 1)) {
                               method = args[i + 1];
-                          } else if (arg.equals("--wn-lmf") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--wn-lmf") && args.length > (i + 1)) {
                               pathToWNLMF = args[i + 1];
-                          } else if (arg.equals("--drift-max") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--drift-max") && args.length > (i + 1)) {
                               try {
                                   DRIFTMAX = Integer.parseInt(args[i + 1]);
                               } catch (NumberFormatException e) {
-                                  // e.printStackTrace();
+                                   e.printStackTrace();
                               }
-                          } else if (arg.equals("--sim") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--sim") && args.length > (i + 1)) {
                               try {
-                                  simthreshold = Integer.parseInt(args[i + 1]);
+                                  simthreshold = Double.parseDouble(args[i + 1]);
                               } catch (NumberFormatException e) {
-                                  // e.printStackTrace();
+                                   e.printStackTrace();
                               }
-                          } else if (arg.equals("--proportion") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--proportion") && args.length > (i + 1)) {
                               try {
                                   proportionalthreshold = Integer.parseInt(args[i + 1]);
                               } catch (NumberFormatException e) {
-                                  // e.printStackTrace();
+                                   e.printStackTrace();
                               }
-                          } else if (arg.equals("--com-frames") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--com-frames") && args.length > (i + 1)) {
                               String frameFilePath = args[i+1];
                               communicationFrame =Util.ReadFileToStringVector(frameFilePath);
                           }
