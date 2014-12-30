@@ -33,11 +33,11 @@ public class EventCorefWordnetSim {
     static final String version = "2.1";
     static Vector<String> communicationFrame = new Vector<String>();
     static WordnetData wordnetData = null;
-    static String method = "leacock-chodorow";
-    static int proportionalthreshold = 80;
-    static double simthreshold = 2.2;
+    static String method = "";
+    static int proportionalthreshold = -1;
+    static double simthreshold = -1;
     static ArrayList<String> relations = new ArrayList<String>();
-    static final int DRIFTMAX = 3;
+    static int DRIFTMAX = -1;
 
     static public void main (String [] args) {
               if (args.length==0) {
@@ -70,6 +70,12 @@ public class EventCorefWordnetSim {
                           } else if (arg.equals("--sim") && args.length > (i + 1)) {
                               try {
                                   simthreshold = Double.parseDouble(args[i + 1]);
+                              } catch (NumberFormatException e) {
+                                  // e.printStackTrace();
+                              }
+                          } else if (arg.equals("--drift-max") && args.length > (i + 1)) {
+                              try {
+                                  DRIFTMAX = Integer.parseInt(args[i + 1]);
                               } catch (NumberFormatException e) {
                                   // e.printStackTrace();
                               }
@@ -119,6 +125,12 @@ public class EventCorefWordnetSim {
                               method = args[i + 1];
                           } else if (arg.equals("--wn-lmf") && args.length > (i + 1)) {
                               pathToWNLMF = args[i + 1];
+                          } else if (arg.equals("--drift-max") && args.length > (i + 1)) {
+                              try {
+                                  DRIFTMAX = Integer.parseInt(args[i + 1]);
+                              } catch (NumberFormatException e) {
+                                  // e.printStackTrace();
+                              }
                           } else if (arg.equals("--sim") && args.length > (i + 1)) {
                               try {
                                   simthreshold = Integer.parseInt(args[i + 1]);
@@ -141,7 +153,12 @@ public class EventCorefWordnetSim {
                           wordnetLmfSaxParser.setRelations(relations);
                           wordnetLmfSaxParser.parseFile(pathToWNLMF);
                           wordnetData = wordnetLmfSaxParser.wordnetData;
-                         // System.out.println("wordnetData hyperrelations = " + wordnetData.hyperRelations.size());
+                          System.out.println("wordnetData relations = " + wordnetData.hyperRelations.size());
+                          System.out.println("simthreshold = " + simthreshold);
+                          System.out.println("proportionalthreshold = " + proportionalthreshold);
+                          System.out.println("method = " + method);
+                          System.out.println("DRIFTMAX = " + DRIFTMAX);
+                          System.out.println("relations = " + relations.toString());
                           if (!folder.isEmpty()) {
                               processNafFolder(new File(folder), extension);
                           } else {
@@ -297,7 +314,9 @@ public class EventCorefWordnetSim {
                   kafCoreferenceSet.setType("event");
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
-              fixEventCoreferenceSets(kafSaxParser);
+              if (DRIFTMAX>-1) {
+                  fixEventCoreferenceSets(kafSaxParser);
+              }
               strEndDate = eu.kyotoproject.util.DateUtil.createTimestamp();
               String host = "";
               try {
