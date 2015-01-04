@@ -234,14 +234,33 @@ public class ComponentMatch {
      * @return
      */
     public static boolean compareCompositeEventContextual(CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
-        if (! compareActor (compositeEvent1.getMySemActors(), compositeEvent2.getMySemActors())) {
-            return  false;
-        }
-        if (compositeEvent1.getMySemPlaces().size()> 0 && compositeEvent2.getMySemPlaces().size()>0) {
-            if (!comparePlace(compositeEvent1.getMySemPlaces(), compositeEvent2.getMySemPlaces())) {
-                return false;
+        if (compositeEvent1.getMySemActors().size()==0 && compositeEvent2.getMySemActors().size()==0) {
+            //// there are no participants
+            if (compositeEvent1.getMySemPlaces().size()> 0 && compositeEvent2.getMySemPlaces().size()>0) {
+                if (!comparePlace(compositeEvent1.getMySemPlaces(), compositeEvent2.getMySemPlaces())) {
+                    return false;
+                }
+            }
+            else {
+                return true;
             }
         }
+        else {
+            /// match at least one actor
+            if (! compareActor (compositeEvent1.getMySemActors(), compositeEvent2.getMySemActors())) {
+                return  false;
+            }
+            /// if there is a place linked to both, also match at least one place
+            if (compositeEvent1.getMySemPlaces().size()> 0 && compositeEvent2.getMySemPlaces().size()>0) {
+                if (!comparePlace(compositeEvent1.getMySemPlaces(), compositeEvent2.getMySemPlaces())) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        /// if we get up to here we can assume a match
         return true;
     }
 

@@ -101,6 +101,57 @@ public class MatchEventObjects {
     }
 
 
+    static void compareObjectFileWithFinalEvents (File file, HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap, String eventType) {
+        HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
+        // System.out.println("localEventMap.size() = " + localEventMap.size());
+        Set keySet = localEventMap.keySet();
+        Iterator keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String lemma = (String) keys.next();
+            ArrayList<CompositeEvent> finalCompositeEvents = new ArrayList<CompositeEvent>();
+
+            /////// WE ARE ONLY COMPARING EVENTS WITH THE SAME PHRASE!!!!!!!
+            ////// THIS WAS MISSING WHICH SEEMS TO BE A BUG!!!!!
+            if (finalLemmaEventMap.containsKey(lemma)) {
+                finalCompositeEvents = finalLemmaEventMap.get(lemma);
+            }
+
+
+            ArrayList<CompositeEvent> myCompositeEvents = localEventMap.get(lemma);
+
+            for (int j = 0; j < myCompositeEvents.size(); j++) {
+                boolean match = false;
+                boolean same = false;
+                CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
+                for (int k = 0; k < finalCompositeEvents.size(); k++) {
+                    CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
+                    // checkCompositeEvents(myCompositeEvent, finalCompositeEvent);
+
+                    if (myCompositeEvent.getEvent().getId().equals(finalCompositeEvent.getEvent().getId())) {
+                        same = true;
+                    }
+                    else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
+                        match = true;
+                        finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
+                        finalCompositeEvent.mergeObjects(myCompositeEvent);
+                        finalCompositeEvent.mergeRelations(myCompositeEvent);
+                        finalCompositeEvent.mergeFactRelations(myCompositeEvent);
+                        /// we thus merge with the first matching event and do not consider others that may be bettter!!!!!
+                        //  System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                        break;
+                    }
+                }
+                if (!match && !same) {
+                    finalCompositeEvents.add(myCompositeEvent);
+                }
+            }
+
+            finalLemmaEventMap.put(lemma, finalCompositeEvents);
+        }
+    }
+
+
+
     public static HashMap<String, ArrayList<CompositeEvent>> readLemmaEventHashMapFromObjectFile (File file) {
         HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
         if (file.exists() ) {
@@ -270,55 +321,6 @@ public class MatchEventObjects {
        // System.out.println("nMatches = " + nMatches);
     }
 
-
-    static void compareObjectFileWithFinalEvents (File file, HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap, String eventType) {
-        HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
-        // System.out.println("localEventMap.size() = " + localEventMap.size());
-        Set keySet = localEventMap.keySet();
-        Iterator keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String lemma = (String) keys.next();
-            ArrayList<CompositeEvent> finalCompositeEvents = new ArrayList<CompositeEvent>();
-
-
-            ////// THIS WAS MISSING WHICH SEEMS TO BE A BUG!!!!!
-            if (finalLemmaEventMap.containsKey(lemma)) {
-                finalCompositeEvents = finalLemmaEventMap.get(lemma);
-            }
-
-
-            ArrayList<CompositeEvent> myCompositeEvents = localEventMap.get(lemma);
-
-            for (int j = 0; j < myCompositeEvents.size(); j++) {
-                boolean match = false;
-                boolean same = false;
-                CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
-                for (int k = 0; k < finalCompositeEvents.size(); k++) {
-                    CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
-                    // checkCompositeEvents(myCompositeEvent, finalCompositeEvent);
-
-                    if (myCompositeEvent.getEvent().getId().equals(finalCompositeEvent.getEvent().getId())) {
-                        same = true;
-                    }
-                    else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
-                        match = true;
-                        finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
-                        finalCompositeEvent.mergeObjects(myCompositeEvent);
-                        finalCompositeEvent.mergeRelations(myCompositeEvent);
-                        finalCompositeEvent.mergeFactRelations(myCompositeEvent);
-                        /// we thus merge with the first matching event and do not consider others that may be bettter!!!!!
-                        //  System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
-                        break;
-                    }
-                }
-                if (!match && !same) {
-                    finalCompositeEvents.add(myCompositeEvent);
-                }
-            }
-
-            finalLemmaEventMap.put(lemma, finalCompositeEvents);
-        }
-    }
 
     public static void processEventFoldersSingleOutputFile (File pathToEventFolder, double conceptMatchThreshold,
                                       double phraseMatchThreshold,
