@@ -214,6 +214,8 @@ public class MatchEventObjects {
                 File file = files.get(i);
                 // System.out.println("file.getName() = " + file.getName());
                 HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap = new HashMap<String, ArrayList<CompositeEvent>>();
+                compareObjectFileWithFinalEvents(file, finalLemmaEventMap, eventType);
+/*
                 HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
                 // System.out.println("localEventMap.size() = " + localEventMap.size());
                 Set keySet = localEventMap.keySet();
@@ -251,7 +253,7 @@ public class MatchEventObjects {
                         }
                     }
                     finalLemmaEventMap.put(lemma, finalCompositeEvents);
-                }
+                }*/
 
                 JenaSerialization.addJenaCompositeEvents(ds, instanceModel, provenanceModel, finalLemmaEventMap, sourceMetaHashMap);
                // System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
@@ -268,6 +270,55 @@ public class MatchEventObjects {
        // System.out.println("nMatches = " + nMatches);
     }
 
+
+    static void compareObjectFileWithFinalEvents (File file, HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap, String eventType) {
+        HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
+        // System.out.println("localEventMap.size() = " + localEventMap.size());
+        Set keySet = localEventMap.keySet();
+        Iterator keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String lemma = (String) keys.next();
+            ArrayList<CompositeEvent> finalCompositeEvents = new ArrayList<CompositeEvent>();
+
+
+            ////// THIS WAS MISSING WHICH SEEMS TO BE A BUG!!!!!
+            if (finalLemmaEventMap.containsKey(lemma)) {
+                finalCompositeEvents = finalLemmaEventMap.get(lemma);
+            }
+
+
+            ArrayList<CompositeEvent> myCompositeEvents = localEventMap.get(lemma);
+
+            for (int j = 0; j < myCompositeEvents.size(); j++) {
+                boolean match = false;
+                boolean same = false;
+                CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
+                for (int k = 0; k < finalCompositeEvents.size(); k++) {
+                    CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
+                    // checkCompositeEvents(myCompositeEvent, finalCompositeEvent);
+
+                    if (myCompositeEvent.getEvent().getId().equals(finalCompositeEvent.getEvent().getId())) {
+                        same = true;
+                    }
+                    else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
+                        match = true;
+                        finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
+                        finalCompositeEvent.mergeObjects(myCompositeEvent);
+                        finalCompositeEvent.mergeRelations(myCompositeEvent);
+                        finalCompositeEvent.mergeFactRelations(myCompositeEvent);
+                        /// we thus merge with the first matching event and do not consider others that may be bettter!!!!!
+                        //  System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                        break;
+                    }
+                }
+                if (!match && !same) {
+                    finalCompositeEvents.add(myCompositeEvent);
+                }
+            }
+
+            finalLemmaEventMap.put(lemma, finalCompositeEvents);
+        }
+    }
 
     public static void processEventFoldersSingleOutputFile (File pathToEventFolder, double conceptMatchThreshold,
                                       double phraseMatchThreshold,
@@ -297,14 +348,22 @@ public class MatchEventObjects {
                 ArrayList<File> files = Util.makeRecursiveFileList(nextEventFolder, ".obj");
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
-                    // System.out.println("file.getName() = " + file.getName());
-                    HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
-                    // System.out.println("localEventMap.size() = " + localEventMap.size());
+                    compareObjectFileWithFinalEvents(file, finalLemmaEventMap, eventType);
+
+                   /* HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
                     Set keySet = localEventMap.keySet();
                     Iterator keys = keySet.iterator();
                     while (keys.hasNext()) {
                         String lemma = (String) keys.next();
                         ArrayList<CompositeEvent> finalCompositeEvents = new ArrayList<CompositeEvent>();
+
+
+                        ////// THIS WAS MISSING WHICH SEEMS TO BE A BUG!!!!!
+                        if (finalLemmaEventMap.containsKey(lemma)) {
+                            finalCompositeEvents = finalLemmaEventMap.get(lemma);
+                        }
+
+
                         ArrayList<CompositeEvent> myCompositeEvents = localEventMap.get(lemma);
 
                         for (int j = 0; j < myCompositeEvents.size(); j++) {
@@ -333,8 +392,9 @@ public class MatchEventObjects {
                                 finalCompositeEvents.add(myCompositeEvent);
                             }
                         }
+
                         finalLemmaEventMap.put(lemma, finalCompositeEvents);
-                    }
+                    }*/
                 }
                 JenaSerialization.addJenaCompositeEvents(ds, instanceModel, provenanceModel, finalLemmaEventMap, sourceMetaHashMap);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
@@ -359,19 +419,26 @@ public class MatchEventObjects {
         try {
 
 
-            int nMatches = 0;
             ArrayList<File> files = Util.makeRecursiveFileList(pathToEventFolder, ".obj");
             for (int i = 0; i < files.size(); i++) {
                 File file = files.get(i);
                 // System.out.println("file.getName() = " + file.getName());
                 HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap = new HashMap<String, ArrayList<CompositeEvent>>();
-                HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
+                compareObjectFileWithFinalEvents(file, finalLemmaEventMap, eventType);
+
+/*                HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
                 // System.out.println("localEventMap.size() = " + localEventMap.size());
                 Set keySet = localEventMap.keySet();
                 Iterator keys = keySet.iterator();
                 while (keys.hasNext()) {
                     String lemma = (String) keys.next();
                     ArrayList<CompositeEvent> finalCompositeEvents = new ArrayList<CompositeEvent>();
+
+                    ////// THIS WAS MISSING WHICH SEEMS TO BE A BUG!!!!!
+                    if (finalLemmaEventMap.containsKey(lemma)) {
+                        finalCompositeEvents = finalLemmaEventMap.get(lemma);
+                    }
+
                     ArrayList<CompositeEvent> myCompositeEvents = localEventMap.get(lemma);
                     for (int j = 0; j < myCompositeEvents.size(); j++) {
                         boolean match = false;
@@ -402,7 +469,7 @@ public class MatchEventObjects {
                         }
                     }
                     finalLemmaEventMap.put(lemma, finalCompositeEvents);
-                }
+                }*/
                 OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");
                 JenaSerialization.serializeJenaCompositeEvents(fos, finalLemmaEventMap, sourceMetaHashMap);
                 fos.close();
