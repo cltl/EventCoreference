@@ -34,6 +34,7 @@ public class SemObject implements Serializable {
     private String lcs;
     private String label;
     private ArrayList<NafMention> nafMentions;
+  //  private ArrayList<KafSense> senses;
 
     public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();
@@ -44,6 +45,7 @@ public class SemObject implements Serializable {
         this.score = 0;
         this.concepts = new ArrayList<KafSense>();
         this.phraseCounts = new ArrayList<PhraseCount>();
+      //  this.senses = new ArrayList<KafSense>();
     }
 
 
