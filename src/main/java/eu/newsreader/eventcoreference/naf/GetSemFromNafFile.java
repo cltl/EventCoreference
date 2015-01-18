@@ -222,6 +222,24 @@ public class GetSemFromNafFile {
                 newKafSenses.add(kafSense);
                 RERANK = true;
             }
+            else {
+                if (kafSense.getChildren().size()>0) {
+                   /*
+                   In this case, we assume that the child is the English equivalent.
+                   We prefer the English equivalent over the non-English reference
+                   <externalRef confidence="1.0" reference="http://nl.dbpedia.org/resource/Allerzielen" reftype="nl" resource="spotlight_v1">
+                        <externalRef confidence="1.0" reference="http://dbpedia.org/resource/All_Souls'_Day" reftype="en" resource="wikipedia-db-nlEn"/>
+                   </externalRef>
+                   */
+                    for (int j = 0; j < kafSense.getChildren().size(); j++) {
+                        KafSense sense = kafSense.getChildren().get(j);
+                        if (sense.getRefType().equals("en")) {
+                            newKafSenses.add(sense);
+                            RERANK = true;
+                        }
+                    }
+                }
+            }
         }
         if (RERANK) {
           //  System.out.println("RERANKED");
@@ -260,6 +278,7 @@ public class GetSemFromNafFile {
                 //// this is an event coreference set
                 //// no we get all the predicates for this set.
                 SemEvent semEvent = new SemEvent();
+                semEvent.addLcses(kafCoreferenceSet.getExternalReferences());
                 for (int j = 0; j < kafSaxParser.getKafEventArrayList().size(); j++) {
                     KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
                     if (Util.hasCorefTargetArrayList(event.getSpans(), kafCoreferenceSet.getSetsOfSpans())) {
@@ -268,7 +287,6 @@ public class GetSemFromNafFile {
                         semEvent.addNafMentions(mentionArrayList);
                         semEvent.addConcepts(event.getExternalReferences());
                     }
-
                 }
                 semEvent.addPhraseCountsForMentions(kafSaxParser);
                 String eventName = semEvent.getTopPhraseAsLabel();
@@ -1326,7 +1344,7 @@ public class GetSemFromNafFile {
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47R9-0JG0-015B-31P6.xml";
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/4PG2-TTJ0-TXVX-P0FV.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
-        String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47JW-VP90-01H0-F4NW.xml";
+        String pathToNafFile = "/Users/piek/Desktop/NWR/Cross-lingual/test.srl.lexicalunits.pm.fn.ecoref.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NEDRerankedTest/51Y9-WY41-DYVC-J27G_reranked.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";

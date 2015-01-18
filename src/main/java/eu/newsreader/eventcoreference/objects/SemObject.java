@@ -31,21 +31,19 @@ public class SemObject implements Serializable {
     private double score;
     private ArrayList<KafSense> concepts;
     private ArrayList<PhraseCount> phraseCounts;
-    private String lcs;
+    private ArrayList<KafSense> lcs;
     private String label;
     private ArrayList<NafMention> nafMentions;
-  //  private ArrayList<KafSense> senses;
 
     public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
         this.label = "";
         this.uri = "";
-        this.lcs = "";
+        this.lcs = new ArrayList<KafSense>();
         this.score = 0;
         this.concepts = new ArrayList<KafSense>();
         this.phraseCounts = new ArrayList<PhraseCount>();
-      //  this.senses = new ArrayList<KafSense>();
     }
 
 
@@ -137,11 +135,24 @@ public class SemObject implements Serializable {
         this.nafMentions.add(mentionUri);
     }
 
-    public String getLcs() {
+    public ArrayList<KafSense> getLcs() {
         return lcs;
     }
 
-    public void setLcs(String lcs) {
+    public void addLcses(KafSense concept) {
+        if (!concept.getSensecode().isEmpty()) {
+            this.lcs.add(concept);
+        }
+    }
+
+    public void addLcses(ArrayList<KafSense> lcses) {
+        for (int i = 0; i < lcses.size(); i++) {
+            KafSense kafSense = lcses.get(i);
+            this.addLcses(kafSense);
+        }
+    }
+
+    public void setLcs(ArrayList<KafSense> lcs) {
         this.lcs = lcs;
     }
 

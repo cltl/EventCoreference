@@ -3,10 +3,9 @@ package eu.newsreader.eventcoreference.naf;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
+import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.coref.ComponentMatch;
-import eu.newsreader.eventcoreference.objects.CompositeEvent;
-import eu.newsreader.eventcoreference.objects.NafMention;
-import eu.newsreader.eventcoreference.objects.SourceMeta;
+import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
 import eu.newsreader.eventcoreference.util.Util;
@@ -102,7 +101,8 @@ public class MatchEventObjects {
 
 
     static void compareObjectFileWithFinalEvents (File file, HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap, String eventType) {
-        HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
+        //HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaEventHashMapFromObjectFile(file);
+        HashMap<String, ArrayList<CompositeEvent>> localEventMap = readLemmaIliEventHashMapFromObjectFile(file);
         // System.out.println("localEventMap.size() = " + localEventMap.size());
         Set keySet = localEventMap.keySet();
         Iterator keys = keySet.iterator();
@@ -150,7 +150,80 @@ public class MatchEventObjects {
         }
     }
 
+    public static ArrayList<KafSense> getILIreferences (SemObject semEvent) {
+        ArrayList<KafSense> iliReferences = new ArrayList<KafSense>();
+        for (int i = 0; i < semEvent.getConcepts().size(); i++) {
+            KafSense kafSense = semEvent.getConcepts().get(i);
+            if (kafSense.getSensecode().toLowerCase().startsWith("ili")) {
+                iliReferences.add(kafSense);
+            }
+        }
+        return iliReferences;
+    }
 
+    public static HashMap<String, ArrayList<CompositeEvent>> readLemmaIliEventHashMapFromObjectFile (File file) {
+        HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
+        if (file.exists() ) {
+            int cnt = 0;
+            if (DEBUG) System.out.println("file = " + file.getName());
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois =  new ObjectInputStream(fis);
+                Object obj = null;
+                while (fis.available()>0) {
+                    while ((obj = ois.readObject()) != null) {
+                        cnt++;
+                        if (obj instanceof CompositeEvent) {
+                            CompositeEvent compositeEvent = (CompositeEvent) obj;
+/*                            if (!compositeEvent.getEvent().getPhrase().equals("production")) {
+                                continue;
+                            }*/
+                            if (DEBUG)
+                                System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
+
+                            ArrayList<KafSense> iliReferences = getILIreferences(compositeEvent.getEvent());
+                            if (iliReferences.size()>0) {
+                                for (int i = 0; i < iliReferences.size(); i++) {
+                                    KafSense kafSense = iliReferences.get(i);
+                                    if (eventMap.containsKey(kafSense.getSensecode())) {
+                                        ArrayList<CompositeEvent> events = eventMap.get(kafSense.getSensecode());
+                                        events.add(compositeEvent);
+                                        eventMap.put(kafSense.getSensecode(), events);
+                                    } else {
+                                        ArrayList<CompositeEvent> events = new ArrayList<CompositeEvent>();
+                                        events.add(compositeEvent);
+                                        eventMap.put(kafSense.getSensecode(), events);
+                                    }
+                                }
+                            }
+                            else {
+                                if (eventMap.containsKey(compositeEvent.getEvent().getPhrase())) {
+                                    ArrayList<CompositeEvent> events = eventMap.get(compositeEvent.getEvent().getPhrase());
+                                    events.add(compositeEvent);
+                                    eventMap.put(compositeEvent.getEvent().getPhrase(), events);
+                                } else {
+                                    ArrayList<CompositeEvent> events = new ArrayList<CompositeEvent>();
+                                    events.add(compositeEvent);
+                                    eventMap.put(compositeEvent.getEvent().getPhrase(), events);
+                                }
+                            }
+                        } else {
+                            if (DEBUG) System.out.println("Unknown object obj.getClass() = " + obj.getClass());
+                        }
+                    }
+                    ois.reset();
+                    ois.close();
+                    fis.close();
+                }
+            } catch (Exception e) {
+               //  System.out.println("file = " + file.getAbsolutePath());
+              //   e.printStackTrace();
+            }
+            if (DEBUG) System.out.println(file.getName()+" nr objects read = " + cnt);
+        }
+
+        return eventMap;
+    }
 
     public static HashMap<String, ArrayList<CompositeEvent>> readLemmaEventHashMapFromObjectFile (File file) {
         HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
