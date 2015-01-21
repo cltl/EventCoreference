@@ -16,7 +16,7 @@ public class ResourcesUri {
     final static public String nwrontology = "http://www.newsreader-project.eu/ontologies/";
     //final static public String eso = "http://www.newsreader-project.eu/ontologies/eso/";
     final static public String eso = "http://www.newsreader-project.eu/domain-ontology#";
-    final static public String wn = "http://www.newsreader-project.eu/ontologies/wordnet3.0";
+    final static public String wn = "http://www.newsreader-project.eu/ontologies/wordnet3.0/";
     final static public String fn = "http://www.newsreader-project.eu/ontologies/framenet/";
     final static public String vn = "http://www.newsreader-project.eu/ontologies/verbnet/";
     final static public String pb = "http://www.newsreader-project.eu/ontologies/propbank/";

@@ -423,7 +423,7 @@ public class SemObject implements Serializable {
                 continue;
             }
             if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-                continue;
+              //  continue;
             }
             if (kafSense.getResource().equalsIgnoreCase("propbank")) {
                 continue;
