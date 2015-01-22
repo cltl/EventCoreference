@@ -77,6 +77,9 @@ public class MatchEventObjects {
             else if (arg.equals("--match-type") && args.length>(i+1)) {
                 MATCHTYPE = args[i+1];
             }
+            else if (arg.equals("--ili-uri")) {
+                JenaSerialization.USEILIURI = true;
+            }
             else if (arg.equals("--event-type") && args.length>(i+1)) {
                 eventType = args[i+1];
             }

@@ -1601,7 +1601,7 @@ public class Util {
     static public ArrayList<File> makeRecursiveFileList(File inputFile, String theFilter) {
         ArrayList<File> acceptedFileList = new ArrayList<File>();
         File[] theFileList = null;
-        if ((inputFile.canRead()) && inputFile.isDirectory()) {
+        if ((inputFile.canRead())) {
             theFileList = inputFile.listFiles();
             for (int i = 0; i < theFileList.length; i++) {
                 File newFile = theFileList[i];
@@ -1617,7 +1617,7 @@ public class Util {
         } else {
             System.out.println("Cannot access file:" + inputFile + "#");
             if (!inputFile.exists()) {
-                System.out.println("File does not exist!");
+                System.out.println("File/folder does not exist!");
             }
         }
         return acceptedFileList;

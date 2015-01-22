@@ -19,6 +19,7 @@ import java.util.Set;
  */
 public class JenaSerialization {
 
+    static public boolean USEILIURI = false; //// used for testing cross-lingual extraction
     static public void serializeJena (OutputStream stream,
                                       ArrayList<SemObject> semEvents,
                                       ArrayList<SemObject> semActors,
@@ -127,8 +128,13 @@ public class JenaSerialization {
             ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
             for (int c = 0; c < compositeEvents.size(); c++) {
                 CompositeEvent compositeEvent = compositeEvents.get(c);
-                //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
-                compositeEvent.getEvent().addToJenaModelCondensed(instanceModel, Sem.Event);
+                if (USEILIURI) {
+                    compositeEvent.getEvent().addToJenaModelIliEvent(instanceModel, Sem.Event);
+                }
+                else {
+                    //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
+                    compositeEvent.getEvent().addToJenaModelCondensed(instanceModel, Sem.Event);
+                }
 
                 //  System.out.println("ACTORS");
                 for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
