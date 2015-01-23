@@ -100,6 +100,10 @@ public class JenaSerialization {
         }
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+       // RDFDataMgr.write(stream, ds, RDFFormat.RDFJSON);
+       // RDFWriter writer = ds.getDefaultModel().getWriter();
+       // writer.write(ds.getDefaultModel(), stream, RDFFormat.RDFJSON);
+       // writer.write(ds.getDefaultModel(), );
         // defaultModel.write(stream);
         //  RDFWriter writer = defaultModel.getWriter();
         // writer.

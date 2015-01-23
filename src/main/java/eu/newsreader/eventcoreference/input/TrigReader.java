@@ -184,18 +184,44 @@ public class TrigReader {
 
     static public void main (String[] args) {
         try {
-            String format = "NT";
+            String format = "";
+            format = "Json/LD";
+                    //format = "NT";
           //  String format = "Turle";
           //  String format = "N3";
 
 
+            String trigfolder = "";
+            String outputFileInstances = "";
+            String outputFileProvenance = "";
+            String outputFileOthers = "";
+            String statsFile = "";
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
+                if (arg.equals("--instance-out") && args.length>(i+1)) {
+                    outputFileInstances = args[i+1];
+                }
+                else if (arg.equals("--trig-folder") && args.length>(i+1)) {
+                    trigfolder = args[i+1];
+                }
+                else if (arg.equals("--provenance-out") && args.length>(i+1)) {
+                    outputFileProvenance = args[i+1];
+                }
+                else if (arg.equals("--others-out") && args.length>(i+1)) {
+                    outputFileOthers = args[i+1];
+                }
+                else if (arg.equals("--stats-out") && args.length>(i+1)) {
+                    statsFile = args[i+1];
+                }
+            }
 
-
-            String trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
-            String outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualInstances.trp";
-            String outputFileProvenance = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualProvenance.trp";
-            String outputFileOthers = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualOthers.trp";
-            String statsFile = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus.stats";
+/*
+            trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
+            outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualInstances.trp";
+            outputFileProvenance = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualProvenance.trp";
+            outputFileOthers = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualOthers.trp";
+            statsFile = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus.stats";
+*/
 
 
 
