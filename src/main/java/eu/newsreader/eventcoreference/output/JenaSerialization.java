@@ -3,6 +3,7 @@ package eu.newsreader.eventcoreference.output;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
+import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.objects.*;
 import org.apache.jena.riot.RDFDataMgr;
@@ -113,6 +114,28 @@ public class JenaSerialization {
         writer.write(defaultModel, stream);*/
     }
 
+    static void replaceEventIdsWithILIids (CompositeEvent compositeEvent) {
+        String IliUri = "";
+        for (int i = 0; i < compositeEvent.getEvent().getConcepts().size(); i++) {
+            KafSense kafSense = compositeEvent.getEvent().getConcepts().get(i);
+            if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+                if (!IliUri.isEmpty()) {
+                    IliUri+="-and-";
+                }
+                IliUri += kafSense.getSensecode();
+            }
+        }
+        // System.out.println("IliUri = " + IliUri);
+        if (!IliUri.isEmpty()) {
+            IliUri = ResourcesUri.nwrontology+IliUri;
+            compositeEvent.getEvent().setId(IliUri);
+            for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
+                SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
+                semRelation.setSubject(IliUri);
+            }
+        }
+    }
+
     static public void addJenaCompositeEvents (
             Dataset ds ,
             Model instanceModel,
@@ -129,12 +152,11 @@ public class JenaSerialization {
             for (int c = 0; c < compositeEvents.size(); c++) {
                 CompositeEvent compositeEvent = compositeEvents.get(c);
                 if (USEILIURI) {
-                    compositeEvent.getEvent().addToJenaModelIliEvent(instanceModel, Sem.Event);
+                    replaceEventIdsWithILIids(compositeEvent);
                 }
-                else {
-                    //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
-                    compositeEvent.getEvent().addToJenaModelCondensed(instanceModel, Sem.Event);
-                }
+
+                //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
+                compositeEvent.getEvent().addToJenaModelCondensed(instanceModel, Sem.Event);
 
                 //  System.out.println("ACTORS");
                 for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
@@ -162,8 +184,7 @@ public class JenaSerialization {
                 for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
                     SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
                     if (sourceMetaHashMap!=null) {
-                        semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
-
+                            semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
                     }
                     else {
                         semRelation.addToJenaDataSet(ds, provenanceModel);

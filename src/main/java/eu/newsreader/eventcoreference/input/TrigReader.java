@@ -19,18 +19,31 @@ import java.util.*;
  */
 public class TrigReader {
 
+
     static final String provenanceGraph = "http://www.newsreader-project.eu/provenance";
     static final String instanceGraph = "http://www.newsreader-project.eu/instances";
     static HashMap<String, Integer> predicateMapInstances = new HashMap<String, Integer>();
     static HashMap<String, Integer> subjectMapInstances = new HashMap<String, Integer>();
+    static HashMap<String, Integer> mentionMapDBPEntities = new HashMap<String, Integer>();
+    static HashMap<String, Integer> mentionMapNotDBPEntities = new HashMap<String, Integer>();
+    static HashMap<String, Integer> mentionMapIliEvents = new HashMap<String, Integer>();
+    static HashMap<String, Integer> mentionMapLabelEvents = new HashMap<String, Integer>();
     static HashMap<String, Integer> objectMapInstances = new HashMap<String, Integer>();
     static HashMap<String, Integer> predicateObjectMapInstances = new HashMap<String, Integer>();
     static HashMap<String, Integer> predicateSubjectMapInstances = new HashMap<String, Integer>();
+    static HashMap<String, Integer> tripleMapOthers = new HashMap<String, Integer>();
     static HashMap<String, Integer> predicateMapOthers = new HashMap<String, Integer>();
     static HashMap<String, Integer> subjectMapOthers = new HashMap<String, Integer>();
     static HashMap<String, Integer> objectMapOthers = new HashMap<String, Integer>();
     static HashMap<String, Integer> predicateObjectMapOthers = new HashMap<String, Integer>();
     static HashMap<String, Integer> predicateSubjectMapOthers = new HashMap<String, Integer>();
+    static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
+    static int nrEntities = 0;
+    static int nrEvents = 0;
+    static int nrDBPEntities = 0;
+    static int nrOtherEntities = 0;
+    static int nrIliEvents = 0;
+    static int nrLabelEvents = 0;
 
     static void updateMap (HashMap<String, Integer> map, String s) {
         if (map.containsKey(s)) {
@@ -43,9 +56,12 @@ public class TrigReader {
         }
 
     }
+
+
     static void updateOtherStats (Statement s) {
         String predicate = s.getPredicate().getURI();
         String subject = s.getSubject().getURI();
+        String instanceTypeSubject = getInstanceType(subject);
         String object = "";
         if (s.getObject().isLiteral()) {
             object = s.getObject().asLiteral().toString();
@@ -53,18 +69,66 @@ public class TrigReader {
         else if (s.getObject().isURIResource()) {
             object = s.getObject().asResource().getURI();
         }
+        int idx = predicate.lastIndexOf("/");
+        if (idx>-1) predicate = predicate.substring(idx+1);
+        idx = subject.lastIndexOf("/");
+        if (idx>-1) subject = subject.substring(idx+1);
+        idx = object.lastIndexOf("/");
+        if (idx>-1) object = object.substring(idx+1);
+
         String predicateSubject = subject +"\t"+predicate;
         String predicateObject = predicate+"\t"+object;
+
         updateMap(predicateMapOthers, predicate);
         updateMap(subjectMapOthers, subject);
         updateMap(objectMapOthers, object);
         updateMap(predicateSubjectMapOthers, predicateSubject);
         updateMap(predicateObjectMapOthers, predicateObject);
+
+        if (instanceTypeSubject.equals("IEV") && !predicate.equalsIgnoreCase("hastime")) {
+            String [] fields = subject.split("-and-");
+            for (int i = 0; i < fields.length; i++) {
+                String field = fields[i];
+                String iliReference = field+"[";
+                if (iliMap.containsKey(field)) {
+                    ArrayList<String> syns = iliMap.get(field);
+                    for (int j = 0; j < syns.size(); j++) {
+                        String s1 = syns.get(j);
+                        iliReference+=s1;
+                    }
+                }
+                iliReference+="]";
+                String crossLingualTriple = iliReference+"\t"+predicate+"\t"+object;
+                updateMap(tripleMapOthers, crossLingualTriple);
+            }
+        }
     }
 
+
+    static String getInstanceType (String subject) {
+        String type = "";
+        if (subject.indexOf("dbpedia.org")>-1) {
+            type = "DBP";
+        }
+        else if (subject.indexOf("/entities/")>-1) {
+            type = "ENT";
+        }
+        else if (subject.indexOf("ili-30")>-1) {
+            type = "IEV";
+        }
+        else if (subject.indexOf("#ev")>-1) {
+            type = "LEV";
+        }
+        else if (subject.indexOf("http://www.newsreader-project.eu/time/")>-1) {
+            type = "DATE";
+        }
+
+        return type;
+    }
     static void updateInstanceStats (Statement s) {
         String predicate = s.getPredicate().getURI();
         String subject = s.getSubject().getURI();
+        String instanceType = getInstanceType(subject);
         String object = "";
         if (s.getObject().isLiteral()) {
             object = s.getObject().asLiteral().toString();
@@ -72,6 +136,13 @@ public class TrigReader {
         else if (s.getObject().isURIResource()) {
             object = s.getObject().asResource().getURI();
         }
+
+        int idx = predicate.lastIndexOf("/");
+        if (idx>-1) predicate = predicate.substring(idx+1);
+        idx = subject.lastIndexOf("/");
+        if (idx>-1) subject = subject.substring(idx+1);
+        idx = object.lastIndexOf("/");
+        if (idx>-1) object = object.substring(idx+1);
         String predicateSubject = subject +"\t"+predicate;
         String predicateObject = predicate+"\t"+object;
         updateMap(predicateMapInstances, predicate);
@@ -79,6 +150,36 @@ public class TrigReader {
         updateMap(objectMapInstances, object);
         updateMap(predicateSubjectMapInstances, predicateSubject);
         updateMap(predicateObjectMapInstances, predicateObject);
+        if (predicate.endsWith("denotedBy")) {
+            if (instanceType.equals("DBP")) {
+                updateMap(mentionMapDBPEntities, subject);
+            }
+            else if (instanceType.equals("ENT")) {
+                updateMap(mentionMapNotDBPEntities, subject);
+            }
+            else if (instanceType.equals("IEV")) {
+                String [] fields = subject.split("-and-");
+                for (int i = 0; i < fields.length; i++) {
+                    String field = fields[i];
+                    String iliReference = field+"[";
+                    if (iliMap.containsKey(field)) {
+                       ArrayList<String> syns = iliMap.get(field);
+                        for (int j = 0; j < syns.size(); j++) {
+                            String s1 = syns.get(j);
+                            iliReference+=s1;
+                        }
+                    }
+                    iliReference+="]";
+                    updateMap(mentionMapIliEvents, iliReference);
+                }
+            }
+            else if (instanceType.equals("LEV")) {
+                updateMap(mentionMapLabelEvents, subject);
+            }
+            else if (instanceType.equals("DBP")) {
+                updateMap(mentionMapDBPEntities, subject);
+            }
+        }
     }
 
     static public void main (String[] args) {
@@ -86,6 +187,9 @@ public class TrigReader {
             String format = "NT";
           //  String format = "Turle";
           //  String format = "N3";
+
+
+
 
             String trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
             String outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualInstances.trp";
@@ -95,7 +199,13 @@ public class TrigReader {
 
 
 
+
+
+
+
 /*
+
+
             String trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_apple/events/contextual";
             String outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_apple_contextualInstances.trp";
             String outputFileProvenance = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_apple_contextualProvenance.trp";
@@ -105,13 +215,21 @@ public class TrigReader {
 
 
 
+
+
+
 /*
+
             String trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford/events/contextual";
             String outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford_contextualInstances.trp";
             String outputFileProvenance = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford_contextualProvenance.trp";
             String outputFileOthers = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford_contextualOthers.trp";
             String statsFile = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford.stats";
 */
+
+
+
+
 
 
 /*
@@ -123,6 +241,9 @@ public class TrigReader {
 */
 
 
+
+            String pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
+            iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
             Dataset dataset = TDBFactory.createDataset();
             ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
             ArrayList<String> provenanceTriples = new ArrayList<String>();
@@ -183,10 +304,39 @@ public class TrigReader {
             OutputStream fosStats = new FileOutputStream(statsFile+".instances.xls");
             str += trigfolder+"\n\n";
             str += "INSTANCES\n\n";
+            str += "DBP entities\t"+mentionMapDBPEntities.size()+"\n";
+            str += "NEW entities\t"+mentionMapNotDBPEntities.size()+"\n";
+            str += "ILI events\t"+mentionMapIliEvents.size()+"\n";
+            str += "LEMMA events\t"+mentionMapLabelEvents.size()+"\n";
             fosStats.write(str.getBytes());
-            str = "PREDICATES\n";
+
+            str = "\nPREDICATES\n";
             fosStats.write(str.getBytes());
             writesStats(fosStats, predicateMapInstances);
+
+
+            str = "\nMENTION COUNTS\n";
+            fosStats.write(str.getBytes());
+
+            str = "\nMENTIONS OF DBP entities\n";
+            fosStats.write(str.getBytes());
+            writesStats(fosStats, mentionMapDBPEntities);
+
+            str = "\nMENTIONS OF NEW entities\n";
+            fosStats.write(str.getBytes());
+            writesStats(fosStats, mentionMapNotDBPEntities);
+
+            str = "\nMENTIONS OF ILI events\n";
+            fosStats.write(str.getBytes());
+            writesStats(fosStats, mentionMapIliEvents);
+
+            str = "\nMENTIONS OF LEMMA Events\n";
+            fosStats.write(str.getBytes());
+            writesStats(fosStats, mentionMapLabelEvents);
+
+/*
+            str = "\nTRIPLE COUNTS\n";
+            fosStats.write(str.getBytes());
             str = "\nSUBJECTS\n";
             fosStats.write(str.getBytes());
             writesStats(fosStats, subjectMapInstances);
@@ -200,17 +350,23 @@ public class TrigReader {
             fosStats.write(str.getBytes());
             writesStats(fosStats, predicateObjectMapInstances);
             str = "\n";
-            fosStats.write(str.getBytes());
+            fosStats.write(str.getBytes());*/
+
             fosStats.close();
 
             fosStats = new FileOutputStream(statsFile+".relations.xls");
             str = trigfolder+"\n\n";
-            str += "\nRELATIONS\n\n";
+            str += "\nTRIPLES\n\n";
             fosStats.write(str.getBytes());
             str = "PREDICATES\n";
             fosStats.write(str.getBytes());
             writesStats(fosStats, predicateMapOthers);
-            str = "\nSUBJECTS\n";
+
+            str += "\nCROSSLINGUAL TRIPLES\n\n";
+            fosStats.write(str.getBytes());
+            writesStats(fosStats, tripleMapOthers);
+
+/*            str = "\nSUBJECTS\n";
             fosStats.write(str.getBytes());
             writesStats(fosStats, subjectMapOthers);
             str = "\nOBJECTS\n";
@@ -223,7 +379,8 @@ public class TrigReader {
             fosStats.write(str.getBytes());
             writesStats(fosStats, predicateObjectMapOthers);
             str = "\n";
-            fosStats.write(str.getBytes());
+            fosStats.write(str.getBytes());*/
+
             fosStats.close();
 
 
@@ -247,7 +404,10 @@ public class TrigReader {
         fos.close();
     }
 
+
+
     static void writesStats (OutputStream fos, HashMap<String, Integer> map) throws IOException {
+
         TreeSet<String> tree = new TreeSet<String>();
         Set keySet = map.keySet();
         Iterator<String> keys = keySet.iterator();
@@ -274,5 +434,6 @@ public class TrigReader {
         }
         return str;
     }
+
 
 }

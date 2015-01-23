@@ -1668,7 +1668,7 @@ public class Util {
 
 
 
-    static public HashMap ReadFileToStringHashMap(String fileName) {
+    static public HashMap<String, ArrayList<String>> ReadFileToStringHashMap(String fileName) {
         HashMap<String, ArrayList<String>> lineHashMap = new HashMap<String, ArrayList<String>>();
         if (new File(fileName).exists() ) {
             try {

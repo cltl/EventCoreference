@@ -180,7 +180,7 @@ public class SemRelation implements Serializable {
         Resource object = relationModel.createResource(this.getObject());
 
 
-        /// since we no longer distinghuish places from actors, we now check the predicates for propbank AM-LOC
+        /// since we no longer distinguish places from actors, we now check the predicates for propbank AM-LOC
         /// if so we use sem:hasPlace otherwise we take the semType value from the hassem predicate
         Property semProperty = null;
         boolean place = false;
@@ -217,47 +217,6 @@ public class SemRelation implements Serializable {
                 }
             }
         }
-
-/*
-         Property semProperty = null;
-
-        boolean subActor = false;
-        for (int i = 0; i < predicates.size(); i++) {
-            String predicate = predicates.get(i);
-            if (predicate.equalsIgnoreCase("hasFactBankValue")) {
-                Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue + predicate);
-                subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
-            } else {
-                if (predicate.toLowerCase().startsWith("hassem")) {
-                   semProperty = getSemRelationType(predicate);
-                } else {
-                    predicate = getRoleRelation(predicate);
-                    if (!predicate.isEmpty()) {
-                        Property fnProperty = relationModel.createProperty(predicate);
-                        subject.addProperty(fnProperty, object);
-                        subActor = true;
-                    }
-                }
-            }
-        }*/
-
-        //// CHOOSE ONE OF THE TWO OPTIONS A. or B.
-        //// A.
-        //// ONLY ADDS SEMACTOR IF NO OTHER PROPERTY GENERATED
-/*       if (!subActor && semProperty!=null) {
-            if (semProperty != Sem.hasSubType) {
-                subject.addProperty(semProperty, object);
-            }
-        }*/
-        ///// B.
-        //// ALWAYS ADDS SEMACTOR IF NOT NULL
-/*
-        if (semProperty!=null) {
-            if (semProperty != Sem.hasSubType) {
-                subject.addProperty(semProperty, object);
-            }
-        }
-*/
 
         Resource provenanceResource = provenanceModel.createResource(this.id);
 
@@ -301,6 +260,8 @@ public class SemRelation implements Serializable {
             }
         }
     }
+
+
 
 
     public SemRelation (SemRelation semRelation) {
