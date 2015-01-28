@@ -1,7 +1,6 @@
 package eu.newsreader.eventcoreference.util;
 
 import java.io.*;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,491 +11,108 @@ import java.util.Set;
  */
 public class Statistics {
 
-    public static class TotalStats {
-        private String year;
-        private Integer instances;
-        private Integer mentions;
-        private Integer sources;
-        private Integer labels;
-        private Integer singletons;
+    static boolean DBPENTITY = false;
+    static boolean NEWENTITY = false;
+    static boolean ILIEVENT = false;
+    static boolean LEMMAEVENT = false;
+    static boolean PREDICATE = false;
+    static boolean TRIPLE = false;
 
-        public TotalStats() {
-            this.year = "";
-            this.instances = 0;
-            this.mentions = 0;
-            this.sources = 0;
-            this.labels = 0;
-            this.singletons = 0;
-        }
-
-        public String getYear() {
-            return year;
-        }
-
-        public void setYear(String year) {
-            this.year = year;
-        }
-
-        public Integer getInstances() {
-            return instances;
-        }
-
-        public void setInstances(Integer instances) {
-            this.instances = instances;
-        }
-
-        public void addInstances(Integer instances) {
-            this.instances += instances;
-        }
-
-        public Integer getMentions() {
-            return mentions;
-        }
-
-        public Double getMentionsPerInstance() {
-            Double rate = 0.0;
-
-            if (this.getInstances()>0) {
-              rate = new Double ((double) this.getMentions()/(double) this.getInstances());
-            }
-            return rate;
-        }
-
-        public String getMentionsPerInstanceString() {
-            Double rate = 0.0;
-
-            if (this.getInstances()>0) {
-              rate = new Double ((double) this.getMentions()/(double) this.getInstances());
-            }
-            DecimalFormat df = new DecimalFormat("#.00");
-            return df.format(rate);
-        }
-
-        public void setMentions(Integer mentions) {
-            this.mentions = mentions;
-        }
-
-        public void addMentions(Integer mentions) {
-            this.mentions += mentions;
-        }
-
-        public Integer getSources() {
-            return sources;
-        }
-
-        public void setSources(Integer sources) {
-            this.sources = sources;
-        }
+    static ArrayList<String> fileMap = new ArrayList<String>();
+    static HashMap<String, ArrayList<Integer>> dbpEntityMap = new HashMap<String, ArrayList<Integer>>();
+    static HashMap<String, ArrayList<Integer>> newEntityMap = new HashMap<String, ArrayList<Integer>>();
+    static HashMap<String, ArrayList<Integer>> iliEventMap = new HashMap<String, ArrayList<Integer>>();
+    static HashMap<String, ArrayList<Integer>> predicateMap = new HashMap<String, ArrayList<Integer>>();
+    static HashMap<String, ArrayList<Integer>> tripleMap = new HashMap<String, ArrayList<Integer>>();
 
 
-        public void addSources(Integer sources) {
-            this.sources += sources;
-        }
-
-        public Double getSourcesPerInstance() {
-            Double rate = 0.0;
-            if (this.getInstances()>0) {
-             rate = new Double ((double) this.getSources()/(double) this.getInstances());
-            }
-            return rate;
-        }
-
-        public String getSourcesPerInstanceString() {
-            Double rate = 0.0;
-
-            if (this.getInstances()>0) {
-                rate = new Double ((double) this.getSources()/(double) this.getInstances());
-            }
-            DecimalFormat df = new DecimalFormat("#.00");
-            return df.format(rate);
-        }
-
-        public Integer getLabels() {
-            return labels;
-        }
-
-        public void setLabels(Integer labels) {
-            this.labels = labels;
-        }
-
-        public void addLabels(Integer labels) {
-            this.labels += labels;
-        }
-        public Double getLabelsPerInstance() {
-            Double rate = 0.0;
-            if (this.getInstances()>0) {
-                rate = new Double ((double) this.getLabels()/(double)this.getInstances());
-            }
-            return rate;
-        }
-
-        public String getLabelsPerInstanceString() {
-            Double rate = 0.0;
-
-            if (this.getInstances()>0) {
-                rate = new Double ((double) this.getLabels()/(double) this.getInstances());
-            }
-            DecimalFormat df = new DecimalFormat("#.00");
-            return df.format(rate);
-        }
-
-        public Integer getSingletons() {
-            return singletons;
-        }
-
-        public void setSingletons(Integer singletons) {
-            this.singletons = singletons;
-        }
-        public void addSingletons(Integer singletons) {
-            this.singletons += singletons;
-        }
-
-        public Double getSingletonsPerMention() {
-            Double rate = 0.0;
-            if (this.getInstances()>0) {
-                rate = new Double ((double) this.getSingletons()/(double)this.getMentions());
-            }
-            return rate;
-        }
-
-        public String getSingletonsPerMentionString() {
-            Double rate = 0.0;
-
-            if (this.getInstances()>0) {
-                rate = new Double ((double) this.getSingletons()/(double) this.getMentions());
-            }
-            DecimalFormat df = new DecimalFormat("#.00");
-            return df.format(rate);
-        }
+    static void setALLFALSE () {
+        DBPENTITY = false;
+        NEWENTITY = false;
+        ILIEVENT = false;
+        LEMMAEVENT = false;
+        PREDICATE = false;
+        TRIPLE = false;
     }
 
-    static HashMap<String, Integer> eventLabelMap = new HashMap<String, Integer>();
-    static HashMap<String, Integer> actorLabelMap = new HashMap<String, Integer>();
-    static HashMap<String, Integer> placeLabelMap = new HashMap<String, Integer>();
-    static HashMap<String, Integer> timeLabelMap = new HashMap<String, Integer>();
-    static HashMap<String, SemUtilObject> timeMap = new HashMap<String, SemUtilObject>();
-    static HashMap<String, SemUtilObject> eventMap = new HashMap<String, SemUtilObject>();
-    static HashMap<String, SemUtilObject> placeMap = new HashMap<String, SemUtilObject>();
-    static HashMap<String, SemUtilObject> actorMap = new HashMap<String, SemUtilObject>();
-    static HashMap<String, SemUtilObject> dbpMap = new HashMap<String, SemUtilObject>();
-
-    static boolean EVENT = false;
-    static boolean DBP = false;
-    static boolean ACTOR = false;
-    static boolean PLACE = false;
-    static boolean TIME = false;
-
-
-    static void storeLabels (HashMap<String, Integer> map, ArrayList<LabelCount> labels) {
-        for (int i = 0; i < labels.size(); i++) {
-            LabelCount labelCount = labels.get(i);
-            if (map.containsKey(labelCount.getLabel())) {
-                Integer labelCnt = map.get(labelCount.getLabel());
-                labelCnt += labelCount.getCnt();
-                map.put(labelCount.getLabel(), labelCnt);
-            }
-            else {
-                map.put(labelCount.getLabel(), labelCount.getCnt());
-            }
-        }
-    }
-    
-    static void storeObject (SemUtilObject semUtilObject, String theType) {
-        if (semUtilObject!=null && !semUtilObject.getUri().trim().isEmpty()) {
-            if (DBP) {
-                if (semUtilObject.getUri().startsWith("dbp:") || semUtilObject.getUri().indexOf("dbpedia")>-1) {
-                    if (dbpMap.containsKey(semUtilObject.getUri())) {
-                        SemUtilObject utilObject = dbpMap.get(semUtilObject.getUri());
-                        utilObject.mergeObject(semUtilObject);
-                        dbpMap.put(utilObject.getUri(), utilObject);
-                    }
-                    else {
-                        dbpMap.put(semUtilObject.getUri(), semUtilObject);
-                    }
-/*
-                    System.out.println(semUtilObject.getUri());
-                    if (semUtilObject.getTypes().contains("sem:Place")) {
-                        System.out.println("\tsem:Place");
-                    }
-                    if (semUtilObject.getTypes().contains("sem:Actor")) {
-                        System.out.println("\tsem:Actor");
-                    }
-*/
-                }
-            }
-            if (EVENT) {
-                if (theType.equals("sem:Event")) {
-                    if (eventMap.containsKey(semUtilObject.getUri())) {
-                        SemUtilObject utilObject = eventMap.get(semUtilObject.getUri());
-                        utilObject.mergeObject(semUtilObject);
-                        eventMap.put(utilObject.getUri(), utilObject);
-                    }
-                    else {
-                        eventMap.put(semUtilObject.getUri(), semUtilObject);
-                    }
-                    storeLabels(eventLabelMap, semUtilObject.getLabels());
-                }
-            }
-            if (ACTOR) {
-               if (theType.equals("sem:Actor")) {
-                    if (actorMap.containsKey(semUtilObject.getUri())) {
-                        SemUtilObject utilObject = actorMap.get(semUtilObject.getUri());
-                        utilObject.mergeObject(semUtilObject);
-                        actorMap.put(utilObject.getUri(), utilObject);
-                    }
-                    else {
-                        actorMap.put(semUtilObject.getUri(), semUtilObject);
-                    }
-                    storeLabels(actorLabelMap, semUtilObject.getLabels());
-                }
-            }
-            if (PLACE) {
-                if (theType.equals("sem:Place")) {
-                    if (placeMap.containsKey(semUtilObject.getUri())) {
-                        SemUtilObject utilObject = placeMap.get(semUtilObject.getUri());
-                        utilObject.mergeObject(semUtilObject);
-                        placeMap.put(utilObject.getUri(), utilObject);
-                    }
-                    else {
-                        placeMap.put(semUtilObject.getUri(), semUtilObject);
-                    }
-                    storeLabels(placeLabelMap, semUtilObject.getLabels());
-                }
-            }
-            if (TIME) {
-                if (theType.equals("sem:Time")) {
-                    if (timeMap.containsKey(semUtilObject.getUri())) {
-                        SemUtilObject utilObject = timeMap.get(semUtilObject.getUri());
-                        utilObject.mergeObject(semUtilObject);
-                        timeMap.put(utilObject.getUri(), utilObject);
-                    }
-                    else {
-                        timeMap.put(semUtilObject.getUri(), semUtilObject);
-                    }
-                    storeLabels(timeLabelMap, semUtilObject.getLabels());
-                }
-            }
-        }
+    static void updateMap (String key, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
+           if (map.containsKey(key)) {
+               ArrayList<Integer> counts = map.get(key);
+               counts.set(fileNr, count);
+               map.put(key, counts);
+           }
+           else {
+               ArrayList<Integer> counts = new ArrayList<Integer>();
+               for (int i = 0; i < nrFiles; i++) {
+                   counts.add(0);
+               }
+               counts.set(fileNr, count);
+               map.put(key, counts);
+           }
     }
 
-    static void getStats(File file) {
-        /*
-          nwr:instances {
+    static void getStats(File file, int fileNr, int nrFiles) {
 
-            <http://www.newsreader-project.eu/2004_4_26_4C7M-RB90-01K9-42PW.xml#coe91>
-            a              sem:Event ;
-            rdfs:label     "discussion:1" ;
-            gaf:denotedBy  <http://www.newsreader-project.eu/2004_4_26_4C7M-RB90-01K9-42PW.xml#char=3138,3148&word=w576&term=t576> .
-
-            <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B1.xml#coentity9>
-            a              sem:Actor , nwr:organization ;
-            rdfs:label     "Mitsubishi the Chrysler:1" ;
-            gaf:denotedBy  <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B1.xml#char=1621,1631&word=w288&term=t288> , <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B1.xml#char=1632,1635&word=w289&term=t289> , <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B1.xml#char=1636,1644&word=w290&term=t290> .
-
-            dbp:Chrysler_PT_Cruiser
-            a              sem:Actor , nwr:organization ;
-            rdfs:label     "PT Cruiser:2" ;
-            gaf:denotedBy  <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B1.xml#char=1930,1932&word=w341&term=t341> , <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B1.xml#char=1933,1940&word=w342&term=t342> , <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B1.xml#char=5159,5161&word=w974&term=t974> , <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B1.xml#char=5162,5169&word=w975&term=t975> .
-
-            dbp:India  a           sem:Actor , nwr:misc , sem:Place , nwr:location ;
-            rdfs:label     "indian:1" , "India:2" ;
-            gaf:denotedBy  <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B6.xml#char=1404,1410&word=w261&term=t261> , <http://www.newsreader-project.eu/2004_4_26_4C7N-GTG0-0002-M1S5.xml#char=364,369&word=w69&term=t69> .
-
-
-            }
-         */
         if (file.exists() ) {
+            fileMap.add(fileNr, file.getName());
             try {
                 FileInputStream fis = new FileInputStream(file);
                 InputStreamReader isr = new InputStreamReader(fis);
                 BufferedReader in = new BufferedReader(isr);
                 String inputLine;
-                String theType = "";
-                boolean read = false;
-                SemUtilObject semUtilObject = null;
                 while (in.ready()&&(inputLine = in.readLine()) != null) {
                    // System.out.println(inputLine);
                     inputLine = inputLine.trim();
+                    if (inputLine.startsWith("CROSSLINGUAL TRIPLES")) {
+                        setALLFALSE();
+                        TRIPLE = true;
+                    }
+                    else if (inputLine.startsWith("MENTIONS OF DBP entities")) {
+                        setALLFALSE();
+                        DBPENTITY = true;
+                    }
+                    else if (inputLine.startsWith("MENTIONS OF NEW entities")) {
+                        setALLFALSE();
+                        NEWENTITY = true;
+                    }
+                    else if (inputLine.startsWith("MENTIONS OF ILI events")) {
+                        setALLFALSE();
+                        ILIEVENT = true;
+                    }
+                    else if (inputLine.startsWith("PREDICATES")) {
+                        setALLFALSE();
+                        PREDICATE = true;
+                    }
+                    else if (inputLine.startsWith("MENTIONS OF LEMMA Events")) {
+                        setALLFALSE();
+                        PREDICATE = true;
+                    }
                     if (inputLine.trim().length()>0) {
-                        int idx_s = inputLine.indexOf("nwr:instances {");
-                        if (idx_s>-1) {
-                            read = true;
-                        }
-                        else if (read) {
-                            if (inputLine.indexOf("}")>-1) {
-                                ///we are done
-                                break;
+                         String[] fields = inputLine.split("\t");
+                        if (fields.length==2) {
+                            String key = fields[0];
+                            Integer count = Integer.parseInt(fields[1]);
+                            if (DBPENTITY) {
+                                updateMap(key, count, dbpEntityMap, fileNr, nrFiles);
                             }
-                            else {
-                                if (inputLine.toLowerCase().startsWith("<http")) {
-                                    semUtilObject = new SemUtilObject();
-                                    semUtilObject.setUri(inputLine.trim());
-                                }
-                                else if (inputLine.toLowerCase().startsWith("nwr:")) {
-                                    semUtilObject = new SemUtilObject();
-                                    semUtilObject.setUri(inputLine.trim());
-                                }
-                                else if (inputLine.toLowerCase().startsWith("dbp:")) {
-                                    //dbp:India  a           sem:Actor , nwr:misc , sem:Place , nwr:location ;
-                                    //System.out.println("inputLine = " + inputLine);
-                                    semUtilObject = new SemUtilObject();
-                                    int idx = inputLine.indexOf(" a ");
-                                    if (idx>-1) {
-                                        semUtilObject.setUri(inputLine.substring(0, idx).trim());
-                                        String[] types = inputLine.substring(idx+3).trim().split(",");
-                                        for (int i = 0; i < types.length; i++) {
-                                            String type = types[i].trim();
-                                            if (type.endsWith(" ;")) {
-                                                type = type.substring(0, type.length()-1).trim();
-                                            }
-                                            semUtilObject.addTypes(type);
-                                           /* if (type.equals("nwr:contextual")) {
-                                                theType = "sem:Event";
-                                            }*/
-                                            if (type.equals("nwr:communication") || type.equals("nwr:cognition")) {
-                                                theType = "sem:Event";
-                                            }
-                                            /*if (type.equals("nwr:cognition")) {
-                                                theType = type;
-                                            }*/
-                                            /*if (type.equals("nwr:grammatical")) {
-                                                theType = type;
-                                            }*/
-                                            /*if (type.equals("sem:Event")) {
-                                                theType = type;
-                                            }*/
-                                            else if (type.equals("sem:Place")) {
-                                                theType = type;
-                                            }
-                                            else if (type.equals("sem:Actor")) {
-                                                theType = type;
-                                            }
-                                            else if (type.equals("sem:Time")) {
-                                                theType = type;
-                                            }
-                                        }
-                                    }
-                                    else {
-                                        semUtilObject.setUri(inputLine.trim());
-                                    }
-                                }
-                                else if (inputLine.startsWith("a       ")) {
-                                    //a              sem:Actor , nwr:organization ;
-                                    String[] types = inputLine.substring(3).trim().split(",");
-                                    for (int i = 0; i < types.length; i++) {
-                                        String type = types[i].trim();
-                                        if (type.endsWith(" ;")) {
-                                            type = type.substring(0, type.length()-1).trim();
-                                        }
-                                        semUtilObject.addTypes(type);
-
-                                        semUtilObject.addTypes(type);
-                                        /*if (type.equals("nwr:contextual")) {
-                                            theType = "sem:Event";
-                                        }*/
-                                            if (type.equals("nwr:communication") || type.equals("nwr:cognition")) {
-                                                theType = "sem:Event";
-                                            }
-                                            /*if (type.equals("nwr:cognition")) {
-                                                theType = type;
-                                            }*/
-                                            /*if (type.equals("nwr:grammatical")) {
-                                                theType = type;
-                                            }*/
-                                            /*if (type.equals("sem:Event")) {
-                                                theType = type;
-                                            }*/
-                                        else if (type.equals("sem:Place")) {
-                                            theType = type;
-                                        }
-                                        else if (type.equals("sem:Actor")) {
-                                            theType = type;
-                                        }
-                                        else if (type.equals("sem:Time")) {
-                                            theType = type;
-                                        }
-                                        else {
-                                           // System.out.println("unknown type = " + type);
-                                        }
-                                    }
-                                }
-                                else {
-                                    if (inputLine.toLowerCase().startsWith("rdfs:label")) {
-                                        //rdfs:label     "indian:1" , "India:2" ;
-                                        int idx = inputLine.indexOf("\"");
-                                        if (idx > -1) {
-                                            String[] labels = inputLine.substring(idx).trim().split("\" , \"");
-                                            for (int i = 0; i < labels.length; i++) {
-                                                String label = labels[i].trim();
-                                                if (label.startsWith("\"")) {
-                                                    label = label.substring(1);
-                                                }
-                                                if (label.endsWith("\" ;")) {
-                                                    label = label.substring(0, label.length() - 3);
-                                                }
-                                                label = label.replaceAll("\t", " ");
-                                                LabelCount labelCount = new LabelCount(label);
-                                                semUtilObject.addLabelCount(labelCount);
-                                            }
-                                        }
-                                    } else if (inputLine.startsWith("gaf:denotedBy")) {
-                                        //gaf:denotedBy  <http://www.newsreader-project.eu/2004_4_26_4C7V-T4D0-0015-K1B6.xml#char=1404,1410&word=w261&term=t261> , <http://www.newsreader-project.eu/2004_4_26_4C7N-GTG0-0002-M1S5.xml#char=364,369&word=w69&term=t69> .
-                                        int idx = inputLine.indexOf(" <");
-                                        if (idx > -1) {
-                                            int mentionsCount = 0;
-                                            String[] mentions = inputLine.substring(idx).trim().split("<");
-                                            //semUtilObject.setMentions(mentions.length);
-                                            ArrayList<String> sources = new ArrayList<String>();
-                                            ArrayList<String> dupsources = new ArrayList<String>();
-                                            for (int i = 0; i < mentions.length; i++) {
-                                                String mention = mentions[i].trim();
-                                                if (!mention.isEmpty()) {
-                                                    mentionsCount++;
-/*                                                    if (!semUtilObject.mentionStrings.contains(mention)) {
-                                                        semUtilObject.mentionStrings.add(mention);
-                                                    }*/
-                                                  //  System.out.println("mention = " + mention);
-                                                    int idx_m = mention.indexOf("#");
-                                                    if (idx_m > -1) {
-                                                        String source = mention.substring(0, idx_m).trim();
-                                                        if (!source.isEmpty()) {
-                                                            if (!sources.contains(source)) {
-                                                              //  System.out.println("source = " + source);
-                                                                sources.add(source);
-                                                            }
-                                                            else {
-                                                                if (!dupsources.contains(source)) {
-                                                                    dupsources.add(source);
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            semUtilObject.setMentions(mentionsCount);
-                                            Integer singletons = 0;
-                                            for (int i = 0; i < sources.size(); i++) {
-                                                String s = sources.get(i);
-                                                if (!s.isEmpty()) {
-                                                    if (dupsources.contains(s)) {
-                                                        singletons++;
-                                                    }
-                                                }
-                                            }
-                                            // System.out.println("singletons = " + singletons);
-                                            semUtilObject.setSingletons(singletons);
-                                            semUtilObject.setDispersion(sources.size());
-                                        } else {
-                                            //  System.out.println("inputLine = " + inputLine);
-                                        }
-                                    }
-                                }
-
-                                if (inputLine.endsWith(" .")) {
-                                    /// marks the end of the trig object, so we store it
-                                    storeObject(semUtilObject, theType);
-                                    semUtilObject = new SemUtilObject();
-                                }
+                            else if (NEWENTITY) {
+                                updateMap(key, count, newEntityMap, fileNr, nrFiles);
+                            }
+                            else if (ILIEVENT) {
+                                updateMap(key, count, iliEventMap, fileNr, nrFiles);
+                            }
+                            else if (PREDICATE) {
+                                updateMap(key, count, predicateMap, fileNr, nrFiles);
+                            }
+                        }
+                        else if (fields.length==4) {
+                            String subject = fields[0];
+                            String predicate = fields[1];
+                            String object = fields[2];
+                            String triple = subject+":"+predicate+":"+object;
+                            Integer count = Integer.parseInt(fields[3]);
+                            if (TRIPLE) {
+                                updateMap(triple, count, tripleMap, fileNr, nrFiles);
                             }
                         }
                     }
@@ -510,606 +126,144 @@ public class Statistics {
 
 
 
-    /**
-     *             String totalStr = "ALL ENTITIES\t"+dbpMap.size()+"\n";
-     totalStr += "\t"+"mentions\t"+nMentions+"\n";
-     totalStr += "\t"+"source\t"+nSources+"\n";
-     totalStr += "\t"+"dbp size\t"+dbpMap.size()+"\n";
-     totalStr += "\t"+"actors\t"+actorMap.size()+"\n";
-     totalStr += "\t"+"places\t"+placeMap.size()+"\n";
-     totalStr += "\t"+"events\t"+eventMap.size()+"\n";
-     totalStr += "\t"+"times\t"+timeMap.size()+"\n\n";
-     fos.write(totalStr.getBytes());
-
-     */
-
-    static void addToInstanceOverviewStats (HashMap<String, ArrayList<TotalStats>> totalMap,  HashMap<String, SemUtilObject> aMap, String year) {
-        Set keySet = aMap.keySet();
-        Iterator keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            SemUtilObject semUtilObject = aMap.get(key);
-            TotalStats totalStats = new TotalStats();
-            totalStats.setYear(year);
-            totalStats.addMentions(semUtilObject.getMentions());
-            totalStats.addSources(semUtilObject.getDispersion());
-            totalStats.addLabels(semUtilObject.getLabels().size());
-
-            if (totalMap.containsKey(key)) {
-                ArrayList<TotalStats> totalStatsArray = totalMap.get(key);
-                totalStatsArray.add(totalStats);
-                totalMap.put(key, totalStatsArray);
-            }
-            else {
-
-                ArrayList<TotalStats> totalStatsArray = new ArrayList<TotalStats>();
-                totalStatsArray.add(totalStats);
-                totalMap.put(key, totalStatsArray);
-            }
-        }
-    }
-
-    static void addToLabelOverviewStats (HashMap<String, ArrayList<Integer>> totalMap,  HashMap<String, Integer> aMap) {
-        Set keySet = aMap.keySet();
-        Iterator keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            Integer cnt = aMap.get(key);
-            if (totalMap.containsKey(key)) {
-                ArrayList<Integer> totalStatsArray = totalMap.get(key);
-                totalStatsArray.add(cnt);
-                totalMap.put(key, totalStatsArray);
-            }
-            else {
-
-                ArrayList<Integer> totalStatsArray = new ArrayList<Integer>();
-                totalStatsArray.add(cnt);
-                totalMap.put(key, totalStatsArray);
-            }
-        }
-    }
-
-    static void saveDBPStats (String fileName) {
-        try {
-            System.out.println("dbpMap = " + dbpMap.size());
-            FileOutputStream fos = new FileOutputStream(fileName);
-            String str = "DBP\tMentions\tSources\tLabels\tTypes\tsem:Actor\tsem:Place\n";
-            fos.write(str.getBytes());
-            Set keySet = dbpMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                SemUtilObject semUtilObject = dbpMap.get(key);
-                str = semUtilObject.toStatString();
-                if (actorMap.containsKey(key)) {
-                    semUtilObject = actorMap.get(key);
-                    str += "\t"+semUtilObject.getMentions();
-                }
-                if (placeMap.containsKey(key)) {
-                    semUtilObject = placeMap.get(key);
-                    str += "\t"+semUtilObject.getMentions();
-                }
-                str += "\n";
-                fos.write(str.getBytes());
-            }
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void saveEventStats (String fileName) {
-        try {
-            System.out.println("eventMap.size() = " + eventMap.size());
-            FileOutputStream fos = new FileOutputStream(fileName);
-            String str = "";
-            str = "Events\tMentions\tSources\tLabels\tTypes\n";
-            fos.write(str.getBytes());
-
-            Set keySet = eventMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                SemUtilObject semUtilObject = eventMap.get(key);
-                str = semUtilObject.toStatString();
-                str += "\n";
-                fos.write(str.getBytes());
-            }
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void saveEventLabelStats (String fileName) {
-        try {
-            System.out.println("eventLabelMap.size() = " + eventLabelMap.size());
-            FileOutputStream fos = new FileOutputStream(fileName);
-            String str = "Event label\t"+"Frequency\n";
-            fos.write(str.getBytes());
-            Set keySet = eventLabelMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                Integer cnt = eventLabelMap.get(key);
-                str  = key+"\t"+cnt+"\n";
-                fos.write(str.getBytes());
-
-            }
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void saveActorStats  (String fileName) {
-        try {
-            System.out.println("actorMap.size() = " + actorMap.size());
-            FileOutputStream fos = new FileOutputStream(fileName);
-            String str = "";
-            str ="Actors\tMentions\tSources\tLabels\tTypes\n";
-            fos.write(str.getBytes());
-
-            Set keySet = actorMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                SemUtilObject semUtilObject = actorMap.get(key);
-                str = semUtilObject.toStatString();
-                str += "\n";
-                fos.write(str.getBytes());
-            }
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    static void saveActorLabelStats  (String fileName) {
-        try {
-            System.out.println("actorLabelMap.size() = " + actorLabelMap.size());
-            FileOutputStream fos = new FileOutputStream(fileName);
-
-            String str = "";
-            str += "Actor label\t"+"Frequency\n";
-            fos.write(str.getBytes());
-            Set keySet = actorLabelMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                Integer cnt = actorLabelMap.get(key);
-                str  = key+"\t"+cnt+"\n";
-                fos.write(str.getBytes());
-            }
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-    static void savePlacesStats  (String fileName) {
-        try {
-            System.out.println("placeMap.size() = " + placeMap.size());
-            FileOutputStream fos = new FileOutputStream(fileName);
-            String str = "";
-            str = "ALL PLACES\t"+placeMap.size()+"\n";
-            str +="Places\tMentions\tSources\tLabels\tTypes\n";
-            fos.write(str.getBytes());
-
-            Set keySet = placeMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                SemUtilObject semUtilObject = placeMap.get(key);
-                str = semUtilObject.toStatString();
-                str += "\n";
-                fos.write(str.getBytes());
-            }
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void savePlaceLabelStats  (String fileName) {
-        try {
-            System.out.println("placeLabelMap.size() = " + placeLabelMap.size());
-            FileOutputStream fos = new FileOutputStream(fileName);
-
-            String str = "";
-            str += "Place label\t"+"Frequency\n";
-            fos.write(str.getBytes());
-            Set keySet = placeLabelMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                Integer cnt = placeLabelMap.get(key);
-                str  = key+"\t"+cnt+"\n";
-                fos.write(str.getBytes());
-            }
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void saveTimeStats  (String fileName) {
-        try {
-            System.out.println("timeMap.size() = " + timeMap.size());
-            FileOutputStream fos = new FileOutputStream(fileName);
-            String str = "ALL TIMES\t"+timeMap.size()+"\n";
-            str += "Time\tMentions\tSources\tLabels\tTypes\n";
-            fos.write(str.getBytes());
-
-            Set keySet = timeMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                SemUtilObject semUtilObject = timeMap.get(key);
-                str = semUtilObject.toStatString();
-                str += "\n";
-                fos.write(str.getBytes());
-            }
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-
-    static void statsPerYear (String folder) {
-
-        try {
-            Integer eventLabelMax = 0;
-            Integer actorLabelMax = 0;
-            Integer placeLabelMax = 0;
-            Integer timeLabelMax = 0;
-            ArrayList<String> yearStrings = new ArrayList<String>();
-            yearStrings.add("Total");
-            HashMap<String, ArrayList<String>> yearMap = new HashMap<String, ArrayList<String>>();
-            ArrayList<File> years = Util.makeFolderList(new File(folder));
-            for (int i = 0; i < years.size(); i++) {
-                File file =  years.get(i);
-                int idx = file.getName().indexOf("-");
-                if (idx>-1) {
-                    String year = file.getName().substring(0, idx);
-                    if (!yearStrings.contains(year)) {
-                        yearStrings.add(year);
-                    }
-                    if (yearMap.containsKey(year)) {
-                        ArrayList<String> folders = yearMap.get(year);
-                        folders.add(file.getAbsolutePath());
-                        yearMap.put(year, folders);
-                    }
-                    else {
-                        ArrayList<String> folders = new ArrayList<String>();
-                        folders.add(file.getAbsolutePath());
-                        yearMap.put(year, folders);
-                    }
-                }
-            }
-            HashMap<String, Integer[]> eventLabelTotalMap = new HashMap<String, Integer[]>();
-            HashMap<String, Integer[]> actorLabelTotalMap = new HashMap<String, Integer[]>();
-            HashMap<String, Integer[]> placeLabelTotalMap = new HashMap<String, Integer[]>();
-            HashMap<String, Integer[]> timeLabelTotalMap = new HashMap<String, Integer[]>();
-            String statFile = folder+"/";
-            if (EVENT) statFile+="EVENT_";
-            if (DBP) statFile+="DBP_";
-            if (ACTOR) statFile+="ACTOR_";
-            if (PLACE) statFile+="PLACE_";
-            if (TIME) statFile+="TIME_";
-            statFile +="yearOverview.xls";
-            FileOutputStream fos = new FileOutputStream(statFile);
-            String str = "\t"+"DBP\t\t\t\t\t\t\t"+"Events\t\t\t\t\t\t\t"+ "Actors\t\t\t\t\t\t\t"+ "Places\t\t\t\t\t\t\t"+ "Times\t\t\t\t\t\t\t"+"\n";
-            str += "YEAR\t"+"Instances\tMentions\tM/I\tSources\tS/I\tLabels\tL/I\t"
-                    +"Instances\tMentions\tM/I\tSources\tS/I\tLabels\tL/I\t"
-                    +"Instances\tMentions\tM/I\tSources\tS/I\tLabels\tL/I\t"
-                    +"Instances\tMentions\tM/I\tSources\tS/I\tLabels\tL/I\t"
-                    +"Instances\tMentions\tM/I\tSources\tS/I\tLabels\tL/I\t"+"\n";
-            fos.write(str.getBytes());
-            for (int y = 1; y < yearStrings.size(); y++) { // skip the first [0] which holds the total
-                String year =  yearStrings.get(y);
-                System.out.println("year = " + year);
-                ArrayList<String> folders = yearMap.get(year);
-                System.out.println("folders.size() = " + folders.size());
-                timeMap = new HashMap<String, SemUtilObject>();
-                eventMap = new HashMap<String, SemUtilObject>();
-                placeMap = new HashMap<String, SemUtilObject>();
-                actorMap = new HashMap<String, SemUtilObject>();
-                dbpMap = new HashMap<String, SemUtilObject>();
-                eventLabelMap = new HashMap<String, Integer>();
-                actorLabelMap = new HashMap<String, Integer>();
-                placeLabelMap = new HashMap<String, Integer>();
-                timeLabelMap = new HashMap<String, Integer>();
-                for (int i = 0; i < folders.size(); i++) {
-                    String nextFolder =  folders.get(i);
-                    ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(nextFolder), ".trig");
-                    for (int f = 0; f < trigFiles.size(); f++) {
-                        File file = trigFiles.get(f);
-                        getStats(file);
-                    }
-                }
-                str = year;
-                TotalStats totalStats = null;
-
-                totalStats = getTotalStatsString(dbpMap, year);
-                System.out.println("dbpMap.size() = " + dbpMap.size());
-                System.out.println("totalStats.instances = " + totalStats.getInstances());
-                System.out.println("totalStats.getMentions() = " + totalStats.getMentions());
-                System.out.println("totalStats.getLabels() = " + totalStats.getLabels());
-                str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
-                        "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
-                        "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
-
-                totalStats = getTotalStatsString(eventMap, year);
-                totalStats.setLabels(eventLabelMap.size());
-                str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
-                        "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
-                        "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
-
-                totalStats = getTotalStatsString(actorMap, year);
-                totalStats.setLabels(actorLabelMap.size());
-                str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
-                        "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
-                        "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
-
-                totalStats = getTotalStatsString(placeMap, year);
-
-                totalStats.setLabels(placeLabelMap.size());
-                str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
-                        "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
-                        "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
-
-                totalStats = getTotalStatsString(timeMap, year);
-                str += "\t"+totalStats.getInstances()+"\t"+totalStats.getMentions()+"\t"+totalStats.getMentionsPerInstanceString()+
-                        "\t"+totalStats.getSources() +"\t"+totalStats.getSourcesPerInstanceString()+
-                        "\t"+totalStats.getLabels() +"\t"+totalStats.getLabelsPerInstanceString();
-                str += "\n";
-                fos.write(str.getBytes());
-
-                if (EVENT) eventLabelMax = updateTotalLabelMap(eventLabelTotalMap, eventLabelMap, y, yearStrings.size());
-                if (ACTOR) actorLabelMax = updateTotalLabelMap(actorLabelTotalMap, actorLabelMap, y, yearStrings.size());
-                if (PLACE) placeLabelMax = updateTotalLabelMap(placeLabelTotalMap, placeLabelMap, y, yearStrings.size());
-                if (TIME) timeLabelMax = updateTotalLabelMap(timeLabelTotalMap, timeLabelMap, y, yearStrings.size());
-            }
-            fos.close();
-
-
-            String labelFile = "";
-            if (EVENT) {
-                labelFile = folder+"/"+"labelUsageEvents.xls";
-                fos = new FileOutputStream(labelFile);
-                str = "Event labels\t"+eventLabelTotalMap.size()+"\n";
-                fos.write(str.getBytes());
-                str = "Events";
-                for (int i = 0; i < yearStrings.size(); i++) {
-                    String s = yearStrings.get(i);
-                    str += "\t"+s;
-                }
-                str += "\n";
-                fos.write(str.getBytes());
-                writeLabelsStats(eventLabelTotalMap, eventLabelMax, fos);
-                fos.close();
-            }
-
-            if (ACTOR) {
-                labelFile = folder+"/"+"labelUsageActors.xls";
-                fos = new FileOutputStream(labelFile);
-                str = "Actor labels\t"+actorLabelTotalMap.size()+"\n";
-                fos.write(str.getBytes());
-                str = "Actors";
-                for (int i = 0; i < yearStrings.size(); i++) {
-                    String s = yearStrings.get(i);
-                    str += "\t"+s;
-                }
-                str += "\n";
-                fos.write(str.getBytes());
-                writeLabelsStats(actorLabelTotalMap, actorLabelMax, fos);
-                fos.close();
-            }
-            if (PLACE) {
-                labelFile = folder+"/"+"labelUsagePlaces.xls";
-                fos = new FileOutputStream(labelFile);
-                str = "Places labels\t"+placeLabelTotalMap.size()+"\n";
-                fos.write(str.getBytes());
-                str = "Places";
-                for (int i = 0; i < yearStrings.size(); i++) {
-                    String s = yearStrings.get(i);
-                    str += "\t"+s;
-                }
-                str += "\n";
-                fos.write(str.getBytes());
-                writeLabelsStats(placeLabelTotalMap, placeLabelMax, fos);
-                fos.close();
-            }
-            if (TIME) {
-                labelFile = folder+"/"+"labelUsageTimes.xls";
-                fos = new FileOutputStream(labelFile);
-                str = "Times labels\t"+timeLabelTotalMap.size()+"\n";
-                fos.write(str.getBytes());
-                str = "Times";
-                for (int i = 0; i < yearStrings.size(); i++) {
-                    String s = yearStrings.get(i);
-                    str += "\t"+s;
-                }
-                str += "\n";
-                fos.write(str.getBytes());
-                writeLabelsStats(timeLabelTotalMap, timeLabelMax, fos);
-                fos.close();
-             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static Integer updateTotalLabelMap (HashMap<String, Integer[]> totalLabelMap, HashMap<String, Integer> labelMap, int y, int maxYears) {
-        Integer max = 0;
-        Set labelSet = labelMap.keySet();
-        Iterator labels = labelSet.iterator();
-        while (labels.hasNext()) {
-            String label = (String) labels.next();
-            Integer cnt = labelMap.get(label);
-            if (totalLabelMap.containsKey(label)) {
-                Integer[] cnts = totalLabelMap.get(label);
-                cnts[y]=cnt;
-                cnts[0] += cnt;
-                if (cnts[0]>max) {
-                    max = cnts[0];
-                }
-                totalLabelMap.put(label, cnts);
-            }
-            else {
-                Integer[] cnts = new Integer[maxYears];
-                for (int i = 0; i < cnts.length; i++) {
-                    cnts[i] = 0;
-                }
-                cnts[0]=cnt; // index 0 represents the total
-                cnts[y]=cnt; // index 1 to represent the first year;
-                if (cnt>max) {
-                    max = cnt;
-                }
-                totalLabelMap.put(label, cnts);
-            }
-        }
-        return max;
-    }
-
-    static void writeLabelsStats(HashMap<String, Integer[]> totalLabelMap, Integer max, FileOutputStream fos) {
-        Set labelSet = totalLabelMap.keySet();
-        Iterator labels = labelSet.iterator();
-        while (labels.hasNext()) {
-            String label = (String) labels.next();
-            Integer[] cnts = totalLabelMap.get(label);
-            if ((cnts[0]%max)>=95) {
-                String str = label;
-                for (int i = 0; i < cnts.length; i++) {
-                    Integer cnt = cnts[i];
-                    str += "\t"+cnt;
-
-                }
-                str += "\n";
-                try {
-                    fos.write(str.getBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    static TotalStats getTotalStatsString (HashMap<String, SemUtilObject> totalMap, String year){
-            TotalStats totalStats = new TotalStats();
-            Integer topMention = 0;
-            ArrayList<String> topMentions = new ArrayList<String>();
-            String topMentionUri = "";
-            Set keySet = totalMap.keySet();
-            Iterator keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                SemUtilObject semUtilObject = totalMap.get(key);
-                totalStats.addMentions(semUtilObject.getMentions());
-                totalStats.addSources(semUtilObject.getDispersion());
-                totalStats.addLabels(semUtilObject.getLabels().size());
-                totalStats.addSingletons(semUtilObject.getSingletons());
-                if (semUtilObject.getMentions()>topMention) {
-                    topMention = semUtilObject.getMentions();
-                    topMentions = semUtilObject.mentionStrings;
-                    topMentionUri = semUtilObject.getUri();
-                }
-            }
-            System.out.println("topMentionUri = " + topMentionUri);
-            System.out.println("topMention = " + topMention);
-            for (int i = 0; i < topMentions.size(); i++) {
-                String s = topMentions.get(i);
-                System.out.println("mention = " + s);
-            }
-            totalStats.setInstances(totalMap.size());
-            totalStats.setYear(year);
-            return totalStats;
-    }
-
-
-    static public void statsForAll (String folder) {
-        timeMap = new HashMap<String, SemUtilObject>();
-        eventMap = new HashMap<String, SemUtilObject>();
-        placeMap = new HashMap<String, SemUtilObject>();
-        actorMap = new HashMap<String, SemUtilObject>();
-        dbpMap = new HashMap<String, SemUtilObject>();
-        eventLabelMap = new HashMap<String, Integer>();
-        actorLabelMap = new HashMap<String, Integer>();
-        placeLabelMap = new HashMap<String, Integer>();
-        ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(folder), ".trig");
-        for (int i = 0; i < trigFiles.size(); i++) {
-        //for (int i = 0; i < 50; i++) {
-            File file = trigFiles.get(i);
-           /// System.out.println("file = " + file.getAbsolutePath());
-            getStats(file);
-        }
-        String statFile = "";
-        if (DBP) {
-            statFile = folder+"/"+"stats-dbp.xls";
-            saveDBPStats(statFile);
-        }
-        if (EVENT) {
-            statFile = folder+"/"+"stats-event.xls";
-            saveEventStats(statFile);
-            statFile = folder+"/"+"stats-event-labels.xls";
-            saveEventLabelStats(statFile);
-        }
-        if (ACTOR) {
-            statFile = folder+"/"+"stats-actor.xls";
-            saveActorStats(statFile);
-            statFile = folder+"/"+"stats-actor-labels.xls";
-            saveActorLabelStats(statFile);
-        }
-        if (PLACE) {
-            statFile = folder+"/"+"stats-place.xls";
-            savePlacesStats(statFile);
-            statFile = folder+"/"+"stats-place-labels.xls";
-            savePlaceLabelStats(statFile);
-        }
-        if (TIME) {
-            statFile = folder+"/"+"stats-time.xls";
-            saveTimeStats(statFile);
-        }
-    }
 
     static public void main (String [] args) {
-        String folder = "/Users/piek/Desktop/NWR-DATA/techcrunch/techcrunch_clustered_trig";
-      //  String folder = "/Users/piek/Desktop/NWR-DATA/trig/entitycoref";
-        //String folder = "/Users/piek/Desktop/NWR-DATA/trig/test";
-        //EVENT = true;
-        //DBP = true;
-        //ACTOR = true;
-        //PLACE = true;
-        TIME = true;
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.equals("--event")) {
-                EVENT = true;
-            }
-            else if (arg.equals("--dbp")) {
-                DBP = true;
-            }
-            else if (arg.equals("--actor")) {
-                ACTOR = true;
-            }
-            else if (arg.equals("--place")) {
-                PLACE = true;
-            }
-            else if (arg.equals("--time")) {
-                TIME = true;
-            }
-            else if (arg.equals("--folder") && args.length>(i+1)) {
-                folder =args[i+1];
-            }
+        String folder = "/Users/piek/Desktop/NWR/Cross-lingual/stats/instances/airbus";
+        ArrayList<File> files = Util.makeFlatFileList(new File(folder), ".xls");
+        fileMap = new ArrayList<String>(files.size());
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+            getStats(file, i, files.size());
         }
-        //statsForAll(folder);
-        statsPerYear(folder);
+        try {
+            OutputStream fos = new FileOutputStream(folder+"/"+"crosslingual.stats.xls");
+            String str = "";
+
+            if (dbpEntityMap.size()>0) {
+                str = "MENTIONS OF DBP entities\n";
+                str += "\t";
+                for (int i = 0; i < fileMap.size(); i++) {
+                    String fileName = fileMap.get(i);
+                    str += fileName + "\t";
+                }
+                str += "\n";
+                Set keySet = dbpEntityMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    ArrayList<Integer> counts = dbpEntityMap.get(key);
+                    str += key + "\t";
+                    for (int i = 0; i < counts.size(); i++) {
+                        Integer integer = counts.get(i);
+                        str += integer.toString() + "\t";
+                    }
+                    str += "\n";
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+            }
+
+            if (newEntityMap.size()>0) {
+                str = "MENTIONS OF NEW entities\n";
+                str += "\t";
+                for (int i = 0; i < fileMap.size(); i++) {
+                    String fileName = fileMap.get(i);
+                    str += fileName + "\t";
+                }
+                str += "\n";
+                Set keySet = newEntityMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    ArrayList<Integer> counts = newEntityMap.get(key);
+                    str += key + "\t";
+                    for (int i = 0; i < counts.size(); i++) {
+                        Integer integer = counts.get(i);
+                        str += integer.toString() + "\t";
+                    }
+                    str += "\n";
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+            }
+
+            if (iliEventMap.size()>0) {
+                str = "MENTIONS OF ILI events\n";
+                str += "\t";
+                for (int i = 0; i < fileMap.size(); i++) {
+                    String fileName = fileMap.get(i);
+                    str += fileName + "\t";
+                }
+                str += "\n";
+                Set keySet = iliEventMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    ArrayList<Integer> counts = iliEventMap.get(key);
+                    str += key + "\t";
+                    for (int i = 0; i < counts.size(); i++) {
+                        Integer integer = counts.get(i);
+                        str += integer.toString() + "\t";
+                    }
+                    str += "\n";
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+            }
+
+            if (predicateMap.size()>0) {
+                str = "PREDICATES\n";
+                str += "\t";
+                for (int i = 0; i < fileMap.size(); i++) {
+                    String fileName = fileMap.get(i);
+                    str += fileName + "\t";
+                }
+                str += "\n";
+                Set keySet = predicateMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    ArrayList<Integer> counts = predicateMap.get(key);
+                    str += key + "\t";
+                    for (int i = 0; i < counts.size(); i++) {
+                        Integer integer = counts.get(i);
+                        str += integer.toString() + "\t";
+                    }
+                    str += "\n";
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+            }
+
+            if (tripleMap.size()>0) {
+                str = "TRIPLES\n";
+                str += "\t";
+                for (int i = 0; i < fileMap.size(); i++) {
+                    String fileName = fileMap.get(i);
+                    str += fileName + "\t";
+                }
+                str += "\n";
+                Set keySet = tripleMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    ArrayList<Integer> counts = tripleMap.get(key);
+                    str += key + "\t";
+                    for (int i = 0; i < counts.size(); i++) {
+                        Integer integer = counts.get(i);
+                        str += integer.toString() + "\t";
+                    }
+                    str += "\n";
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+            }
+
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

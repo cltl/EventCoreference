@@ -277,7 +277,7 @@ public class TrigReader {
             ArrayList<String> otherTriples = new ArrayList<String>();
             for (int i = 0; i < trigFiles.size(); i++) {
                 File file = trigFiles.get(i);
-               // System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
+                System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
                 dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
                 Iterator<String> it = dataset.listNames();
                 while (it.hasNext()) {
