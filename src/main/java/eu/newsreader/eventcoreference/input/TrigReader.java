@@ -105,7 +105,7 @@ public class TrigReader {
     }
 
 
-    static String getInstanceType (String subject) {
+    static public String getInstanceType (String subject) {
         String type = "";
         if (subject.indexOf("dbpedia.org")>-1) {
             type = "DBP";

@@ -1,5 +1,7 @@
 package eu.newsreader.eventcoreference.util;
 
+import eu.newsreader.eventcoreference.input.TrigReader;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,7 +87,7 @@ public class Statistics {
                     }
                     else if (inputLine.startsWith("MENTIONS OF LEMMA Events")) {
                         setALLFALSE();
-                        PREDICATE = true;
+                        LEMMAEVENT = true;
                     }
                     if (inputLine.trim().length()>0) {
                          String[] fields = inputLine.split("\t");
@@ -102,17 +104,19 @@ public class Statistics {
                                 updateMap(key, count, iliEventMap, fileNr, nrFiles);
                             }
                             else if (PREDICATE) {
-                                updateMap(key, count, predicateMap, fileNr, nrFiles);
+                                updateMap(normalizePredicate(key), count, predicateMap, fileNr, nrFiles);
                             }
                         }
                         else if (fields.length==4) {
-                            String subject = fields[0];
-                            String predicate = fields[1];
-                            String object = fields[2];
-                            String triple = subject+":"+predicate+":"+object;
-                            Integer count = Integer.parseInt(fields[3]);
                             if (TRIPLE) {
-                                updateMap(triple, count, tripleMap, fileNr, nrFiles);
+                                String subject = fields[0];
+                                if (TrigReader.getInstanceType(subject).equals("IEV")) {
+                                    String predicate = normalizePredicate(fields[1]);
+                                    String object = fields[2];
+                                    String triple = subject + ":" + predicate + ":" + object;
+                                    Integer count = Integer.parseInt(fields[3]);
+                                    updateMap(triple, count, tripleMap, fileNr, nrFiles);
+                                }
                             }
                         }
                     }
@@ -125,145 +129,182 @@ public class Statistics {
     }
 
 
-
+    static String normalizePredicate (String predicate) {
+        String normalizedPredicate = predicate;
+        if (predicate.equalsIgnoreCase("arg0")) {
+            normalizedPredicate = "A0";
+        }
+        else if (predicate.equalsIgnoreCase("arg1")) {
+            normalizedPredicate = "A1";
+        }
+        else if (predicate.equalsIgnoreCase("arg2")) {
+            normalizedPredicate = "A2";
+        }
+        else if (predicate.equalsIgnoreCase("arg3")) {
+            normalizedPredicate = "A3";
+        }
+        else if (predicate.equalsIgnoreCase("arg4")) {
+            normalizedPredicate = "A4";
+        }
+        else {
+            int idx = predicate.indexOf("@");
+            if (idx>-1) {
+                normalizedPredicate = predicate.substring(idx+1);
+            }
+        }
+        return normalizedPredicate;
+    }
 
     static public void main (String [] args) {
-        String folder = "/Users/piek/Desktop/NWR/Cross-lingual/stats/instances/airbus";
-        ArrayList<File> files = Util.makeFlatFileList(new File(folder), ".xls");
+        String  folderPath = "";
+        folderPath = args[0];
+        //folderPath = "/Users/piek/Desktop/NWR/Cross-lingual/stats/relations/airbus";
+        File folder = new File(folderPath);
+        ArrayList<File> files = Util.makeFlatFileList(folder, ".xls");
         fileMap = new ArrayList<String>(files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
             getStats(file, i, files.size());
         }
         try {
-            OutputStream fos = new FileOutputStream(folder+"/"+"crosslingual.stats.xls");
+            OutputStream fos1 = new FileOutputStream(folder.getParent()+"/"+folder.getName()+"_crosslingual.table.stats.xls");
+            OutputStream fos2 = new FileOutputStream(folder.getParent()+"/"+folder.getName()+"_crosslingual.overview.stats.xls");
             String str = "";
-
             if (dbpEntityMap.size()>0) {
                 str = "MENTIONS OF DBP entities\n";
-                str += "\t";
-                for (int i = 0; i < fileMap.size(); i++) {
-                    String fileName = fileMap.get(i);
-                    str += fileName + "\t";
-                }
-                str += "\n";
-                Set keySet = dbpEntityMap.keySet();
-                Iterator<String> keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    ArrayList<Integer> counts = dbpEntityMap.get(key);
-                    str += key + "\t";
-                    for (int i = 0; i < counts.size(); i++) {
-                        Integer integer = counts.get(i);
-                        str += integer.toString() + "\t";
-                    }
-                    str += "\n";
-                }
-                str += "\n";
-                fos.write(str.getBytes());
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, dbpEntityMap);
             }
 
             if (newEntityMap.size()>0) {
                 str = "MENTIONS OF NEW entities\n";
-                str += "\t";
-                for (int i = 0; i < fileMap.size(); i++) {
-                    String fileName = fileMap.get(i);
-                    str += fileName + "\t";
-                }
-                str += "\n";
-                Set keySet = newEntityMap.keySet();
-                Iterator<String> keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    ArrayList<Integer> counts = newEntityMap.get(key);
-                    str += key + "\t";
-                    for (int i = 0; i < counts.size(); i++) {
-                        Integer integer = counts.get(i);
-                        str += integer.toString() + "\t";
-                    }
-                    str += "\n";
-                }
-                str += "\n";
-                fos.write(str.getBytes());
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, newEntityMap);
             }
 
             if (iliEventMap.size()>0) {
                 str = "MENTIONS OF ILI events\n";
-                str += "\t";
-                for (int i = 0; i < fileMap.size(); i++) {
-                    String fileName = fileMap.get(i);
-                    str += fileName + "\t";
-                }
-                str += "\n";
-                Set keySet = iliEventMap.keySet();
-                Iterator<String> keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    ArrayList<Integer> counts = iliEventMap.get(key);
-                    str += key + "\t";
-                    for (int i = 0; i < counts.size(); i++) {
-                        Integer integer = counts.get(i);
-                        str += integer.toString() + "\t";
-                    }
-                    str += "\n";
-                }
-                str += "\n";
-                fos.write(str.getBytes());
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, iliEventMap);
             }
 
             if (predicateMap.size()>0) {
                 str = "PREDICATES\n";
-                str += "\t";
-                for (int i = 0; i < fileMap.size(); i++) {
-                    String fileName = fileMap.get(i);
-                    str += fileName + "\t";
-                }
-                str += "\n";
-                Set keySet = predicateMap.keySet();
-                Iterator<String> keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    ArrayList<Integer> counts = predicateMap.get(key);
-                    str += key + "\t";
-                    for (int i = 0; i < counts.size(); i++) {
-                        Integer integer = counts.get(i);
-                        str += integer.toString() + "\t";
-                    }
-                    str += "\n";
-                }
-                str += "\n";
-                fos.write(str.getBytes());
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1,fos2, predicateMap);
             }
 
             if (tripleMap.size()>0) {
                 str = "TRIPLES\n";
-                str += "\t";
-                for (int i = 0; i < fileMap.size(); i++) {
-                    String fileName = fileMap.get(i);
-                    str += fileName + "\t";
-                }
-                str += "\n";
-                Set keySet = tripleMap.keySet();
-                Iterator<String> keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    ArrayList<Integer> counts = tripleMap.get(key);
-                    str += key + "\t";
-                    for (int i = 0; i < counts.size(); i++) {
-                        Integer integer = counts.get(i);
-                        str += integer.toString() + "\t";
-                    }
-                    str += "\n";
-                }
-                str += "\n";
-                fos.write(str.getBytes());
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, tripleMap);
             }
 
-            fos.close();
+            fos1.close();
+            fos2.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    static void writeMapToStream(OutputStream fos1, OutputStream fos2, HashMap<String, ArrayList<Integer>> map) throws IOException {
+        String str = "";
+        int nReferenceKeys = 0;
+        str += "\t";
+        for (int i = 0; i < fileMap.size(); i++) {
+            String fileName = fileMap.get(i);
+            str += fileName + "\t";
+            if (i>0) {
+                str += "\t";
+            }
+        }
+        str += "\n";
+        str += "\t";
+        for (int i = 0; i < fileMap.size(); i++) {
+            str += "nr" + "\t";
+            if (i>0) {
+                str += "%"+"\t";
+            }
+        }
+        str += "\n";
+        fos1.write(str.getBytes());
+        fos2.write(str.getBytes());
+        str = "";
+        ArrayList<Integer> correctCounts = new ArrayList<Integer>();
+        ArrayList<Integer> proportionSum = new ArrayList<Integer>();
+        for (int i = 0; i < fileMap.size(); i++) {
+            proportionSum.add(0);
+        }
+        for (int i = 0; i < fileMap.size(); i++) {
+            correctCounts.add(0);
+        }
+
+
+        Set keySet = map.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<Integer> counts = map.get(key);
+            str += key + "\t";
+            int refCount = counts.get(0);
+            str += refCount + "\t";
+            if (refCount>0) {
+                nReferenceKeys++;
+                correctCounts.set(0, correctCounts.get(0)+refCount);
+            }
+
+            for (int i = 1; i < counts.size(); i++) {
+                Integer integer = counts.get(i);
+                Double prop = 0.0;
+                if (refCount==0) {
+                    prop = 0.0;
+                }
+                else if (integer==0) {
+                    prop=0.0;
+                }
+                else {
+                    prop = (100*(double)integer)/(double)refCount;
+                   // System.out.println("prop = " + prop);
+                    if (prop>100) {
+                        correctCounts.set(i, correctCounts.get(i)+refCount);
+                        prop=100.0;
+                    }
+                    else {
+                        correctCounts.set(i, correctCounts.get(i)+integer);
+                    }
+                    proportionSum.set(i, proportionSum.get(i)+prop.intValue());
+                }
+                str += integer.toString() + "\t"+prop+"\t";
+            }
+            str += "\n";
+        }
+        str += "\n";
+        fos1.write(str.getBytes());
+        str = "";
+        str += "MACRO RECALL N="+nReferenceKeys+"\t"+correctCounts.get(0);
+        for (int i = 1; i < proportionSum.size(); i++) {
+            Integer sum = proportionSum.get(i);
+            Integer correct = correctCounts.get(i);
+            double recall = (double)sum/nReferenceKeys;
+            str +="\t"+correct+"\t"+recall;
+        }
+        str += "\n";
+        str += "MICRO RECALL\t";
+        Integer baseline = correctCounts.get(0);
+        for (int i = 1; i < correctCounts.size(); i++) {
+            Integer system = correctCounts.get(i);
+            double recall = 100*(double)system/(double)baseline;
+            str += "\t"+"\t"+recall;
+
+        }
+        str += "\n\n";
+        fos2.write(str.getBytes());
     }
 
 }
