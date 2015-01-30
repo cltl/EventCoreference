@@ -216,20 +216,20 @@ public class Statistics {
     static void writeMapToStream(OutputStream fos1, OutputStream fos2, HashMap<String, ArrayList<Integer>> map) throws IOException {
         String str = "";
         int nReferenceKeys = 0;
-        str += "\t";
+        str += "\t\t";
         for (int i = 0; i < fileMap.size(); i++) {
             String fileName = fileMap.get(i);
             str += fileName + "\t";
             if (i>0) {
-                str += "\t";
+                str += "\t\t";
             }
         }
         str += "\n";
-        str += "\t";
+        str += "\tReference values\t";
         for (int i = 0; i < fileMap.size(); i++) {
-            str += "nr" + "\t";
+            str += "Nr\t";
             if (i>0) {
-                str += "%"+"\t";
+                str += "macro C"+"\t"+"micro C"+"\t";
             }
         }
         str += "\n";
@@ -287,6 +287,28 @@ public class Statistics {
         str += "\n";
         fos1.write(str.getBytes());
         str = "";
+        Integer baseline = correctCounts.get(0);
+        str += "COVERAGE\t"+nReferenceKeys+"\t"+correctCounts.get(0);
+        for (int i = 1; i < proportionSum.size(); i++) {
+            Integer sum = proportionSum.get(i);
+            Integer correct = correctCounts.get(i);
+            double macrorecall = (double)sum/nReferenceKeys;
+            double microrecall = 100*(double)correct/(double)baseline;
+            str +="\t"+correct+"\t"+macrorecall+"\t"+microrecall;
+        }
+/*
+        str += "\n";
+        str += "MICRO RECALL\t";
+        for (int i = 1; i < correctCounts.size(); i++) {
+            Integer system = correctCounts.get(i);
+            double recall = 100*(double)system/(double)baseline;
+            str += "\t"+"\t"+recall;
+
+        }
+*/
+        str += "\n\n";
+
+        /*str = "";
         str += "MACRO RECALL N="+nReferenceKeys+"\t"+correctCounts.get(0);
         for (int i = 1; i < proportionSum.size(); i++) {
             Integer sum = proportionSum.get(i);
@@ -303,7 +325,7 @@ public class Statistics {
             str += "\t"+"\t"+recall;
 
         }
-        str += "\n\n";
+        str += "\n\n";*/
         fos2.write(str.getBytes());
     }
 
