@@ -215,8 +215,20 @@ public class Statistics {
 
     static void writeMapToStream(OutputStream fos1, OutputStream fos2, HashMap<String, ArrayList<Integer>> map) throws IOException {
         String str = "";
+        str += "\t";
+        for (int i = 0; i < fileMap.size(); i++) {
+            String fileName = fileMap.get(i);
+            str += fileName + "\t";
+            if (i>0) {
+                str += "\t";
+            }
+        }
+        str += "\n";
+
+        fos1.write(str.getBytes());
+
         int nReferenceKeys = 0;
-        str += "\t\t";
+        str = "\t\t";
         for (int i = 0; i < fileMap.size(); i++) {
             String fileName = fileMap.get(i);
             str += fileName + "\t";
@@ -233,7 +245,6 @@ public class Statistics {
             }
         }
         str += "\n";
-        fos1.write(str.getBytes());
         fos2.write(str.getBytes());
         str = "";
         ArrayList<Integer> correctCounts = new ArrayList<Integer>();

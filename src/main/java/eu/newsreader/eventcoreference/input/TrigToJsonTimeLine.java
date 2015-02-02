@@ -166,6 +166,7 @@ public class TrigToJsonTimeLine {
                     for (int i = 0; i < instanceTriples.size(); i++) {
                         Statement statement = instanceTriples.get(i);
                         String predicate = statement.getPredicate().getURI();
+                      //  if (predicate.)
                         String object = "";
                         if (statement.getObject().isLiteral()) {
                             object = statement.getObject().asLiteral().toString();
@@ -321,55 +322,6 @@ public class TrigToJsonTimeLine {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-
-
-
-    static void writeSortedStringArrayList(String fileName, ArrayList<String> result) throws IOException {
-        OutputStream fos = new FileOutputStream(fileName);
-        TreeSet<String> tree = new TreeSet<String>();
-        for (int i = 0; i < result.size(); i++) {
-            String s = result.get(i)+"\n";
-            tree.add(s);
-        }
-        Iterator<String> t = tree.iterator();
-        while(t.hasNext()) {
-            String s = t.next();
-            fos.write(s.getBytes());
-        }
-        fos.close();
-    }
-
-
-
-    static void writesStats (OutputStream fos, HashMap<String, Integer> map) throws IOException {
-
-        TreeSet<String> tree = new TreeSet<String>();
-        Set keySet = map.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            tree.add(key);
-        }
-        Iterator<String> t = tree.iterator();
-        while(t.hasNext()) {
-            String s = t.next();
-            Integer cnt = map.get(s);
-            s += "\t" + cnt.toString() + "\n";
-            fos.write(s.getBytes());
-        }
-    }
-
-    static String getStatementString (Statement s) {
-        String str = s.getPredicate().getURI()+"\t"+s.getSubject().getURI()+"\t";
-        if (s.getObject().isLiteral()) {
-            str += s.getObject().asLiteral();
-        }
-        else if (s.getObject().isURIResource()) {
-            str += s.getObject().asResource().getURI();
-        }
-        return str;
     }
 
 
