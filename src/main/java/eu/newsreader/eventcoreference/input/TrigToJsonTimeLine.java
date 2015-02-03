@@ -140,7 +140,55 @@ public class TrigToJsonTimeLine {
 
     //        TimeLanguage.setLanguage(kafSaxParser.getLanguage());
 
+
     static ArrayList<JSONObject> getJSONObjectArray() throws JSONException {
+        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
+
+        Set keySet = tripleMapOthers.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next(); //// this is the subject of the triple which should point to an event
+            ArrayList<Statement> otherTriples = tripleMapOthers.get(key);
+            if (!hasActor(otherTriples)) {
+               /// we ignore events without actors.....
+            }
+            else if (getInstanceType(key).equals("IEV")) {
+
+                JSONObject jsonObject = new JSONObject();
+
+                jsonObject.put("event", key);
+                String timeAnchor = getTimeAnchor(otherTriples);
+                int idx = timeAnchor.lastIndexOf("/");
+                if (idx>-1) {
+                    timeAnchor = timeAnchor.substring(idx+1);
+                }
+                jsonObject.put("time", timeAnchor);
+                if (tripleMapInstances.containsKey( key)) {
+                    ArrayList<Statement> instanceTriples = tripleMapInstances.get(key);
+                    JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
+                    if (jsonClasses.keys().hasNext()) {
+                        jsonObject.put("classes", jsonClasses);
+                    }
+                    JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                    if (jsonLabels.keys().hasNext()) {
+                        jsonObject.put("labels", jsonLabels.get("labels"));
+                    }
+                    JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
+                    if (jsonMentions.keys().hasNext()) {
+                        jsonObject.put("mentions", jsonMentions.get("mentions"));
+                    }
+                }
+                JSONObject actors = getActorsJSONObjectFromInstanceStatement(otherTriples);
+                if (actors.keys().hasNext()) {
+                    jsonObject.put("actors",actors);
+                }
+                jsonObjectArrayList.add(jsonObject);
+            }
+        }
+        return jsonObjectArrayList;
+    }
+
+    static ArrayList<JSONObject> getJSONObjectArrayRDF() throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
 
         Set keySet = tripleMapOthers.keySet();
@@ -159,8 +207,7 @@ public class TrigToJsonTimeLine {
                 String timeAnchor = getTimeAnchor(otherTriples);
                 // String timeString = semTime.getOwlTime().toString().replaceAll("-", ",");
 
-                jsonObject.put("startDate", timeAnchor);
-                jsonObject.put("endDate", timeAnchor);
+                jsonObject.put("time", timeAnchor);
                 if (tripleMapInstances.containsKey( key)) {
                     ArrayList<Statement> instanceTriples = tripleMapInstances.get(key);
                     for (int i = 0; i < instanceTriples.size(); i++) {
@@ -204,7 +251,7 @@ public class TrigToJsonTimeLine {
 
                 for (int j = 0; j < objects.size(); j++) {
                     JSONObject jsonObject = objects.get(j);
-                    timeLineObject.append("event", jsonObject);
+                    timeLineObject.append("events", jsonObject);
                 }
                 String str = "{ \"timeline\":\n";
                 jsonOut.write(str.getBytes());
@@ -325,4 +372,187 @@ public class TrigToJsonTimeLine {
     }
 
 
+
+    static JSONObject getClassesJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+        JSONObject jsonClassesObject = new JSONObject();
+        ArrayList<String> coveredValues = new ArrayList<String>();
+
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#type")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String [] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    int idx = value.lastIndexOf("/");
+                    if (idx > -1) {
+                        String property = "";
+                        if (value.indexOf("/framenet/") > -1) {
+                            property = "fn";
+                        } else if (object.indexOf("/eso/") > -1) {
+                            property = "eso";
+                        }
+                        if (!property.isEmpty()) {
+                            if (!coveredValues.contains(property+value)) {
+                                coveredValues.add(property+value);
+                                value = value.substring(idx + 1);
+                                jsonClassesObject.append(property, value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return jsonClassesObject;
+    }
+
+    static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+        JSONObject jsonActorsObject = new JSONObject();
+
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.toLowerCase().endsWith("hastime")) {
+                ///
+            }
+            else if (predicate.toLowerCase().endsWith("hasactor")) {
+                ///
+            }
+            else {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                int idx = predicate.lastIndexOf("/");
+                if (idx>-1) {
+                    predicate = predicate.substring(idx+1);
+                }
+                String [] values = object.split(",");
+                ArrayList<String> coveredValues = new ArrayList<String>();
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    if (!coveredValues.contains(value)) {
+                        coveredValues.add(value);
+                        jsonActorsObject.append(predicate, value);
+                    }
+                }
+            }
+
+        }
+        return jsonActorsObject;
+    }
+
+    static JSONObject getMentionsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+        JSONObject jsonClassesObject = new JSONObject();
+        ArrayList<String> coveredValues = new ArrayList<String>();
+
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#denotedBy")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                //"http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"http://www.newsreader-project.eu/ontologies/framenet/Manufacturing"
+                String [] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    if (!coveredValues.contains(value)) {
+                        coveredValues.add(value);
+                        jsonClassesObject.append("mentions", value);
+                    }
+                }
+            }
+        }
+        return jsonClassesObject;
+    }
+
+    static JSONObject getLabelsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+        JSONObject jsonClassesObject = new JSONObject();
+        ArrayList<String> coveredValues = new ArrayList<String>();
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#label")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String [] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    if (!coveredValues.contains(value)) {
+                        coveredValues.add(value);
+                        jsonClassesObject.append("labels", value);
+                    }
+                }
+            }
+        }
+        return jsonClassesObject;
+    }
+
+
+
+    /**
+     * events { event:
+     mentions {
+        offset: http://en.wikinews.org/wiki/Technical_problem_on_Airbus_A400M_maiden_flight#char=993,1001,
+        offset: http://en.wikinews.org/wiki/Technical_problem_on_Airbus_sale#char=93,100
+     }
+     labels {
+        label: employ
+     }
+     classname{
+        fn: Management,
+        eso: Management
+     }
+
+     actor{
+        pb@a0: www.dbp/resource/Apple,
+        pb@a1: www.dbp/resource/Jobs,
+        fn@Employee:www.dbp/resource/Jobs
+     }
+     time:
+
+     }
+
+     { event:
+     mentions {
+     offset: http://en.wikinews.org/wiki/Technical_problem_on_Airbus_A400M_maiden_flight#char=993,1001
+     }
+     labels {
+     label: purchase,
+     label: sell
+     }
+     classname{
+     fn:Commerce,
+     wn: Transaction
+     }
+
+     actor{
+     pb-a0:www.dbp/resource/Ford,
+     pb-a1:www.dbp/resource/Toyota,
+     pb-Buyer: www.dbp/resource/Ford,
+     pb-Seller: www.dbp/resource/Toyota
+     }
+     time:
+     }
+     */
 }
