@@ -29,48 +29,6 @@ public class TrigToJsonTimeLine {
 
 
 
-    static void updateOtherStats (Statement s) {
-        String predicate = s.getPredicate().getURI();
-        String subject = s.getSubject().getURI();
-        String instanceTypeSubject = getInstanceType(subject);
-        String object = "";
-        if (s.getObject().isLiteral()) {
-            object = s.getObject().asLiteral().toString();
-        }
-        else if (s.getObject().isURIResource()) {
-            object = s.getObject().asResource().getURI();
-        }
-
-        int idx = predicate.lastIndexOf("/");
-        if (idx>-1) predicate = predicate.substring(idx+1);
-        idx = subject.lastIndexOf("/");
-        if (idx>-1) subject = subject.substring(idx+1);
-        idx = object.lastIndexOf("/");
-        if (idx>-1) object = object.substring(idx+1);
-
-        String predicateSubject = subject +"\t"+predicate;
-        String predicateObject = predicate+"\t"+object;
-
-
-
-        if (instanceTypeSubject.equals("IEV") && !predicate.equalsIgnoreCase("hastime")) {
-            String [] fields = subject.split("-and-");
-            for (int i = 0; i < fields.length; i++) {
-                String field = fields[i];
-                String iliReference = field+"[";
-                if (iliMap.containsKey(field)) {
-                    ArrayList<String> syns = iliMap.get(field);
-                    for (int j = 0; j < syns.size(); j++) {
-                        String s1 = syns.get(j);
-                        iliReference+=s1;
-                    }
-                }
-                iliReference+="]";
-                String crossLingualTriple = iliReference+"\t"+predicate+"\t"+object;
-            }
-        }
-    }
-
 
     static String getInstanceType (String subject) {
         String type = "";
@@ -103,6 +61,38 @@ public class TrigToJsonTimeLine {
             }
             else {
               //  System.out.println("predicate = " + predicate);
+            }
+        }
+        return false;
+    }
+
+    static boolean hasILI (ArrayList<Statement> triples) {
+        for (int i = 0; i < triples.size(); i++) {
+            Statement statement = triples.get(i);
+            String object = "";
+            if (statement.getObject().isLiteral()) {
+                object = statement.getObject().asLiteral().toString();
+            } else if (statement.getObject().isURIResource()) {
+                object = statement.getObject().asResource().getURI();
+            }
+            if (object.indexOf("ili-")>-1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean hasFrameNet (ArrayList<Statement> triples) {
+        for (int i = 0; i < triples.size(); i++) {
+            Statement statement = triples.get(i);
+            String object = "";
+            if (statement.getObject().isLiteral()) {
+                object = statement.getObject().asLiteral().toString();
+            } else if (statement.getObject().isURIResource()) {
+                object = statement.getObject().asResource().getURI();
+            }
+            if (object.indexOf("framenet")>-1) {
+                return true;
             }
         }
         return false;
@@ -144,6 +134,54 @@ public class TrigToJsonTimeLine {
     static ArrayList<JSONObject> getJSONObjectArray() throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
 
+        Set keySet = tripleMapInstances.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next(); //// this is the subject of the triple which should point to an event
+            ArrayList<Statement> instanceTriples = tripleMapInstances.get(key);
+            if (hasILI(instanceTriples) || hasFrameNet(instanceTriples)) {
+                if (tripleMapOthers.containsKey( key)) {
+                    ArrayList<Statement> otherTriples = tripleMapOthers.get(key);
+                    if (!hasActor(otherTriples)) {
+                        /// we ignore events without actors.....
+                    }
+                    else {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("event", key);
+                        String timeAnchor = getTimeAnchor(otherTriples);
+                        int idx = timeAnchor.lastIndexOf("/");
+                        if (idx>-1) {
+                            timeAnchor = timeAnchor.substring(idx+1);
+                        }
+                        jsonObject.put("time", timeAnchor);
+
+                        JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonClasses.keys().hasNext()) {
+                            jsonObject.put("classes", jsonClasses);
+                        }
+                        JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonLabels.keys().hasNext()) {
+                            jsonObject.put("labels", jsonLabels.get("labels"));
+                        }
+                        JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonMentions.keys().hasNext()) {
+                            jsonObject.put("mentions", jsonMentions.get("mentions"));
+                        }
+                        JSONObject actors = getActorsJSONObjectFromInstanceStatement(otherTriples);
+                        if (actors.keys().hasNext()) {
+                            jsonObject.put("actors",actors);
+                        }
+                        jsonObjectArrayList.add(jsonObject);
+                    }
+                }
+            }
+        }
+        return jsonObjectArrayList;
+    }
+
+    static ArrayList<JSONObject> getJSONObjectArrayOld() throws JSONException {
+        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
+
         Set keySet = tripleMapOthers.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -152,7 +190,7 @@ public class TrigToJsonTimeLine {
             if (!hasActor(otherTriples)) {
                /// we ignore events without actors.....
             }
-            else if (getInstanceType(key).equals("IEV")) {
+            else {
 
                 JSONObject jsonObject = new JSONObject();
 
@@ -165,17 +203,19 @@ public class TrigToJsonTimeLine {
                 jsonObject.put("time", timeAnchor);
                 if (tripleMapInstances.containsKey( key)) {
                     ArrayList<Statement> instanceTriples = tripleMapInstances.get(key);
-                    JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
-                    if (jsonClasses.keys().hasNext()) {
-                        jsonObject.put("classes", jsonClasses);
-                    }
-                    JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                    if (jsonLabels.keys().hasNext()) {
-                        jsonObject.put("labels", jsonLabels.get("labels"));
-                    }
-                    JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
-                    if (jsonMentions.keys().hasNext()) {
-                        jsonObject.put("mentions", jsonMentions.get("mentions"));
+                    if (hasILI(instanceTriples) || hasFrameNet(instanceTriples)) {
+                        JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonClasses.keys().hasNext()) {
+                            jsonObject.put("classes", jsonClasses);
+                        }
+                        JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonLabels.keys().hasNext()) {
+                            jsonObject.put("labels", jsonLabels.get("labels"));
+                        }
+                        JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonMentions.keys().hasNext()) {
+                            jsonObject.put("mentions", jsonMentions.get("mentions"));
+                        }
                     }
                 }
                 JSONObject actors = getActorsJSONObjectFromInstanceStatement(otherTriples);
@@ -396,8 +436,15 @@ public class TrigToJsonTimeLine {
                         String property = "";
                         if (value.indexOf("/framenet/") > -1) {
                             property = "fn";
-                        } else if (object.indexOf("/eso/") > -1) {
+                        }
+                        else if (object.indexOf("/eso/") > -1) {
                             property = "eso";
+                        }
+                        else if (object.indexOf("domain-ontology") > -1) {
+                            property = "eso";
+                        }
+                        else if (object.indexOf("ili-30") > -1) {
+                            property = "wn";
                         }
                         if (!property.isEmpty()) {
                             if (!coveredValues.contains(property+value)) {
