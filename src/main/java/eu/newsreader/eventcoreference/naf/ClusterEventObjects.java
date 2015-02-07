@@ -40,6 +40,8 @@ public class ClusterEventObjects {
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
     static final int TIMEEXPRESSIONMAX = 5;
+    static boolean MICROSTORIES = false;
+    static Integer SENTENCERANGE = 0;
     static String done = "";
 
     static public void main (String [] args) {
@@ -74,6 +76,10 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--project") && args.length>(i+1)) {
                 projectName = args[i+1];
+            }
+            else if (arg.equals("--microstories")&& args.length>(i+1)) {
+                MICROSTORIES = true;
+                SENTENCERANGE = Integer.parseInt(args[i+1]);
             }
             else if (arg.equals("--communication-frames") && args.length>(i+1)) {
                 comFrameFile = args[i+1];
@@ -432,6 +438,14 @@ public class ClusterEventObjects {
     ) throws IOException {
 
         GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        System.out.println("semEvents = " + semEvents.size());
+        semEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
+        semActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
+        semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
+        semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
+       // CreateMicrostory.getMicrostory(SENTENCERANGE, semEvents, semActors, semTimes, semRelations);
+        System.out.println("micro semEvents = " + semEvents.size());
+
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());
         for (int j = 0; j < semEvents.size(); j++) {

@@ -286,7 +286,8 @@ public class TrigToJsonTimeLine {
     static void writeJsonObjectArray (String pathToFolder, String project, ArrayList<JSONObject> objects) {
         try {
             try {
-                OutputStream jsonOut = new FileOutputStream(pathToFolder + "/" + "timeline.json");
+                File folder = new File(pathToFolder);
+                OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + folder.getName()+".timeline.json");
                 JSONObject timeLineObject = JsonEvent.createTimeLineProperty(new File(pathToFolder).getName(), project);
 
                 for (int j = 0; j < objects.size(); j++) {
@@ -327,8 +328,8 @@ public class TrigToJsonTimeLine {
             }
 
 
-            trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
-            pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
+           // trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
+           // pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
             iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
             Dataset dataset = TDBFactory.createDataset();
             ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
