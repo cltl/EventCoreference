@@ -337,6 +337,16 @@ public class ClusterEventObjects {
     ) throws IOException {
 
         GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        if (MICROSTORIES) {
+            System.out.println("semEvents = " + semEvents.size());
+            semEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
+            semActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
+            semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
+            semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
+            // CreateMicrostory.getMicrostory(SENTENCERANGE, semEvents, semActors, semTimes, semRelations);
+            System.out.println("micro semEvents = " + semEvents.size());
+        }
+
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());
         for (int j = 0; j < semEvents.size(); j++) {
@@ -438,14 +448,15 @@ public class ClusterEventObjects {
     ) throws IOException {
 
         GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-        System.out.println("semEvents = " + semEvents.size());
-        semEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
-        semActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
-        semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
-        semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
-       // CreateMicrostory.getMicrostory(SENTENCERANGE, semEvents, semActors, semTimes, semRelations);
-        System.out.println("micro semEvents = " + semEvents.size());
-
+        if (MICROSTORIES) {
+            System.out.println("semEvents = " + semEvents.size());
+            semEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
+            semActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
+            semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
+            semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
+            // CreateMicrostory.getMicrostory(SENTENCERANGE, semEvents, semActors, semTimes, semRelations);
+            System.out.println("micro semEvents = " + semEvents.size());
+        }
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());
         for (int j = 0; j < semEvents.size(); j++) {

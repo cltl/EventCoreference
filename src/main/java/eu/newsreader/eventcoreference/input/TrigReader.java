@@ -86,7 +86,7 @@ public class TrigReader {
         updateMap(predicateObjectMapOthers, predicateObject);
 
         if (instanceTypeSubject.equals("IEV") && !predicate.equalsIgnoreCase("hastime")) {
-            String [] fields = subject.split("-and-");
+/*            String [] fields = subject.split("-and-");
             for (int i = 0; i < fields.length; i++) {
                 String field = fields[i];
                 String iliReference = field+"[";
@@ -100,7 +100,9 @@ public class TrigReader {
                 iliReference+="]";
                 String crossLingualTriple = iliReference+"\t"+predicate+"\t"+object;
                 updateMap(tripleMapOthers, crossLingualTriple);
-            }
+            }*/
+            String crossLingualTriple = subject+"\t"+predicate+"\t"+object;
+            updateMap(tripleMapOthers, crossLingualTriple);
         }
     }
 
@@ -158,6 +160,7 @@ public class TrigReader {
                 updateMap(mentionMapNotDBPEntities, subject);
             }
             else if (instanceType.equals("IEV")) {
+/*
                 String [] fields = subject.split("-and-");
                 for (int i = 0; i < fields.length; i++) {
                     String field = fields[i];
@@ -172,6 +175,8 @@ public class TrigReader {
                     iliReference+="]";
                     updateMap(mentionMapIliEvents, iliReference);
                 }
+*/
+                updateMap(mentionMapIliEvents, subject);
             }
             else if (instanceType.equals("LEV")) {
                 updateMap(mentionMapLabelEvents, subject);

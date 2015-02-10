@@ -123,10 +123,12 @@ public class JenaSerialization {
         for (int i = 0; i < compositeEvent.getEvent().getConcepts().size(); i++) {
             KafSense kafSense = compositeEvent.getEvent().getConcepts().get(i);
             if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-                if (!IliUri.isEmpty()) {
-                    IliUri+="-and-";
+                if (IliUri.indexOf(kafSense.getSensecode())==-1) {
+                    if (!IliUri.isEmpty()) {
+                            IliUri += "-and-";
+                    }
+                    IliUri += kafSense.getSensecode();
                 }
-                IliUri += kafSense.getSensecode();
             }
         }
         // System.out.println("IliUri = " + IliUri);

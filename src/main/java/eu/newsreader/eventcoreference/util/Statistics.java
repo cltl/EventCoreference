@@ -37,6 +37,90 @@ public class Statistics {
         TRIPLE = false;
     }
 
+    static boolean intersectingILI (String ili_1, String ili_2) {
+        String [] ili_1_fields = ili_1.split("-and-");
+        String [] ili_2_fields = ili_2.split("-and-");
+        for (int i = 0; i < ili_1_fields.length; i++) {
+            String ili_1_field = ili_1_fields[i];
+            for (int j = 0; j < ili_2_fields.length; j++) {
+                String ili_2_field = ili_2_fields[j];
+                if (ili_1_field.equals(ili_2_field)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static void updateMapUsingSubstringIntersection (String key, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
+           if (map.containsKey(key)) {
+               ArrayList<Integer> counts = map.get(key);
+               counts.set(fileNr, count);
+               map.put(key, counts);
+           }
+           else {
+               boolean match = false;
+               Set keySet = map.keySet();
+               Iterator<String> keys = keySet.iterator();
+               while (keys.hasNext()) {
+                   String iliKey = keys.next();
+                   if (intersectingILI(iliKey, key)) {
+                       ArrayList<Integer> counts = map.get(iliKey);
+                       counts.set(fileNr, count);
+                       map.put(iliKey, counts);
+                       match = true;
+                       break;
+                   }
+               }
+               if (!match) {
+                   ArrayList<Integer> counts = new ArrayList<Integer>();
+                   for (int i = 0; i < nrFiles; i++) {
+                       counts.add(0);
+                   }
+                   counts.set(fileNr, count);
+                   map.put(key, counts);
+               }
+           }
+    }
+
+    static void updateMapUsingTripleSubjectSubstringIntersection (String key, String triple, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
+           if (map.containsKey(triple)) {
+               ArrayList<Integer> counts = map.get(triple);
+               counts.set(fileNr, count);
+               map.put(triple, counts);
+           }
+           else {
+               boolean match = false;
+               Set keySet = map.keySet();
+               Iterator<String> keys = keySet.iterator();
+               while (keys.hasNext()) {
+                   String iliTriple = keys.next();
+                   String [] fields = iliTriple.split(":");
+                   if (fields.length==3) {
+                       String iliKey = fields[0];
+                       String iliDuple = fields[1] + ":" + fields[2];
+                       if (triple.endsWith(iliDuple)) {
+                           if (intersectingILI(iliKey, key)) {
+                               ArrayList<Integer> counts = map.get(iliKey);
+                               counts.set(fileNr, count);
+                               map.put(iliTriple, counts);
+                               match = true;
+                               break;
+                           }
+                       }
+                   }
+               }
+               if (!match) {
+                   ArrayList<Integer> counts = new ArrayList<Integer>();
+                   for (int i = 0; i < nrFiles; i++) {
+                       counts.add(0);
+                   }
+                   counts.set(fileNr, count);
+                   map.put(triple, counts);
+               }
+           }
+    }
+
     static void updateMap (String key, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
            if (map.containsKey(key)) {
                ArrayList<Integer> counts = map.get(key);
@@ -101,7 +185,8 @@ public class Statistics {
                                 updateMap(key, count, newEntityMap, fileNr, nrFiles);
                             }
                             else if (ILIEVENT) {
-                                updateMap(key, count, iliEventMap, fileNr, nrFiles);
+                                updateMapUsingSubstringIntersection(key, count, iliEventMap, fileNr, nrFiles);
+                               // updateMap(key, count, iliEventMap, fileNr, nrFiles);
                             }
                             else if (PREDICATE) {
                                 updateMap(normalizePredicate(key), count, predicateMap, fileNr, nrFiles);
@@ -115,7 +200,8 @@ public class Statistics {
                                     String object = fields[2];
                                     String triple = subject + ":" + predicate + ":" + object;
                                     Integer count = Integer.parseInt(fields[3]);
-                                    updateMap(triple, count, tripleMap, fileNr, nrFiles);
+                                    updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, iliEventMap, fileNr, nrFiles);
+                                   // updateMap(triple, count, tripleMap, fileNr, nrFiles);
                                 }
                             }
                         }
