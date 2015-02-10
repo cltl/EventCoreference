@@ -101,7 +101,7 @@ public class Statistics {
                        String iliDuple = fields[1] + ":" + fields[2];
                        if (triple.endsWith(iliDuple)) {
                            if (intersectingILI(iliKey, key)) {
-                               ArrayList<Integer> counts = map.get(iliKey);
+                               ArrayList<Integer> counts = map.get(iliTriple);
                                counts.set(fileNr, count);
                                map.put(iliTriple, counts);
                                match = true;
