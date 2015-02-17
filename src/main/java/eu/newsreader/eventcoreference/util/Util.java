@@ -76,6 +76,31 @@ public class Util {
         }
     }
 
+    /**
+     * A single termId overlap is sufficient to fire true
+     * @param objects
+     * @param object
+     * @return
+     */
+    static public boolean hasMentionAndSpanIntersect (ArrayList<SemObject> objects, SemObject object) {
+        for (int i = 0; i < object.getNafMentions().size(); i++) {
+            NafMention nafMention = object.getNafMentions().get(i);
+            for (int j = 0; j < objects.size(); j++) {
+                SemObject semObject = objects.get(j);
+                for (int k = 0; k < nafMention.getTermsIds().size(); k++) {
+                    String temdId = nafMention.getTermsIds().get(k);
+                    for (int l = 0; l < semObject.getNafMentions().size(); l++) {
+                        NafMention mention = semObject.getNafMentions().get(l);
+                        if (mention.getTermsIds().contains(temdId)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     static public void addObject(ArrayList<SemObject> objects, SemObject object) {
         boolean DEBUG = false;
 /*        if ((object.getId().equals("http://dbpedia.org/resource/Micky_Adams"))) {
@@ -264,6 +289,10 @@ public class Util {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
+                if (!RoleLabels.hasFrameNetRole(kafParticipant)) {
+                    ///// SKIP ROLE WITHOUT FRAMENET
+                    continue;
+                }
                 //// SKIP LARGE PHRASES
                 if (kafParticipant.getSpans().size()>SPANMAXLOCATION) {
                     continue;
@@ -310,6 +339,10 @@ public class Util {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
+                if (!RoleLabels.hasFrameNetRole(kafParticipant)) {
+                    ///// SKIP ROLE WITHOUT FRAMENET
+                    continue;
+                }
                 //// SKIP LARGE PHRASES
                 if (kafParticipant.getSpans().size()>SPANMAXPARTICIPANT) {
                     continue;
@@ -348,6 +381,7 @@ public class Util {
                      //   System.out.println("kafParticipant.getTokenString() = " + kafParticipant.getTokenString());
                     }
                 }
+
             }
         }
         return mentions;
@@ -760,6 +794,8 @@ public class Util {
 
         return topObject;
     }
+
+
 
     static public ArrayList<SemObject> getAllMatchingObject(KafSaxParser kafSaxParser,
                                                   KafParticipant kafParticipant,

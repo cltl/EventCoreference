@@ -1,10 +1,15 @@
 package eu.newsreader.eventcoreference.naf;
 
+import eu.kyotoproject.kaf.KafEvent;
+import eu.kyotoproject.kaf.KafParticipant;
 import eu.kyotoproject.kaf.KafSaxParser;
+import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.objects.NafMention;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
+import eu.newsreader.eventcoreference.util.RoleLabels;
+import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -133,6 +138,7 @@ public class CreateMicrostory {
         ArrayList<SemRelation> microRelations = new ArrayList<SemRelation>();
          for (int i = 0; i < semRelations.size(); i++) {
              SemRelation semRelation =  semRelations.get(i);
+            // System.out.println("semRelation.getId() = " + semRelation.getId());
              for (int j = 0; j < semRelation.getNafMentions().size(); j++) {
                  NafMention nafMention = semRelation.getNafMentions().get(j);
                  String sentenceId = nafMention.getSentence();
@@ -149,104 +155,84 @@ public class CreateMicrostory {
                  }
              }
          }
+        /*for (int i = 0; i < microRelations.size(); i++) {
+             SemRelation microRelation = microRelations.get(i);
+             System.out.println("microRelation.getId() = " + microRelation.getId());
+         }*/
         return microRelations;
     }
 
-    static public void getMicrostory (     Integer sentenceRange,
-                                           ArrayList<SemObject> semEvents,
-                                           ArrayList<SemObject> semActors,
-                                           ArrayList<SemObject> semTimes,
-                                           ArrayList<SemRelation> semRelations
-
+    /**
+     * Obtain events and participants through bridging relations
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semEvents
+     * @param semActors
+     * @param semRelations
+     */
+    static void getEventsAndActorsThroughBridging (String baseUrl, KafSaxParser kafSaxParser,
+                                                   ArrayList<SemObject> semEvents,
+                                                   ArrayList<SemObject> semActors,
+                                                   ArrayList<SemRelation> semRelations
     ) {
-        ArrayList<SemObject> semMicroEvents = new ArrayList<SemObject>();
-        ArrayList<SemObject> semMicroActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semMicroTimes = new ArrayList<SemObject>();
-        ArrayList<SemRelation> semMicroRelations = new ArrayList<SemRelation>();
-
-        for (int i = 0; i < semEvents.size(); i++) {
-            SemObject semEvent =  semEvents.get(i);
-            for (int j = 0; j < semEvent.getNafMentions().size(); j++) {
-                NafMention nafMention = semEvent.getNafMentions().get(j);
-                String sentenceId = nafMention.getSentence();
-                if (!sentenceId.isEmpty()) {
-                    try {
-                        Integer sentenceInteger = Integer.parseInt(sentenceId);
-                        if (sentenceInteger <= sentenceRange) {
-                            semMicroEvents.add(semEvent);
+        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+            KafEvent kafEvent =  kafSaxParser.getKafEventArrayList().get(i);
+            //// we need to get the corresponding semEvent first
+            // check the SemEvents
+            String semEventId = "";
+            for (int j = 0; j < semEvents.size(); j++) {
+                SemObject semEvent = semEvents.get(j);
+                // if (matchAtLeastASingleSpan(kafEvent.getSpanIds(), semEvent)) {
+                if (Util.matchAllOfAnyMentionSpans(kafEvent.getSpanIds(), semEvent)) {
+                    semEventId = semEvent.getId();
+                    break;
+                }
+            }
+            if (semEventId.isEmpty()) {
+                //// this is an event without SRL representation, which is not allowed
+                // SHOULD NEVER OCCUR
+            }
+            else {
+                for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
+                    KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
+                    // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
+                    if (!RoleLabels.validRole(kafParticipant.getRole())) {
+                        continue;
+                    }
+                    //// we take all objects above threshold
+                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+                    for (int l = 0; l < semObjects.size(); l++) {
+                        SemObject semObject = semObjects.get(l);
+                        if (semObject!=null) {
+                            SemRelation semRelation = new SemRelation();
+                            String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
+                            semRelation.setId(relationInstanceId);
+/*
+                            if (kafParticipant.getId().equals("rl130")) {
+                                System.out.println(semObject.getId());
+                            }
+*/
+                            ArrayList<String> termsIds = kafEvent.getSpanIds();
+                            for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
+                                String s = kafParticipant.getSpanIds().get(j);
+                                termsIds.add(s);
+                            }
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
+                            semRelation.addMention(mention);
+                            semRelation.addPredicate("hasSemActor");
+                            //// check the source and prefix accordingly
+                            semRelation.addPredicate(kafParticipant.getRole());
+                            for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
+                                KafSense kafSense = kafParticipant.getExternalReferences().get(j);
+                                semRelation.addPredicate(kafSense.getResource() + ":" + kafSense.getSensecode());
+                            }
+                            semRelation.setSubject(semEventId);
+                            semRelation.setObject(semObject.getId());
+                            semRelations.add(semRelation);
                         }
-                    } catch (NumberFormatException e) {
-                      //  e.printStackTrace();
                     }
                 }
             }
         }
-        for (int i = 0; i < semActors.size(); i++) {
-            SemObject semActor =  semActors.get(i);
-            for (int j = 0; j < semActor.getNafMentions().size(); j++) {
-                NafMention nafMention = semActor.getNafMentions().get(j);
-                String sentenceId = nafMention.getSentence();
-                if (!sentenceId.isEmpty()) {
-                    try {
-                        Integer sentenceInteger = Integer.parseInt(sentenceId);
-                        if (sentenceInteger <= sentenceRange) {
-                            semMicroActors.add(semActor);
-                        }
-                    } catch (NumberFormatException e) {
-                      //  e.printStackTrace();
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < semTimes.size(); i++) {
-            SemObject semTime =  semTimes.get(i);
-            for (int j = 0; j < semTime.getNafMentions().size(); j++) {
-                NafMention nafMention = semTime.getNafMentions().get(j);
-                String sentenceId = nafMention.getSentence();
-                if (!sentenceId.isEmpty()) {
-                    try {
-                        Integer sentenceInteger = Integer.parseInt(sentenceId);
-                        if (sentenceInteger <= sentenceRange) {
-                            semMicroTimes.add(semTime);
-                        }
-                    } catch (NumberFormatException e) {
-                     //   e.printStackTrace();
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < semRelations.size(); i++) {
-            SemRelation semRelation =  semRelations.get(i);
-            for (int j = 0; j < semRelation.getNafMentions().size(); j++) {
-                NafMention nafMention = semRelation.getNafMentions().get(j);
-                String sentenceId = nafMention.getSentence();
-                if (!sentenceId.isEmpty()) {
-                    Integer sentenceInteger = null;
-                    try {
-                        sentenceInteger = Integer.parseInt(sentenceId);
-                        if (sentenceInteger <= sentenceRange) {
-                            semMicroRelations.add(semRelation);
-                        }
-                    } catch (NumberFormatException e) {
-                       // e.printStackTrace();
-                    }
-                }
-            }
-        }
-        System.out.println("semEvents = " + semEvents.size());/*
-        System.out.println("semMicroEvents = " + semMicroEvents.size());
-        System.out.println("semActors = " + semActors.size());
-        System.out.println("semMicroActors = " + semMicroActors.size());
-        System.out.println("semTimes = " + semTimes.size());
-        System.out.println("semMicroTimes = " + semMicroTimes.size());
-        System.out.println("semRelations = " + semRelations.size());
-        System.out.println("semMicroRelations = " + semMicroRelations.size());*/
-        semEvents = new ArrayList<SemObject>();
-        semEvents = semMicroEvents;
-        semActors = semMicroActors;
-        semTimes = semMicroTimes;
-        semRelations = semMicroRelations;
     }
-
-
 }

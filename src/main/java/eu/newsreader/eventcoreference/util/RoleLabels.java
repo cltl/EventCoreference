@@ -1,5 +1,8 @@
 package eu.newsreader.eventcoreference.util;
 
+import eu.kyotoproject.kaf.KafParticipant;
+import eu.kyotoproject.kaf.KafSense;
+
 import java.util.ArrayList;
 
 /**
@@ -52,6 +55,26 @@ public class RoleLabels {
      LVB light verb
 
      */
+
+
+
+    static public String normalizeProbBankValue (String role) {
+        String normRole = role;
+        if (role.toLowerCase().startsWith("arg-")) {   ///ARG- and arg-
+            normRole = "A"+role.substring(4);
+        }
+        else if (role.toLowerCase().startsWith("arg")) {   ///ARG and arg
+            normRole = "A"+role.substring(3);
+        }
+        else if (role.toLowerCase().startsWith("a-")) {       /// A- and a-
+            normRole = "A"+role.substring(2);
+        }
+        else if (role.startsWith("a")) {     //// a
+            normRole = "A"+role.substring(1);
+        }
+        return normRole;
+    }
+
 
     static public final String [] PRIMEPARTICIPANT = {"a0","arg0", "a-0", "arg-0"};
     static public final String [] SECONDPARTICIPANT = {"a1","arg1", "a-1", "arg-1"};
@@ -183,4 +206,13 @@ public class RoleLabels {
         }
     }
 
+    static public boolean hasFrameNetRole (KafParticipant kafParticipant) {
+        for (int k = 0; k < kafParticipant.getExternalReferences().size(); k++) {
+            KafSense kafSense =  kafParticipant.getExternalReferences().get(k);
+            if (kafSense.getResource().equalsIgnoreCase("FrameNet")) {
+                return  true;
+            }
+        }
+        return false;
+    }
 }

@@ -245,7 +245,7 @@ public class ClusterEventObjects {
             }*/
 
             if (i % 500 == 0) {
-                System.out.println("i = " + i);
+               // System.out.println("i = " + i);
                 //  System.out.println("file.getName() = " + file.getAbsolutePath());
             }
 
@@ -326,6 +326,22 @@ public class ClusterEventObjects {
                 semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
     }
 
+
+    /**
+     * @Deprecated
+     * @param project
+     * @param kafSaxParser
+     * @param speechFolder
+     * @param otherFolder
+     * @param grammaticalFolder
+     * @param semEvents
+     * @param semActors
+     * @param semPlaces
+     * @param semTimes
+     * @param semRelations
+     * @param factRelations
+     * @throws IOException
+     */
     static void processKafSaxParser(String project, KafSaxParser kafSaxParser,
                                     File speechFolder, File otherFolder, File grammaticalFolder,
                                     ArrayList<SemObject> semEvents ,
@@ -338,13 +354,15 @@ public class ClusterEventObjects {
 
         GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         if (MICROSTORIES) {
-            System.out.println("semEvents = " + semEvents.size());
+            /// we first get the remaining roles!
+            GetSemFromNafFile.processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
+           // System.out.println("semEvents = " + semEvents.size());
             semEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
             semActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
             semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
             semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
             // CreateMicrostory.getMicrostory(SENTENCERANGE, semEvents, semActors, semTimes, semRelations);
-            System.out.println("micro semEvents = " + semEvents.size());
+          //  System.out.println("micro semEvents = " + semEvents.size());
         }
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
@@ -447,15 +465,17 @@ public class ClusterEventObjects {
                                     ArrayList<SemRelation> factRelations
     ) throws IOException {
 
-        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         if (MICROSTORIES) {
-            System.out.println("semEvents = " + semEvents.size());
+            GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+           // System.out.println("semEvents = " + semEvents.size());
             semEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
             semActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
             semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
             semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
-            // CreateMicrostory.getMicrostory(SENTENCERANGE, semEvents, semActors, semTimes, semRelations);
-            System.out.println("micro semEvents = " + semEvents.size());
+          //  System.out.println("micro semEvents = " + semEvents.size());
+        }
+        else {
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         }
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());

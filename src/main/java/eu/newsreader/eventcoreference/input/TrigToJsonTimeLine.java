@@ -6,13 +6,17 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.newsreader.eventcoreference.objects.JsonEvent;
+import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.riot.RDFDataMgr;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by piek on 1/3/14.
@@ -26,9 +30,111 @@ public class TrigToJsonTimeLine {
     static HashMap<String, ArrayList<Statement>> tripleMapInstances = new HashMap<String, ArrayList<Statement>>();
     static HashMap<String, ArrayList<Statement>> tripleMapOthers = new HashMap<String, ArrayList<Statement>>();
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
+    static String ACTORNAMESPACES = "";
 
 
+    static public void main (String[] args) {
+        String project = "NewsReader timeline";
+        String pathToILIfile = "";
+        String trigfolder = "";
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("--trig-folder") && args.length>(i+1)) {
+                trigfolder = args[i+1];
+            }
+            else if (arg.equals("--ili") && args.length>(i+1)) {
+                pathToILIfile = args[i+1];
+            }
+            else if (arg.equals("--actors") && args.length>(i+1)) {
+                ACTORNAMESPACES = args[i+1];
+                System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
+            }
+        }
 
+
+        // trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
+        // pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
+        iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
+        Dataset dataset = TDBFactory.createDataset();
+        ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
+        ArrayList<String> provenanceTriples = new ArrayList<String>();
+        ArrayList<String> instanceTriples = new ArrayList<String>();
+        ArrayList<String> otherTriples = new ArrayList<String>();
+        for (int i = 0; i < trigFiles.size(); i++) {
+            File file = trigFiles.get(i);
+            //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
+            dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
+            Iterator<String> it = dataset.listNames();
+            while (it.hasNext()) {
+                String name = it.next();
+                // System.out.println("name = " + name);
+                if (name.equals(provenanceGraph)) {
+                    Model namedModel = dataset.getNamedModel(name);
+                    StmtIterator siter = namedModel.listStatements();
+                    while (siter.hasNext()) {
+                        Statement s = siter.nextStatement();
+                        String subject = s.getSubject().getURI();
+                        if (tripleMapProvenance.containsKey(subject)) {
+                            ArrayList<Statement> triples = tripleMapProvenance.get(subject);
+                            triples.add(s);
+                            tripleMapProvenance.put(subject, triples);
+                        }
+                        else {
+
+                            ArrayList<Statement> triples = new ArrayList<Statement>();
+                            triples.add(s);
+                            tripleMapProvenance.put(subject, triples);
+                        }
+                    }
+                }
+                else if (name.equals(instanceGraph)) {
+                    Model namedModel = dataset.getNamedModel(name);
+                    StmtIterator siter = namedModel.listStatements();
+                    while (siter.hasNext()) {
+                        Statement s = siter.nextStatement();
+                        String subject = s.getSubject().getURI();
+                        if (tripleMapInstances.containsKey(subject)) {
+                            ArrayList<Statement> triples = tripleMapInstances.get(subject);
+                            triples.add(s);
+                            tripleMapInstances.put(subject, triples);
+                        }
+                        else {
+
+                            ArrayList<Statement> triples = new ArrayList<Statement>();
+                            triples.add(s);
+                            tripleMapInstances.put(subject, triples);
+                        }
+                    }
+                }
+                else {
+                    Model namedModel = dataset.getNamedModel(name);
+                    StmtIterator siter = namedModel.listStatements();
+                    while (siter.hasNext()) {
+                        Statement s = siter.nextStatement();
+                        String subject = s.getSubject().getURI();
+                        if (tripleMapOthers.containsKey(subject)) {
+                            ArrayList<Statement> triples = tripleMapOthers.get(subject);
+                            triples.add(s);
+                            tripleMapOthers.put(subject, triples);
+                        }
+                        else {
+
+                            ArrayList<Statement> triples = new ArrayList<Statement>();
+                            triples.add(s);
+                            tripleMapOthers.put(subject, triples);
+                        }
+                    }
+                }
+            }
+            dataset.close();
+        }
+        try {
+            ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
+            writeJsonObjectArray(trigfolder, project, jsonObjects);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     static String getInstanceType (String subject) {
         String type = "";
@@ -179,54 +285,7 @@ public class TrigToJsonTimeLine {
         return jsonObjectArrayList;
     }
 
-    static ArrayList<JSONObject> getJSONObjectArrayOld() throws JSONException {
-        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
 
-        Set keySet = tripleMapOthers.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = keys.next(); //// this is the subject of the triple which should point to an event
-            ArrayList<Statement> otherTriples = tripleMapOthers.get(key);
-            if (!hasActor(otherTriples)) {
-               /// we ignore events without actors.....
-            }
-            else {
-
-                JSONObject jsonObject = new JSONObject();
-
-                jsonObject.put("event", key);
-                String timeAnchor = getTimeAnchor(otherTriples);
-                int idx = timeAnchor.lastIndexOf("/");
-                if (idx>-1) {
-                    timeAnchor = timeAnchor.substring(idx+1);
-                }
-                jsonObject.put("time", timeAnchor);
-                if (tripleMapInstances.containsKey( key)) {
-                    ArrayList<Statement> instanceTriples = tripleMapInstances.get(key);
-                    if (hasILI(instanceTriples) || hasFrameNet(instanceTriples)) {
-                        JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonClasses.keys().hasNext()) {
-                            jsonObject.put("classes", jsonClasses);
-                        }
-                        JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonLabels.keys().hasNext()) {
-                            jsonObject.put("labels", jsonLabels.get("labels"));
-                        }
-                        JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonMentions.keys().hasNext()) {
-                            jsonObject.put("mentions", jsonMentions.get("mentions"));
-                        }
-                    }
-                }
-                JSONObject actors = getActorsJSONObjectFromInstanceStatement(otherTriples);
-                if (actors.keys().hasNext()) {
-                    jsonObject.put("actors",actors);
-                }
-                jsonObjectArrayList.add(jsonObject);
-            }
-        }
-        return jsonObjectArrayList;
-    }
 
     static ArrayList<JSONObject> getJSONObjectArrayRDF() throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
@@ -311,108 +370,47 @@ public class TrigToJsonTimeLine {
     }
 
 
-
-    static public void main (String[] args) {
-            String project = "NewsReader timeline";
-            String pathToILIfile = "";
-            String trigfolder = "";
-            for (int i = 0; i < args.length; i++) {
-                String arg = args[i];
-                if (arg.equals("--trig-folder") && args.length>(i+1)) {
-                    trigfolder = args[i+1];
-                }
-                else if (arg.equals("--ili") && args.length>(i+1)) {
-                    pathToILIfile = args[i+1];
-                }
-
-            }
-
-
-           // trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
-           // pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
-            iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
-            Dataset dataset = TDBFactory.createDataset();
-            ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
-            ArrayList<String> provenanceTriples = new ArrayList<String>();
-            ArrayList<String> instanceTriples = new ArrayList<String>();
-            ArrayList<String> otherTriples = new ArrayList<String>();
-            for (int i = 0; i < trigFiles.size(); i++) {
-                File file = trigFiles.get(i);
-                //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
-                dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
-                Iterator<String> it = dataset.listNames();
-                while (it.hasNext()) {
-                    String name = it.next();
-                   // System.out.println("name = " + name);
-                    if (name.equals(provenanceGraph)) {
-                        Model namedModel = dataset.getNamedModel(name);
-                        StmtIterator siter = namedModel.listStatements();
-                        while (siter.hasNext()) {
-                            Statement s = siter.nextStatement();
-                            String subject = s.getSubject().getURI();
-                            if (tripleMapProvenance.containsKey(subject)) {
-                                ArrayList<Statement> triples = tripleMapProvenance.get(subject);
-                                triples.add(s);
-                                tripleMapProvenance.put(subject, triples);
-                            }
-                            else {
-
-                                ArrayList<Statement> triples = new ArrayList<Statement>();
-                                triples.add(s);
-                                tripleMapProvenance.put(subject, triples);
-                            }
-                        }
-                    }
-                    else if (name.equals(instanceGraph)) {
-                        Model namedModel = dataset.getNamedModel(name);
-                        StmtIterator siter = namedModel.listStatements();
-                        while (siter.hasNext()) {
-                            Statement s = siter.nextStatement();
-                            String subject = s.getSubject().getURI();
-                            if (tripleMapInstances.containsKey(subject)) {
-                                ArrayList<Statement> triples = tripleMapInstances.get(subject);
-                                triples.add(s);
-                                tripleMapInstances.put(subject, triples);
-                            }
-                            else {
-
-                                ArrayList<Statement> triples = new ArrayList<Statement>();
-                                triples.add(s);
-                                tripleMapInstances.put(subject, triples);
-                            }
-                        }
-                    }
-                    else {
-                        Model namedModel = dataset.getNamedModel(name);
-                        StmtIterator siter = namedModel.listStatements();
-                        while (siter.hasNext()) {
-                            Statement s = siter.nextStatement();
-                            String subject = s.getSubject().getURI();
-                            if (tripleMapOthers.containsKey(subject)) {
-                                ArrayList<Statement> triples = tripleMapOthers.get(subject);
-                                triples.add(s);
-                                tripleMapOthers.put(subject, triples);
-                            }
-                            else {
-
-                                ArrayList<Statement> triples = new ArrayList<Statement>();
-                                triples.add(s);
-                                tripleMapOthers.put(subject, triples);
-                            }
-                        }
-                    }
-                }
-                dataset.close();
-            }
-        try {
-            ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
-            writeJsonObjectArray(trigfolder, project, jsonObjects);
-        } catch (JSONException e) {
-            e.printStackTrace();
+    static String getNameSpaceString (String value) {
+        String property = "";
+        if (value.indexOf("/framenet/") > -1) {
+            property = "fn";
         }
+        else if (value.indexOf("/propbank/") > -1) {
+            property = "pb";
+        }
+        else if (value.indexOf("/sem/") > -1) {
+            property = "sem";
+        }
+        else if (value.indexOf("/sumo/") > -1) {
+            property = "sumo";
+        }
+        else if (value.indexOf("/eso/") > -1) {
+            property = "eso";
+        }
+        else if (value.indexOf("/domain-ontology") > -1) {
+            property = "eso";
+        }
+        else if (value.indexOf("ili-30") > -1) {
+            property = "wn";
+        }
+        return property;
     }
 
-
+    static String getValue (String predicate) {
+        int idx = predicate.lastIndexOf("#");
+        if (idx>-1) {
+            return predicate.substring(idx + 1);
+        }
+        else {
+            idx = predicate.lastIndexOf("/");
+            if (idx>-1) {
+                return predicate.substring(idx + 1);
+            }
+            else {
+                return predicate;
+            }
+        }
+    }
 
     static JSONObject getClassesJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
         JSONObject jsonClassesObject = new JSONObject();
@@ -432,27 +430,12 @@ public class TrigToJsonTimeLine {
                 String [] values = object.split(",");
                 for (int j = 0; j < values.length; j++) {
                     String value = values[j];
-                    int idx = value.lastIndexOf("/");
-                    if (idx > -1) {
-                        String property = "";
-                        if (value.indexOf("/framenet/") > -1) {
-                            property = "fn";
-                        }
-                        else if (object.indexOf("/eso/") > -1) {
-                            property = "eso";
-                        }
-                        else if (object.indexOf("domain-ontology") > -1) {
-                            property = "eso";
-                        }
-                        else if (object.indexOf("ili-30") > -1) {
-                            property = "wn";
-                        }
-                        if (!property.isEmpty()) {
-                            if (!coveredValues.contains(property+value)) {
-                                coveredValues.add(property+value);
-                                value = value.substring(idx + 1);
-                                jsonClassesObject.append(property, value);
-                            }
+                    String property = getNameSpaceString(value);
+                    if (!property.isEmpty() && !property.equalsIgnoreCase("sem")) {
+                        value = getValue(value);
+                        if (!coveredValues.contains(property+value)) {
+                            coveredValues.add(property+value);
+                            jsonClassesObject.append(property, value);
                         }
                     }
                 }
@@ -464,6 +447,7 @@ public class TrigToJsonTimeLine {
     static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
         JSONObject jsonActorsObject = new JSONObject();
 
+        HashMap<String, ArrayList<Statement>> actorMap = new HashMap<String, ArrayList<Statement>>();
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
 
@@ -481,21 +465,64 @@ public class TrigToJsonTimeLine {
                 } else if (statement.getObject().isURIResource()) {
                     object = statement.getObject().asResource().getURI();
                 }
-                int idx = predicate.lastIndexOf("/");
-                if (idx>-1) {
-                    predicate = predicate.substring(idx+1);
+                if (actorMap.containsKey(object)) {
+                    ArrayList<Statement> actorStatements = actorMap.get(object);
+                    actorStatements.add(statement);
+                    actorMap.put(object, actorStatements);
                 }
-                String [] values = object.split(",");
+                else {
+                    ArrayList<Statement> actorStatements = new ArrayList<Statement>();
+                    actorStatements.add(statement);
+                    actorMap.put(object, actorStatements);
+                }
+            }
+        }
+        Set keySet = actorMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<Statement> actorStatements = actorMap.get(key);
+            String combinedPredicate = "";
+            for (int i = 0; i < actorStatements.size(); i++) {
+                Statement statement = actorStatements.get(i);
+                String predicate = statement.getPredicate().getURI();
+                String property = getNameSpaceString(predicate);
+                if (!property.isEmpty()) {
+                    if (ACTORNAMESPACES.indexOf(property)>-1 || ACTORNAMESPACES.isEmpty()) {
+                        if (property.equalsIgnoreCase("pb")) {
+                            predicate = property + "/" + RoleLabels.normalizeProbBankValue(getValue(predicate));
+                        }
+                        else {
+                            predicate = property + "/" + getValue(predicate);
+                        }
+                        if (!combinedPredicate.isEmpty()) {
+                            combinedPredicate+="+";
+                        }
+                        combinedPredicate += predicate;
+                        /*String[] values = key.split(",");
+                        ArrayList<String> coveredValues = new ArrayList<String>();
+                        for (int j = 0; j < values.length; j++) {
+                            String value = values[j];
+                            if (!coveredValues.contains(value)) {
+                                coveredValues.add(value);
+                                jsonActorsObject.append(predicate, value);
+                            }
+                        }*/
+                    }
+                }
+              //  break; //// only takes the first
+            }
+            if (!combinedPredicate.isEmpty()) {
+                String[] values = key.split(",");
                 ArrayList<String> coveredValues = new ArrayList<String>();
                 for (int j = 0; j < values.length; j++) {
                     String value = values[j];
                     if (!coveredValues.contains(value)) {
                         coveredValues.add(value);
-                        jsonActorsObject.append(predicate, value);
+                        jsonActorsObject.append(combinedPredicate, value);
                     }
                 }
             }
-
         }
         return jsonActorsObject;
     }
@@ -557,50 +584,4 @@ public class TrigToJsonTimeLine {
     }
 
 
-
-    /**
-     * events { event:
-     mentions {
-        offset: http://en.wikinews.org/wiki/Technical_problem_on_Airbus_A400M_maiden_flight#char=993,1001,
-        offset: http://en.wikinews.org/wiki/Technical_problem_on_Airbus_sale#char=93,100
-     }
-     labels {
-        label: employ
-     }
-     classname{
-        fn: Management,
-        eso: Management
-     }
-
-     actor{
-        pb@a0: www.dbp/resource/Apple,
-        pb@a1: www.dbp/resource/Jobs,
-        fn@Employee:www.dbp/resource/Jobs
-     }
-     time:
-
-     }
-
-     { event:
-     mentions {
-     offset: http://en.wikinews.org/wiki/Technical_problem_on_Airbus_A400M_maiden_flight#char=993,1001
-     }
-     labels {
-     label: purchase,
-     label: sell
-     }
-     classname{
-     fn:Commerce,
-     wn: Transaction
-     }
-
-     actor{
-     pb-a0:www.dbp/resource/Ford,
-     pb-a1:www.dbp/resource/Toyota,
-     pb-Buyer: www.dbp/resource/Ford,
-     pb-Seller: www.dbp/resource/Toyota
-     }
-     time:
-     }
-     */
 }
