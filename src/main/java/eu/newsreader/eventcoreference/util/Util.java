@@ -102,33 +102,106 @@ public class Util {
     }
 
     static public void addObject(ArrayList<SemObject> objects, SemObject object) {
-        boolean DEBUG = false;
-/*        if ((object.getId().equals("http://dbpedia.org/resource/Micky_Adams"))) {
-            System.out.println("TODEBUG");
-            DEBUG = true;
+       if (!hasObject(objects, object)) {
+           objects.add(object);
+       }
+       else {
+           absorbObject(objects, object);
+       }
+    }
+
+    static public void absorbObject(ArrayList<SemObject> objects, SemObject object) {
+        for (int i = 0; i < objects.size(); i++) {
+            SemObject semObject = objects.get(i);
+            if (semObject.getURI().equals(object.getURI())) {
+                for (int j = 0; j < object.getNafMentions().size(); j++) {
+                    NafMention nafMention = object.getNafMentions().get(j);
+                    /// add all mentions of this object that are new
+                    if (!semObject.hasMention(nafMention)) {
+                        semObject.addMentionUri(nafMention);
+                    }
+                }
+                break;
+            }
+            else {
+                //// Next check absorbs an object if there is any mention overlap despite the URI mismatch!!!!
+                boolean mentionMatch = false;
+
+                for (int j = 0; j < object.getNafMentions().size(); j++) {
+                    NafMention nafMention = object.getNafMentions().get(j);
+                    if (semObject.hasMention(nafMention)) {
+                        mentionMatch = true;
+                        break;
+                    }
+                }
+
+                if (mentionMatch) {
+                    /// add all mentins to this object that are new
+                    for (int j = 0; j < object.getNafMentions().size(); j++) {
+                        NafMention nafMention = object.getNafMentions().get(j);
+                        if (!semObject.hasMention(nafMention)) {
+                        }
+                    }
+                    break;
+                }
+            }
         }
+    }
+
+    static public boolean hasObject(ArrayList<SemObject> objects, SemObject object) {
+        for (int i = 0; i < objects.size(); i++) {
+            SemObject semObject = objects.get(i);
+            if (semObject.getURI().equals(object.getURI())) {
+                 return true;
+            }
+            else {
+                //// Next check absorbs an object if there is a mention overlap despite the URI mismatch!!!!
+                for (int j = 0; j < object.getNafMentions().size(); j++) {
+                    NafMention nafMention = object.getNafMentions().get(j);
+                    if (semObject.hasMention(nafMention)) {
+                        //// there is a mention overlap!
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    static public boolean hasObjectUri(ArrayList<SemObject> objects, String objectURI) {
+        for (int i = 0; i < objects.size(); i++) {
+            SemObject semObject = objects.get(i);
+            if (semObject.getURI().equals(objectURI)) {
+                 return true;
+            }
+        }
+        return false;
+    }
+
+   /* static public void addObjectOrg(ArrayList<SemObject> objects, SemObject object) {
+        boolean DEBUG = false;
+
         if (DEBUG) {
             System.out.println("object.getId() = " + object.getId());
             for (int i = 0; i < object.getNafMentions().size(); i++) {
                 NafMention nafMention = object.getNafMentions().get(i);
                 System.out.println("object nafMention.toString() = " + nafMention.toString());
             }
-        }*/
+        }
 
         boolean objectmatch =false;
         boolean mentionMatch = false;
         for (int i = 0; i < objects.size(); i++) {
             SemObject semObject = objects.get(i);
-/*            if (DEBUG) {
+            if (DEBUG) {
                 System.out.println("semObject = " + semObject.getId());
                 for (int j = 0; j < semObject.getNafMentions().size(); j++) {
                     NafMention nafMention = semObject.getNafMentions().get(j);
                     System.out.println("semObject nafMention.toString() = " + nafMention.toString());
                 }
-            }*/
+            }
             if (semObject.getURI().equals(object.getURI())) {
                 objectmatch = true;
-                //if (DEBUG) System.out.println("URI MATCH");
+                if (DEBUG) System.out.println("URI MATCH");
                 for (int j = 0; j < object.getNafMentions().size(); j++) {
                     NafMention nafMention = object.getNafMentions().get(j);
                     if (!semObject.hasMention(nafMention)) {
@@ -162,17 +235,18 @@ public class Util {
             }
         }
         if (!objectmatch && !mentionMatch) {
-           objects.add(object);
-           if (DEBUG) {
-               System.out.println("new object = " + object.getId());
-           }
+            if (DEBUG) {
+                System.out.println("new object = " + object.getId());
+            }
+            objects.add(object);
+
         }
         else {
             if (DEBUG) {
                 System.out.println("matched object = " + object.getId());
             }
         }
-    }
+    }*/
 
     static public ArrayList<KafSense> getExternalReferences(ArrayList<KafEntity> entities) {
         ArrayList<KafSense> refs = new ArrayList<KafSense>();

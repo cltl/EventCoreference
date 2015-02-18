@@ -1,14 +1,11 @@
 package eu.newsreader.eventcoreference.naf;
 
-import eu.kyotoproject.kaf.KafEvent;
-import eu.kyotoproject.kaf.KafParticipant;
 import eu.kyotoproject.kaf.KafSaxParser;
-import eu.kyotoproject.kaf.KafSense;
+import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.objects.NafMention;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
-import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.FileOutputStream;
@@ -164,75 +161,90 @@ public class CreateMicrostory {
 
     /**
      * Obtain events and participants through bridging relations
-     * @param baseUrl
-     * @param kafSaxParser
      * @param semEvents
-     * @param semActors
-     * @param semRelations
+     * @param microSemEvents
+     * @param frameNetReader
      */
-    static void getEventsAndActorsThroughBridging (String baseUrl, KafSaxParser kafSaxParser,
-                                                   ArrayList<SemObject> semEvents,
-                                                   ArrayList<SemObject> semActors,
-                                                   ArrayList<SemRelation> semRelations
+    static void getEventsThroughFrameNetBridging (ArrayList<SemObject> semEvents,
+                                                  ArrayList<SemObject> microSemEvents,
+                                                  FrameNetReader frameNetReader
     ) {
-        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
-            KafEvent kafEvent =  kafSaxParser.getKafEventArrayList().get(i);
-            //// we need to get the corresponding semEvent first
-            // check the SemEvents
-            String semEventId = "";
-            for (int j = 0; j < semEvents.size(); j++) {
-                SemObject semEvent = semEvents.get(j);
-                // if (matchAtLeastASingleSpan(kafEvent.getSpanIds(), semEvent)) {
-                if (Util.matchAllOfAnyMentionSpans(kafEvent.getSpanIds(), semEvent)) {
-                    semEventId = semEvent.getId();
-                    break;
-                }
-            }
-            if (semEventId.isEmpty()) {
-                //// this is an event without SRL representation, which is not allowed
-                // SHOULD NEVER OCCUR
-            }
-            else {
-                for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
-                    KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
-                    // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
-                    if (!RoleLabels.validRole(kafParticipant.getRole())) {
-                        continue;
-                    }
-                    //// we take all objects above threshold
-                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
-                    for (int l = 0; l < semObjects.size(); l++) {
-                        SemObject semObject = semObjects.get(l);
-                        if (semObject!=null) {
-                            SemRelation semRelation = new SemRelation();
-                            String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
-                            semRelation.setId(relationInstanceId);
-/*
-                            if (kafParticipant.getId().equals("rl130")) {
-                                System.out.println(semObject.getId());
-                            }
-*/
-                            ArrayList<String> termsIds = kafEvent.getSpanIds();
-                            for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
-                                String s = kafParticipant.getSpanIds().get(j);
-                                termsIds.add(s);
-                            }
-                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
-                            semRelation.addMention(mention);
-                            semRelation.addPredicate("hasSemActor");
-                            //// check the source and prefix accordingly
-                            semRelation.addPredicate(kafParticipant.getRole());
-                            for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
-                                KafSense kafSense = kafParticipant.getExternalReferences().get(j);
-                                semRelation.addPredicate(kafSense.getResource() + ":" + kafSense.getSensecode());
-                            }
-                            semRelation.setSubject(semEventId);
-                            semRelation.setObject(semObject.getId());
-                            semRelations.add(semRelation);
+        for (int i = 0; i < microSemEvents.size(); i++) {
+            SemObject microEvent = microSemEvents.get(i);
+            for (int k = 0; k < semEvents.size(); k++) {
+                SemObject event = semEvents.get(k);
+                if (!event.getURI().equals(microEvent.getURI())) {
+                    if (frameNetReader.frameNetConnected(microEvent, event) ||
+                            frameNetReader.frameNetConnected(event, microEvent)) {
+                        if (!Util.hasObjectUri(microSemEvents, event.getURI())) {
+                            microSemEvents.add(event);
                         }
                     }
                 }
             }
         }
+    }
+
+
+    /**
+     * Obtain events and participants through bridging relations
+     * @param semEvents
+     * @param microSemEvents
+     * @param microSemActors
+     * @param semRelations
+     */
+    static void getEventsThroughBridging (ArrayList<SemObject> semEvents,
+                                                   ArrayList<SemObject> microSemEvents,
+                                                   ArrayList<SemObject> microSemActors,
+                                                   ArrayList<SemRelation> semRelations
+    ) {
+        for (int i = 0; i < microSemActors.size(); i++) {
+            SemObject semObject = microSemActors.get(i);
+            for (int j = 0; j < semRelations.size(); j++) {
+                SemRelation semRelation = semRelations.get(j);
+                if (semRelation.getObject().equals(semObject.getURI())) {
+                    for (int k = 0; k < semEvents.size(); k++) {
+                        SemObject event = semEvents.get(k);
+                        if (event.getURI().equals(semRelation.getSubject())) {
+                            if (!Util.hasObjectUri(microSemEvents, event.getURI())) {
+                                microSemEvents.add(event);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Obtain participants through bridging relations
+     * @param microSemEvents
+     * @param semActors
+     * @param microSemActors
+     * @param semRelations
+     */
+    static void getActorsThroughBridging (ArrayList<SemObject> microSemEvents,
+                                                   ArrayList<SemObject> semActors,
+                                                   ArrayList<SemObject> microSemActors,
+                                                   ArrayList<SemRelation> semRelations
+    ) {
+        for (int i = 0; i < microSemEvents.size(); i++) {
+            SemObject semEvent = microSemEvents.get(i);
+            for (int j = 0; j < semRelations.size(); j++) {
+                SemRelation semRelation = semRelations.get(j);
+                if (semRelation.getSubject().equals(semEvent.getURI())) {
+                    for (int k = 0; k < semActors.size(); k++) {
+                        SemObject actor = semActors.get(k);
+                        if (actor.getURI().equals(semRelation.getObject())) {
+                            if (!Util.hasObjectUri(microSemActors, actor.getURI())) {
+                                microSemActors.add(actor);
+                            }
+                                //Util.addObject(microSemActors, actor);
+                            }
+                        }
+                    }
+                }
+            }
     }
 }

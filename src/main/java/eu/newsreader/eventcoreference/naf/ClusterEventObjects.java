@@ -3,6 +3,7 @@ package eu.newsreader.eventcoreference.naf;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.coref.ComponentMatch;
+import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.util.Util;
 
@@ -39,9 +40,11 @@ public class ClusterEventObjects {
     static Vector<String> communicationVector = null;
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
+    static FrameNetReader frameNetReader = new FrameNetReader();
     static final int TIMEEXPRESSIONMAX = 5;
     static boolean MICROSTORIES = false;
     static Integer SENTENCERANGE = 0;
+    static boolean BRIDGING = false;
     static String done = "";
 
     static public void main (String [] args) {
@@ -58,10 +61,17 @@ public class ClusterEventObjects {
         //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup";
        // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
         String projectName  = "";
-        String extension = ".naf";
-        String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
-        String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/contextual.txt";
-        String grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/grammatical.txt";
+        String extension = "";
+        String comFrameFile = "";
+        String contextualFrameFile = "";
+        String grammaticalFrameFile = "";
+        String fnFile = "";
+/*
+        extension = ".naf";
+        comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
+        contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/contextual.txt";
+        grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/grammatical.txt";
+*/
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -77,9 +87,15 @@ public class ClusterEventObjects {
             else if (arg.equals("--project") && args.length>(i+1)) {
                 projectName = args[i+1];
             }
+            else if (arg.equals("--bridging")) {
+                BRIDGING = true;
+            }
             else if (arg.equals("--microstories")&& args.length>(i+1)) {
                 MICROSTORIES = true;
                 SENTENCERANGE = Integer.parseInt(args[i+1]);
+            }
+            else if (arg.equals("--frame-relations") && args.length>(i+1)) {
+                fnFile = args[i+1];
             }
             else if (arg.equals("--communication-frames") && args.length>(i+1)) {
                 comFrameFile = args[i+1];
@@ -93,6 +109,10 @@ public class ClusterEventObjects {
             else if (arg.equals("--rename") && args.length>(i+1)) {
                 done = args[i+1];
             }
+        }
+
+        if (!fnFile.isEmpty()) {
+            frameNetReader.parseFile(fnFile);
         }
         //// read resources
         communicationVector = Util.ReadFileToStringVector(comFrameFile);
@@ -327,7 +347,9 @@ public class ClusterEventObjects {
     }
 
 
-    /**
+/*
+    */
+/**
      * @Deprecated
      * @param project
      * @param kafSaxParser
@@ -341,7 +363,8 @@ public class ClusterEventObjects {
      * @param semRelations
      * @param factRelations
      * @throws IOException
-     */
+     *//*
+
     static void processKafSaxParser(String project, KafSaxParser kafSaxParser,
                                     File speechFolder, File otherFolder, File grammaticalFolder,
                                     ArrayList<SemObject> semEvents ,
@@ -393,10 +416,12 @@ public class ClusterEventObjects {
             ArrayList<SemTime> outputTimes = myTimes;
             // eventFos.writeObject(compositeEvent);
             /// now we need to write the event data and relations to the proper time folder for comparison
+*/
 /*                if (outputTimes.size() == 0) {
                     /// we use the doc times as fall back;
                     outputTimes = compositeEvent.getMyDocTimes();
-                }*/
+                }*//*
+
             if (outputTimes.size() == 0) {
                 /// timeless
                 timeFile = new File(folder.getAbsolutePath() + "/" + "events-" + "timeless" + ".obj");
@@ -453,6 +478,7 @@ public class ClusterEventObjects {
             }
         }
     }
+*/
 
 
     static void processKafSaxParserOutputFolder(String nafFileName, String project, KafSaxParser kafSaxParser,
@@ -467,12 +493,30 @@ public class ClusterEventObjects {
 
         if (MICROSTORIES) {
             GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-           // System.out.println("semEvents = " + semEvents.size());
-            semEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
-            semActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
-            semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
-            semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
-          //  System.out.println("micro semEvents = " + semEvents.size());
+            ArrayList<SemObject> microSemEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
+            ArrayList<SemObject> microSemActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
+            //semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
+            // semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
+
+            System.out.println("microSemEvents = " + microSemEvents.size());
+            System.out.println("microSemActors = " + microSemActors.size());
+
+            if (BRIDGING) {
+                CreateMicrostory.getEventsThroughBridging(semEvents, microSemEvents, microSemActors, semRelations);
+                CreateMicrostory.getActorsThroughBridging(microSemEvents, semActors, microSemActors, semRelations);
+                System.out.println("bridgedEvents = " + microSemEvents.size());
+                System.out.println("bridgedActors = " + microSemActors.size());
+                if (frameNetReader.subToSuperFrame.size()>0) {
+                    CreateMicrostory.getEventsThroughFrameNetBridging(semEvents, microSemEvents, frameNetReader);
+                    System.out.println("bridgedEvents = " + microSemEvents.size());
+                }
+            }
+
+            semEvents = microSemEvents;
+            semActors = microSemActors;
+
+            System.out.println("semEvents = " + semEvents.size());
+            System.out.println("semActors = " + semActors.size());
         }
         else {
             GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);

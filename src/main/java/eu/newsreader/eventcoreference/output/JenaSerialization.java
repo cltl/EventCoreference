@@ -131,15 +131,18 @@ public class JenaSerialization {
                 }
             }
         }
-        // System.out.println("IliUri = " + IliUri);
+       // System.out.println("IliUri = " + IliUri);
         if (!IliUri.isEmpty()) {
             IliUri = ResourcesUri.nwrontology+IliUri;
             compositeEvent.getEvent().setId(IliUri);
+            compositeEvent.getEvent().setUri(IliUri);
             for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
                 SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
                 semRelation.setSubject(IliUri);
             }
         }
+      //  System.out.println("compositeEvent = " + compositeEvent.getEvent().getId());
+      //  System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
     }
 
     static public void addJenaCompositeEvents (

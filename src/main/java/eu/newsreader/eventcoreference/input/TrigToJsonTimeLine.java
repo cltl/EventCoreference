@@ -236,6 +236,38 @@ public class TrigToJsonTimeLine {
 
     //        TimeLanguage.setLanguage(kafSaxParser.getLanguage());
 
+    static public String getSynsetsFromIli (String key) {
+        String synset = "";
+        int idx = key.lastIndexOf("/");
+        if (idx>-1) key = key.substring(idx+1);
+        synset = key;
+        ArrayList<String> synsetArray = new ArrayList<String>();
+        String [] ilis = key.split("-and-");
+        for (int i = 0; i < ilis.length; i++) {
+            String ili = ilis[i];
+            if (iliMap.containsKey(ili)) {
+                ArrayList<String> syns = iliMap.get(ili);
+                for (int j = 0; j < syns.size(); j++) {
+                    String s = syns.get(j);
+                    s = s.substring(0, s.indexOf("%"));
+                    if (!synsetArray.contains(s)) {
+                        synsetArray.add(s);
+                    }
+                }
+            }
+        }
+        if (synsetArray.size()>0) {
+            synset = "";
+            for (int i = 0; i < synsetArray.size(); i++) {
+                String s = synsetArray.get(i);
+                if (!synset.isEmpty()) {
+                    synset+= ";";
+                }
+                synset += s;
+            }
+        }
+        return synset;
+    }
 
     static ArrayList<JSONObject> getJSONObjectArray() throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
@@ -253,7 +285,7 @@ public class TrigToJsonTimeLine {
                     }
                     else {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("event", key);
+                        jsonObject.put("event", getSynsetsFromIli(key));
                         String timeAnchor = getTimeAnchor(otherTriples);
                         int idx = timeAnchor.lastIndexOf("/");
                         if (idx>-1) {
@@ -445,6 +477,52 @@ public class TrigToJsonTimeLine {
     }
 
     static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+        JSONObject jsonActorsObject = new JSONObject();
+
+        HashMap<String, ArrayList<Statement>> actorMap = new HashMap<String, ArrayList<Statement>>();
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.toLowerCase().endsWith("hastime")) {
+                ///
+            }
+            else if (predicate.toLowerCase().endsWith("hasactor")) {
+                ///
+            }
+            else {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String property = getNameSpaceString(predicate);
+                if (!property.isEmpty()) {
+                    if (ACTORNAMESPACES.indexOf(property)>-1 || ACTORNAMESPACES.isEmpty()) {
+                        if (property.equalsIgnoreCase("pb")) {
+                            predicate = property + "/" + RoleLabels.normalizeProbBankValue(getValue(predicate));
+                        }
+                        else {
+                            predicate = property + "/" + getValue(predicate);
+                        }
+                        String[] values = object.split(",");
+                        ArrayList<String> coveredValues = new ArrayList<String>();
+                        for (int j = 0; j < values.length; j++) {
+                            String value = values[j];
+                            if (!coveredValues.contains(value)) {
+                                coveredValues.add(value);
+                                jsonActorsObject.append(predicate, value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return jsonActorsObject;
+    }
+
+    static JSONObject getUniqueActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
         JSONObject jsonActorsObject = new JSONObject();
 
         HashMap<String, ArrayList<Statement>> actorMap = new HashMap<String, ArrayList<Statement>>();
