@@ -66,6 +66,7 @@ public class ClusterEventObjects {
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";
         String fnFile = "";
+        int fnLevel = 0;
 /*
         extension = ".naf";
         comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
@@ -97,6 +98,13 @@ public class ClusterEventObjects {
             else if (arg.equals("--frame-relations") && args.length>(i+1)) {
                 fnFile = args[i+1];
             }
+            else if (arg.equals("--frame-level") && args.length>(i+1)) {
+                try {
+                    fnLevel = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
             else if (arg.equals("--communication-frames") && args.length>(i+1)) {
                 comFrameFile = args[i+1];
             }
@@ -113,7 +121,7 @@ public class ClusterEventObjects {
 
         if (!fnFile.isEmpty()) {
             frameNetReader.parseFile(fnFile);
-            frameNetReader.flatRelations(2);
+            frameNetReader.flatRelations(fnLevel);
             System.out.println("frameNetReader sub= " + frameNetReader.subToSuperFrame.size());
             System.out.println("frameNetReader super= " + frameNetReader.superToSubFrame.size());
         }
