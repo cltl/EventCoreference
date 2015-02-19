@@ -113,6 +113,9 @@ public class ClusterEventObjects {
 
         if (!fnFile.isEmpty()) {
             frameNetReader.parseFile(fnFile);
+            frameNetReader.flatRelations(2);
+            System.out.println("frameNetReader sub= " + frameNetReader.subToSuperFrame.size());
+            System.out.println("frameNetReader super= " + frameNetReader.superToSubFrame.size());
         }
         //// read resources
         communicationVector = Util.ReadFileToStringVector(comFrameFile);
@@ -508,7 +511,7 @@ public class ClusterEventObjects {
                 System.out.println("bridgedActors = " + microSemActors.size());
                 if (frameNetReader.subToSuperFrame.size()>0) {
                     CreateMicrostory.getEventsThroughFrameNetBridging(semEvents, microSemEvents, frameNetReader);
-                    System.out.println("bridgedEvents = " + microSemEvents.size());
+                    System.out.println("fn bridgedEvents = " + microSemEvents.size());
                 }
             }
 
