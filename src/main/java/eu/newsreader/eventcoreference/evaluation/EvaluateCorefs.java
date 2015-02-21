@@ -85,7 +85,11 @@ public class EvaluateCorefs {
             }
             else if (arg.equalsIgnoreCase("--namesubstring")) {
                 if (args.length>i+1) {
-                    nameSubString = Integer.parseInt(args[i+1]);
+                    try {
+                        nameSubString = Integer.parseInt(args[i+1]);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             else if (arg.equalsIgnoreCase("--debug")) {
@@ -93,7 +97,11 @@ public class EvaluateCorefs {
             }
             else if (arg.equalsIgnoreCase("--cardinality")) {
                 if (args.length>i+1) {
-                    cardinality = Integer.parseInt(args[i+1]);
+                    try {
+                        cardinality = Integer.parseInt(args[i+1]);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

@@ -148,7 +148,12 @@ certainty="CERTAIN" polarity="POS" tense="PRESENT" modality="" pred="unveil" com
         if (qName.equalsIgnoreCase("token")) {
             kafWordForm = new KafWordForm();
             kafWordForm.setWid(attributes.getValue("t_id"));
-            Integer sentenceInt = Integer.parseInt(attributes.getValue("sentence"));
+            Integer sentenceInt = 0;
+            try {
+                sentenceInt = Integer.parseInt(attributes.getValue("sentence"));
+            } catch (NumberFormatException e) {
+               // e.printStackTrace();
+            }
             sentenceInt++;
             kafWordForm.setSent(sentenceInt.toString());
         }
