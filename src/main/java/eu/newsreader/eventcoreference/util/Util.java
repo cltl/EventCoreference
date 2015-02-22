@@ -1049,21 +1049,23 @@ public class Util {
             NafMention nafMention1 = semObject1.getNafMentions().get(i);
             for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                 NafMention nafMention2 = semObject2.getNafMentions().get(k);
-                if (nafMention1.getSentence().equals(nafMention2.getSentence())) {
-                    //if (semObject2.getId().endsWith("tmx7")) System.out.println(nafMention1.getSentence()+":" + nafMention2.getSentence());
-                    for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
-                        String id = nafMention1.getTermsIds().get(m);
-                        if (!ids.contains(id)) {
-                            ids.add(id);
+                if (!nafMention2.getSentence().isEmpty()) {
+                    if (nafMention1.getSentence().equals(nafMention2.getSentence())) {
+                        //if (semObject2.getId().endsWith("tmx7")) System.out.println(nafMention1.getSentence()+":" + nafMention2.getSentence());
+                        for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
+                            String id = nafMention1.getTermsIds().get(m);
+                            if (!ids.contains(id)) {
+                                ids.add(id);
+                            }
                         }
-                    }
-                    for (int m = 0; m < nafMention2.getTermsIds().size(); m++) {
-                        String id = nafMention2.getTermsIds().get(m);
-                        if (!ids.contains(id)) {
-                            ids.add(id);
+                        for (int m = 0; m < nafMention2.getTermsIds().size(); m++) {
+                            String id = nafMention2.getTermsIds().get(m);
+                            if (!ids.contains(id)) {
+                                ids.add(id);
+                            }
                         }
+                        break;
                     }
-                    break;
                 }
             }
         }
@@ -1082,37 +1084,41 @@ public class Util {
             NafMention nafMention1 = semObject1.getNafMentions().get(i);
             for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                 NafMention nafMention2 = semObject2.getNafMentions().get(k);
-                try {
-                    int s1 = 0;
+                if (!nafMention2.getSentence().isEmpty()) {
                     try {
-                        s1 = Integer.parseInt(nafMention1.getSentence());
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                    int s2 = 0;
-                    try {
-                        s2 = Integer.parseInt(nafMention2.getSentence());
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                    if (s1-1==s2 || s1+1==s2) {
-                       // if (semObject2.getId().endsWith("tmx7")) System.out.println(s1+":"+s2);
-                        for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
-                            String id = nafMention1.getTermsIds().get(m);
-                            if (!ids.contains(id)) {
-                                ids.add(id);
+                        int s1 = 0;
+                        try {
+                            s1 = Integer.parseInt(nafMention1.getSentence());
+                            int s2 = 0;
+                            try {
+                                s2 = Integer.parseInt(nafMention2.getSentence());
+                                if (s1 - 1 == s2 || s1 + 1 == s2) {
+                                    // if (semObject2.getId().endsWith("tmx7")) System.out.println(s1+":"+s2);
+                                    for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
+                                        String id = nafMention1.getTermsIds().get(m);
+                                        if (!ids.contains(id)) {
+                                            ids.add(id);
+                                        }
+                                    }
+                                    for (int m = 0; m < nafMention2.getTermsIds().size(); m++) {
+                                        String id = nafMention2.getTermsIds().get(m);
+                                        if (!ids.contains(id)) {
+                                            ids.add(id);
+                                        }
+                                    }
+                                    break;
+                                }
+                            } catch (NumberFormatException e) {
+                                /// the document creation time is presented as a timex without span
+                                /// this results in empty sentence and an error
+                                    e.printStackTrace();
                             }
+                        } catch (NumberFormatException e) {
+                              e.printStackTrace();
                         }
-                        for (int m = 0; m < nafMention2.getTermsIds().size(); m++) {
-                            String id = nafMention2.getTermsIds().get(m);
-                            if (!ids.contains(id)) {
-                                ids.add(id);
-                            }
-                        }
-                        break;
+                    } catch (NumberFormatException e) {
+                         e.printStackTrace();
                     }
-                } catch (NumberFormatException e) {
-                    // e.printStackTrace();
                 }
             }
         }
@@ -1131,37 +1137,40 @@ public class Util {
             NafMention nafMention1 = semObject1.getNafMentions().get(i);
             for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                 NafMention nafMention2 = semObject2.getNafMentions().get(k);
-                try {
-                    int s1 = 0;
+                if (!nafMention2.getSentence().isEmpty()) {
                     try {
-                        Integer.parseInt(nafMention1.getSentence());
-                    } catch (NumberFormatException e) {
-                       // e.printStackTrace();
-                    }
-                    int s2 = 0;
-                    try {
-                        Integer.parseInt(nafMention2.getSentence());
-                    } catch (NumberFormatException e) {
-                      // e.printStackTrace();
-                    }
-                    if (s1==s2 || s1-1==s2 || s1-2==s2 || s1+1==s2) {
-                       // if (semObject2.getId().endsWith("tmx7")) System.out.println(s1+":"+s2);
-                        for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
-                            String id = nafMention1.getTermsIds().get(m);
-                            if (!ids.contains(id)) {
-                                ids.add(id);
+                        int s1 = 0;
+                        try {
+                            Integer.parseInt(nafMention1.getSentence());
+                            int s2 = 0;
+                            try {
+                                Integer.parseInt(nafMention2.getSentence());
+                                if (s1 == s2 || s1 - 1 == s2 || s1 - 2 == s2 || s1 + 1 == s2) {
+                                    // if (semObject2.getId().endsWith("tmx7")) System.out.println(s1+":"+s2);
+                                    for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
+                                        String id = nafMention1.getTermsIds().get(m);
+                                        if (!ids.contains(id)) {
+                                            ids.add(id);
+                                        }
+                                    }
+                                    for (int m = 0; m < nafMention2.getTermsIds().size(); m++) {
+                                        String id = nafMention2.getTermsIds().get(m);
+                                        if (!ids.contains(id)) {
+                                            ids.add(id);
+                                        }
+                                    }
+                                    break;
+                                }
+                            } catch (NumberFormatException e) {
+                                // e.printStackTrace();
                             }
+
+                        } catch (NumberFormatException e) {
+                            // e.printStackTrace();
                         }
-                        for (int m = 0; m < nafMention2.getTermsIds().size(); m++) {
-                            String id = nafMention2.getTermsIds().get(m);
-                            if (!ids.contains(id)) {
-                                ids.add(id);
-                            }
-                        }
-                        break;
+                    } catch (NumberFormatException e) {
+                        // e.printStackTrace();
                     }
-                } catch (NumberFormatException e) {
-                    // e.printStackTrace();
                 }
             }
         }
@@ -1183,30 +1192,32 @@ public class Util {
                 KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
                 for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                     NafMention nafMention2 = semObject2.getNafMentions().get(k);
-                    for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
-                        String tokenId2 = nafMention2.getTokensIds().get(l);
-                        KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
-                        if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
-                            return true;
-                        }
-                        try {
-                            int s1 = 0;
-                            try {
-                                Integer.parseInt(kafWordForm1.getSent());
-                            } catch (NumberFormatException e) {
-                               // e.printStackTrace();
-                            }
-                            int s2 = 0;
-                            try {
-                                Integer.parseInt(kafWordForm2.getSent());
-                            } catch (NumberFormatException e) {
-                               // e.printStackTrace();
-                            }
-                            if (s1==s2 || s1-1==s2 || s1-2==s2 || s1+1==s2) {
+                    if (!nafMention2.getSentence().isEmpty()) {
+                        for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                            String tokenId2 = nafMention2.getTokensIds().get(l);
+                            KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
+                            if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
                                 return true;
                             }
-                        } catch (NumberFormatException e) {
-                           // e.printStackTrace();
+                            try {
+                                int s1 = 0;
+                                try {
+                                    Integer.parseInt(kafWordForm1.getSent());
+                                    int s2 = 0;
+                                    try {
+                                        Integer.parseInt(kafWordForm2.getSent());
+                                        if (s1 == s2 || s1 - 1 == s2 || s1 - 2 == s2 || s1 + 1 == s2) {
+                                            return true;
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        // e.printStackTrace();
+                                    }
+                                } catch (NumberFormatException e) {
+                                    // e.printStackTrace();
+                                }
+                            } catch (NumberFormatException e) {
+                                // e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -1238,17 +1249,17 @@ public class Util {
                         int s1 = 0;
                         try {
                             Integer.parseInt(kafWordForm1.getSent());
+                            int s2 = 0;
+                            try {
+                                Integer.parseInt(kafWordForm2.getSent());
+                                if (s1==s2 || s1-1==s2 || s1-2==s2 || s1+1==s2) {
+                                    return true;
+                                }
+                            } catch (NumberFormatException e) {
+                                //  e.printStackTrace();
+                            }
                         } catch (NumberFormatException e) {
-                            e.printStackTrace();
-                        }
-                        int s2 = 0;
-                        try {
-                            Integer.parseInt(kafWordForm2.getSent());
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
-                        }
-                        if (s1==s2 || s1-1==s2 || s1-2==s2 || s1+1==s2) {
-                            return true;
+                           // e.printStackTrace();
                         }
                     } catch (NumberFormatException e) {
                        // e.printStackTrace();
@@ -1274,30 +1285,32 @@ public class Util {
                 KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
                 for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                     NafMention nafMention2 = semObject2.getNafMentions().get(k);
-                    for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
-                        String tokenId2 = nafMention2.getTokensIds().get(l);
-                        KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
-                        if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
-                            return true;
-                        }
-                        try {
-                            int s1 = 0;
-                            try {
-                                Integer.parseInt(kafWordForm1.getSent());
-                            } catch (NumberFormatException e) {
-                               // e.printStackTrace();
-                            }
-                            int s2 = 0;
-                            try {
-                                Integer.parseInt(kafWordForm2.getSent());
-                            } catch (NumberFormatException e) {
-                                //e.printStackTrace();
-                            }
-                            if (s1==s2 || s1-1==s2 || s1-2==s2 || s1-3==s2 ||s1-4==s2 ||s1-5==s2) {
+                    if (!nafMention2.getSentence().isEmpty()) {
+                        for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                            String tokenId2 = nafMention2.getTokensIds().get(l);
+                            KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
+                            if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
                                 return true;
                             }
-                        } catch (NumberFormatException e) {
-                           // e.printStackTrace();
+                            try {
+                                int s1 = 0;
+                                try {
+                                    Integer.parseInt(kafWordForm1.getSent());
+                                } catch (NumberFormatException e) {
+                                    // e.printStackTrace();
+                                }
+                                int s2 = 0;
+                                try {
+                                    Integer.parseInt(kafWordForm2.getSent());
+                                } catch (NumberFormatException e) {
+                                    //e.printStackTrace();
+                                }
+                                if (s1 == s2 || s1 - 1 == s2 || s1 - 2 == s2 || s1 - 3 == s2 || s1 - 4 == s2 || s1 - 5 == s2) {
+                                    return true;
+                                }
+                            } catch (NumberFormatException e) {
+                                // e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -1430,6 +1443,9 @@ public class Util {
                 for (int i = 0; i < kafTerm.getSpans().size(); i++) {
                     String tokenId = kafTerm.getSpans().get(i);
                     KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
+                    if (kafWordForm==null) {
+                        continue;
+                    }
                     mention.addTokensId(kafWordForm.getWid());
                     if (!kafWordForm.getCharOffset().isEmpty()) {
                         int offSet = 0;
