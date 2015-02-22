@@ -1084,7 +1084,8 @@ public class Util {
             NafMention nafMention1 = semObject1.getNafMentions().get(i);
             for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                 NafMention nafMention2 = semObject2.getNafMentions().get(k);
-                if (!nafMention2.getSentence().isEmpty()) {
+                if ((!nafMention1.getSentence().isEmpty()) &&
+                        (!nafMention2.getSentence().isEmpty()))    {
                     try {
                         int s1 = 0;
                         try {
@@ -1137,8 +1138,8 @@ public class Util {
             NafMention nafMention1 = semObject1.getNafMentions().get(i);
             for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                 NafMention nafMention2 = semObject2.getNafMentions().get(k);
-                if (!nafMention2.getSentence().isEmpty()) {
-                    try {
+                if ((!nafMention1.getSentence().isEmpty()) &&
+                        (!nafMention2.getSentence().isEmpty()))    {                    try {
                         int s1 = 0;
                         try {
                             Integer.parseInt(nafMention1.getSentence());
@@ -1192,8 +1193,8 @@ public class Util {
                 KafWordForm kafWordForm1 = kafSaxParser.getWordForm(tokenId);
                 for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                     NafMention nafMention2 = semObject2.getNafMentions().get(k);
-                    if (!nafMention2.getSentence().isEmpty()) {
-                        for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
+                    if ((!nafMention1.getSentence().isEmpty()) &&
+                            (!nafMention2.getSentence().isEmpty()))    {                        for (int l = 0; l < nafMention2.getTokensIds().size(); l++) {
                             String tokenId2 = nafMention2.getTokensIds().get(l);
                             KafWordForm kafWordForm2 = kafSaxParser.getWordForm(tokenId2);
                             if (kafWordForm1.getSent().equals(kafWordForm2.getSent())) {
