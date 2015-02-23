@@ -521,6 +521,8 @@ public class ClusterEventObjects {
                     CreateMicrostory.getEventsThroughFrameNetBridging(semEvents, microSemEvents, frameNetReader);
                     System.out.println("fn bridgedEvents = " + microSemEvents.size());
                 }
+                CreateMicrostory.getEventsThroughNafEventRelations(semEvents, microSemEvents, kafSaxParser);
+                System.out.println("NAF event relations bridgedEvents = " + microSemEvents.size());
             }
 
             semEvents = microSemEvents;

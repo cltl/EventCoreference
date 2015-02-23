@@ -1,5 +1,6 @@
 package eu.newsreader.eventcoreference.naf;
 
+import eu.kyotoproject.kaf.KafEventRelation;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.objects.NafMention;
@@ -160,7 +161,7 @@ public class CreateMicrostory {
     }
 
     /**
-     * Obtain events and participants through bridging relations
+     * Obtain events and participants through FN relations
      * @param semEvents
      * @param microSemEvents
      * @param frameNetReader
@@ -179,6 +180,50 @@ public class CreateMicrostory {
                         if (!Util.hasObjectUri(microSemEvents, event.getURI())) {
                             microSemEvents.add(event);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Obtain events and participants through NAF event relations
+     * @param semEvents
+     * @param microSemEvents
+     * @param kafSaxParser
+     */
+    static void getEventsThroughNafEventRelations (ArrayList<SemObject> semEvents,
+                                                  ArrayList<SemObject> microSemEvents,
+                                                  KafSaxParser kafSaxParser
+    ) {
+        for (int i = 0; i < microSemEvents.size(); i++) {
+            SemObject microEvent = microSemEvents.get(i);
+            for (int k = 0; k < semEvents.size(); k++) {
+                SemObject event = semEvents.get(k);
+                if (!event.getURI().equals(microEvent.getURI())) {
+                    boolean relatedMicro = false;
+                    boolean relatedEvent = false;
+                    for (int j = 0; j < kafSaxParser.kafTlinks.size(); j++) {
+                        KafEventRelation kafEventRelation = kafSaxParser.kafTlinks.get(j);
+                        for (int l = 0; l < microEvent.getNafMentions().size(); l++) {
+                            NafMention nafMention = microEvent.getNafMentions().get(l);
+                            if (nafMention.getTermsIds().contains(kafEventRelation.getFrom()) ||
+                                nafMention.getTermsIds().contains(kafEventRelation.getTo())) {
+                                relatedMicro = true;
+                                break;
+                            }
+                        }
+                        for (int l = 0; l < event.getNafMentions().size(); l++) {
+                            NafMention nafMention = event.getNafMentions().get(l);
+                            if (nafMention.getTermsIds().contains(kafEventRelation.getFrom()) ||
+                                nafMention.getTermsIds().contains(kafEventRelation.getTo())) {
+                                relatedEvent = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (relatedMicro && relatedEvent) {
+                            microSemEvents.add(event);
                     }
                 }
             }
