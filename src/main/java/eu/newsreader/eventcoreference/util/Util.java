@@ -1595,7 +1595,25 @@ public class Util {
         return mention;
     }
 
-
+    static public ArrayList<String> getPredicateIdsForNafMentions (ArrayList<NafMention> nafMentions, KafSaxParser kafSaxParser) {
+        ArrayList<String> predicateIds = new ArrayList<String>();
+        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+            KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
+            for (int j = 0; j < nafMentions.size(); j++) {
+                NafMention nafMention = nafMentions.get(j);
+                for (int k = 0; k < nafMention.getTermsIds().size(); k++) {
+                    String termId =  nafMention.getTermsIds().get(k);
+                    if (kafEvent.getSpanIds().contains(termId)) {
+                        if (!predicateIds.contains(kafEvent.getId())) {
+                            predicateIds.add(kafEvent.getId());
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return predicateIds;
+    }
 
     static public boolean matchTimeReference (ArrayList<SemTime> times1, ArrayList<SemTime> times2, String time1Id, String time2Id) {
         SemTime semTime1 = null;

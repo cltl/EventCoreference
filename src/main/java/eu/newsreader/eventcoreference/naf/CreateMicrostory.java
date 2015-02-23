@@ -166,7 +166,7 @@ public class CreateMicrostory {
      * @param microSemEvents
      * @param frameNetReader
      */
-    static void getEventsThroughFrameNetBridging (ArrayList<SemObject> semEvents,
+    static void addEventsThroughFrameNetBridging (ArrayList<SemObject> semEvents,
                                                   ArrayList<SemObject> microSemEvents,
                                                   FrameNetReader frameNetReader
     ) {
@@ -186,48 +186,102 @@ public class CreateMicrostory {
         }
     }
 
+    static ArrayList<SemObject> getEventsThroughFrameNetBridging (ArrayList<SemObject> semEvents,
+                                                  ArrayList<SemObject> microSemEvents,
+                                                  FrameNetReader frameNetReader
+    ) { ArrayList<SemObject> fnRelatedEvents = new ArrayList<SemObject>();
+        for (int i = 0; i < microSemEvents.size(); i++) {
+            SemObject microEvent = microSemEvents.get(i);
+            for (int k = 0; k < semEvents.size(); k++) {
+                SemObject event = semEvents.get(k);
+                if (!event.getURI().equals(microEvent.getURI())) {
+                    if (frameNetReader.frameNetConnected(microEvent, event) ||
+                            frameNetReader.frameNetConnected(event, microEvent)) {
+                        if (!Util.hasObjectUri(microSemEvents, event.getURI()) &&
+                            !Util.hasObjectUri(fnRelatedEvents, event.getURI())) {
+                            fnRelatedEvents.add(event);
+                        }
+                    }
+                }
+            }
+        }
+        return fnRelatedEvents;
+    }
+
     /**
      * Obtain events and participants through NAF event relations
      * @param semEvents
      * @param microSemEvents
      * @param kafSaxParser
      */
-    static void getEventsThroughNafEventRelations (ArrayList<SemObject> semEvents,
+    static void addEventsThroughNafEventRelations (ArrayList<SemObject> semEvents,
                                                   ArrayList<SemObject> microSemEvents,
                                                   KafSaxParser kafSaxParser
     ) {
         for (int i = 0; i < microSemEvents.size(); i++) {
             SemObject microEvent = microSemEvents.get(i);
+            ArrayList<String> microPredicateIds = Util.getPredicateIdsForNafMentions(microEvent.getNafMentions(), kafSaxParser);
             for (int k = 0; k < semEvents.size(); k++) {
                 SemObject event = semEvents.get(k);
                 if (!event.getURI().equals(microEvent.getURI())) {
-                    boolean relatedMicro = false;
-                    boolean relatedEvent = false;
+                    ArrayList<String> eventPredicateIds = Util.getPredicateIdsForNafMentions(microEvent.getNafMentions(), kafSaxParser);
                     for (int j = 0; j < kafSaxParser.kafTlinks.size(); j++) {
                         KafEventRelation kafEventRelation = kafSaxParser.kafTlinks.get(j);
-                        for (int l = 0; l < microEvent.getNafMentions().size(); l++) {
-                            NafMention nafMention = microEvent.getNafMentions().get(l);
-                            if (nafMention.getTermsIds().contains(kafEventRelation.getFrom()) ||
-                                nafMention.getTermsIds().contains(kafEventRelation.getTo())) {
-                                relatedMicro = true;
-                                break;
+                        if (microPredicateIds.contains(kafEventRelation.getFrom()) ||
+                                eventPredicateIds.contains(kafEventRelation.getTo())) {
+                            if (!Util.hasObjectUri(microSemEvents, event.getURI())) {
+                                microSemEvents.add(event);
                             }
+                            break;
                         }
-                        for (int l = 0; l < event.getNafMentions().size(); l++) {
-                            NafMention nafMention = event.getNafMentions().get(l);
-                            if (nafMention.getTermsIds().contains(kafEventRelation.getFrom()) ||
-                                nafMention.getTermsIds().contains(kafEventRelation.getTo())) {
-                                relatedEvent = true;
-                                break;
+                        if (eventPredicateIds.contains(kafEventRelation.getFrom()) ||
+                                microPredicateIds.contains(kafEventRelation.getTo())) {
+                            if (!Util.hasObjectUri(microSemEvents, event.getURI())) {
+                                microSemEvents.add(event);
                             }
+                            break;
                         }
-                    }
-                    if (relatedMicro && relatedEvent) {
-                            microSemEvents.add(event);
                     }
                 }
             }
         }
+    }
+
+    static ArrayList<SemObject> getEventsThroughNafEventRelations (ArrayList<SemObject> semEvents,
+                                                  ArrayList<SemObject> microSemEvents,
+                                                  KafSaxParser kafSaxParser
+    ) {
+        ArrayList<SemObject> relatedEvents = new ArrayList<SemObject>();
+        for (int i = 0; i < microSemEvents.size(); i++) {
+            SemObject microEvent = microSemEvents.get(i);
+            ArrayList<String> microPredicateIds = Util.getPredicateIdsForNafMentions(microEvent.getNafMentions(), kafSaxParser);
+            for (int k = 0; k < semEvents.size(); k++) {
+                SemObject event = semEvents.get(k);
+                if (!event.getURI().equals(microEvent.getURI())) {
+                    ArrayList<String> eventPredicateIds = Util.getPredicateIdsForNafMentions(microEvent.getNafMentions(), kafSaxParser);
+                    for (int j = 0; j < kafSaxParser.kafTlinks.size(); j++) {
+                        KafEventRelation kafEventRelation = kafSaxParser.kafTlinks.get(j);
+                        if (microPredicateIds.contains(kafEventRelation.getFrom()) &&
+                                eventPredicateIds.contains(kafEventRelation.getTo())) {
+                            if (!Util.hasObjectUri(microSemEvents, event.getURI()) &&
+                                    !Util.hasObjectUri(relatedEvents, event.getURI())) {
+                                relatedEvents.add(event);
+                            }
+                            break;
+                        }
+                        if (eventPredicateIds.contains(kafEventRelation.getFrom()) &&
+                                microPredicateIds.contains(kafEventRelation.getTo())) {
+                            if (!Util.hasObjectUri(microSemEvents, event.getURI()) &&
+                                !Util.hasObjectUri(relatedEvents, event.getURI())) {
+                                relatedEvents.add(event);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return relatedEvents;
     }
 
 
@@ -238,10 +292,10 @@ public class CreateMicrostory {
      * @param microSemActors
      * @param semRelations
      */
-    static void getEventsThroughBridging (ArrayList<SemObject> semEvents,
-                                                   ArrayList<SemObject> microSemEvents,
-                                                   ArrayList<SemObject> microSemActors,
-                                                   ArrayList<SemRelation> semRelations
+    static void addEventsThroughCoparticipation(ArrayList<SemObject> semEvents,
+                                                ArrayList<SemObject> microSemEvents,
+                                                ArrayList<SemObject> microSemActors,
+                                                ArrayList<SemRelation> semRelations
     ) {
         for (int i = 0; i < microSemActors.size(); i++) {
             SemObject semObject = microSemActors.get(i);
@@ -261,6 +315,32 @@ public class CreateMicrostory {
         }
     }
 
+    static ArrayList<SemObject> getEventsThroughCoparticipation(ArrayList<SemObject> semEvents,
+                                                ArrayList<SemObject> microSemEvents,
+                                                ArrayList<SemObject> microSemActors,
+                                                ArrayList<SemRelation> semRelations
+    ) {
+        ArrayList<SemObject> coparticipationEvents = new ArrayList<SemObject>();
+        for (int i = 0; i < microSemActors.size(); i++) {
+            SemObject semObject = microSemActors.get(i);
+            for (int j = 0; j < semRelations.size(); j++) {
+                SemRelation semRelation = semRelations.get(j);
+                if (semRelation.getObject().equals(semObject.getURI())) {
+                    for (int k = 0; k < semEvents.size(); k++) {
+                        SemObject event = semEvents.get(k);
+                        if (event.getURI().equals(semRelation.getSubject())) {
+                            if (!Util.hasObjectUri(microSemEvents, event.getURI()) &&
+                                !Util.hasObjectUri(coparticipationEvents, event.getURI())) {
+                                coparticipationEvents.add(event);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return coparticipationEvents;
+    }
+
 
     /**
      * Obtain participants through bridging relations
@@ -269,10 +349,10 @@ public class CreateMicrostory {
      * @param microSemActors
      * @param semRelations
      */
-    static void getActorsThroughBridging (ArrayList<SemObject> microSemEvents,
-                                                   ArrayList<SemObject> semActors,
-                                                   ArrayList<SemObject> microSemActors,
-                                                   ArrayList<SemRelation> semRelations
+    static void addActorsThroughCoparticipation(ArrayList<SemObject> microSemEvents,
+                                                ArrayList<SemObject> semActors,
+                                                ArrayList<SemObject> microSemActors,
+                                                ArrayList<SemRelation> semRelations
     ) {
         for (int i = 0; i < microSemEvents.size(); i++) {
             SemObject semEvent = microSemEvents.get(i);
@@ -292,4 +372,32 @@ public class CreateMicrostory {
                 }
             }
     }
+
+    static ArrayList<SemObject> getActorsThroughCoparticipation(ArrayList<SemObject> microSemEvents,
+                                                ArrayList<SemObject> semActors,
+                                                ArrayList<SemObject> microSemActors,
+                                                ArrayList<SemRelation> semRelations
+    ) {
+        ArrayList<SemObject> coparticipantActors = new ArrayList<SemObject>();
+        for (int i = 0; i < microSemEvents.size(); i++) {
+            SemObject semEvent = microSemEvents.get(i);
+            for (int j = 0; j < semRelations.size(); j++) {
+                SemRelation semRelation = semRelations.get(j);
+                if (semRelation.getSubject().equals(semEvent.getURI())) {
+                    for (int k = 0; k < semActors.size(); k++) {
+                        SemObject actor = semActors.get(k);
+                        if (actor.getURI().equals(semRelation.getObject())) {
+                            if (!Util.hasObjectUri(microSemActors, actor.getURI()) &&
+                                !Util.hasObjectUri(coparticipantActors, actor.getURI())) {
+                                coparticipantActors.add(actor);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return coparticipantActors;
+    }
+
+
 }

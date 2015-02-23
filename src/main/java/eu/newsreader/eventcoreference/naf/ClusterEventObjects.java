@@ -504,32 +504,65 @@ public class ClusterEventObjects {
 
         if (MICROSTORIES) {
             GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+
+            System.out.println("all semEvents.size() = " + semEvents.size());
+            System.out.println("all semActors.size() = " + semActors.size());
             ArrayList<SemObject> microSemEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
             ArrayList<SemObject> microSemActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
-            //semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
-            // semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
 
-            System.out.println("microSemEvents = " + microSemEvents.size());
-            System.out.println("microSemActors = " + microSemActors.size());
+            System.out.println("microSemEvents (sentence range:"+SENTENCERANGE+ ") = " + microSemEvents.size());
+            System.out.println("microSemActors (sentence range:"+SENTENCERANGE+ ") = " + microSemActors.size());
 
             if (BRIDGING) {
-                CreateMicrostory.getEventsThroughBridging(semEvents, microSemEvents, microSemActors, semRelations);
-                CreateMicrostory.getActorsThroughBridging(microSemEvents, semActors, microSemActors, semRelations);
-                System.out.println("bridgedEvents = " + microSemEvents.size());
-                System.out.println("bridgedActors = " + microSemActors.size());
+                ArrayList<SemObject> coparticipationEvents = CreateMicrostory.getEventsThroughCoparticipation(semEvents, microSemEvents, microSemActors, semRelations);
+                ArrayList<SemObject> coparticipationActors = CreateMicrostory.getActorsThroughCoparticipation(microSemEvents, semActors, microSemActors, semRelations);
+                System.out.println("events after co-participation = " + coparticipationEvents.size());
+                System.out.println("actors after co-participation = " + coparticipationActors.size());
+                ArrayList<SemObject> fnBridgingEvents = new ArrayList<SemObject>();
                 if (frameNetReader.subToSuperFrame.size()>0) {
-                    CreateMicrostory.getEventsThroughFrameNetBridging(semEvents, microSemEvents, frameNetReader);
-                    System.out.println("fn bridgedEvents = " + microSemEvents.size());
+                    fnBridgingEvents = CreateMicrostory.getEventsThroughFrameNetBridging(semEvents, microSemEvents, frameNetReader);
+                    System.out.println("events after fn bridging = " + fnBridgingEvents.size());
                 }
-                CreateMicrostory.getEventsThroughNafEventRelations(semEvents, microSemEvents, kafSaxParser);
-                System.out.println("NAF event relations bridgedEvents = " + microSemEvents.size());
+                ArrayList<SemObject> eventRelationEvents = CreateMicrostory.getEventsThroughNafEventRelations(semEvents, microSemEvents, kafSaxParser);
+                System.out.println("events after bridging through NAF event relations = " + eventRelationEvents.size());
+
+                semEvents = microSemEvents;
+                semActors = microSemActors;
+
+
+                for (int i = 0; i < coparticipationEvents.size(); i++) {
+                    SemObject semObject = coparticipationEvents.get(i);
+                    if (!Util.hasObject(semEvents, semObject)) {
+                        semEvents.add(semObject);
+                    }
+                }
+                for (int i = 0; i < coparticipationActors.size(); i++) {
+                    SemObject semObject = coparticipationActors.get(i);
+                    if (!Util.hasObject(semActors, semObject)) {
+                        semActors.add(semObject);
+                    }
+                }
+                for (int i = 0; i < fnBridgingEvents.size(); i++) {
+                    SemObject semObject = fnBridgingEvents.get(i);
+                    if (!Util.hasObject(semActors, semObject)) {
+                        semEvents.add(semObject);
+                    }
+                }
+                for (int i = 0; i < eventRelationEvents.size(); i++) {
+                    SemObject semObject = eventRelationEvents.get(i);
+                    if (!Util.hasObject(semEvents, semObject)) {
+                        semEvents.add(semObject);
+                    }
+                }
+            }
+            else {
+                semEvents = microSemEvents;
+                semActors = microSemActors;
             }
 
-            semEvents = microSemEvents;
-            semActors = microSemActors;
 
-            System.out.println("semEvents = " + semEvents.size());
-            System.out.println("semActors = " + semActors.size());
+            System.out.println("final microstory semEvents = " + semEvents.size());
+            System.out.println("final microstory semActors = " + semActors.size());
         }
         else {
             GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
