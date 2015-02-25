@@ -78,7 +78,9 @@ public class CreateMicrostory {
                     try {
                         Integer sentenceInteger = Integer.parseInt(sentenceId);
                         if (sentenceInteger <= sentenceRange) {
-                            microEvents.add(semEvent);
+                            if (!Util.hasObjectUri(microEvents, semEvent.getURI())) {
+                                microEvents.add(semEvent);
+                            }
                         }
                     } catch (NumberFormatException e) {
                         //  e.printStackTrace();

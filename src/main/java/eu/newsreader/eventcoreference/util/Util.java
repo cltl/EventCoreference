@@ -177,6 +177,20 @@ public class Util {
         return false;
     }
 
+    static public boolean hasObjectUriDEBUG(ArrayList<SemObject> objects, String objectURI) {
+        System.out.println("objectURI = " + objectURI);
+        for (int i = 0; i < objects.size(); i++) {
+            SemObject semObject = objects.get(i);
+            System.out.println("semObject.getURI() = " + semObject.getURI());
+            if (semObject.getURI().equals(objectURI)) {
+                System.out.println("MATCH");
+                 return true;
+            }
+        }
+        System.out.println("NO MATCH");
+        return false;
+    }
+
    /* static public void addObjectOrg(ArrayList<SemObject> objects, SemObject object) {
         boolean DEBUG = false;
 

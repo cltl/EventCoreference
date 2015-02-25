@@ -31,7 +31,7 @@ public class TrigToJsonTimeLine {
     static HashMap<String, ArrayList<Statement>> tripleMapOthers = new HashMap<String, ArrayList<Statement>>();
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static String ACTORNAMESPACES = "";
-
+    static boolean ALL = false; /// if true we do not filter events
 
     static public void main (String[] args) {
         String project = "NewsReader timeline";
@@ -277,13 +277,11 @@ public class TrigToJsonTimeLine {
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
             ArrayList<Statement> instanceTriples = tripleMapInstances.get(key);
-            if (hasILI(instanceTriples) || hasFrameNet(instanceTriples)) {
+            if (hasILI(instanceTriples) || hasFrameNet(instanceTriples) || ALL) {
                 if (tripleMapOthers.containsKey( key)) {
                     ArrayList<Statement> otherTriples = tripleMapOthers.get(key);
-                    if (!hasActor(otherTriples)) {
+                    if (hasActor(otherTriples) || ALL) {
                         /// we ignore events without actors.....
-                    }
-                    else {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("event", getSynsetsFromIli(key));
                         String timeAnchor = getTimeAnchor(otherTriples);
