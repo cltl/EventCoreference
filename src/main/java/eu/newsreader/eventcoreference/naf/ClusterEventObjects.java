@@ -46,7 +46,7 @@ public class ClusterEventObjects {
     static Integer SENTENCERANGE = 0;
     static boolean BRIDGING = false;
     static String done = "";
-
+    static boolean ADDITIONALROLES = false;
     static public void main (String [] args) {
         if (args.length==0) {
             System.out.println(USAGE);
@@ -87,6 +87,9 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--project") && args.length>(i+1)) {
                 projectName = args[i+1];
+            }
+            else if (arg.equals("--non-entities")) {
+                ADDITIONALROLES = true;
             }
             else if (arg.equals("--bridging")) {
                 BRIDGING = true;
@@ -576,8 +579,11 @@ public class ClusterEventObjects {
                 System.out.println("Final semEvent.getURI() = " + semObject.getURI());
             }*/
         }
+        else if (ADDITIONALROLES) {
+            GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        }
         else {
-            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+                GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         }
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());
