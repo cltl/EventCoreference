@@ -1108,7 +1108,7 @@ public class Util {
                             try {
                                 s2 = Integer.parseInt(nafMention2.getSentence());
                                 if (s1 - 1 == s2 || s1 + 1 == s2) {
-                                    // if (semObject2.getId().endsWith("tmx7")) System.out.println(s1+":"+s2);
+                                   // if (semObject2.getId().endsWith("tmx12")) System.out.println(s1+":"+s2);
                                     for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
                                         String id = nafMention1.getTermsIds().get(m);
                                         if (!ids.contains(id)) {
@@ -1153,15 +1153,17 @@ public class Util {
             for (int k = 0; k < semObject2.getNafMentions().size(); k++) {
                 NafMention nafMention2 = semObject2.getNafMentions().get(k);
                 if ((!nafMention1.getSentence().isEmpty()) &&
-                        (!nafMention2.getSentence().isEmpty()))    {                    try {
+                        (!nafMention2.getSentence().isEmpty()))    {
+                    try {
                         int s1 = 0;
                         try {
                             Integer.parseInt(nafMention1.getSentence());
                             int s2 = 0;
                             try {
                                 Integer.parseInt(nafMention2.getSentence());
-                                if (s1 == s2 || s1 - 1 == s2 || s1 - 2 == s2 || s1 + 1 == s2) {
-                                    // if (semObject2.getId().endsWith("tmx7")) System.out.println(s1+":"+s2);
+                                if (s1 - 2 == s2 || s1 + 1 == s2) {
+                                   // if (semObject2.getId().endsWith("tmx12"))
+                                   // System.out.println(s1+":"+s2);
                                     for (int m = 0; m < nafMention1.getTermsIds().size(); m++) {
                                         String id = nafMention1.getTermsIds().get(m);
                                         if (!ids.contains(id)) {

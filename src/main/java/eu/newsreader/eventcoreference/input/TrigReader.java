@@ -219,7 +219,8 @@ public class TrigReader {
                     statsFile = args[i+1];
                 }
             }
-
+//            trigfolder = "/Users/piek/Desktop/EventWorkshop/examples/crosslingual/events/contextual/e-2007-03-19";
+//            statsFile = "/Users/piek/Desktop/EventWorkshop/examples/crosslingual/events/contextual/e-2007-03-19/sem.trig.stats";
 /*
             trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
             outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualInstances.trp";
@@ -359,58 +360,26 @@ public class TrigReader {
 
             str = "\nMENTIONS OF ILI events\n";
             fosStats.write(str.getBytes());
-            writesStats(fosStats, mentionMapIliEvents);
+            writesStatsILI(fosStats, mentionMapIliEvents);
+            //writesStats(fosStats, mentionMapIliEvents);
 
             str = "\nMENTIONS OF LEMMA Events\n";
             fosStats.write(str.getBytes());
             writesStats(fosStats, mentionMapLabelEvents);
 
-/*
-            str = "\nTRIPLE COUNTS\n";
-            fosStats.write(str.getBytes());
-            str = "\nSUBJECTS\n";
-            fosStats.write(str.getBytes());
-            writesStats(fosStats, subjectMapInstances);
-            str = "\nOBJECTS\n";
-            fosStats.write(str.getBytes());
-            writesStats(fosStats, objectMapInstances);
-            str = "\nSUBJECTS & PREDICATES\n";
-            fosStats.write(str.getBytes());
-            writesStats(fosStats, predicateSubjectMapInstances);
-            str = "\nPREDICATE & OBJECTS\n";
-            fosStats.write(str.getBytes());
-            writesStats(fosStats, predicateObjectMapInstances);
-            str = "\n";
-            fosStats.write(str.getBytes());*/
 
             fosStats.close();
 
             fosStats = new FileOutputStream(statsFile+".relations.xls");
             str = trigfolder+"\n\n";
-            str += "\nTRIPLES\n\n";
-            fosStats.write(str.getBytes());
             str = "PREDICATES\n";
             fosStats.write(str.getBytes());
             writesStats(fosStats, predicateMapOthers);
 
             str += "\nCROSSLINGUAL TRIPLES\n\n";
             fosStats.write(str.getBytes());
-            writesStats(fosStats, tripleMapOthers);
-
-/*            str = "\nSUBJECTS\n";
-            fosStats.write(str.getBytes());
-            writesStats(fosStats, subjectMapOthers);
-            str = "\nOBJECTS\n";
-            fosStats.write(str.getBytes());
-            writesStats(fosStats, objectMapOthers);
-            str = "\nSUBJECTS & PREDICATES\n";
-            fosStats.write(str.getBytes());
-            writesStats(fosStats, predicateSubjectMapOthers);
-            str = "\nPREDICATE & OBJECTS\n";
-            fosStats.write(str.getBytes());
-            writesStats(fosStats, predicateObjectMapOthers);
-            str = "\n";
-            fosStats.write(str.getBytes());*/
+            writesStatsTriple(fosStats, tripleMapOthers);
+            //writesStats(fosStats, tripleMapOthers);
 
             fosStats.close();
 
@@ -454,6 +423,85 @@ public class TrigReader {
             fos.write(s.getBytes());
         }
     }
+
+    static void writesStatsILI (OutputStream fos, HashMap<String, Integer> map) throws IOException {
+
+        TreeSet<String> tree = new TreeSet<String>();
+        Set keySet = map.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            tree.add(key);
+        }
+        Iterator<String> t = tree.iterator();
+        while(t.hasNext()) {
+            String s = t.next();
+            String synset = getSynonymsForILI(s);
+            Integer cnt = map.get(s);
+            s += synset+"\t" + cnt.toString() + "\n";
+            fos.write(s.getBytes());
+        }
+    }
+    static void writesStatsTriple (OutputStream fos, HashMap<String, Integer> map) throws IOException {
+
+        TreeSet<String> tree = new TreeSet<String>();
+        Set keySet = map.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            tree.add(key);
+        }
+        Iterator<String> t = tree.iterator();
+        while(t.hasNext()) {
+            String s = t.next();
+            String synset = getSynonymsForIliTriple(s);
+            Integer cnt = map.get(s);
+            s = synset+"\t" + cnt.toString() + "\n";
+            fos.write(s.getBytes());
+        }
+    }
+
+    static String getSynonymsForILI (String iliString) {
+        String synset = "[";
+
+        String [] fields = iliString.split("-and-");
+        if (fields.length>0) {
+            for (int i = 0; i < fields.length; i++) {
+                String field = fields[i];
+                if (iliMap.containsKey(field)) {
+                    ArrayList<String> syns = iliMap.get(field);
+                    for (int j = 0; j < syns.size(); j++) {
+                        String s1 = syns.get(j);
+                        //synset += s1;
+                        int idx = s1.indexOf("%");
+                        if (idx>-1) {
+                            s1 = s1.substring(0, idx+1);
+                        }
+                        if (synset.indexOf(s1)==-1) {
+                            synset += s1;
+                        }
+                    }
+                }
+            }
+        }
+        synset += "]";
+        return synset;
+    }
+
+
+    static String getSynonymsForIliTriple (String iliString) {
+        String triple = "";
+        String [] tripleFields = iliString.split("\t");
+        if (tripleFields.length==3) {
+            triple = tripleFields[0]+getSynonymsForILI(tripleFields[0]);
+            triple += "\t"+tripleFields[1]+"\t"+tripleFields[2];
+        }
+        else {
+            triple = iliString;
+        }
+        return triple;
+    }
+
 
     static String getStatementString (Statement s) {
         String str = s.getPredicate().getURI()+"\t"+s.getSubject().getURI()+"\t";

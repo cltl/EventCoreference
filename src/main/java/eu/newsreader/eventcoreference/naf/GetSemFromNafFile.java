@@ -1164,8 +1164,10 @@ public class GetSemFromNafFile {
                     // System.out.println("semRelation = " + semRelation.getSubject());
                     // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                     timeAnchor = true;
+                  //  break;
                 }
             }
+
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
                     SemObject semTime = semTimes.get(l);
@@ -1177,7 +1179,7 @@ public class GetSemFromNafFile {
                         //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
                         String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
                         semRelation.setId(relationInstanceId);
-                        // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
+                        //System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                         NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
                         semRelation.addMention(mention);
                         semRelation.addPredicate("hasSemTime");
@@ -1187,6 +1189,7 @@ public class GetSemFromNafFile {
                         // System.out.println("semRelation = " + semRelation.getSubject());
                         // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                         timeAnchor = true;
+                      //  break;
                     }
                 }
             }
@@ -1201,7 +1204,7 @@ public class GetSemFromNafFile {
                         //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
                         String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
                         semRelation.setId(relationInstanceId);
-                        // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
+                        //System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                         NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
                         semRelation.addMention(mention);
                         semRelation.addPredicate("hasSemTime");
@@ -1211,6 +1214,7 @@ public class GetSemFromNafFile {
                         // System.out.println("semRelation = " + semRelation.getSubject());
                         // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                         timeAnchor = true;
+                       // break;
                     }
                 }
             }
@@ -1305,7 +1309,7 @@ public class GetSemFromNafFile {
                             semRelation.addMention(mention);
                             semRelation.addPredicate("hasSemActor");
                             //// check the source and prefix accordingly
-                            semRelation.addPredicate(kafParticipant.getRole());
+                            semRelation.addPredicate(RoleLabels.normalizeProbBankValue(kafParticipant.getRole()));
                             for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
                                 KafSense kafSense = kafParticipant.getExternalReferences().get(j);
                                 semRelation.addPredicate(kafSense.getResource() + ":" + kafSense.getSensecode());
@@ -1331,7 +1335,7 @@ public class GetSemFromNafFile {
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
                             semRelation.addMention(mention);
                             semRelation.addPredicate("hasSemPlace");
-                            semRelation.addPredicate(kafParticipant.getRole());
+                            semRelation.addPredicate(RoleLabels.normalizeProbBankValue(kafParticipant.getRole()));
                             for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
                                 KafSense kafSense = kafParticipant.getExternalReferences().get(j);
                                 semRelation.addPredicate(kafSense.getResource() + ":" + kafSense.getSensecode());
@@ -1362,7 +1366,7 @@ public class GetSemFromNafFile {
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/Cross-lingual/test.srl.lexicalunits.pm.fn.ecoref.naf";
         //String pathToNafFile = "/users/piek/Desktop/NWR/timeline/vua-naf2sem_v2_2015/test/corpus_airbus/1173_Internal_emails_expose_Boeing-Air_Force_contract_discussions.naf";
-        String pathToNafFile = "/Users/piek//Desktop/NWR/Cross-lingual/dutch-wikinews/corpus_airbus/7742_Airbus_announces_job_cuts_of_10,000_dutch_utf8.out.naf.nl.coref";
+        String pathToNafFile = "/Users/piek/Desktop/EventWorkshop/examples/7924_A380_makes_maiden_flight_to_US.nl.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
@@ -1385,9 +1389,9 @@ public class GetSemFromNafFile {
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(pathToNafFile);
         processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-        System.out.println("semActors.size() = " + semActors.size());
-    //    processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
-        System.out.println("semActors.size() = " + semActors.size());
+       // System.out.println("semActors.size() = " + semActors.size());
+       // processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
+       // System.out.println("semActors.size() = " + semActors.size());
         try {
            // System.out.println("semEvents = " + semEvents.size());
             String pathToTrigFile = pathToNafFile+".trig";

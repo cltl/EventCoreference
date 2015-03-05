@@ -26,6 +26,7 @@ public class Statistics {
     static HashMap<String, ArrayList<Integer>> iliEventMap = new HashMap<String, ArrayList<Integer>>();
     static HashMap<String, ArrayList<Integer>> predicateMap = new HashMap<String, ArrayList<Integer>>();
     static HashMap<String, ArrayList<Integer>> tripleMap = new HashMap<String, ArrayList<Integer>>();
+    static HashMap<String, ArrayList<Integer>> subjectObjectMap = new HashMap<String, ArrayList<Integer>>();
 
 
     static void setALLFALSE () {
@@ -38,8 +39,20 @@ public class Statistics {
     }
 
     static boolean intersectingILI (String ili_1, String ili_2) {
-        String [] ili_1_fields = ili_1.split("-and-");
-        String [] ili_2_fields = ili_2.split("-and-");
+        String ili1 = ili_1;
+        String ili2 = ili_2;
+
+        int idx_1 = ili_1.indexOf("[");
+        if (idx_1>-1) {
+            ili1 = ili_1.substring(0, idx_1);
+        }
+        int idx_2 = ili_2.indexOf("[");
+        if (idx_2>-1) {
+            ili2 = ili_2.substring(0, idx_2);
+        }
+
+        String [] ili_1_fields = ili1.split("-and-");
+        String [] ili_2_fields = ili2.split("-and-");
         for (int i = 0; i < ili_1_fields.length; i++) {
             String ili_1_field = ili_1_fields[i];
             for (int j = 0; j < ili_2_fields.length; j++) {
@@ -121,6 +134,8 @@ public class Statistics {
            }
     }
 
+
+
     static void updateMap (String key, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
            if (map.containsKey(key)) {
                ArrayList<Integer> counts = map.get(key);
@@ -199,8 +214,10 @@ public class Statistics {
                                     String predicate = normalizePredicate(fields[1]);
                                     String object = fields[2];
                                     String triple = subject + ":" + predicate + ":" + object;
+                                    String pair = subject+":"+object;
                                     Integer count = Integer.parseInt(fields[3]);
-                                    updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, iliEventMap, fileNr, nrFiles);
+                                    updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleMap, fileNr, nrFiles);
+                                    updateMapUsingTripleSubjectSubstringIntersection(subject, pair, count, subjectObjectMap, fileNr, nrFiles);
                                    // updateMap(triple, count, tripleMap, fileNr, nrFiles);
                                 }
                             }
@@ -289,6 +306,13 @@ public class Statistics {
                 fos1.write(str.getBytes());
                 fos2.write(str.getBytes());
                 writeMapToStream(fos1, fos2, tripleMap);
+            }
+
+            if (subjectObjectMap.size()>0) {
+                str = "SUBJECT OBJECT PAIRS TRIPLES\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, subjectObjectMap);
             }
 
             fos1.close();
@@ -393,36 +417,8 @@ public class Statistics {
             double microrecall = 100*(double)correct/(double)baseline;
             str +="\t"+correct+"\t"+macrorecall+"\t"+microrecall;
         }
-/*
-        str += "\n";
-        str += "MICRO RECALL\t";
-        for (int i = 1; i < correctCounts.size(); i++) {
-            Integer system = correctCounts.get(i);
-            double recall = 100*(double)system/(double)baseline;
-            str += "\t"+"\t"+recall;
-
-        }
-*/
         str += "\n\n";
 
-        /*str = "";
-        str += "MACRO RECALL N="+nReferenceKeys+"\t"+correctCounts.get(0);
-        for (int i = 1; i < proportionSum.size(); i++) {
-            Integer sum = proportionSum.get(i);
-            Integer correct = correctCounts.get(i);
-            double recall = (double)sum/nReferenceKeys;
-            str +="\t"+correct+"\t"+recall;
-        }
-        str += "\n";
-        str += "MICRO RECALL\t";
-        Integer baseline = correctCounts.get(0);
-        for (int i = 1; i < correctCounts.size(); i++) {
-            Integer system = correctCounts.get(i);
-            double recall = 100*(double)system/(double)baseline;
-            str += "\t"+"\t"+recall;
-
-        }
-        str += "\n\n";*/
         fos2.write(str.getBytes());
     }
 

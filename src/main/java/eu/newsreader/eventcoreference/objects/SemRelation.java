@@ -200,6 +200,9 @@ public class SemRelation implements Serializable {
                         if (predicate.toLowerCase().endsWith("am-loc")) {
                             place = true;
                         }
+                        else if (predicate.toLowerCase().endsWith("am-dir")) {
+                            place = true;
+                        }
                     }
                 }
             }

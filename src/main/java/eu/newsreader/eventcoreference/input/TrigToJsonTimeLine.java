@@ -45,6 +45,9 @@ public class TrigToJsonTimeLine {
             else if (arg.equals("--ili") && args.length>(i+1)) {
                 pathToILIfile = args[i+1];
             }
+            else if (arg.equals("--all")){
+                ALL = true;
+            }
             else if (arg.equals("--actors") && args.length>(i+1)) {
                 ACTORNAMESPACES = args[i+1];
                 System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
