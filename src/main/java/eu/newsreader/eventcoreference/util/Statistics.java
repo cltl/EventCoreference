@@ -26,6 +26,7 @@ public class Statistics {
     static HashMap<String, ArrayList<Integer>> iliEventMap = new HashMap<String, ArrayList<Integer>>();
     static HashMap<String, ArrayList<Integer>> predicateMap = new HashMap<String, ArrayList<Integer>>();
     static HashMap<String, ArrayList<Integer>> tripleMap = new HashMap<String, ArrayList<Integer>>();
+    static HashMap<String, ArrayList<Integer>> tripleSemMap = new HashMap<String, ArrayList<Integer>>();
     static HashMap<String, ArrayList<Integer>> subjectObjectMap = new HashMap<String, ArrayList<Integer>>();
 
 
@@ -217,6 +218,12 @@ public class Statistics {
                                     String pair = subject+":"+object;
                                     Integer count = Integer.parseInt(fields[3]);
                                     updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleMap, fileNr, nrFiles);
+                                    if (predicate.toLowerCase().endsWith("hasactor")
+                                            ||
+                                            predicate.toLowerCase().endsWith("hasplace")
+                                            ) {
+                                        updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleSemMap, fileNr, nrFiles);
+                                    }
                                     updateMapUsingTripleSubjectSubstringIntersection(subject, pair, count, subjectObjectMap, fileNr, nrFiles);
                                    // updateMap(triple, count, tripleMap, fileNr, nrFiles);
                                 }
@@ -299,6 +306,13 @@ public class Statistics {
                 fos1.write(str.getBytes());
                 fos2.write(str.getBytes());
                 writeMapToStream(fos1,fos2, predicateMap);
+            }
+
+            if (tripleSemMap.size()>0) {
+                str = "SEM TRIPLES\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, tripleSemMap);
             }
 
             if (tripleMap.size()>0) {

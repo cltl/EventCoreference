@@ -198,13 +198,15 @@ public class MatchEventObjects {
                 finalCompositeEvents = finalLemmaEventMap.get(lemma);
             }
 
+/*
             if (lemma.equals("ili-30-01451842-v")) {
-                DEBUG = false;
+                DEBUG = true;
             }
             else {
                 DEBUG = false;
                 continue;
             }
+*/
             if (DEBUG) {
                 System.out.println("lemma = " + lemma);
                 System.out.println("finalCompositeEvents.size() = " + finalCompositeEvents.size());
