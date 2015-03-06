@@ -31,8 +31,8 @@ public class Statistics {
 
     static public void main (String [] args) {
         String  folderPath = "";
-//        folderPath = args[0];
-        folderPath = "/Users/piek/Desktop/NWR/Cross-lingual/stats.4/relations/airbus";
+        folderPath = args[0];
+        //folderPath = "/Users/piek/Desktop/NWR/Cross-lingual/stats.4/relations/airbus";
         File folder = new File(folderPath);
         ArrayList<File> files = Util.makeFlatFileList(folder, ".xls");
         fileMap = new ArrayList<String>(files.size());
