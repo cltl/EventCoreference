@@ -29,6 +29,77 @@ public class Statistics {
     static HashMap<String, ArrayList<Integer>> tripleSemMap = new HashMap<String, ArrayList<Integer>>();
     static HashMap<String, ArrayList<Integer>> subjectObjectMap = new HashMap<String, ArrayList<Integer>>();
 
+    static public void main (String [] args) {
+        String  folderPath = "";
+//        folderPath = args[0];
+        folderPath = "/Users/piek/Desktop/NWR/Cross-lingual/stats.4/relations/airbus";
+        File folder = new File(folderPath);
+        ArrayList<File> files = Util.makeFlatFileList(folder, ".xls");
+        fileMap = new ArrayList<String>(files.size());
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+            getStats(file, i, files.size());
+        }
+        try {
+            OutputStream fos1 = new FileOutputStream(folder.getParent()+"/"+folder.getName()+"_crosslingual.table.stats.xls");
+            OutputStream fos2 = new FileOutputStream(folder.getParent()+"/"+folder.getName()+"_crosslingual.overview.stats.xls");
+            String str = "";
+            if (dbpEntityMap.size()>0) {
+                str = "MENTIONS OF DBP entities\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, dbpEntityMap);
+            }
+
+            if (newEntityMap.size()>0) {
+                str = "MENTIONS OF NEW entities\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, newEntityMap);
+            }
+
+            if (iliEventMap.size()>0) {
+                str = "MENTIONS OF ILI events\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, iliEventMap);
+            }
+
+            if (predicateMap.size()>0) {
+                str = "PREDICATES\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1,fos2, predicateMap);
+            }
+
+            if (tripleSemMap.size()>0) {
+                str = "SEM TRIPLES\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, tripleSemMap);
+            }
+
+            if (tripleMap.size()>0) {
+                str = "TRIPLES\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, tripleMap);
+            }
+
+            if (subjectObjectMap.size()>0) {
+                str = "SUBJECT OBJECT PAIRS TRIPLES\n";
+                fos1.write(str.getBytes());
+                fos2.write(str.getBytes());
+                writeMapToStream(fos1, fos2, subjectObjectMap);
+            }
+
+            fos1.close();
+            fos2.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     static void setALLFALSE () {
         DBPENTITY = false;
@@ -51,7 +122,6 @@ public class Statistics {
         if (idx_2>-1) {
             ili2 = ili_2.substring(0, idx_2);
         }
-
         String [] ili_1_fields = ili1.split("-and-");
         String [] ili_2_fields = ili2.split("-and-");
         for (int i = 0; i < ili_1_fields.length; i++) {
@@ -98,6 +168,56 @@ public class Statistics {
     }
 
     static void updateMapUsingTripleSubjectSubstringIntersection (String key, String triple, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
+           if (map.containsKey(triple)) {
+               ArrayList<Integer> counts = map.get(triple);
+               counts.set(fileNr, count);
+               map.put(triple, counts);
+           }
+           else {
+               boolean match = false;
+               Set keySet = map.keySet();
+               Iterator<String> keys = keySet.iterator();
+               while (keys.hasNext()) {
+                   String iliTriple = keys.next();
+                   String [] fields = iliTriple.split(":");
+                   if (fields.length==3) {
+                       String iliKey = fields[0];
+                       String iliDuple = fields[1] + ":" + fields[2];
+                       if (triple.endsWith(iliDuple)) {
+                           if (intersectingILI(iliKey, key)) {
+                               ArrayList<Integer> counts = map.get(iliTriple);
+                               counts.set(fileNr, count);
+                               map.put(iliTriple, counts);
+                               match = true;
+                               break;
+                           }
+                       }
+                   }
+                   else if (fields.length==2) {
+                       String iliKey = fields[0];
+                       String iliDuple = fields[1];
+                       if (triple.endsWith(iliDuple)) {
+                           if (intersectingILI(iliKey, key)) {
+                               ArrayList<Integer> counts = map.get(iliTriple);
+                               counts.set(fileNr, count);
+                               map.put(iliTriple, counts);
+                               match = true;
+                               break;
+                           }
+                       }
+                   }
+               }
+               if (!match) {
+                   ArrayList<Integer> counts = new ArrayList<Integer>();
+                   for (int i = 0; i < nrFiles; i++) {
+                       counts.add(0);
+                   }
+                   counts.set(fileNr, count);
+                   map.put(triple, counts);
+               }
+           }
+    }
+ static void updateMapUsingTripleSubjectSubstringIntersectionDebug (String key, String triple, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
            if (map.containsKey(triple)) {
                ArrayList<Integer> counts = map.get(triple);
                counts.set(fileNr, count);
@@ -215,7 +335,7 @@ public class Statistics {
                                     String predicate = normalizePredicate(fields[1]);
                                     String object = fields[2];
                                     String triple = subject + ":" + predicate + ":" + object;
-                                    String pair = subject+":"+object;
+                                    String so_pair = subject+":"+object;
                                     Integer count = Integer.parseInt(fields[3]);
                                     updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleMap, fileNr, nrFiles);
                                     if (predicate.toLowerCase().endsWith("hasactor")
@@ -224,7 +344,7 @@ public class Statistics {
                                             ) {
                                         updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleSemMap, fileNr, nrFiles);
                                     }
-                                    updateMapUsingTripleSubjectSubstringIntersection(subject, pair, count, subjectObjectMap, fileNr, nrFiles);
+                                    updateMapUsingTripleSubjectSubstringIntersection(subject, so_pair, count, subjectObjectMap, fileNr, nrFiles);
                                    // updateMap(triple, count, tripleMap, fileNr, nrFiles);
                                 }
                             }
@@ -265,79 +385,8 @@ public class Statistics {
         return normalizedPredicate;
     }
 
-    static public void main (String [] args) {
-        String  folderPath = "";
-        folderPath = args[0];
-        //folderPath = "/Users/piek/Desktop/NWR/Cross-lingual/stats/relations/airbus";
-        File folder = new File(folderPath);
-        ArrayList<File> files = Util.makeFlatFileList(folder, ".xls");
-        fileMap = new ArrayList<String>(files.size());
-        for (int i = 0; i < files.size(); i++) {
-            File file = files.get(i);
-            getStats(file, i, files.size());
-        }
-        try {
-            OutputStream fos1 = new FileOutputStream(folder.getParent()+"/"+folder.getName()+"_crosslingual.table.stats.xls");
-            OutputStream fos2 = new FileOutputStream(folder.getParent()+"/"+folder.getName()+"_crosslingual.overview.stats.xls");
-            String str = "";
-            if (dbpEntityMap.size()>0) {
-                str = "MENTIONS OF DBP entities\n";
-                fos1.write(str.getBytes());
-                fos2.write(str.getBytes());
-                writeMapToStream(fos1, fos2, dbpEntityMap);
-            }
 
-            if (newEntityMap.size()>0) {
-                str = "MENTIONS OF NEW entities\n";
-                fos1.write(str.getBytes());
-                fos2.write(str.getBytes());
-                writeMapToStream(fos1, fos2, newEntityMap);
-            }
-
-            if (iliEventMap.size()>0) {
-                str = "MENTIONS OF ILI events\n";
-                fos1.write(str.getBytes());
-                fos2.write(str.getBytes());
-                writeMapToStream(fos1, fos2, iliEventMap);
-            }
-
-            if (predicateMap.size()>0) {
-                str = "PREDICATES\n";
-                fos1.write(str.getBytes());
-                fos2.write(str.getBytes());
-                writeMapToStream(fos1,fos2, predicateMap);
-            }
-
-            if (tripleSemMap.size()>0) {
-                str = "SEM TRIPLES\n";
-                fos1.write(str.getBytes());
-                fos2.write(str.getBytes());
-                writeMapToStream(fos1, fos2, tripleSemMap);
-            }
-
-            if (tripleMap.size()>0) {
-                str = "TRIPLES\n";
-                fos1.write(str.getBytes());
-                fos2.write(str.getBytes());
-                writeMapToStream(fos1, fos2, tripleMap);
-            }
-
-            if (subjectObjectMap.size()>0) {
-                str = "SUBJECT OBJECT PAIRS TRIPLES\n";
-                fos1.write(str.getBytes());
-                fos2.write(str.getBytes());
-                writeMapToStream(fos1, fos2, subjectObjectMap);
-            }
-
-            fos1.close();
-            fos2.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    static void writeMapToStream(OutputStream fos1, OutputStream fos2, HashMap<String, ArrayList<Integer>> map) throws IOException {
+    static void writeMapToStream(OutputStream tableFos, OutputStream overviewFos, HashMap<String, ArrayList<Integer>> map) throws IOException {
         String str = "";
         str += "\t";
         for (int i = 0; i < fileMap.size(); i++) {
@@ -349,28 +398,30 @@ public class Statistics {
         }
         str += "\n";
 
-        fos1.write(str.getBytes());
+        tableFos.write(str.getBytes());
 
         int nReferenceKeys = 0;
         str = "\t\t";
         for (int i = 0; i < fileMap.size(); i++) {
             String fileName = fileMap.get(i);
-            str += fileName + "\t";
+            str += fileName + "\t"+"\t";
             if (i>0) {
-                str += "\t\t";
+                str += "\t\t\t";
             }
         }
         str += "\n";
-        str += "\tReference values\t";
+        str += "\tTotal values\t";
         for (int i = 0; i < fileMap.size(); i++) {
-            str += "Nr\t";
+            str += "Values\tReferences\t";
             if (i>0) {
-                str += "macro C"+"\t"+"micro C"+"\t";
+                str += "Intersect"+"\t"+"macro C"+"\t"+"micro C"+"\t";
             }
         }
         str += "\n";
-        fos2.write(str.getBytes());
+        overviewFos.write(str.getBytes());
         str = "";
+        ArrayList<Integer> totalValues = new ArrayList<Integer>();
+        ArrayList<Integer> totalReferences = new ArrayList<Integer>();
         ArrayList<Integer> correctCounts = new ArrayList<Integer>();
         ArrayList<Integer> proportionSum = new ArrayList<Integer>();
         for (int i = 0; i < fileMap.size(); i++) {
@@ -378,6 +429,12 @@ public class Statistics {
         }
         for (int i = 0; i < fileMap.size(); i++) {
             correctCounts.add(0);
+        }
+        for (int i = 0; i < fileMap.size(); i++) {
+            totalValues.add(0);
+        }
+        for (int i = 0; i < fileMap.size(); i++) {
+            totalReferences.add(0);
         }
 
 
@@ -392,6 +449,10 @@ public class Statistics {
             if (refCount>0) {
                 nReferenceKeys++;
                 correctCounts.set(0, correctCounts.get(0)+refCount);
+                if (correctCounts.get(0)>0) {
+                    totalValues.set(0, totalValues.get(0)+1);
+                    totalReferences.set(0, totalReferences.get(0)+correctCounts.get(0));
+                }
             }
 
             for (int i = 1; i < counts.size(); i++) {
@@ -415,25 +476,29 @@ public class Statistics {
                     }
                     proportionSum.set(i, proportionSum.get(i)+prop.intValue());
                 }
+                if (integer>0) {
+                    totalValues.set(i, totalValues.get(i)+1);
+                    totalReferences.set(i, totalReferences.get(i)+integer);
+                }
                 str += integer.toString() + "\t"+prop+"\t";
             }
             str += "\n";
         }
         str += "\n";
-        fos1.write(str.getBytes());
+        tableFos.write(str.getBytes());
         str = "";
         Integer baseline = correctCounts.get(0);
-        str += "COVERAGE\t"+nReferenceKeys+"\t"+correctCounts.get(0);
+        str += "COVERAGE\t"+map.size()+"\t"+totalValues.get(0)+"\t"+correctCounts.get(0);
         for (int i = 1; i < proportionSum.size(); i++) {
             Integer sum = proportionSum.get(i);
             Integer correct = correctCounts.get(i);
             double macrorecall = (double)sum/nReferenceKeys;
             double microrecall = 100*(double)correct/(double)baseline;
-            str +="\t"+correct+"\t"+macrorecall+"\t"+microrecall;
+            str +="\t"+totalValues.get(i)+"\t"+totalReferences.get(i)+"\t"+correct+"\t"+macrorecall+"\t"+microrecall;
         }
         str += "\n\n";
 
-        fos2.write(str.getBytes());
+        overviewFos.write(str.getBytes());
     }
 
 }
