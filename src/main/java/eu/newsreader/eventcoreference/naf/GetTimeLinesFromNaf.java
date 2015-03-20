@@ -51,8 +51,8 @@ public class GetTimeLinesFromNaf {
         String project = "";
         String pathToFolder = "";
 
-        //processType = "event";
-        processType = "entity";
+        processType = "event";
+        //processType = "entity";
         // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/naf_file_raw_out-2/17174-Apple_executive_leaves.xml.naf";
         // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialNWR20.naf";
         // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialPiekCoref.naf";
@@ -63,15 +63,20 @@ public class GetTimeLinesFromNaf {
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_airbus-entity-based-3";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_apple-entity-based-3";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_gm_chrysler_ford-entity-based-3";
-        pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_stock_market-entity-based-3";
-        pathToFolder = "/Users/piek/Desktop/NWR/timeline/wiki_bio_out";
+
+        //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_airbus_event_based_4";
+        //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_apple_event_based_4";
+        //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_gm_chrysler_ford_event_based_4";
+        pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_stock_market_event_based_4";
+
+        //pathToFolder = "/Users/piek/Desktop/NWR/timeline/wiki_bio_out";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_airbus-event-based-3";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_apple-event-based-3";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_gm_chrysler_ford-event-based-3";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_stock_market-event-based-3";
        // pathToFolder = "/Users/piek/Desktop/NWR/timeline/test";
         extension = ".naf";
-        project = "wiki_bio_out";
+        project = "semeval_timeline";
 
         String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
         String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/contextual.txt";
@@ -126,6 +131,7 @@ public class GetTimeLinesFromNaf {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+/*
             timeLines = tripleNafFile(new File(pathToNafFile), project, kafSaxParser, processType);
             try {
                 OutputStream fos = new FileOutputStream(pathToNafFile + ".trp");
@@ -134,6 +140,7 @@ public class GetTimeLinesFromNaf {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+*/
         }
         else if (!pathToFolder.isEmpty()) {
 
@@ -161,6 +168,7 @@ public class GetTimeLinesFromNaf {
                             e.printStackTrace();
                         }
 
+/*
                         timeLines = tripleNafFile(new File(pathToNafFile), project, kafSaxParser, processType);
                        // System.out.println("timeLines = " + timeLines);
                         try {
@@ -170,6 +178,7 @@ public class GetTimeLinesFromNaf {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+*/
                     }
         }
 
@@ -952,6 +961,7 @@ public class GetTimeLinesFromNaf {
                     timeAnchor = true;
                 }
             }
+/*
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
                     SemObject semTime = semTimes.get(l);
@@ -1000,6 +1010,7 @@ public class GetTimeLinesFromNaf {
                     }
                 }
             }
+*/
         }
 
 

@@ -1,10 +1,10 @@
 package eu.newsreader.eventcoreference.naf;
 
 import eu.kyotoproject.kaf.KafSaxParser;
-import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.*;
@@ -150,81 +150,6 @@ public class ClusterEventObjects {
         }
     }
 
-    static String getEventTypeString (SemEvent semEvent) {
-        boolean DEBUG = false;
-        String eventType = "";
-        //// we prefer the frames listed in the external resources
-        for (int k = 0; k < semEvent.getConcepts().size(); k++) {
-            KafSense kafSense = semEvent.getConcepts().get(k);
-            if (kafSense.getResource().equalsIgnoreCase("framenet")) {
-/*                if (kafSense.getSensecode().equalsIgnoreCase("Cause_change_of_position_on_a_scale")) {
-                    DEBUG = true;
-                }
-                else {
-                    DEBUG = false;
-                }*/
-
-                if (contextualVector != null && contextualVector.contains(kafSense.getSensecode().toLowerCase())) {
-                    eventType = "contextual";
-                    break;
-                }
-                else if (communicationVector != null && communicationVector.contains(kafSense.getSensecode().toLowerCase())) {
-                    eventType = "source";
-                    break;
-                } else if (grammaticalVector != null && grammaticalVector.contains(kafSense.getSensecode().toLowerCase())) {
-                    eventType = "grammatical";
-                    break;
-                }
-            }
-        }
-        if (DEBUG) System.out.println("eventType = " + eventType);
-        //// if none of the frames matched, we check the eventtype value that was given
-        if (eventType.isEmpty()) {
-            for (int k = 0; k < semEvent.getConcepts().size(); k++) {
-                 KafSense kafSense = semEvent.getConcepts().get(k);
-                 if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
-                     if (kafSense.getSensecode().equalsIgnoreCase("speech-cognition")) {
-                         eventType = "source";
-                         break;
-                     } else if (kafSense.getSensecode().equalsIgnoreCase("speech_cognition")) {
-                         eventType = "source";
-                         break;
-                     } else if (kafSense.getSensecode().equalsIgnoreCase("speech")) {
-                         eventType = "source";
-                         break;
-                     } else if (kafSense.getSensecode().equalsIgnoreCase("source")) {
-                         eventType = "source";
-                         break;
-                     } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
-                         eventType = "source";
-                         break;
-                     } else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
-                         eventType = "source";
-                         break;
-                     } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
-                         eventType = "grammatical";
-                         break;
-                     } else {
-                         eventType = "contextual";
-                         break;
-                     }
-                 }
-            }
-        }
-        else {
-            ///// we are going to overwrite any event type since the frame mapping is more trustworthy
-            for (int k = 0; k < semEvent.getConcepts().size(); k++) {
-                KafSense kafSense = semEvent.getConcepts().get(k);
-                if (kafSense.getResource().equalsIgnoreCase("eventtype")) {
-                    kafSense.setSensecode(eventType);
-                        break;
-                }
-            }
-        }
-        if (DEBUG) System.out.println("final eventType = " + eventType);
-        return eventType;
-    }
-
     public static void processFolderEvents (String project, File pathToNafFolder, File eventParentFolder, String extension
 
     ) throws IOException {
@@ -269,6 +194,7 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
+        ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
         System.out.println("files.size() = " + files.size());
@@ -291,19 +217,22 @@ public class ClusterEventObjects {
             semPlaces = new ArrayList<SemObject>();
             semRelations = new ArrayList<SemRelation>();
             factRelations = new ArrayList<SemRelation>();
+
           //  System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
            /* processKafSaxParser(project,
                     kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
                     semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);*/
             processKafSaxParserOutputFolder(file.getName(), project,
-                    kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
+                    kafSaxParser, perspectiveObjects,speechFolder, otherFolder, grammaticalFolder,
                     semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
             if (!done.isEmpty()) {
                 File doneFile = new File(file.getAbsolutePath() + done);
                 file.renameTo(doneFile);
             }
-
+        }
+        if (perspectiveObjects.size()>0) {
+            GetPerspectiveRelations.perspectiveRelationsToTrig(eventFolder, perspectiveObjects);
         }
 
     }
@@ -343,12 +272,16 @@ public class ClusterEventObjects {
             System.out.println("Cannot create the grammaticalFolder = " + grammaticalFolder);
             return;
         }
+        ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(nafStream);
-        processKafSaxParser(project, kafSaxParser, speechFolder, otherFolder, grammaticalFolder);
+        processKafSaxParser(project, kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder);
+        if (perspectiveObjects.size()>0) {
+            GetPerspectiveRelations.perspectiveRelationsToTrig(eventParentFolder, perspectiveObjects);
+        }
     }
 
-    static void processKafSaxParser(String project, KafSaxParser kafSaxParser,
+    static void processKafSaxParser(String project, KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectiveObjects,
                         File speechFolder,
                         File otherFolder,
                         File grammaticalFolder) throws IOException {
@@ -358,146 +291,12 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-        processKafSaxParserOutputFolder("", project, kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
+        processKafSaxParserOutputFolder("", project, kafSaxParser, perspectiveObjects,speechFolder, otherFolder, grammaticalFolder,
                 semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
     }
 
 
-/*
-    */
-/**
-     * @Deprecated
-     * @param project
-     * @param kafSaxParser
-     * @param speechFolder
-     * @param otherFolder
-     * @param grammaticalFolder
-     * @param semEvents
-     * @param semActors
-     * @param semPlaces
-     * @param semTimes
-     * @param semRelations
-     * @param factRelations
-     * @throws IOException
-     *//*
-
-    static void processKafSaxParser(String project, KafSaxParser kafSaxParser,
-                                    File speechFolder, File otherFolder, File grammaticalFolder,
-                                    ArrayList<SemObject> semEvents ,
-                                    ArrayList<SemObject> semActors,
-                                    ArrayList<SemObject> semPlaces,
-                                    ArrayList<SemObject> semTimes,
-                                    ArrayList<SemRelation> semRelations,
-                                    ArrayList<SemRelation> factRelations
-    ) throws IOException {
-
-        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-        if (MICROSTORIES) {
-            /// we first get the remaining roles!
-            GetSemFromNafFile.processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
-           // System.out.println("semEvents = " + semEvents.size());
-            semEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
-            semActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
-            semTimes = CreateMicrostory.getMicroTimes(SENTENCERANGE, semTimes);
-            semRelations = CreateMicrostory.getMicroRelations(SENTENCERANGE, semRelations);
-            // CreateMicrostory.getMicrostory(SENTENCERANGE, semEvents, semActors, semTimes, semRelations);
-          //  System.out.println("micro semEvents = " + semEvents.size());
-        }
-
-        // We need to create output objects that are more informative than the Trig output and store these in files per date
-        //System.out.println("semTimes = " + semTimes.size());
-        for (int j = 0; j < semEvents.size(); j++) {
-            SemEvent mySemEvent = (SemEvent) semEvents.get(j);
-            ArrayList<SemTime> myTimes = Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
-            //   System.out.println("myTimes.size() = " + myTimes.size());
-            ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
-            ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
-            ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
-            if (myRelations.size() == 0) {
-                continue;
-            }
-            ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
-            CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
-            File folder = otherFolder;
-            String eventType = getEventTypeString(mySemEvent);
-            if (!eventType.isEmpty()) {
-                if (eventType.equalsIgnoreCase("source")) {
-                    folder = speechFolder;
-                } else if (eventType.equalsIgnoreCase("grammatical")) {
-                    folder = grammaticalFolder;
-                }
-            }
-            File timeFile = null;
-
-            ArrayList<SemTime> outputTimes = myTimes;
-            // eventFos.writeObject(compositeEvent);
-            /// now we need to write the event data and relations to the proper time folder for comparison
-*/
-/*                if (outputTimes.size() == 0) {
-                    /// we use the doc times as fall back;
-                    outputTimes = compositeEvent.getMyDocTimes();
-                }*//*
-
-            if (outputTimes.size() == 0) {
-                /// timeless
-                timeFile = new File(folder.getAbsolutePath() + "/" + "events-" + "timeless" + ".obj");
-            } else if (outputTimes.size() == 1) {
-                /// time: same year or exact?
-                SemTime myTime = outputTimes.get(0);
-                String timePhrase = "-" + myTime.getOwlTime().toString();
-                timeFile = new File(folder.getAbsolutePath() + "/" + "events" + timePhrase + ".obj");
-            } else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
-                /// special case if multiple times, what to do? create a period?
-                //// ?????
-                TreeSet<String> treeSet = new TreeSet<String>();
-                String timePhrase = "";
-                for (int k = 0; k < outputTimes.size(); k++) {
-                    SemTime semTime = (SemTime) outputTimes.get(k);
-                    timePhrase = semTime.getOwlTime().toString();
-                    if (!treeSet.contains(timePhrase)) {
-                        treeSet.add(timePhrase);
-                    }
-                }
-                timePhrase = "";
-                Iterator keys = treeSet.iterator();
-                while (keys.hasNext()) {
-                    timePhrase += "-" + keys.next();
-                }
-                timeFile = new File(folder.getAbsolutePath() + "/" + "events" + timePhrase + ".obj");
-            }
-            if (timeFile != null) {
-                if (timeFile.exists()) {
-                    //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
-                    OutputStream os = new FileOutputStream(timeFile, true);
-                    Util.AppendableObjectOutputStream eventFos = new Util.AppendableObjectOutputStream(os);
-                    try {
-                        eventFos.writeObject(compositeEvent);
-                    } catch (IOException e) {
-                        //e.printStackTrace();
-                    }
-                    os.close();
-                    eventFos.close();
-                } else {
-                    //  System.out.println("timeFile.getName() = " + timeFile.getName());
-                    OutputStream os = new FileOutputStream(timeFile);
-                    ObjectOutputStream eventFos = new ObjectOutputStream(os);
-                    try {
-                        eventFos.writeObject(compositeEvent);
-                    } catch (IOException e) {
-                        // e.printStackTrace();
-                    }
-                    os.close();
-                    eventFos.close();
-                }
-            } else {
-                //   System.out.println("timeFile = " + timeFile);
-            }
-        }
-    }
-*/
-
-
-    static void processKafSaxParserOutputFolder(String nafFileName, String project, KafSaxParser kafSaxParser,
+    static void processKafSaxParserOutputFolder(String nafFileName, String project, KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectives,
                                     File speechFolder, File otherFolder, File grammaticalFolder,
                                     ArrayList<SemObject> semEvents ,
                                     ArrayList<SemObject> semActors,
@@ -585,6 +384,19 @@ public class ClusterEventObjects {
         else {
                 GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         }
+
+        //// create the perspective output here...
+        //
+        //
+        //
+        GetPerspectiveRelations.getPerspective (kafSaxParser,
+                project ,   perspectives,
+                semActors,
+                contextualVector,
+                communicationVector,
+                grammaticalVector);
+
+
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());
         for (int j = 0; j < semEvents.size(); j++) {
@@ -600,7 +412,7 @@ public class ClusterEventObjects {
             ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
             CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
             File folder = otherFolder;
-            String eventType = getEventTypeString(mySemEvent);
+            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, communicationVector, grammaticalVector);
             if (!eventType.isEmpty()) {
                 if (eventType.equalsIgnoreCase("source")) {
                     folder = speechFolder;
@@ -695,6 +507,22 @@ public class ClusterEventObjects {
         }
     }
 
+    /**
+     * @Deprecated
+     * @param nafFileName
+     * @param project
+     * @param kafSaxParser
+     * @param speechFolder
+     * @param otherFolder
+     * @param grammaticalFolder
+     * @param semEvents
+     * @param semActors
+     * @param semPlaces
+     * @param semTimes
+     * @param semRelations
+     * @param factRelations
+     * @throws IOException
+     */
     static void processKafSaxParserOutputFolderOrg(String nafFileName, String project, KafSaxParser kafSaxParser,
                                     File speechFolder, File otherFolder, File grammaticalFolder,
                                     ArrayList<SemObject> semEvents ,
@@ -798,7 +626,7 @@ public class ClusterEventObjects {
             ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
             CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
             File folder = otherFolder;
-            String eventType = getEventTypeString(mySemEvent);
+            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, communicationVector, grammaticalVector);
             if (!eventType.isEmpty()) {
                 if (eventType.equalsIgnoreCase("source")) {
                     folder = speechFolder;

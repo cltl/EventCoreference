@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.objects;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,5 +48,21 @@ public class PhraseCount  implements Serializable {
 
     public void setPhrase(String phrase) {
         this.phrase = phrase;
+    }
+
+    static public class Compare implements Comparator {
+        public int compare (Object aa, Object bb) {
+            PhraseCount a = (PhraseCount) aa;
+            PhraseCount b = (PhraseCount) bb;
+            if (a.getCount() < b.getCount()) {
+                return 1;
+            }
+            else if (a.getCount()> b.getCount()) {
+                return -1;
+            }
+            else {
+                return a.getPhrase().compareTo(b.getPhrase());
+            }
+        }
     }
 }

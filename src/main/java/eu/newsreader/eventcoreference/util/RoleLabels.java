@@ -215,4 +215,24 @@ public class RoleLabels {
         }
         return false;
     }
+
+    static public boolean hasSourceTarget (KafParticipant kafParticipant) {
+        /**
+         *           <externalRef resource="VerbNet" reference="indicate-78@Topic"/>
+         <externalRef resource="FrameNet" reference="Communication@Message"/>
+         <externalRef resource="FrameNet" reference="Communication@Topic"/>
+         <externalRef resource="FrameNet" reference="Evidence@Proposition"/>
+         */
+        for (int i = 0; i < kafParticipant.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafParticipant.getExternalReferences().get(i);
+            if (kafSense.getSensecode().endsWith("@Topic") ||
+                kafSense.getSensecode().endsWith("@Message") ||
+                kafSense.getSensecode().endsWith("@Theme") ||
+                kafSense.getSensecode().endsWith("@Proposition")
+                    ) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

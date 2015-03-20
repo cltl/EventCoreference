@@ -145,6 +145,16 @@ public class JenaSerialization {
       //  System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
     }
 
+    static public void addJenaPerspectiveObjects(Dataset ds,
+                                            ArrayList<PerspectiveObject> perspectiveObjects) {
+        for (int i = 0; i < perspectiveObjects.size(); i++) {
+            PerspectiveObject perspectiveObject = perspectiveObjects.get(i);
+           // System.out.println("perspectiveObject.toString() = " + perspectiveObject.toString());
+            perspectiveObject.addToJenaDataSet(ds);
+        }
+    }
+
+
     static public void addJenaCompositeEvents (
             Dataset ds ,
             Model instanceModel,

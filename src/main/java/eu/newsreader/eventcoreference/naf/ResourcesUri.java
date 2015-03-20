@@ -62,6 +62,7 @@ public class ResourcesUri {
 
     static public void prefixModelGaf (Model model) {
         model.setNsPrefix("gaf", ResourcesUri.gaf);
+        model.setNsPrefix("prov", ResourcesUri.prov);
         model.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
         model.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
     }

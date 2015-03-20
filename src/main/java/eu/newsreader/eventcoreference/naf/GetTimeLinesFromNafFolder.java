@@ -42,12 +42,11 @@ public class GetTimeLinesFromNafFolder {
         processType = "event";
        // processType = "entity";
         String pathToFolder = "";
-        //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_281114/corpus_apple_event_based";
-        pathToFolder = "/Users/piek/Desktop/NWR/timeline/test/corpus_airbus_event_based-3";
+        pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_stock_market_event_based_4";
         String query = "apple";
         String extension = ".naf";
         String eventType = "CONTEXTUAL";
-        String project = "apple";
+        String project = "semeval-timeline";
         String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
         String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/contextual.txt";
         String grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/grammatical.txt";
@@ -762,7 +761,7 @@ public class GetTimeLinesFromNafFolder {
                     timeAnchor = true;
                 }
             }
-            if (!timeAnchor) {
+/*            if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
                     SemObject semTime = semTimes.get(l);
                     ArrayList<String> termIds = Util.range1SentenceRange(semEvent, semTime);
@@ -785,8 +784,8 @@ public class GetTimeLinesFromNafFolder {
                         timeAnchor = true;
                     }
                 }
-            }
-            if (!timeAnchor) {
+            }*/
+/*            if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
                     SemObject semTime = semTimes.get(l);
                     ArrayList<String> termIds = Util.rangemin2plus1SentenceRange(semEvent, semTime);
@@ -809,7 +808,7 @@ public class GetTimeLinesFromNafFolder {
                         timeAnchor = true;
                     }
                 }
-            }
+            }*/
         }
 
 

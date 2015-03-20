@@ -6,17 +6,16 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.newsreader.eventcoreference.objects.JsonEvent;
+import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.riot.RDFDataMgr;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by piek on 1/3/14.
@@ -32,11 +31,14 @@ public class TrigToJsonTimeLine {
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static String ACTORNAMESPACES = "";
     static boolean ALL = false; /// if true we do not filter events
+    static FrameNetReader frameNetReader = new FrameNetReader();
 
     static public void main (String[] args) {
         String project = "NewsReader timeline";
         String pathToILIfile = "";
         String trigfolder = "";
+        String fnFile = "";
+        int fnLevel = 0;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
@@ -50,11 +52,27 @@ public class TrigToJsonTimeLine {
             }
             else if (arg.equals("--actors") && args.length>(i+1)) {
                 ACTORNAMESPACES = args[i+1];
-                System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
+               // System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
+            }
+
+            else if (arg.equals("--frame-relations") && args.length>(i+1)) {
+                fnFile = args[i+1];
+            }
+            else if (arg.equals("--frame-level") && args.length>(i+1)) {
+                try {
+                    fnLevel = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
-
+        if (!fnFile.isEmpty()) {
+            frameNetReader.parseFile(fnFile);
+            frameNetReader.flatRelations(fnLevel);
+         //   System.out.println("frameNetReader sub= " + frameNetReader.subToSuperFrame.size());
+         //   System.out.println("frameNetReader super= " + frameNetReader.superToSubFrame.size());
+        }
         // trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
         // pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
         iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
@@ -298,6 +316,7 @@ public class TrigToJsonTimeLine {
                         if (jsonClasses.keys().hasNext()) {
                             jsonObject.put("classes", jsonClasses);
                         }
+                        getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
                         JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
                         if (jsonLabels.keys().hasNext()) {
                             jsonObject.put("labels", jsonLabels.get("labels"));
@@ -315,10 +334,67 @@ public class TrigToJsonTimeLine {
                 }
             }
         }
+        jsonObjectArrayList = createGroupsForJSONArrayList(jsonObjectArrayList);
         return jsonObjectArrayList;
     }
 
-
+    static ArrayList<JSONObject> createGroupsForJSONArrayList (ArrayList<JSONObject> jsonObjects) {
+        ArrayList<JSONObject> groupedObjects = new ArrayList<JSONObject>();
+        HashMap<String, ArrayList<JSONObject>> frameMap = new HashMap<String, ArrayList<JSONObject>>();
+        for (int i = 0; i < jsonObjects.size(); i++) {
+            JSONObject jsonObject = jsonObjects.get(i);
+            try {
+                JSONArray superFrames = (JSONArray) jsonObject.get("fnsuperframes");
+                for (int j = 0; j < superFrames.length(); j++) {
+                    String frame = (String) superFrames.get(j);
+                    if (frameMap.containsKey(frame)) {
+                        ArrayList<JSONObject> objects = frameMap.get(frame);
+                        objects.add(jsonObject);
+                        frameMap.put(frame, objects);
+                    }
+                    else {
+                        ArrayList<JSONObject> objects = new ArrayList<JSONObject>();
+                        objects.add(jsonObject);
+                        frameMap.put(frame, objects);
+                    }
+                }
+            } catch (JSONException e) {
+              //  e.printStackTrace();
+                if (frameMap.containsKey("noframe")) {
+                    ArrayList<JSONObject> objects = frameMap.get("noframe");
+                    objects.add(jsonObject);
+                    frameMap.put("noframe", objects);
+                }
+                else {
+                    ArrayList<JSONObject> objects = new ArrayList<JSONObject>();
+                    objects.add(jsonObject);
+                    frameMap.put("noframe", objects);
+                }
+            }
+        }
+        SortedSet<PhraseCount> list = new TreeSet<PhraseCount>(new PhraseCount.Compare());
+        Set keySet = frameMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<JSONObject> objects = frameMap.get(key);
+            PhraseCount pcount = new PhraseCount(key, objects.size());
+            list.add(pcount);
+        }
+        for (PhraseCount pcount : list) {
+            ArrayList<JSONObject> objects = frameMap.get(pcount.getPhrase());
+            for (int i = 0; i < objects.size(); i++) {
+                JSONObject jsonObject = objects.get(i);
+                try {
+                    jsonObject.put("group", pcount.getPhrase());
+                    groupedObjects.add(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return groupedObjects;
+    }
 
     static ArrayList<JSONObject> getJSONObjectArrayRDF() throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
@@ -475,6 +551,44 @@ public class TrigToJsonTimeLine {
             }
         }
         return jsonClassesObject;
+    }
+
+    static void getFrameNetSuperFramesJSONObjectFromInstanceStatement (JSONObject parent, ArrayList<Statement> statements) throws JSONException {
+        ArrayList<String> coveredValues = new ArrayList<String>();
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#type")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String [] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    String property = getNameSpaceString(value);
+                    if (property.equalsIgnoreCase("fn")) {
+                        value = getValue(value);
+                     //   System.out.println("value = " + value);
+                        String superFrame = "";
+                        if (frameNetReader.subToSuperFrame.containsKey(value)) {
+                            ArrayList<String> superFrames = frameNetReader.subToSuperFrame.get(value);
+                            for (int k = 0; k < superFrames.size(); k++) {
+                                superFrame =  superFrames.get(k);
+                                if (!coveredValues.contains(superFrame)) {
+                                    coveredValues.add(superFrame);
+                                    parent.append("fnsuperframes", superFrame);
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {

@@ -6,6 +6,7 @@ import eu.newsreader.eventcoreference.objects.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -51,7 +52,11 @@ public class Util {
      * @param baseUrl
      * @param subjectId
      */
-    static public void addMentionToFactRelations (NafMention nafMention, ArrayList<SemRelation> factRelations, String factValue, String baseUrl, String subjectId) {
+    static public void addMentionToFactRelations (NafMention nafMention,
+                                                  ArrayList<SemRelation> factRelations,
+                                                  String factValue,
+                                                  String baseUrl,
+                                                  String subjectId) {
         boolean valueMatch = false;
         for (int i = 0; i < factRelations.size(); i++) {
             SemRelation semRelation = factRelations.get(i);
@@ -100,6 +105,7 @@ public class Util {
         }
         return false;
     }
+
 
     static public void addObject(ArrayList<SemObject> objects, SemObject object) {
        if (!hasObject(objects, object)) {
@@ -191,76 +197,6 @@ public class Util {
         return false;
     }
 
-   /* static public void addObjectOrg(ArrayList<SemObject> objects, SemObject object) {
-        boolean DEBUG = false;
-
-        if (DEBUG) {
-            System.out.println("object.getId() = " + object.getId());
-            for (int i = 0; i < object.getNafMentions().size(); i++) {
-                NafMention nafMention = object.getNafMentions().get(i);
-                System.out.println("object nafMention.toString() = " + nafMention.toString());
-            }
-        }
-
-        boolean objectmatch =false;
-        boolean mentionMatch = false;
-        for (int i = 0; i < objects.size(); i++) {
-            SemObject semObject = objects.get(i);
-            if (DEBUG) {
-                System.out.println("semObject = " + semObject.getId());
-                for (int j = 0; j < semObject.getNafMentions().size(); j++) {
-                    NafMention nafMention = semObject.getNafMentions().get(j);
-                    System.out.println("semObject nafMention.toString() = " + nafMention.toString());
-                }
-            }
-            if (semObject.getURI().equals(object.getURI())) {
-                objectmatch = true;
-                if (DEBUG) System.out.println("URI MATCH");
-                for (int j = 0; j < object.getNafMentions().size(); j++) {
-                    NafMention nafMention = object.getNafMentions().get(j);
-                    if (!semObject.hasMention(nafMention)) {
-                        semObject.addMentionUri(nafMention);
-                    }
-                }
-                break;
-            }
-            else {
-                //// Next check absorbs an object if there is a mention overlap despite the URI mismatch!!!!
-                for (int j = 0; j < object.getNafMentions().size(); j++) {
-                    NafMention nafMention = object.getNafMentions().get(j);
-                    if (semObject.hasMention(nafMention)) {
-                        //// there is a mention overlap!
-                        if (DEBUG) System.out.println("MENTION MATCH");
-                        mentionMatch = true;
-                        break;
-                    }
-                }
-
-                if (mentionMatch) {
-                    for (int j = 0; j < object.getNafMentions().size(); j++) {
-                        NafMention nafMention = object.getNafMentions().get(j);
-                        if (!semObject.hasMention(nafMention)) {
-                            if (DEBUG) System.out.println("to be added Object nafMention.toString() = " + nafMention.toString());
-                            semObject.addMentionUri(nafMention);
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        if (!objectmatch && !mentionMatch) {
-            if (DEBUG) {
-                System.out.println("new object = " + object.getId());
-            }
-            objects.add(object);
-
-        }
-        else {
-            if (DEBUG) {
-                System.out.println("matched object = " + object.getId());
-            }
-        }
-    }*/
 
     static public ArrayList<KafSense> getExternalReferences(ArrayList<KafEntity> entities) {
         ArrayList<KafSense> refs = new ArrayList<KafSense>();
@@ -734,6 +670,34 @@ public class Util {
         return true;
     }
 
+    static public boolean containsAllSpans(ArrayList<String> spans, SemObject semObject) {
+        boolean match = false;
+        for (int i = 0; i < semObject.getNafMentions().size(); i++) {
+            ArrayList<NafMention> mentions = semObject.getNafMentions();
+            for (int j = 0; j < mentions.size(); j++) {
+                NafMention nafMention = mentions.get(j);
+                match = false;
+                for (int k = 0; k < nafMention.getTermsIds().size(); k++) {
+                    String id = nafMention.getTermsIds().get(k);
+                    if (!spans.contains(id)) {
+                        match = false;
+                        break;
+                    }
+                    else {
+                        match = true;
+                    }
+                }
+                if (match) {
+                    break;
+                }
+                else {
+                    //try next one
+                }
+            }
+        }
+        return match;
+    }
+
     /**
      *
      * @param spans
@@ -1022,6 +986,16 @@ public class Util {
         }
     }
 
+
+    static public void setFactuality(KafSaxParser kafSaxParser, NafMention nafMention) {
+        for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
+            KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
+            if (nafMention.getTokensIds().contains(kafFactuality.getId())) {
+                //   System.out.println("nafMention.toString() = " + nafMention.toString());
+                nafMention.setFactuality(kafFactuality);
+            }
+        }
+    }
 
     /**
      * Checks if two SemObject have a mention in the same sentence
@@ -1956,4 +1930,6 @@ public class Util {
         }
         return vector;
     }
+
+
 }
