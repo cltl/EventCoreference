@@ -1353,6 +1353,7 @@ public class GetSemFromNafFile {
 
 
     static public void main (String [] args) {
+        String pathToNafFile = "";
         //String pathToNafFile = args[0];
        // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/scale-test.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/increase-example/57VV-5311-F111-G0HJ.xml_7684191f264a9e21af56de7ec51cf2d5.naf.coref";
@@ -1366,7 +1367,7 @@ public class GetSemFromNafFile {
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/Cross-lingual/test.srl.lexicalunits.pm.fn.ecoref.naf";
         //String pathToNafFile = "/users/piek/Desktop/NWR/timeline/vua-naf2sem_v2_2015/test/corpus_airbus/1173_Internal_emails_expose_Boeing-Air_Force_contract_discussions.naf";
-        String pathToNafFile = "/Users/piek/Desktop/EventWorkshop/examples/7924_A380_makes_maiden_flight_to_US.nl.naf";
+        // pathToNafFile = "/Users/piek/Desktop/EventWorkshop/examples/7924_A380_makes_maiden_flight_to_US.nl.naf";
         //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
