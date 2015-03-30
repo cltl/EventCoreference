@@ -31,6 +31,18 @@ public class MatchEventObjects {
 
     static boolean DEBUG = false;
     static String MATCHTYPE= "LEMMA";  // ILI OR ILILEMMA
+    static final String usage = "MatchEventObjects reads obj files stored in time-folders with CompositeEventObjects and outputs a single RDF-TRiG file\n" +
+            "The parameters are:\n" +
+            "--event-folder  <path>     <Path to the event folder that has subfolders for each time-description, e.g. \"e-2012-03-29\". Object file (*.obj) should be stored in these subfolders\n" +
+            "--wordnet-lmf   <path>     <(OPTIONAL, not yet used) Path to a WordNet-LMF file\n>" +
+            "--concept-match <double>   <(OPTIONAL, not yet used) threshold for conceptual matches of events>\n" +
+            "--phrase-match  <double>   <(OPTIONAL, not yet used) threshold for phrase matches of events>\n" +
+            "--match-type    <string>   <(OPTIONAL) Indicates what is used to match events across resources. Default value is \"LEMMA\". Values:\"LEMMA\", \"ILI\", \"ILILEMMA\">\n" +
+            "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
+            "--event-type    <string>   <(OPTIONAL) Indicate the type of events for establishing event coreference more or less strict. Values are \"contetxual\", \"source\", \"grammatical\">\n" +
+            "--source-data   <path>     <(OPTIONAL) Path to LexisNexis meta data on owners and authors to enrich the provenance>\n" +
+            "--debug                    <(OPTIONAL)>\n";
+
 
     static public void main (String [] args) {
 
@@ -39,7 +51,6 @@ public class MatchEventObjects {
         WordnetData wordnetData = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
-        boolean singleOutput = false;
         String pathToEventFolder = "";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/speech";
        // String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/events/contextual";
@@ -83,9 +94,6 @@ public class MatchEventObjects {
             else if (arg.equals("--event-type") && args.length>(i+1)) {
                 eventType = args[i+1];
             }
-            else if (arg.equals("--single-output")) {
-                singleOutput = true;
-            }
             else if (arg.equals("--source-data") && args.length>(i+1)) {
                 pathToSourceDataFile = args[i+1];
             }
@@ -97,13 +105,8 @@ public class MatchEventObjects {
             sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
             System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
         }
-        if (singleOutput) {
-            //processEventFilesSingleOutputFile(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
-            processEventFoldersSingleOutputFile(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
-        }
-        else {
-            processEventFilesSeparateOutputFiles(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
-        }
+        processEventFoldersSingleOutputFile(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+
     }
 
     static void chaining (HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap, String eventType) {
@@ -175,6 +178,7 @@ public class MatchEventObjects {
 
     static void compareObjectFileWithFinalEvents (File file, HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap, String eventType) {
        // System.out.println("file.getName() = " + file.getName());
+        //DEBUG = true;
         HashMap<String, ArrayList<CompositeEvent>> localEventMap = new HashMap<String, ArrayList<CompositeEvent>>();
         if (MATCHTYPE.equalsIgnoreCase("LEMMA")) {
             localEventMap = readLemmaEventHashMapFromObjectFile(file);
@@ -184,6 +188,9 @@ public class MatchEventObjects {
         }
         else if (MATCHTYPE.equalsIgnoreCase("ILI")) {
             localEventMap = readIliEventHashMapFromObjectFile(file);
+        }
+        else {
+            System.out.println("UNKNOWN MATCH TYPE:"+ MATCHTYPE);
         }
         Set keySet = localEventMap.keySet();
         Iterator keys = keySet.iterator();
@@ -198,15 +205,15 @@ public class MatchEventObjects {
                 finalCompositeEvents = finalLemmaEventMap.get(lemma);
             }
 
-/*
-            if (lemma.equals("ili-30-01451842-v")) {
+
+/*            if (lemma.equals("sell") || lemma.equals("family")) {
                 DEBUG = true;
             }
             else {
                 DEBUG = false;
                 continue;
-            }
-*/
+            }*/
+
             if (DEBUG) {
                 System.out.println("lemma = " + lemma);
                 System.out.println("finalCompositeEvents.size() = " + finalCompositeEvents.size());
@@ -291,7 +298,7 @@ public class MatchEventObjects {
         HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
         if (file.exists() ) {
             int cnt = 0;
-            DEBUG = false;
+          //  DEBUG = false;
             if (DEBUG) System.out.println("file = " + file.getName());
             try {
                 FileInputStream fis = new FileInputStream(file);
@@ -551,6 +558,7 @@ public class MatchEventObjects {
         ArrayList<File> eventFolders = Util.makeFolderList(pathToEventFolder);
         for (int f = 0; f < eventFolders.size(); f++) {
             File nextEventFolder =  eventFolders.get(f);
+            if (DEBUG) System.out.println("nextEventFolder.getName() = " + nextEventFolder.getName());
             try {
                 OutputStream fos = new FileOutputStream(nextEventFolder.getAbsolutePath()+"/sem.trig");
 
@@ -571,7 +579,7 @@ public class MatchEventObjects {
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
                     compareObjectFileWithFinalEvents(file, finalLemmaEventMap, eventType);
-                    //System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
+                    if (DEBUG) System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
                 }
                 chaining(finalLemmaEventMap, eventType);
                 JenaSerialization.addJenaCompositeEvents(ds, instanceModel, provenanceModel, finalLemmaEventMap, sourceMetaHashMap);
@@ -587,7 +595,7 @@ public class MatchEventObjects {
        // System.out.println("nMatches = " + nMatches);
     }
 
-    public static void processEventFilesSeparateOutputFiles (File pathToEventFolder, double conceptMatchThreshold,
+/*    public static void processEventFilesSeparateOutputFiles (File pathToEventFolder, double conceptMatchThreshold,
                                           double phraseMatchThreshold,
                                           HashMap<String, SourceMeta> sourceMetaHashMap,
                                           WordnetData wordnetData,
@@ -611,9 +619,7 @@ public class MatchEventObjects {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-
-       // System.out.println("nMatches = " + nMatches);
-    }
+    }*/
 
     static void checkCompositeEvents (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
         for (int m = 0; m < compositeEvent1.getEvent().getNafMentions().size(); m++) {

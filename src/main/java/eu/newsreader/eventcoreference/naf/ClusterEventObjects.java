@@ -23,6 +23,7 @@ import java.util.Vector;
 public class ClusterEventObjects {
 
 
+
     /*
         @TODO
         1. proper reference to the ontologies (even if not there yet)
@@ -32,11 +33,19 @@ public class ClusterEventObjects {
 
     static final String USAGE = "This program processes NAF files and stores binary objects for events with all related data in different object files based on the event type and the date\n" +
             "The program has the following arguments:\n" +
-            "--naf-folder     <Folder with the NAF files to be processed. Reads NAF files recursively>\n" +
-            "--event-folder   <Folder below which the event folders are created that hold the object file. " +
-            "The output structure is event/other, event/grammatical and event/speech.>\n" +
-            "--extension      <File extension to select the NAF files .>\n" +
-            "--project        <The name of the project for creating URIs>\n";
+            "--naf-folder           <path>   <Folder with the NAF files to be processed. Reads NAF files recursively>\n" +
+            "--event-folder         <path>   <Folder below which the event folders are created that hold the object file. " +
+            "                                 The output structure is event/other, event/grammatical and event/speech.>\n" +
+            "--extension            <string> <File extension to select the NAF files .>\n" +
+            "--project              <string> <The name of the project for creating URIs>\n" +
+            "--non-entities                  <If used, additional FrameNet roles and non-entity phrases are included>\n" +
+            "--contextual-frames    <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
+            "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
+            "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>\n" +
+            "--frame-level          <integer><Depth of path for the FrameNet relations>\n" +
+            "--frame-relations      <path>   <path to FrameNet file with relations>\n" +
+            "--microstories         <integer><Number of sentences to restrict the analysis>\n" +
+            "--bridging                      <Whether or not microstories are extended through bridging relations>\n";
     static Vector<String> communicationVector = null;
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
