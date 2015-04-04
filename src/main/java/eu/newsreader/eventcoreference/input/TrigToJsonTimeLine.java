@@ -450,8 +450,33 @@ public class TrigToJsonTimeLine {
         return jsonObjectArrayList;
     }
 
-
     static void writeJsonObjectArray (String pathToFolder, String project, ArrayList<JSONObject> objects) {
+        try {
+            try {
+                File folder = new File(pathToFolder);
+                OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + folder.getName()+".timeline.json");
+                JSONObject timeLineObject = JsonEvent.createTimeLineProperty(new File(pathToFolder).getName(), project);
+
+                for (int j = 0; j < objects.size(); j++) {
+                    JSONObject jsonObject = objects.get(j);
+                    timeLineObject.append("events", jsonObject);
+                }
+
+                String str = "{ \"timeline\":\n";
+                jsonOut.write(str.getBytes());
+                jsonOut.write(timeLineObject.toString(1).getBytes());
+                str ="}\n";
+                jsonOut.write(str.getBytes());
+                jsonOut.close();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void writeJsonObjectArrayOrg (String pathToFolder, String project, ArrayList<JSONObject> objects) {
         try {
             try {
                 File folder = new File(pathToFolder);

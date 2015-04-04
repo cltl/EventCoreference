@@ -10,6 +10,8 @@ import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.util.Util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -212,8 +214,16 @@ nwr:hasAttribution nwrontology:attrPOSCERTNF .
             Resource subject = ds.getDefaultModel().createResource(id);
             Property property = ds.getDefaultModel().createProperty(ResourcesUri.prov, "wasAttributedTo");
             if (sourceEntity.getURI().isEmpty()) {
-                Resource targetResource = ds.getDefaultModel().createResource(source.getTokenString());
-                subject.addProperty(property, targetResource);
+                String uri = "";
+                try {
+                    uri = URLEncoder.encode(source.getTokenString(), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    //  e.printStackTrace();
+                }
+                if (!uri.isEmpty()) {
+                    Resource targetResource = ds.getDefaultModel().createResource(uri);
+                    subject.addProperty(property, targetResource);
+                }
             }
             else {
                 Resource targetResource = ds.getDefaultModel().createResource(sourceEntity.getURI());
