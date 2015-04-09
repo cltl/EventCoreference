@@ -14,6 +14,7 @@ public class NafMention implements Serializable {
     private String baseUri;
     private String phrase;
     private String sentence;
+    private String sentenceText;
     private String offSetStart;
     private String offSetEnd;
     private ArrayList<String> tokensIds;
@@ -27,6 +28,7 @@ public class NafMention implements Serializable {
         this.offSetStart = "";
         this.offSetEnd = "";
         this.sentence = "";
+        this.sentenceText = "";
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
         this.factuality = new KafFactuality();
@@ -38,6 +40,7 @@ public class NafMention implements Serializable {
         this.offSetStart = "";
         this.offSetEnd = "";
         this.sentence = "";
+        this.sentenceText = "";
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
         this.factuality = new KafFactuality();
@@ -79,6 +82,22 @@ public class NafMention implements Serializable {
                 //System.out.println(kafWordForm.getSent()+" = " + kafWordForm.getWf());
                 sentence = kafWordForm.getSent();
                 break;
+            }
+        }
+    }
+
+    public void setSentenceText(KafSaxParser kafSaxParser) {
+        for (int i = 0; i < tokensIds.size(); i++) {
+            String s = tokensIds.get(i);
+            KafWordForm kafWordForm = kafSaxParser.getWordForm(s);
+            if (kafWordForm!=null) {
+                //System.out.println(kafWordForm.getSent()+" = " + kafWordForm.getWf());
+                if (sentence.equals(kafWordForm.getSent())) {
+                   if (!sentenceText.isEmpty()) {
+                        sentenceText+=" ";
+                    }
+                    sentenceText+= kafWordForm.getWf();
+                }
             }
         }
     }
@@ -162,6 +181,22 @@ public class NafMention implements Serializable {
         this.termsIds.add(termsId);
     }
 
+    public void setPhrase(String phrase) {
+        this.phrase = phrase;
+    }
+
+    public void setSentence(String sentence) {
+        this.sentence = sentence;
+    }
+
+    public String getSentenceText() {
+        return sentenceText;
+    }
+
+    public void setSentenceText(String sentenceText) {
+        this.sentenceText = sentenceText;
+    }
+
     public String toString () {
         String str = baseUri;
         if (!offSetStart.isEmpty() && !offSetEnd.isEmpty())  {
@@ -191,6 +226,9 @@ public class NafMention implements Serializable {
                 else str += ","+s;
 
             }
+        }
+        if (!sentence.isEmpty())  {
+            str += "&sentence="+sentence;
         }
         return str;
     }

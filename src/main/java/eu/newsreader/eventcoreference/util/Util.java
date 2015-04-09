@@ -6,7 +6,6 @@ import eu.newsreader.eventcoreference.objects.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -1471,6 +1470,7 @@ public class Util {
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
         mention.setSentence(kafSaxParser);
+        mention.setSentenceText(kafSaxParser);
         mention.setPhraseFromMention(kafSaxParser);
         return mention;
     }
@@ -1523,6 +1523,7 @@ public class Util {
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
         mention.setSentence(kafSaxParser);
+        mention.setSentenceText(kafSaxParser);
         mention.setPhraseFromMention(kafSaxParser);
         return mention;
     }
@@ -1581,6 +1582,7 @@ public class Util {
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
         mention.setSentence(kafSaxParser);
+        mention.setSentenceText(kafSaxParser);
         mention.setPhraseFromMention(kafSaxParser);
         return mention;
     }

@@ -388,7 +388,8 @@ public class SemObject implements Serializable {
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
             Property property = model.createProperty(ResourcesUri.gaf + "denotedBy");
-            Resource targetResource = model.createResource(nafMention.toString());
+           // Resource targetResource = model.createResource(nafMention.toString());
+            Resource targetResource = model.createResource(nafMention.toStringFull());
             resource.addProperty(property, targetResource);
 
         }
@@ -461,7 +462,8 @@ public class SemObject implements Serializable {
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
             Property property = model.createProperty(ResourcesUri.gaf + "denotedBy");
-            Resource targetResource = model.createResource(nafMention.toString());
+           // Resource targetResource = model.createResource(nafMention.toString());
+            Resource targetResource = model.createResource(nafMention.toStringFull());
             resource.addProperty(property, targetResource);
 
         }

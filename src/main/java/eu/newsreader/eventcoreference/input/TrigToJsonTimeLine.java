@@ -383,9 +383,55 @@ public class TrigToJsonTimeLine {
         }
         for (PhraseCount pcount : list) {
             ArrayList<JSONObject> objects = frameMap.get(pcount.getPhrase());
+            int firstMention = -1;
+            Vector<Integer> climaxIndex = new Vector<Integer>();
+
             for (int i = 0; i < objects.size(); i++) {
                 JSONObject jsonObject = objects.get(i);
                 try {
+                    JSONArray mentions = (JSONArray) jsonObject.get("mentions");
+                    int earliestEventMention = -1;
+                    for (int j = 0; j < mentions.length(); j++) {
+                        String mention =  mentions.get(j).toString();
+                        int idx = mention.indexOf("sentence=");
+                        if (idx >-1) {
+                            idx = mention.lastIndexOf("=");
+                            int sentenceNr = Integer.parseInt(mention.substring(idx+1));
+                            if (sentenceNr<earliestEventMention || earliestEventMention==-1) {
+                                earliestEventMention = sentenceNr;
+                                jsonObject.put("sentence", mention.substring(idx + 1));
+                                if (sentenceNr < firstMention || firstMention == -1) {
+                                    firstMention = sentenceNr;
+                                }
+                            }
+                        }
+                    }
+                    climaxIndex.add(earliestEventMention);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            Collections.sort(climaxIndex);
+/*
+            for (int i = 0; i < climaxIndex.size(); i++) {
+                Integer integer = climaxIndex.get(i);
+                System.out.println("integer = " + integer);
+            }
+*/
+            for (int i = 0; i < objects.size(); i++) {
+                JSONObject jsonObject = objects.get(i);
+                try {
+                    // JSONObject sentenceObject = (JSONObject) jsonObject.get("sentence");
+                    int sentenceNr = Integer.parseInt((String) jsonObject.get("sentence"));
+                    // Integer climax = sentenceNr-firstMention;
+                    Integer climax = climaxIndex.indexOf(sentenceNr);
+/*
+                    System.out.println("firstMention = " + firstMention);
+                    System.out.println("sentenceNr = " + sentenceNr);
+                    System.out.println("climax = " + climax);
+*/
+                    jsonObject.put("climax", climax.toString());
                     jsonObject.put("group", pcount.getPhrase());
                     groupedObjects.add(jsonObject);
                 } catch (JSONException e) {
@@ -760,6 +806,7 @@ public class TrigToJsonTimeLine {
                 } else if (statement.getObject().isURIResource()) {
                     object = statement.getObject().asResource().getURI();
                 }
+                
                 //"http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"http://www.newsreader-project.eu/ontologies/framenet/Manufacturing"
                 String [] values = object.split(",");
                 for (int j = 0; j < values.length; j++) {
