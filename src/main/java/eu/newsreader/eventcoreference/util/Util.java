@@ -1830,6 +1830,34 @@ public class Util {
         return acceptedFileList;
     }
 
+    static public ArrayList<File> makeRecursiveFileListFromFilteredFolders(File inputFile, String theFilter, String folderFilter) {
+        ArrayList<File> acceptedFileList = new ArrayList<File>();
+        File[] theFileList = null;
+        if ((inputFile.canRead())) {
+            theFileList = inputFile.listFiles();
+            for (int i = 0; i < theFileList.length; i++) {
+                File newFile = theFileList[i];
+                if (newFile.isDirectory()) {
+                    ArrayList<File> nextFileList = makeRecursiveFileList(newFile, theFilter);
+                    acceptedFileList.addAll(nextFileList);
+                } else {
+                    String parentFolderName = newFile.getParentFile().getName();
+                    if (parentFolderName.startsWith(folderFilter)) {
+                        if (newFile.getName().endsWith(theFilter)) {
+                            acceptedFileList.add(newFile);
+                        }
+                    }
+                }
+            }
+        } else {
+            System.out.println("Cannot access file:" + inputFile + "#");
+            if (!inputFile.exists()) {
+                System.out.println("File/folder does not exist!");
+            }
+        }
+        return acceptedFileList;
+    }
+
     static public ArrayList<File> makeFlatFileList(File inputFile, String theFilter) {
         ArrayList<File> acceptedFileList = new ArrayList<File>();
         File[] theFileList = null;

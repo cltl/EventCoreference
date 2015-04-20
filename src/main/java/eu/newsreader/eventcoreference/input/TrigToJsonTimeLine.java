@@ -431,7 +431,10 @@ public class TrigToJsonTimeLine {
                     System.out.println("sentenceNr = " + sentenceNr);
                     System.out.println("climax = " + climax);
 */
-                    jsonObject.put("climax", climax.toString());
+                    //jsonObject.put("climax", climax.toString());
+
+                    String combinedKey = pcount.getPhrase()+"."+climax.toString();
+                    jsonObject.put("climax", combinedKey);
                     jsonObject.put("group", pcount.getPhrase());
                     groupedObjects.add(jsonObject);
                 } catch (JSONException e) {

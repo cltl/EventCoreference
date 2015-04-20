@@ -189,18 +189,13 @@ public class TrigReader {
 
     static public void main (String[] args) {
         try {
-            String format = "";
-            format = "Json/LD";
-                    //format = "NT";
-          //  String format = "Turle";
-          //  String format = "N3";
-
-
             String trigfolder = "";
             String outputFileInstances = "";
             String outputFileProvenance = "";
             String outputFileOthers = "";
             String statsFile = "";
+            String pathToILIfile = "";
+            String filter = "";
             for (int i = 0; i < args.length; i++) {
                 String arg = args[i];
                 if (arg.equals("--instance-out") && args.length>(i+1)) {
@@ -217,6 +212,12 @@ public class TrigReader {
                 }
                 else if (arg.equals("--stats-out") && args.length>(i+1)) {
                     statsFile = args[i+1];
+                }
+                else if (arg.equals("--ili") && args.length>(i+1)) {
+                    pathToILIfile = args[i+1];
+                }
+                else if (arg.equals("--prefix") && args.length>(i+1)) {
+                    filter = args[i+1];
                 }
             }
 //            trigfolder = "/Users/piek/Desktop/EventWorkshop/examples/crosslingual/events/contextual/e-2007-03-19";
@@ -274,10 +275,16 @@ public class TrigReader {
 
 
 
-            String pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
+            //pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
             iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
             Dataset dataset = TDBFactory.createDataset();
-            ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
+            ArrayList<File> trigFiles = new ArrayList<File>();
+            if (filter.isEmpty()) {
+                trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
+            }
+            else {
+                trigFiles = Util.makeRecursiveFileListFromFilteredFolders(new File(trigfolder), ".trig", filter);
+            }
             ArrayList<String> provenanceTriples = new ArrayList<String>();
             ArrayList<String> instanceTriples = new ArrayList<String>();
             ArrayList<String> otherTriples = new ArrayList<String>();
