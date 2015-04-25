@@ -285,12 +285,17 @@ public class TrigReader {
             else {
                 trigFiles = Util.makeRecursiveFileListFromFilteredFolders(new File(trigfolder), ".trig", filter);
             }
+            System.out.println("prefix = " + filter);
+            System.out.println("trigFiles.size() = " + trigFiles.size());
             ArrayList<String> provenanceTriples = new ArrayList<String>();
             ArrayList<String> instanceTriples = new ArrayList<String>();
             ArrayList<String> otherTriples = new ArrayList<String>();
             for (int i = 0; i < trigFiles.size(); i++) {
                 File file = trigFiles.get(i);
-                System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
+                if (i%50==0) {
+                    System.out.println(i+": file.getName() = " + file.getParentFile().getName());
+                }
+                //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
                 dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
                 Iterator<String> it = dataset.listNames();
                 while (it.hasNext()) {

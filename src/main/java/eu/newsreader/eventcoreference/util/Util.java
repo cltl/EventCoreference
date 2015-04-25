@@ -1838,7 +1838,7 @@ public class Util {
             for (int i = 0; i < theFileList.length; i++) {
                 File newFile = theFileList[i];
                 if (newFile.isDirectory()) {
-                    ArrayList<File> nextFileList = makeRecursiveFileList(newFile, theFilter);
+                    ArrayList<File> nextFileList = makeRecursiveFileListFromFilteredFolders(newFile, theFilter, folderFilter);
                     acceptedFileList.addAll(nextFileList);
                 } else {
                     String parentFolderName = newFile.getParentFile().getName();

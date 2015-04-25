@@ -78,6 +78,7 @@ public class RoleLabels {
 
     static public final String [] PRIMEPARTICIPANT = {"a0","arg0", "a-0", "arg-0"};
     static public final String [] SECONDPARTICIPANT = {"a1","arg1", "a-1", "arg-1"};
+    static public final String [] THIRDPARTICIPANT = {"a2","arg2", "a-2", "arg-2"};
     static public final String [] NONPRIMEPARTICIPANT = {"a1", "a2", "a3", "a4", "arg1", "arg2", "arg3", "a-1", "a-2", "a-3", "a-4", "arg-1", "arg-2", "arg-3", "arg-4", "am-dir", "argm-dir"};
     static public final String [] LOCATION = {"am-loc", "argm-loc"};
     static public final String [] TIME = {"am-tmp", "argm-tmp"};
@@ -156,6 +157,28 @@ public class RoleLabels {
         }
         return false;
     }
+    static public boolean isTHIRDPARTICIPANT (String role) {
+        for (int i = 0; i < THIRDPARTICIPANT.length; i++) {
+            String s = THIRDPARTICIPANT[i];
+            if (s.equalsIgnoreCase(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static public boolean hasTHIRDPARTICIPANT (ArrayList<String> roles) {
+        for (int i = 0; i < THIRDPARTICIPANT.length; i++) {
+            String s = THIRDPARTICIPANT[i];
+            for (int j = 0; j < roles.size(); j++) {
+                String role = roles.get(j);
+                if (s.equalsIgnoreCase(role)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
    static public boolean isNONPRIMEPARTICIPANT (String role) {
         for (int i = 0; i < NONPRIMEPARTICIPANT.length; i++) {
@@ -166,6 +189,20 @@ public class RoleLabels {
         }
         return false;
     }
+
+    static public boolean hasNONPRIMEPARTICIPANT (ArrayList<String> roles) {
+        for (int i = 0; i < NONPRIMEPARTICIPANT.length; i++) {
+            String s = NONPRIMEPARTICIPANT[i];
+            for (int j = 0; j < roles.size(); j++) {
+                String role = roles.get(j);
+                if (s.equalsIgnoreCase(role)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     static public boolean isLOCATION (String role) {
         for (int i = 0; i < LOCATION.length; i++) {

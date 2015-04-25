@@ -33,6 +33,8 @@ public class GetTimeLinesFromNaf {
     static Vector<String> communicationVector = null;
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
+    static boolean NOENTITYCOREF = false;
+    static boolean NOEVENTCOREF = false;
 
 
     static void reduceSentenceIdentifiers (KafSaxParser kafSaxParser) {
@@ -67,8 +69,8 @@ public class GetTimeLinesFromNaf {
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_airbus_event_based_4";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_apple_event_based_4";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_gm_chrysler_ford_event_based_4";
-        pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_stock_market_event_based_4";
-
+       // pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_stock_market_event_based_4";
+        //pathToFolder = "/Users/piek/Desktop/WNACP/corpus_airbus_NAF/test/";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/wiki_bio_out";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_airbus-event-based-3";
         //pathToFolder = "/Users/piek/Desktop/NWR/timeline/corpus_NAF_output_141214/corpus_apple-event-based-3";
@@ -107,6 +109,12 @@ public class GetTimeLinesFromNaf {
             }
             else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
                 contextualFrameFile = args[i+1];
+            }
+            else if (arg.equals("--noentity-coref")) {
+                NOENTITYCOREF = true;
+            }
+            else if (arg.equals("--noevent-coref")) {
+                NOEVENTCOREF = true;
             }
         }
 
@@ -238,10 +246,20 @@ public class GetTimeLinesFromNaf {
         else {
             baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName() + ID_SEPARATOR;
         }
-        GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
+        if (NOENTITYCOREF) {
+            GetSemFromNafFile.processNafFileForEntityWithoutCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
+        }
+        else {
+            GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
+        }
         GetSemFromNafFile.processNafFileForRemainingSrlActors(entityUri, baseUrl, kafSaxParser, semActors);
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-        GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        if (NOEVENTCOREF) {
+            GetSemFromNafFile.processNafFileForEventWithoutCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        }
+        else {
+            GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        }
         //GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
 /*        try {
@@ -346,12 +364,15 @@ public class GetTimeLinesFromNaf {
                                                     for (int o = 0; o < semEvent.getNafMentions().size(); o++) {
                                                         NafMention nafMention = semEvent.getNafMentions().get(o);
                                                         String sentenceId = "";
+                                                        String wordForm = "";
                                                         for (int p = 0; p < nafMention.getTokensIds().size(); p++) {
                                                             String tokenId = nafMention.getTokensIds().get(p);
                                                             KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
+                                                            wordForm = kafWordForm.getWf();
                                                             sentenceId += kafWordForm.getSent();
                                                         }
-                                                        String value = "\t" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                                       // String value = "\t" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                                        String value = "\t" + sentenceId.trim() + "-" + wordForm+nafMention.getTermsIds().toString();
                                                         if (!coveredEventMentions.contains(value)) {
                                                             //  timeLine += "\t" + file.getName() + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
                                                             timeLine += value;
@@ -373,13 +394,16 @@ public class GetTimeLinesFromNaf {
                                 for (int o = 0; o < semEvent.getNafMentions().size(); o++) {
                                     NafMention nafMention = semEvent.getNafMentions().get(o);
                                     String sentenceId = "";
+                                    String wordForm = "";
                                     for (int p = 0; p < nafMention.getTokensIds().size(); p++) {
                                         String tokenId = nafMention.getTokensIds().get(p);
                                         KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
+                                        wordForm = kafWordForm.getWf();
                                         sentenceId += kafWordForm.getSent();
                                     }
                                    // timeLine += "\t" + file.getName() + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
-                                    String value = "\t"  + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                    //String value = "\t"  + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                                    String value = "\t"  + sentenceId.trim() + "-" + wordForm+nafMention.getTermsIds().toString();
                                     if (!coveredEventMentions.contains(value)) {
                                         timeLine += value;
                                         coveredEventMentions.add(value);
@@ -441,13 +465,16 @@ public class GetTimeLinesFromNaf {
                 for (int o = 0; o < semEvent.getNafMentions().size(); o++) {
                     NafMention nafMention = semEvent.getNafMentions().get(o);
                     String sentenceId = "";
+                    String wordForm = "";
                     for (int p = 0; p < nafMention.getTokensIds().size(); p++) {
                         String tokenId = nafMention.getTokensIds().get(p);
                         KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
+                        wordForm = kafWordForm.getWf();
                         sentenceId += kafWordForm.getSent();
                     }
                     // timeLine += "\t" + file.getName() + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
-                    String value =  sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                    //String value =  sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                    String value =  sentenceId.trim() + "-" + wordForm+nafMention.getTermsIds().toString();
                     if (o<(semEvent.getNafMentions().size()-1)) {
                         value +=";";
                     }
@@ -482,13 +509,16 @@ public class GetTimeLinesFromNaf {
                     for (int o = 0; o < semEvent.getNafMentions().size(); o++) {
                         NafMention nafMention = semEvent.getNafMentions().get(o);
                         String sentenceId = "";
+                        String wordForm = "";
                         for (int p = 0; p < nafMention.getTokensIds().size(); p++) {
                             String tokenId = nafMention.getTokensIds().get(p);
                             KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
+                            wordForm = kafWordForm.getWf();
                             sentenceId += kafWordForm.getSent();
                         }
                         // timeLine += "\t" + file.getName() + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
-                        String value = sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                       // String value = sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
+                        String value = sentenceId.trim() + "-" + wordForm+nafMention.getTermsIds().toString();
                         if (o<(semEvent.getNafMentions().size()-1)) {
                             value +=";";
                         }
@@ -803,7 +833,10 @@ public class GetTimeLinesFromNaf {
                 SemRelation semRelation = semRelations.get(j);
                 if (semRelation.getObject().equals(semObject.getId())) {
                     /// we have an event involving the object
-                    if (RoleLabels.hasPRIMEPARTICIPANT(semRelation.getPredicates()) || RoleLabels.hasSECONDPARTICIPANT(semRelation.getPredicates())) {
+                    if (RoleLabels.hasPRIMEPARTICIPANT(semRelation.getPredicates())
+                            || RoleLabels.hasSECONDPARTICIPANT(semRelation.getPredicates())
+                            || RoleLabels.hasTHIRDPARTICIPANT(semRelation.getPredicates())
+                        ) {
                         String eventId = semRelation.getSubject();
 
                         SemEvent semEvent = null;
@@ -961,7 +994,6 @@ public class GetTimeLinesFromNaf {
                     timeAnchor = true;
                 }
             }
-/*
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
                     SemObject semTime = semTimes.get(l);
@@ -1010,7 +1042,6 @@ public class GetTimeLinesFromNaf {
                     }
                 }
             }
-*/
         }
 
 
@@ -1047,6 +1078,12 @@ public class GetTimeLinesFromNaf {
                     break;
                 }
             }
+/*
+            if (kafEvent.getId().equals("pr1")) {
+                System.out.println("semEventId = " + semEventId);
+            }
+*/
+
             if (semEventId.isEmpty()) {
                 //// this is an event without SRL representation, which is not allowed
                 // SHOULD NEVER OCCUR
@@ -1059,6 +1096,12 @@ public class GetTimeLinesFromNaf {
                         continue;
                     }
                     ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+/*
+                    if (kafEvent.getId().equals("pr1")) {
+                        System.out.println("kafParticipant = " + kafParticipant.getId());
+                        System.out.println("semObjects.toString() = " + semObjects.toString());
+                    }
+*/
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
                         if (semObject!=null) {
