@@ -316,10 +316,11 @@ public class GetSemFromNafFile {
         for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
             KafEvent kafEvent = kafSaxParser.kafEventArrayList.get(i);
             SemEvent semEvent = new SemEvent();
-            semEvent.addLcses(kafEvent.getExternalReferences());
-
-            ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl,
-                    kafSaxParser, kafEvent);
+            ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, kafEvent.getSpanIds());
+                    /*new ArrayList<NafMention>();
+            NafMention nafMention = new NafMention();
+            nafMention.setTermsIds(kafEvent.getSpanIds());
+            mentionArrayList.add(nafMention);*/
             semEvent.addNafMentions(mentionArrayList);
             semEvent.addConcepts(kafEvent.getExternalReferences());
             semEvent.addPhraseCountsForMentions(kafSaxParser);
