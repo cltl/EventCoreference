@@ -73,6 +73,7 @@ public class FrameNetReader extends DefaultHandler {
             ArrayList<String> descendants = new ArrayList<String>();
             getDescendants(levelFrame, descendants);
             if (descendants.size()<100) {
+                /// we skip frames that have too many descendants
                 flatSuperToSubFrame.put(levelFrame, descendants);
                 for (int j = 0; j < descendants.size(); j++) {
                     String d = descendants.get(j);
@@ -103,7 +104,7 @@ public class FrameNetReader extends DefaultHandler {
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next();
-            if (subToSuperFrame.containsKey(key)) {
+            if (!subToSuperFrame.containsKey(key)) {
                 tops.add(key);
             }
         }
@@ -146,6 +147,21 @@ public class FrameNetReader extends DefaultHandler {
             }
         }
     }
+
+    public void getParentChain (String frame, ArrayList<String> parents, ArrayList<String> topFrames) {
+            if (subToSuperFrame.containsKey(frame)) {
+                ArrayList<String> pFrames = subToSuperFrame.get(frame);
+                for (int i = 0; i < pFrames.size(); i++) {
+                    String p = pFrames.get(i);
+                    if (!parents.contains(p)) {
+                        if (topFrames.contains(p)) {
+                            parents.add(p);
+                        }
+                        getParentChain(p, parents);
+                    }
+                }
+            }
+   }
 
     public void getDescendants (String frame, ArrayList<String> decendants) {
         if (superToSubFrame.containsKey(frame)) {

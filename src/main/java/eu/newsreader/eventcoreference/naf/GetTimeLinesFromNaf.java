@@ -359,6 +359,7 @@ public class GetTimeLinesFromNaf {
     static String getTimeLineString (SemEvent semEvent,
                                      ArrayList<SemRelation> semRelations,
                                      ArrayList<SemObject> semTimes,
+                                     String entityRoles,
                                      KafSaxParser kafSaxParser) {
         String timeLine = "";
         ArrayList<String> coveredTimes = new ArrayList<String>();
@@ -375,6 +376,10 @@ public class GetTimeLinesFromNaf {
                             if (!coveredTimes.contains(timeString)) { /// avoid duplicates
                                 coveredTimes.add(timeString);
                                 timeLine += makeTimeLineStringForDateString(timeString, semEvent, kafSaxParser);
+                                if (!entityRoles.isEmpty()) {
+                                    timeLine+=entityRoles;
+                                }
+                                timeLine += "\n";
                                 break;
                             }
                         }
@@ -388,6 +393,10 @@ public class GetTimeLinesFromNaf {
         if (coveredTimes.size()==0) {
             String timeString = "NOTIMEX";
             timeLine = makeTimeLineStringForDateString(timeString, semEvent, kafSaxParser);
+            if (!entityRoles.isEmpty()) {
+                timeLine+=entityRoles;
+            }
+            timeLine += "\n";
         }
         return timeLine;
     }
@@ -433,7 +442,7 @@ public class GetTimeLinesFromNaf {
                             /// This is the event involving this actor
                             /// Now get the time
 
-                            timeLine += getTimeLineString(semEvent, semRelations, semTimes, kafSaxParser) +"\n";
+                            timeLine += getTimeLineString(semEvent, semRelations, semTimes, "", kafSaxParser);
                         }
                         else {
                           //  System.out.println("NO EVENTS");
@@ -458,9 +467,8 @@ public class GetTimeLinesFromNaf {
             SemEvent semEvent = (SemEvent) semEvents.get(i);
             if (!coveredEvents.contains(semEvent.getId())) {
                 coveredEvents.add(semEvent.getId());
-                timeLine += getTimeLineString(semEvent, semRelations, semTimes, kafSaxParser);
-                timeLine += makeListOfActorMentions(semEvent, semRelations, semActors, kafSaxParser);
-                timeLine += "\n";
+                String entityRoles = makeListOfActorMentions(semEvent, semRelations, semActors, kafSaxParser);
+                timeLine += getTimeLineString(semEvent, semRelations, semTimes, entityRoles, kafSaxParser);
             }
         }
         return timeLine;

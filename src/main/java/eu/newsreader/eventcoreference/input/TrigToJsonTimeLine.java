@@ -31,14 +31,23 @@ public class TrigToJsonTimeLine {
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static String ACTORNAMESPACES = "";
     static boolean ALL = false; /// if true we do not filter events
+    static EsoReader esoReader = new EsoReader();
     static FrameNetReader frameNetReader = new FrameNetReader();
+    static ArrayList<String> topFrames = new ArrayList<String>();
+    static int fnLevel = 0;
+    static int esoLevel = 0;
+
+
 
     static public void main (String[] args) {
         String project = "NewsReader timeline";
         String pathToILIfile = "";
         String trigfolder = "";
         String fnFile = "";
-        int fnLevel = 0;
+        String esoFile = "";
+        fnLevel = 0;
+        esoLevel = 0;
+
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
@@ -65,13 +74,33 @@ public class TrigToJsonTimeLine {
                     e.printStackTrace();
                 }
             }
+            else if (arg.equals("--eso-relations") && args.length>(i+1)) {
+                esoFile = args[i+1];
+            }
+            else if (arg.equals("--eso-level") && args.length>(i+1)) {
+                try {
+                    esoLevel = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         if (!fnFile.isEmpty()) {
             frameNetReader.parseFile(fnFile);
+            topFrames = frameNetReader.getTopsFrameNetTree();
             frameNetReader.flatRelations(fnLevel);
          //   System.out.println("frameNetReader sub= " + frameNetReader.subToSuperFrame.size());
          //   System.out.println("frameNetReader super= " + frameNetReader.superToSubFrame.size());
+        }
+        if (!esoFile.isEmpty()) {
+            esoReader.parseFile(esoFile);
+
+/*
+            ArrayList<String> tops = esoReader.getTops();
+            System.out.println("tops.toString() = " + tops.toString());
+            esoReader.printTree(tops, 0);
+*/
         }
         // trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
         // pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
@@ -316,7 +345,14 @@ public class TrigToJsonTimeLine {
                         if (jsonClasses.keys().hasNext()) {
                             jsonObject.put("classes", jsonClasses);
                         }
-                        getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+
+                        if (fnLevel>0) {
+                            getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+                        }
+                        else if (esoLevel>0) {
+                            getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+                        }
+
                         JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
                         if (jsonLabels.keys().hasNext()) {
                             jsonObject.put("labels", jsonLabels.get("labels"));
@@ -344,7 +380,8 @@ public class TrigToJsonTimeLine {
         for (int i = 0; i < jsonObjects.size(); i++) {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
-                JSONArray superFrames = (JSONArray) jsonObject.get("fnsuperframes");
+                //JSONArray superFrames = (JSONArray) jsonObject.get("fnsuperframes");
+                JSONArray superFrames = (JSONArray) jsonObject.get("esosuperclasses");
                 for (int j = 0; j < superFrames.length(); j++) {
                     String frame = (String) superFrames.get(j);
                     if (frameMap.containsKey(frame)) {
@@ -360,6 +397,8 @@ public class TrigToJsonTimeLine {
                 }
             } catch (JSONException e) {
               //  e.printStackTrace();
+                //JSONArray frames = (JSONArray)jsonObject.get("frames");
+
                 if (frameMap.containsKey("noframe")) {
                     ArrayList<JSONObject> objects = frameMap.get("noframe");
                     objects.add(jsonObject);
@@ -382,10 +421,17 @@ public class TrigToJsonTimeLine {
             list.add(pcount);
         }
         for (PhraseCount pcount : list) {
-            ArrayList<JSONObject> objects = frameMap.get(pcount.getPhrase());
+            ArrayList<JSONObject> allObjects = frameMap.get(pcount.getPhrase());
             int firstMention = -1;
             Vector<Integer> climaxIndex = new Vector<Integer>();
-
+            /// filter out objects already covered from the group
+            ArrayList<JSONObject> objects = new ArrayList<JSONObject>();
+            for (int i = 0; i < allObjects.size(); i++) {
+                JSONObject object = allObjects.get(i);
+                if (!groupedObjects.contains(object)) {
+                    objects.add(object);
+                }
+            }
             for (int i = 0; i < objects.size(); i++) {
                 JSONObject jsonObject = objects.get(i);
                 try {
@@ -406,7 +452,9 @@ public class TrigToJsonTimeLine {
                             }
                         }
                     }
-                    climaxIndex.add(earliestEventMention);
+                    if (!climaxIndex.contains(earliestEventMention)) {
+                        climaxIndex.add(earliestEventMention);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -425,18 +473,20 @@ public class TrigToJsonTimeLine {
                     // JSONObject sentenceObject = (JSONObject) jsonObject.get("sentence");
                     int sentenceNr = Integer.parseInt((String) jsonObject.get("sentence"));
                     // Integer climax = sentenceNr-firstMention;
-                    Integer climax = climaxIndex.indexOf(sentenceNr);
-/*
-                    System.out.println("firstMention = " + firstMention);
-                    System.out.println("sentenceNr = " + sentenceNr);
-                    System.out.println("climax = " + climax);
-*/
-                    //jsonObject.put("climax", climax.toString());
+                    Integer climax = 1+climaxIndex.size()-climaxIndex.indexOf(sentenceNr);
+                    Float size = 1+Float.valueOf(((float)((5*climaxIndex.size()-5*climaxIndex.indexOf(sentenceNr))/(float)climaxIndex.size())));
+                //    System.out.println("climax.toString() = " + climax.toString());
+                //    System.out.println("size.toString() = " + size.toString());
 
+/*                  
                     String combinedKey = pcount.getPhrase()+"."+climax.toString();
-                    jsonObject.put("climax", combinedKey);
+                    jsonObject.put("climax", combinedKey);*/
+                    jsonObject.put("size", size.toString());
+                    jsonObject.put("climax", climax.toString());
                     jsonObject.put("group", pcount.getPhrase());
-                    groupedObjects.add(jsonObject);
+                    if (!groupedObjects.contains(jsonObject)) {
+                        groupedObjects.add(jsonObject);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -627,7 +677,9 @@ public class TrigToJsonTimeLine {
         return jsonClassesObject;
     }
 
-    static void getFrameNetSuperFramesJSONObjectFromInstanceStatement (JSONObject parent, ArrayList<Statement> statements) throws JSONException {
+    static void getFrameNetSuperFramesJSONObjectFromInstanceStatement (JSONObject parent,
+                                                                       ArrayList<Statement> statements
+    ) throws JSONException {
         ArrayList<String> coveredValues = new ArrayList<String>();
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
@@ -646,9 +698,27 @@ public class TrigToJsonTimeLine {
                     String property = getNameSpaceString(value);
                     if (property.equalsIgnoreCase("fn")) {
                         value = getValue(value);
-                     //   System.out.println("value = " + value);
-                        String superFrame = "";
-                        if (frameNetReader.subToSuperFrame.containsKey(value)) {
+                       // System.out.println("value = " + value);
+                        ArrayList<String> parents = new ArrayList<String>();
+
+                        frameNetReader.getParentChain(value, parents, topFrames);
+                        if (parents.size()==0) {
+                            parent.append("fnsuperframes", value);
+                        }
+                        else {
+                            for (int k = 0; k < parents.size(); k++) {
+                                String parentFrame = parents.get(k);
+                                if (!coveredValues.contains(parentFrame)) {
+                                    coveredValues.add(parentFrame);
+                                    parent.append("fnsuperframes", parentFrame);
+                                }
+                            }
+                        }
+                      //  System.out.println("value = " + value);
+                      //  System.out.println("\tparents = " + parents.toString());
+
+                       /*   String superFrame = "";
+                            if (frameNetReader.subToSuperFrame.containsKey(value)) {
                             ArrayList<String> superFrames = frameNetReader.subToSuperFrame.get(value);
                             for (int k = 0; k < superFrames.size(); k++) {
                                 superFrame =  superFrames.get(k);
@@ -658,7 +728,69 @@ public class TrigToJsonTimeLine {
                                 }
 
                             }
+                        }*/
+                    }
+                }
+            }
+        }
+    }
+
+    static void getEsoSuperClassesJSONObjectFromInstanceStatement (JSONObject parent,
+                                                                       ArrayList<Statement> statements
+    ) throws JSONException {
+        ArrayList<String> coveredValues = new ArrayList<String>();
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#type")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String [] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    String property = getNameSpaceString(value);
+                    if (property.equalsIgnoreCase("eso")) {
+                        value = getValue(value);
+                        ArrayList<String> parents = new ArrayList<String>();
+                        String parentClass = "";
+                        esoReader.getParentChain(value, parents);
+                        if (parents.size()==0) {
+                            parentClass = value;
                         }
+                        else {
+                            if (esoLevel>parents.size()) {
+                               // parentClass = parents.get(parents.size()-1)+"_"+value;
+                                parentClass = value;
+                            }
+                            else {
+                                int p = parents.size()-esoLevel;
+                                parentClass = parents.get(p)+"_"+value;
+                            }
+
+                          //  parent.append("esosuperclasses", parents.get(parents.size()));
+
+/*
+                            for (int k = 0; k < parents.size(); k++) {
+                                String parentFrame = parents.get(k);
+                                if (!coveredValues.contains(parentFrame)) {
+                                    coveredValues.add(parentFrame);
+                                    parent.append("esosuperclasses", parentFrame);
+                                }
+                            }
+*/
+                        }
+/*
+                        System.out.println("value = " + value);
+                        System.out.println("parents.toString() = " + parents.toString());
+                        System.out.println("parentClass = " + parentClass);
+*/
+                        parent.append("esosuperclasses", parentClass);
+
                     }
                 }
             }
@@ -701,7 +833,7 @@ public class TrigToJsonTimeLine {
                             String value = values[j];
                             if (!coveredValues.contains(value)) {
                                 coveredValues.add(value);
-                                jsonActorsObject.append(predicate, value);
+                                jsonActorsObject.append(predicate, value.replace("+", "_"));
                             }
                         }
                     }
