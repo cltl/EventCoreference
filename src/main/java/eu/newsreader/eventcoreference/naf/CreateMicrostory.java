@@ -8,11 +8,15 @@ import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.Util;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by piek on 2/4/15.
@@ -59,7 +63,8 @@ public class CreateMicrostory {
             // System.out.println("semEvents = " + semEvents.size());
             String pathToTrigFile = pathToNafFile+".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
+            JenaSerialization.serializeJena(fos,
+                    semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null, true);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -210,6 +215,36 @@ public class CreateMicrostory {
         return fnRelatedEvents;
     }
 
+    public static ArrayList<JSONObject> getEventsThroughFrameNetBridging(ArrayList<JSONObject> events,
+                                                                        JSONObject event,
+                                                                         FrameNetReader frameNetReader)
+            throws JSONException {
+        ArrayList<JSONObject> fnRelatedEvents = new ArrayList<JSONObject>();
+        JSONArray superFrames = (JSONArray) event.get("fnsuperframes");
+        if (superFrames!=null) {
+            for (int j = 0; j < superFrames.length(); j++) {
+                String frame = (String) superFrames.get(j);
+                for (int i = 0; i < events.size(); i++) {
+                    JSONObject oEvent = events.get(i);
+                    if (!oEvent.equals(event)) {
+                        JSONArray oSuperFrames = (JSONArray) event.get("fnsuperframes");
+                        for (int k = 0; k < oSuperFrames.length(); k++) {
+                            String oFrame = (String) oSuperFrames.get(k);
+                            if (frame.equals(oFrame)) {
+                                if (!fnRelatedEvents.contains(oEvent)) {
+                                    fnRelatedEvents.add(oEvent);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return fnRelatedEvents;
+    }
+
+
     /**
      * Obtain events and participants through NAF event relations
      * @param semEvents
@@ -341,6 +376,52 @@ public class CreateMicrostory {
             }
         }
         return coparticipationEvents;
+    }
+
+    public static ArrayList<JSONObject> getEventsThroughCoparticipation(ArrayList<JSONObject> events,
+                                                                 JSONObject event)
+            throws JSONException {
+        ArrayList<JSONObject> coPartipantEvents = new ArrayList<JSONObject>();
+        JSONObject actorObject = event.getJSONObject("actors");
+        Iterator keys = actorObject.sortedKeys();
+        while (keys.hasNext()) {
+            String key = keys.next().toString(); //role
+          //  System.out.println("key = " + key);
+            if (key.equalsIgnoreCase("pb/A0") || key.equalsIgnoreCase("pb/A1")) {
+                JSONArray actors = actorObject.getJSONArray(key);
+                // System.out.println("actors.toString() = " + actors.toString());
+                for (int i = 0; i < events.size(); i++) {
+                    JSONObject oEvent = events.get(i);
+                    boolean match = false;
+                    if (!oEvent.equals(event)) {
+                        JSONObject oActorObject = oEvent.getJSONObject("actors");
+                        Iterator oKeys = oActorObject.sortedKeys();
+                        while (oKeys.hasNext()) {
+                            String oKey = oKeys.next().toString();
+                            if (oKey.equalsIgnoreCase("pb/A0") || oKey.equalsIgnoreCase("pb/A1")) {
+                                JSONArray oActors = oActorObject.getJSONArray(oKey);
+                                // System.out.println("oActors.toString() = " + oActors.toString());
+                                for (int j = 0; j < actors.length(); j++) {
+                                    String actor = actors.getString(j);
+                                    for (int k = 0; k < oActors.length(); k++) {
+                                        String oActor = oActors.getString(k);
+                                        if (actor.equals(oActor)) {
+                                            if (!coPartipantEvents.contains(oEvent)) {
+                                                coPartipantEvents.add(oEvent);
+                                                match = true;
+                                                break;
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return coPartipantEvents;
     }
 
 

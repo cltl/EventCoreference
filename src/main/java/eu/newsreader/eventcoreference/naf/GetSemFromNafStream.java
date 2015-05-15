@@ -30,6 +30,14 @@ public class GetSemFromNafStream {
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(System.in);
         GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-        JenaSerialization.serializeJena(System.out, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
+        JenaSerialization.serializeJena(System.out,
+                semEvents,
+                semActors,
+                semPlaces,
+                semTimes,
+                semRelations,
+                factRelations,
+                null,
+                false);
     }
 }

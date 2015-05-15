@@ -31,6 +31,7 @@ public class MatchEventObjects {
 
     static boolean DEBUG = false;
     static String MATCHTYPE= "LEMMA";  // ILI OR ILILEMMA
+    static boolean VERBOSEMENTIONS = false;
     static final String usage = "MatchEventObjects reads obj files stored in time-folders with CompositeEventObjects and outputs a single RDF-TRiG file\n" +
             "The parameters are:\n" +
             "--event-folder  <path>     <Path to the event folder that has subfolders for each time-description, e.g. \"e-2012-03-29\". Object file (*.obj) should be stored in these subfolders\n" +
@@ -99,6 +100,9 @@ public class MatchEventObjects {
             }
             else if (arg.equals("--debug")) {
                 DEBUG = true;
+            }
+            else if (arg.equals("--verbose")) {
+                VERBOSEMENTIONS = true;
             }
         }
         if (!pathToSourceDataFile.isEmpty()) {
@@ -532,7 +536,12 @@ public class MatchEventObjects {
                 // System.out.println("file.getName() = " + file.getName());
                 HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap = new HashMap<String, ArrayList<CompositeEvent>>();
                 compareObjectFileWithFinalEvents(file, finalLemmaEventMap, eventType);
-                JenaSerialization.addJenaCompositeEvents(ds, instanceModel, provenanceModel, finalLemmaEventMap, sourceMetaHashMap);
+                JenaSerialization.addJenaCompositeEvents(ds,
+                        instanceModel,
+                        provenanceModel,
+                        finalLemmaEventMap,
+                        sourceMetaHashMap,
+                        VERBOSEMENTIONS);
                // System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
                 //  GetSemFromNafFile.serializeJenaCompositeEvents(System.out,  finalEventMap, sourceMetaHashMap);
 
@@ -582,7 +591,12 @@ public class MatchEventObjects {
                     if (DEBUG) System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
                 }
                 chaining(finalLemmaEventMap, eventType);
-                JenaSerialization.addJenaCompositeEvents(ds, instanceModel, provenanceModel, finalLemmaEventMap, sourceMetaHashMap);
+                JenaSerialization.addJenaCompositeEvents(ds,
+                        instanceModel,
+                        provenanceModel,
+                        finalLemmaEventMap,
+                        sourceMetaHashMap,
+                        VERBOSEMENTIONS);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
                 fos.close();
             } catch (IOException e) {

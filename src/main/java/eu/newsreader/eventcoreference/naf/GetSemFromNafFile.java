@@ -1502,7 +1502,8 @@ public class GetSemFromNafFile {
            // System.out.println("semEvents = " + semEvents.size());
             String pathToTrigFile = pathToNafFile+".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null);
+            JenaSerialization.serializeJena(fos,
+                    semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null, false);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

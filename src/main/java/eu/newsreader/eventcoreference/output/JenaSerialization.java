@@ -28,7 +28,8 @@ public class JenaSerialization {
                                       ArrayList<SemObject> semTimes,
                                       ArrayList<SemRelation> semRelations,
                                       ArrayList<SemRelation> factRelations,
-                                      HashMap<String, SourceMeta> sourceMetaHashMap) {
+                                      HashMap<String, SourceMeta> sourceMetaHashMap,
+                                      boolean VERBOSE_MENTIONS) {
 
 
 
@@ -48,21 +49,21 @@ public class JenaSerialization {
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
             //semEvent.addToJenaModel(instanceModel, Sem.Event);
-            semEvent.addToJenaModelCondensed(instanceModel, Sem.Event);
+            semEvent.addToJenaModel(instanceModel, Sem.Event, VERBOSE_MENTIONS);
         }
 
         //  System.out.println("ACTORS");
         for (int i = 0; i < semActors.size(); i++) {
             SemObject semActor = semActors.get(i);
            // semActor.addToJenaModel(instanceModel, Sem.Actor);
-            semActor.addToJenaModelCondensed(instanceModel, Sem.Actor);
+            semActor.addToJenaModel(instanceModel, Sem.Actor, VERBOSE_MENTIONS);
         }
 
         //  System.out.println("PLACES");
         for (int i = 0; i < semPlaces.size(); i++) {
             SemObject semPlace = semPlaces.get(i);
            // semPlace.addToJenaModel(instanceModel, Sem.Place);
-            semPlace.addToJenaModelCondensed(instanceModel, Sem.Place);
+            semPlace.addToJenaModel(instanceModel, Sem.Place, VERBOSE_MENTIONS);
         }
         // System.out.println("TIMES");
         for (int i = 0; i < semTimes.size(); i++) {
@@ -160,7 +161,8 @@ public class JenaSerialization {
             Model instanceModel,
             Model provenanceModel ,
             HashMap<String, ArrayList<CompositeEvent>> semEvents,
-            HashMap <String, SourceMeta> sourceMetaHashMap) {
+            HashMap <String, SourceMeta> sourceMetaHashMap,
+            boolean VERBOSE_MENTIONS) {
 
 
         Set keySet = semEvents.keySet();
@@ -175,20 +177,20 @@ public class JenaSerialization {
                 }
 
                 //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
-                compositeEvent.getEvent().addToJenaModelCondensed(instanceModel, Sem.Event);
+                compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event, VERBOSE_MENTIONS);
 
                 //  System.out.println("ACTORS");
                 for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
                     SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
                    // semActor.addToJenaModel(instanceModel, Sem.Actor);
-                    semActor.addToJenaModelCondensed(instanceModel, Sem.Actor);
+                    semActor.addToJenaModel(instanceModel, Sem.Actor, VERBOSE_MENTIONS);
                 }
 
                 //  System.out.println("PLACES");
                 for (int i = 0; i < compositeEvent.getMySemPlaces().size(); i++) {
                     SemPlace semPlace = (SemPlace) compositeEvent.getMySemPlaces().get(i);
                     //semPlace.addToJenaModel(instanceModel, Sem.Place);
-                    semPlace.addToJenaModelCondensed(instanceModel, Sem.Place);
+                    semPlace.addToJenaModel(instanceModel, Sem.Place, VERBOSE_MENTIONS);
                 }
 
                 // System.out.println("TIMES");
@@ -226,7 +228,7 @@ public class JenaSerialization {
     }
 
     static public void serializeJenaCompositeEvents (OutputStream stream,HashMap<String, ArrayList<CompositeEvent>> semEvents,
-                                                     HashMap <String, SourceMeta> sourceMetaHashMap) {
+                                                     HashMap <String, SourceMeta> sourceMetaHashMap, boolean VERBOSE_MENTIONS) {
 
 
 
@@ -243,7 +245,7 @@ public class JenaSerialization {
         ResourcesUri.prefixModel(instanceModel);
         //ResourcesUri.prefixModelNwr(instanceModel);
 
-        addJenaCompositeEvents(ds, instanceModel, provenanceModel, semEvents, sourceMetaHashMap);
+        addJenaCompositeEvents(ds, instanceModel, provenanceModel, semEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
 
@@ -251,47 +253,7 @@ public class JenaSerialization {
     }
 
 
-    static public void serializeJenaEntities (OutputStream stream,
-                                              ArrayList<SemObject> semActors,
-                                              ArrayList<SemObject> semPlaces,
-                                              ArrayList<SemObject> semTimes) {
 
 
 
-        // create an empty Model
-
-        Dataset ds = TDBFactory.createDataset();
-        Model defaultModel = ds.getDefaultModel();
-        ResourcesUri.prefixModel(defaultModel);
-
-        Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
-        ResourcesUri.prefixModel(instanceModel);
-
-        addJenaEntities(instanceModel, semActors, semPlaces, semTimes);
-
-        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
-    }
-
-
-    static public void addJenaEntities (Model instanceModel,
-                                            ArrayList<SemObject> semActors,
-                                            ArrayList<SemObject> semPlaces,
-                                            ArrayList<SemObject> semTimes) {
-        for (int i = 0; i < semActors.size(); i++) {
-            SemObject semActor = semActors.get(i);
-            semActor.addToJenaModel(instanceModel, Sem.Actor);
-        }
-
-        for (int i = 0; i < semPlaces.size(); i++) {
-            SemObject semPlace = semPlaces.get(i);
-            semPlace.addToJenaModel(instanceModel, Sem.Place);
-        }
-
-        for (int i = 0; i < semTimes.size(); i++) {
-            SemTime semTime = (SemTime) semTimes.get(i);
-            //semTime.addToJenaModel(instanceModel, Sem.Time);
-            semTime.addToJenaModelTimeInterval(instanceModel);
-        }
-
-    }
 }

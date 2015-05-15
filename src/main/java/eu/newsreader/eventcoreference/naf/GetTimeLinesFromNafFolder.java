@@ -209,7 +209,7 @@ public class GetTimeLinesFromNafFolder {
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, null, null);
+            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, null, null, true);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -484,7 +484,7 @@ public class GetTimeLinesFromNafFolder {
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, null, null);
+            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, null, null, true);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

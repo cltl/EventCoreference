@@ -336,66 +336,7 @@ public class SemObject implements Serializable {
     }
 
 
-
-    public void addToJenaModel(Model model, Resource type) {
-        Resource resource = model.createResource(this.getURI());
-        for (int i = 0; i < phraseCounts.size(); i++) {
-            PhraseCount phraseCount = phraseCounts.get(i);
-            // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
-            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-        }
-
-        resource.addProperty(RDF.type, type);
-
-        for (int i = 0; i < concepts.size(); i++) {
-            KafSense kafSense = concepts.get(i);
-
-            /// skipping conditions
-            if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
-                continue;
-            }
-            if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-                continue;
-            }
-            if (kafSense.getResource().equalsIgnoreCase("propbank")) {
-                continue;
-            }
-            if (kafSense.getResource().equalsIgnoreCase("nombank")) {
-                continue;
-            }
-            if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
-                continue;
-            }
-            if (kafSense.getResource().equalsIgnoreCase("spotlight_v1")) {
-                /*
-                (5) DBpedia resources are used as classes via rdf:type triples, while
-                    they should be treated as instances, by either:
-                    - using them as the subject of extracted triples (suggested), or
-                    - linking them to entity/event URIs using owl:sameAs triples
-                 */
-/*                String nameSpaceType = getNameSpaceTypeReference(kafSense);
-                Resource conceptResource = model.createResource(nameSpaceType);
-                resource.addProperty(OWL.sameAs, conceptResource);*/
-                /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
-                continue;
-            }
-            String nameSpaceType = getNameSpaceTypeReference(kafSense);
-            Resource conceptResource = model.createResource(nameSpaceType);
-            resource.addProperty(RDF.type, conceptResource);
-
-        }
-
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property property = model.createProperty(ResourcesUri.gaf + "denotedBy");
-           // Resource targetResource = model.createResource(nafMention.toString());
-            Resource targetResource = model.createResource(nafMention.toStringFull());
-            resource.addProperty(property, targetResource);
-
-        }
-    }
-
-    public void addToJenaModelCondensed(Model model, Resource type) {
+    public void addToJenaModel(Model model, Resource type, boolean VERBOSE_MENTION) {
         Resource resource = model.createResource(this.getURI());
 
 
@@ -412,10 +353,29 @@ public class SemObject implements Serializable {
                 }
             }
         }
+
         if (type.getLocalName().equalsIgnoreCase("Event")) {
             resource.addProperty(RDF.type, type);
         }
 
+        addConceptsToResource(resource, model);
+
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            Property property = model.createProperty(ResourcesUri.gaf + "denotedBy");
+            Resource targetResource = null;
+            if (VERBOSE_MENTION) {
+                targetResource = model.createResource(nafMention.toStringFull());
+            }
+            else {
+                targetResource = model.createResource(nafMention.toString());
+
+            }
+            resource.addProperty(property, targetResource);
+        }
+    }
+
+    void addConceptsToResource (Resource resource, Model model) {
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
 
@@ -424,7 +384,7 @@ public class SemObject implements Serializable {
                 continue;
             }
             if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-              //  continue;
+                //  continue;
             }
             if (kafSense.getResource().equalsIgnoreCase("propbank")) {
                 continue;
@@ -456,15 +416,6 @@ public class SemObject implements Serializable {
                 Resource conceptResource = model.createResource(nameSpaceType);
                 resource.addProperty(RDF.type, conceptResource);
             }
-
-        }
-
-        for (int i = 0; i < nafMentions.size(); i++) {
-            NafMention nafMention = nafMentions.get(i);
-            Property property = model.createProperty(ResourcesUri.gaf + "denotedBy");
-           // Resource targetResource = model.createResource(nafMention.toString());
-            Resource targetResource = model.createResource(nafMention.toStringFull());
-            resource.addProperty(property, targetResource);
 
         }
     }
