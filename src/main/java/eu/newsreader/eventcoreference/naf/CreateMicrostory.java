@@ -244,6 +244,35 @@ public class CreateMicrostory {
         return fnRelatedEvents;
     }
 
+    public static ArrayList<JSONObject> getEventsThroughEsotBridging(ArrayList<JSONObject> events,
+                                                                        JSONObject event,
+                                                                         FrameNetReader frameNetReader)
+            throws JSONException {
+        ArrayList<JSONObject> esoRelatedEvents = new ArrayList<JSONObject>();
+        JSONArray superFrames = (JSONArray) event.get("esosuperclasses");
+        if (superFrames!=null) {
+            for (int j = 0; j < superFrames.length(); j++) {
+                String frame = (String) superFrames.get(j);
+                for (int i = 0; i < events.size(); i++) {
+                    JSONObject oEvent = events.get(i);
+                    if (!oEvent.equals(event)) {
+                        JSONArray oSuperFrames = (JSONArray) event.get("esosuperclasses");
+                        for (int k = 0; k < oSuperFrames.length(); k++) {
+                            String oFrame = (String) oSuperFrames.get(k);
+                            if (frame.equals(oFrame)) {
+                                if (!esoRelatedEvents.contains(oEvent)) {
+                                    esoRelatedEvents.add(oEvent);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return esoRelatedEvents;
+    }
+
 
     /**
      * Obtain events and participants through NAF event relations
@@ -387,18 +416,18 @@ public class CreateMicrostory {
         while (keys.hasNext()) {
             String key = keys.next().toString(); //role
           //  System.out.println("key = " + key);
-            if (key.equalsIgnoreCase("pb/A0") || key.equalsIgnoreCase("pb/A1")) {
+            if (key.equalsIgnoreCase("pb/A0") || key.equalsIgnoreCase("pb/A1") || key.equalsIgnoreCase("pb/A2")) {
                 JSONArray actors = actorObject.getJSONArray(key);
                 // System.out.println("actors.toString() = " + actors.toString());
                 for (int i = 0; i < events.size(); i++) {
                     JSONObject oEvent = events.get(i);
                     boolean match = false;
-                    if (!oEvent.equals(event)) {
+                    if (!oEvent.get("instance").toString().equals(event.get("instance").toString())) {
                         JSONObject oActorObject = oEvent.getJSONObject("actors");
                         Iterator oKeys = oActorObject.sortedKeys();
                         while (oKeys.hasNext()) {
                             String oKey = oKeys.next().toString();
-                            if (oKey.equalsIgnoreCase("pb/A0") || oKey.equalsIgnoreCase("pb/A1")) {
+                            if (oKey.equalsIgnoreCase("pb/A0") || oKey.equalsIgnoreCase("pb/A1") || oKey.equalsIgnoreCase("pb/A1")) {
                                 JSONArray oActors = oActorObject.getJSONArray(oKey);
                                 // System.out.println("oActors.toString() = " + oActors.toString());
                                 for (int j = 0; j < actors.length(); j++) {
