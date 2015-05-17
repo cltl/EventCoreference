@@ -336,6 +336,13 @@ public class TrigToJsonTimeLineClimax {
                         if (idx>-1) {
                             timeAnchor = timeAnchor.substring(idx+1);
                         }
+                        if (timeAnchor.length()==6) {
+                            //// this is a month so we pick the first day of the month
+                            timeAnchor+= "01";
+                        }if (timeAnchor.length()==4) {
+                            //// this is a year so we pick the first day of the year
+                            timeAnchor+= "0101";
+                        }
                         jsonObject.put("time", timeAnchor);
 
                         JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
@@ -418,7 +425,6 @@ public class TrigToJsonTimeLineClimax {
         for (int i = 0; i < jsonObjects.size(); i++) {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
-                JSONArray mentions = (JSONArray) jsonObject.get("mentions");
                 Double climax = Double.parseDouble(jsonObject.get("climax").toString());
                 Double propertion = climax/maxClimax;
                 Integer climaxInteger = new Integer ((int)(100*propertion));
@@ -511,7 +517,10 @@ public class TrigToJsonTimeLineClimax {
                 JSONArray actors = actorObject.getJSONArray(key);
                 for (int j = 0; j < actors.length(); j++) {
                     String nextActor = actors.getString(j);
-                    actor += ":" + nextActor.substring(nextActor.lastIndexOf("/")+1);
+                    nextActor = nextActor.substring(nextActor.lastIndexOf("/")+1);
+                    if (actor.indexOf(nextActor)==-1) {
+                        actor += ":" +nextActor;
+                    }
                     //break;
                 }
             }
@@ -530,7 +539,10 @@ public class TrigToJsonTimeLineClimax {
                 JSONArray actors = actorObject.getJSONArray(key);
                 for (int j = 0; j < actors.length(); j++) {
                     String nextActor = actors.getString(j);
-                    actorList.add(nextActor.substring(nextActor.lastIndexOf("/")+1));
+                    nextActor = nextActor.substring(nextActor.lastIndexOf("/")+1);
+                    if (!actorList.contains(nextActor)) {
+                        actorList.add(nextActor);
+                    }
                 }
             }
         }
@@ -548,7 +560,8 @@ public class TrigToJsonTimeLineClimax {
                 JSONArray actors = actorObject.getJSONArray(key);
                 for (int j = 0; j < actors.length(); j++) {
                     String nextActor = actors.getString(j);
-                    actor += ":" + nextActor.substring(nextActor.lastIndexOf("/")+1);
+                    nextActor = nextActor.substring(nextActor.lastIndexOf("/")+1);
+                    actor += ":" + nextActor;
                     break;
                 }
             }
@@ -566,9 +579,11 @@ public class TrigToJsonTimeLineClimax {
                 JSONArray actors = actorObject.getJSONArray(key);
                 for (int j = 0; j < actors.length(); j++) {
                     String nextActor = actors.getString(j);
+                    nextActor = nextActor.substring(nextActor.lastIndexOf("/")+1);
                     if (nextActor.indexOf(actorString)>-1) {
-                        actor += ":" + nextActor.substring(nextActor.lastIndexOf("/") + 1);
-                        //break;
+                        if (actor.indexOf(nextActor)==-1) {
+                            actor += ":" +nextActor;
+                        }
                     }
                 }
         }
@@ -593,12 +608,61 @@ public class TrigToJsonTimeLineClimax {
         return false;
     }
 
+    static ArrayList<JSONObject> intersectEventObjects(ArrayList<JSONObject> set1, ArrayList<JSONObject> set2) throws JSONException {
+        ArrayList<JSONObject> intersection = new ArrayList<JSONObject>();
+        for (int i = 0; i < set1.size(); i++) {
+            JSONObject object1 = set1.get(i);
+            for (int j = 0; j < set2.size(); j++) {
+                JSONObject object2 = set2.get(j);
+                if (object1.get("instance").toString().equals(object2.get("instance").toString())) {
+                   intersection.add(object1);
+                }
+            }
+        }
+        return  intersection;
+    }
+
+
+    static void addObjectToGroup (ArrayList<JSONObject> groupObjects,
+                                  String groupName,
+                                  JSONObject object,
+                                  int divide) throws JSONException {
+        Float size = null;
+        object.put("group", groupName);
+        Integer climax = Integer.parseInt(object.get("climax").toString());
+        if (climax > 0) {
+            // size = 5 * Float.valueOf((float) (1.0 * climax / groupClimax));
+            size = Float.valueOf((float) climax / divide);
+
+        } else {
+            size = new Float(1);
+        }
+        object.put("size", size.toString());
+        groupObjects.add(object);
+    }
+
+    static String climaxString (Integer climax) {
+        String str = "";
+        if (climax==100) {
+            str  = climax.toString();
+        }
+        else if (climax>9){
+            str = "0"+climax.toString();
+        }
+        else {
+            str = "00"+climax.toString();
+        }
+        return str;
+    }
 
     static ArrayList<JSONObject> createStoryLinesForJSONArrayList (ArrayList<JSONObject> jsonObjects)  throws JSONException {
-        String entity = "Boeing";
+
+        String entity = "Airbus";
         String entityTimeLine = entity+"\n";
         String entityMatch = "";
-        boolean PRINTEXAMPLE = false;
+        String debugStr = "";
+        boolean PRINTEXAMPLE = true;
+        boolean DEBUG = false;
         /*
         	2004-10	4-killed[t85]	10-leveled[t182]	36-charges[t803]
 	        2004-10	4-favored[t97]	31-favor[t689]
@@ -613,27 +677,30 @@ public class TrigToJsonTimeLineClimax {
         TreeSet climaxObjects = determineClimaxValues(jsonObjects);
         //TreeSet climaxObjects = determineClimaxValuesFirstMentionOnly(jsonObjects);
 
-        String debugStr = "";
+
+        ArrayList<JSONObject> groupObjects = new ArrayList<JSONObject>();
+        ArrayList<JSONObject> singletonObjects = new ArrayList<JSONObject>();
         Iterator<JSONObject> sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
             JSONObject jsonObject = sortedObjects.next();
             if (!hasObject(groupedObjects, jsonObject)) {
                 try {
+                    groupObjects = new ArrayList<JSONObject>();
                     Integer groupClimax = Integer.parseInt(jsonObject.get("climax").toString());
                     Float size = new Float(1);
                     if (groupClimax > 0) {
                        // size = 5 * Float.valueOf((float) (1.0 * groupClimax / groupClimax));
-                        size = Float.valueOf((float) groupClimax / 5);
+                        size = Float.valueOf((float) groupClimax / 4);
                     }
                     //Float size = 1 + Float.valueOf((float) (10*climax / maxClimax));
                     jsonObject.put("size", size.toString());
-                    String group = groupClimax + ":" + jsonObject.get("labels").toString();
+                    String group = climaxString(groupClimax) + ":" + jsonObject.get("labels").toString();
                     group += getfirstActorByRoleFromEvent(jsonObject, "pb/A1"); /// for representation purposes
 
-                    debugStr = group+":"+groupClimax+":"+size+"\n";
+                    if (DEBUG) debugStr = group+":"+groupClimax+":"+size+"\n";
 
                     jsonObject.put("group", group);
-                    groupedObjects.add(jsonObject);
+                    groupObjects.add(jsonObject);
 
                     ArrayList<String> coparticipantsA0 = getActorsByRoleFromEvent(jsonObject, "pb/A0");
                     ArrayList<String> coparticipantsA1 = getActorsByRoleFromEvent(jsonObject, "pb/A1");
@@ -652,7 +719,7 @@ public class TrigToJsonTimeLineClimax {
                             event += getActorByRoleFromEvent(jsonObject, "pb/A0");
                             event += getActorByRoleFromEvent(jsonObject, "pb/A1");
                             event += getActorByRoleFromEvent(jsonObject, "pb/A2");
-                            entityTimeLine += "\t" + groupClimax + "\t" + time + "\t" + event + "\n";
+                            entityTimeLine += "[C]\t" + groupClimax + "\t" + time + "\t" + event + "\n";
                         }
                         /////// FOR EXAMPLE OUTPUT
                     }
@@ -663,8 +730,12 @@ public class TrigToJsonTimeLineClimax {
                     //ArrayList<JSONObject> fnevents = CreateMicrostory.getEventsThroughEsotBridging(jsonObjects, jsonObject, frameNetReader);
                     //  System.out.println("coevents = " + coevents.size());
                     //  System.out.println("fnevents = " + fnevents.size());
-                    for (int j = 0; j < coevents.size(); j++) {
-                        JSONObject object = coevents.get(j);/*
+
+                    ArrayList<JSONObject> intersection = intersectEventObjects(coevents, fnevents);
+
+                    for (int j = 0; j < intersection.size(); j++) {
+                        JSONObject object = intersection.get(j);
+                        /*
                         if (!hasActorInEvent(object, coparticipantsA0)
                         &&
                         !hasActorInEvent(object, coparticipantsA1)
@@ -676,51 +747,105 @@ public class TrigToJsonTimeLineClimax {
                         if (copartipation.isEmpty()) {
                             continue;
                         }*/
+
+
                         if (!hasObject(groupedObjects, object)) {
-                            for (int k = 0; k < fnevents.size(); k++) {
-                                JSONObject fnObject = fnevents.get(k);
-                                if (fnObject.get("instance").toString().equals(object.get("instance").toString())) {
-                                    // if (object.equals(fnObject)) {
-                                    object.put("group", group);
+                            addObjectToGroup(
+                                    groupObjects,
+                                    group,
+                                    object,
+                                    6);
+                            if (PRINTEXAMPLE) {
+                                if (!entityMatch.isEmpty()) {
+                                    /////// FOR EXAMPLE OUTPUT
 
+                                    /// without forcing coparticipation of the target entity
                                     Integer climax = Integer.parseInt(object.get("climax").toString());
-                                    if (groupClimax > 0) {
-                                       // size = 5 * Float.valueOf((float) (1.0 * climax / groupClimax));
-                                        size = Float.valueOf((float) climax / 5);
-
-                                    } else {
-                                        size = new Float(1);
+                                    String event = object.get("labels").toString();
+                                    event += getActorByRoleFromEvent(object, "pb/A0");
+                                    event += getActorByRoleFromEvent(object, "pb/A1");
+                                    event += getActorByRoleFromEvent(object, "pb/A2");
+                                    String time = object.get("time").toString();
+                                    if (time.isEmpty()) {
+                                        time = "NOTIMEX";
                                     }
-                                    object.put("size", size.toString());
+                                    entityTimeLine += "\t" + climax + "\t" + time + "\t" + event + "\n";
 
-                                    debugStr+="\t"+object.get("labels").toString()+":"+climax+":"+size+"\n";
+                                }
+                            }
+                        }
 
-                                    if (!hasObject(groupedObjects, object)) {
-                                        groupedObjects.add(object);
+                    }
+                    if (intersection.size()==0) {
+                        for (int i = 0; i < coevents.size(); i++) {
+                            JSONObject object = coevents.get(i);
+                            if (!hasObject(groupedObjects, object)) {
+                                addObjectToGroup(
+                                        groupObjects,
+                                        group,
+                                        object,
+                                        8);
+                                if (PRINTEXAMPLE) {
+                                    if (!entityMatch.isEmpty()) {
+                                        /////// FOR EXAMPLE OUTPUT
 
-
-                                        if (PRINTEXAMPLE) {
-                                            /////// FOR EXAMPLE OUTPUT
-                                            if (!entityMatch.isEmpty()) {
-                                                String event = object.get("labels").toString();
-                                                event += getActorByRoleFromEvent(object, "pb/A0");
-                                                event += getActorByRoleFromEvent(object, "pb/A1");
-                                                event += getActorByRoleFromEvent(object, "pb/A2");
-                                                String time = object.get("time").toString();
-                                                if (time.isEmpty()) {
-                                                    time = "NOTIMEX";
-                                                }
-                                                entityTimeLine += "\t" + climax + "\t" + time + "\t" + event + "\n";
-                                            }
-                                            /////// FOR EXAMPLE OUTPUT
+                                        /// without forcing coparticipation of the target entity
+                                        Integer climax = Integer.parseInt(object.get("climax").toString());
+                                        String event = object.get("labels").toString();
+                                        event += getActorByRoleFromEvent(object, "pb/A0");
+                                        event += getActorByRoleFromEvent(object, "pb/A1");
+                                        event += getActorByRoleFromEvent(object, "pb/A2");
+                                        String time = object.get("time").toString();
+                                        if (time.isEmpty()) {
+                                            time = "NOTIMEX";
                                         }
+                                        entityTimeLine += "\t" + climax + "\t" + time + "\t" + event + "\n";
+
+                                    }
+                                }
+                            }
+                        }
+                        for (int i = 0; i < fnevents.size(); i++) {
+                            JSONObject object = fnevents.get(i);
+                            if (!hasObject(groupedObjects, object)) {
+                                addObjectToGroup(
+                                        groupObjects,
+                                        group,
+                                        object,
+                                        8);
+                                if (PRINTEXAMPLE) {
+                                    if (!entityMatch.isEmpty()) {
+                                        /////// FOR EXAMPLE OUTPUT
+
+                                        /// without forcing coparticipation of the target entity
+                                        Integer climax = Integer.parseInt(object.get("climax").toString());
+                                        String event = object.get("labels").toString();
+                                        event += getActorByRoleFromEvent(object, "pb/A0");
+                                        event += getActorByRoleFromEvent(object, "pb/A1");
+                                        event += getActorByRoleFromEvent(object, "pb/A2");
+                                        String time = object.get("time").toString();
+                                        if (time.isEmpty()) {
+                                            time = "NOTIMEX";
+                                        }
+                                        entityTimeLine += "\t" + climax + "\t" + time + "\t" + event + "\n";
 
                                     }
                                 }
                             }
                         }
                     }
-                    System.out.println(debugStr);
+
+                    if (DEBUG) System.out.println(debugStr);
+
+                    if (groupObjects.size()>1) {
+                        for (int i = 0; i < groupObjects.size(); i++) {
+                            JSONObject object = groupObjects.get(i);
+                            groupedObjects.add(object);
+                        }
+                    }
+                    else {
+                        singletonObjects.add(groupObjects.get(0));
+                    }
                 } catch (JSONException e) {
                     // e.printStackTrace();
                 }
@@ -728,7 +853,21 @@ public class TrigToJsonTimeLineClimax {
             }
             //  break;
 
+        } // end of while objects in sorted climaxObjects
+
+        //// now we handle the singleton events
+        //// we assign them to the unrelated events group and recalculate the climax score
+        climaxObjects = determineClimaxValues(singletonObjects);
+        sortedObjects = climaxObjects.iterator();
+        while (sortedObjects.hasNext()) {
+            JSONObject jsonObject = sortedObjects.next();
+            String group = "?:unrelated events";
+            addObjectToGroup(groupedObjects,
+                    group,
+                    jsonObject,
+                    10);
         }
+
 
         if (PRINTEXAMPLE) {
             /////// FOR EXAMPLE OUTPUT
