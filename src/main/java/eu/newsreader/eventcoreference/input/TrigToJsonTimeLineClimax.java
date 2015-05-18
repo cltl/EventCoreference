@@ -661,7 +661,7 @@ public class TrigToJsonTimeLineClimax {
         String entityTimeLine = entity+"\n";
         String entityMatch = "";
         String debugStr = "";
-        boolean PRINTEXAMPLE = true;
+        boolean PRINTEXAMPLE = false;
         boolean DEBUG = false;
         /*
         	2004-10	4-killed[t85]	10-leveled[t182]	36-charges[t803]
