@@ -94,10 +94,12 @@ public class GetTimeLinesFromNafFolder {
                 // System.out.println("file.getName() = " + file.getName());
                 kafSaxParser.parseFile(file);
                 //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
-                GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
+                ///GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
                 //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
                 GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
-                GetSemFromNafFile.fixExternalReferencesEntities(kafSaxParser);
+
+                //// CONSIDERS RERANKER RESULTS AND PREFERS ENGLISH REFERENCES
+                //GetSemFromNafFile.fixExternalReferencesEntities(kafSaxParser);
 
 
 
