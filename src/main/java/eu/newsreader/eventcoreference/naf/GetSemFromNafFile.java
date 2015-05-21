@@ -47,6 +47,7 @@ public class GetSemFromNafFile {
         //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
         fixExternalReferencesSrl(kafSaxParser);
         //// THIS IS NEEDED TO USE RERANKING OF DBPEDIA URIs
+
         //// ALSO PREFERS ENGLISH REFERENCES
         ///fixExternalReferencesEntities(kafSaxParser);
 
@@ -79,10 +80,11 @@ public class GetSemFromNafFile {
 
         /// @deprecated since it is included in the event-coref module for NAF
         //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
-        //// fixEventCoreferenceSets(kafSaxParser);
+        fixEventCoreferenceSets(kafSaxParser);
 
         //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
         //// fixExternalReferencesSrl(kafSaxParser);
+
         //// THIS IS NEEDED TO USE RERANKING OF DBPEDIA URIs
         //// ALSO PREFERS ENGLISH REFERENCES
         /// fixExternalReferencesEntities(kafSaxParser);

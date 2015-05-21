@@ -90,6 +90,7 @@ public class TrigToJsonTimeLineClimax {
                 }
             }
         }
+        //trigfolder = "/tmp/naf2jsonWulzvC/events/contextual";
         System.out.println("fnFile = " + fnFile);
         System.out.println("trigfolder = " + trigfolder);
         if (!fnFile.isEmpty()) {
@@ -431,15 +432,12 @@ public class TrigToJsonTimeLineClimax {
                 jsonObject.put("climax", climaxInteger);
                 climaxObjects.add(jsonObject);
 
-/*
                 System.out.println("jsonObject.get(\"labels\").toString() = " + jsonObject.get("labels").toString());
-                System.out.println("\tmentions.length() = " + mentions.length());
                 System.out.println("jsonObject.get(\"climax\").toString() = " + jsonObject.get("climax").toString());
                 System.out.println("\tmaxClimax = " + maxClimax);
                 System.out.println("\tclimax = " + climax);
                 System.out.println("\tpropertion = " + propertion);
                 System.out.println("\tclimaxInteger = " + climaxInteger);
-*/
 
             } catch (JSONException e) {
                 //   e.printStackTrace();
