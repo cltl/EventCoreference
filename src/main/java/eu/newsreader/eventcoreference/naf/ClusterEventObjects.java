@@ -388,10 +388,12 @@ public class ClusterEventObjects {
             }*/
         }
         else if (ADDITIONALROLES) {
+
+            // if cross-lingual useEnglishExternalReferences
             GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         }
         else {
-                GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
         }
 
         //// create the perspective output here...

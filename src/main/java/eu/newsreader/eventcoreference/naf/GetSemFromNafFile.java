@@ -51,6 +51,10 @@ public class GetSemFromNafFile {
         //// ALSO PREFERS ENGLISH REFERENCES
         ///fixExternalReferencesEntities(kafSaxParser);
 
+        /// if CROSSLINGUAL
+        //useEnglishExternalReferences(kafSaxParser);
+
+
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
         String entityUri = ResourcesUri.nwrdata+project+"/entities/";
@@ -87,7 +91,10 @@ public class GetSemFromNafFile {
 
         //// THIS IS NEEDED TO USE RERANKING OF DBPEDIA URIs
         //// ALSO PREFERS ENGLISH REFERENCES
-        /// fixExternalReferencesEntities(kafSaxParser);
+       //  fixExternalReferencesEntities(kafSaxParser);
+
+        /// if CROSSLINGUAL
+        //useEnglishExternalReferences(kafSaxParser);
 
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
@@ -240,6 +247,35 @@ public class GetSemFromNafFile {
                             newKafSenses.add(sense);
                             RERANK = true;
                         }
+                    }
+                }
+            }
+        }
+        if (RERANK) {
+          //  System.out.println("RERANKED");
+            kafEntity.setExternalReferences(newKafSenses);
+        }
+    }
+
+
+    static void useEnglishExternalReferences (KafEntity kafEntity) {
+        boolean RERANK = false;
+        ArrayList<KafSense> newKafSenses = new ArrayList<KafSense>();
+        for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEntity.getExternalReferences().get(i);
+            if (kafSense.getChildren().size()>0) {
+               /*
+               In this case, we assume that the child is the English equivalent.
+               We prefer the English equivalent over the non-English reference
+               <externalRef confidence="1.0" reference="http://nl.dbpedia.org/resource/Allerzielen" reftype="nl" resource="spotlight_v1">
+                    <externalRef confidence="1.0" reference="http://dbpedia.org/resource/All_Souls'_Day" reftype="en" resource="wikipedia-db-nlEn"/>
+               </externalRef>
+               */
+                for (int j = 0; j < kafSense.getChildren().size(); j++) {
+                    KafSense sense = kafSense.getChildren().get(j);
+                    if (sense.getRefType().equals("en")) {
+                        newKafSenses.add(sense);
+                        RERANK = true;
                     }
                 }
             }
