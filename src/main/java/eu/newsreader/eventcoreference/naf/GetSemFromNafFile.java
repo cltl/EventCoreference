@@ -512,6 +512,137 @@ public class GetSemFromNafFile {
         }
     }
 
+    /**
+     *
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semActors
+     */
+    static void processNafFileForEntityCoreferenceSetsOrg (String entityUri, String baseUrl, KafSaxParser kafSaxParser,
+                                                        ArrayList<SemObject> semActors
+    ) {
+
+        /**
+         * Entity instances
+         */
+
+        ArrayList<String> coveredEntities = new ArrayList<String>();
+
+        /**
+         * We first groups entities with the same URI
+         */
+
+        HashMap<String, ArrayList<KafEntity>> kafEntityActorUriMap = new HashMap<String, ArrayList<KafEntity>>();
+
+        for (int j = 0; j < kafSaxParser.kafEntityArrayList.size(); j++) {
+            KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
+            String uri = Util.getBestEntityUri(kafEntity);
+            if (uri.isEmpty()) {
+                kafEntity.setTokenStrings(kafSaxParser);
+                if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
+                    try {
+                        uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        //  e.printStackTrace();
+                    }
+                }
+            }
+            if (!uri.isEmpty()) {
+                if (kafEntityActorUriMap.containsKey(uri)) {
+                    ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
+                    entities.add(kafEntity);
+                    kafEntityActorUriMap.put(uri, entities);
+                }
+                else {
+                    ArrayList<KafEntity> entities = new ArrayList<KafEntity>();
+                    entities.add(kafEntity);
+                    kafEntityActorUriMap.put(uri, entities);
+                }
+            }
+        }
+
+        /**
+         * Next we iterate over all the coreference sets that are not events
+         */
+
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                //// this is an entity coreference set
+                //// no we get all the entities for this set.
+                int topMatches = 0;
+                String topEntity = "";
+
+               //// we first decide which entity has the highest number of span overlap with the coreference targets
+                Set keySet = kafEntityActorUriMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    ArrayList<KafEntity> entities = kafEntityActorUriMap.get(key);
+                    int nMatches = 0;
+                    for (int j = 0; j < entities.size(); j++) {
+                        KafEntity kafEntity = entities.get(j);
+                        nMatches += Util.countIntersectingSetOfSpans(kafEntity.getSetsOfSpans(), kafCoreferenceSet.getSetsOfSpans());
+                    }
+                    if (nMatches > topMatches) {
+                        topMatches = nMatches;
+                        topEntity = key;
+                    }
+                }
+                if (!topEntity.isEmpty())  {
+                        if (coveredEntities.contains(topEntity)) {
+                          //  System.out.println("duplicating = " + topEntity);
+                        }
+                        coveredEntities.add(topEntity);
+                        ArrayList<KafEntity> entities = kafEntityActorUriMap.get(topEntity);
+                        ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferences(baseUrl, kafSaxParser, entities);
+                        String entityId = "";
+                        entityId = Util.getEntityLabelUriFromEntities(entities);
+                        /*for (int e = 0; e < entities.size(); e++) {
+                            KafEntity kafEntity = entities.get(e);
+                            entityId += kafEntity.getId();
+                        }*/
+                        SemActor semActor = new SemActor();
+                        semActor.setId(entityUri + entityId);
+                        semActor.setNafMentions(mentionArrayList);
+                        semActor.addPhraseCountsForMentions(kafSaxParser);
+                        semActor.addConcepts(Util.getExternalReferences(entities));
+                        semActor.setIdByDBpediaReference();
+                        Util.addObject(semActors, semActor);
+                }
+                else {
+                    ///// coreference sets without any entity matches are ignored so far!!!!!!!!!
+                 //   System.out.println("not matched kafCoreferenceSet.getCoid() = " + kafCoreferenceSet.getCoid());
+                }
+            }
+        }
+
+        //// There could be entities not matched with coreference sets. These are now added separately
+        Set keySet  = kafEntityActorUriMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String uri =  keys.next();
+            if (!coveredEntities.contains(uri)) {
+                //   System.out.println("actor uri = " + uri);
+                ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
+                ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntities(baseUrl, kafSaxParser, entities);
+                String entityId = "";
+                entityId = Util.getEntityLabelUriFromEntities(entities);
+               /* for (int i = 0; i < entities.size(); i++) {
+                    KafEntity kafEntity = entities.get(i);
+                    entityId += kafEntity.getId();
+                }*/
+                SemActor semActor = new SemActor();
+                semActor.setId(entityUri + entityId);
+                semActor.setNafMentions(mentionArrayList);
+                semActor.addPhraseCountsForMentions(kafSaxParser);
+                semActor.addConcepts(Util.getExternalReferences(entities));
+                semActor.setIdByDBpediaReference();
+                Util.addObject(semActors, semActor);
+            }
+        }
+    }
+
 
     /**
      *
@@ -1499,23 +1630,7 @@ public class GetSemFromNafFile {
 
     static public void main (String [] args) {
         String pathToNafFile = "";
-        //String pathToNafFile = args[0];
-       // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/scale-test.naf";
-        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/reasoning/increase-example/57VV-5311-F111-G0HJ.xml_7684191f264a9e21af56de7ec51cf2d5.naf.coref";
-        //String pathToNafFile = "/Users/piek/newsreader-deliverables/papers/maplex/47P9-DCM0-0092-K267.xml";
-        //String pathToNafFile = "/Users/piek/Desktop/MapLex/47T0-YSP0-018S-20DV.xml";
-       // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/47T0-B4V0-01D6-Y3WM.xml";
-       // String pathToNafFile = "/Code/vu/newsreader/EventCoreference/example/naf_and_trig/5C37-HGT1-JBJ4-2472.xml_fb5a69273e6b8028fa2b9796eb62483b.naf";
-       // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
-        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47R9-0JG0-015B-31P6.xml";
-       // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/4PG2-TTJ0-TXVX-P0FV.xml";
-        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars-2/1/47KD-4MN0-009F-S2JG.xml";
-        //String pathToNafFile = "/Users/piek/Desktop/NWR/Cross-lingual/test.srl.lexicalunits.pm.fn.ecoref.naf";
-        //String pathToNafFile = "/users/piek/Desktop/NWR/timeline/vua-naf2sem_v2_2015/test/corpus_airbus/1173_Internal_emails_expose_Boeing-Air_Force_contract_discussions.naf";
-        // pathToNafFile = "/Users/piek/Desktop/EventWorkshop/examples/7924_A380_makes_maiden_flight_to_US.nl.naf";
-        //String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/test/possession-test.naf";
-        //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
-        //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
+        pathToNafFile = "/Users/piek/Desktop/7236196.xml.19k351u4o.xml";
         String project = "cars";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];

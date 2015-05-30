@@ -725,7 +725,36 @@ public class Util {
         return false;
     }
 
+
+
+    static public KafSense getBestScoringExternalReference (ArrayList<KafSense> kafSenses)
+    {   KafSense topSense = null;
+        double topScore = -1;
+        for (int i = 0; i < kafSenses.size(); i++) {
+            KafSense kafSense = kafSenses.get(i);
+            double score = kafSense.getConfidence();
+            if (score>topScore) {
+                topScore = score;
+                topSense = kafSense;
+            }
+        }
+        return topSense;
+    }
+    /**
+     *  Select the URI with the highest score
+     * @param kafEntity
+     * @return
+     */
     static public String getBestEntityUri (KafEntity kafEntity) {
+        String uri="";
+        KafSense topSense = getBestScoringExternalReference(kafEntity.getExternalReferences());
+        if (topSense!=null) {
+            uri = topSense.getSensecode();
+        }
+        return uri;
+    }
+
+    static public String getBestEntityUriWithReranking (KafEntity kafEntity) {
         String uri="";
         boolean RERANK = false;
         for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
@@ -737,7 +766,7 @@ public class Util {
             }
         }
         if (!RERANK) {
-            uri = kafEntity.getFirstUriReference();
+            uri = getBestEntityUri(kafEntity);
         }
         return uri;
     }
@@ -759,7 +788,10 @@ public class Util {
                 semObject.addPhraseCounts(aUri);
             }
         }
+        System.out.println("semObject.getPhrase() = " + semObject.getPhraseCounts().toString());
         uri = semObject.getTopPhraseAsLabel();
+        System.out.println("semObject topPhrase = " + uri);
+
         return uri;
     }
     /**

@@ -160,7 +160,7 @@ public class SemObject implements Serializable {
         return id;
     }
 
-    public void setIdByDBpediaReference() {
+    public void setIdByDBpediaReferenceRerank() {
         //// We first check if there has been a rerank of the references if not
         //// then we are getting the highest scoring external reference, which is the first
         /*                                                                             -
@@ -174,28 +174,31 @@ public class SemObject implements Serializable {
          */
 
         boolean RERANK = false;
-/*        for (int i = 0; i < concepts.size(); i++) {
+        for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
             if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
                 id = getNameSpaceTypeReference(kafSense);
                 RERANK = true;
                 break;
             }
-        }*/
+        }
         if (!RERANK) {
-            for (int i = 0; i < concepts.size(); i++) {
-                KafSense kafSense = concepts.get(i);
-                if ((kafSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
-                        (kafSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
+            setIdByDBpediaReference();
+        }
+    }
+
+    public void setIdByDBpediaReference() {
+        KafSense topSense = Util.getBestScoringExternalReference(concepts);
+        if (topSense!=null) {
+            if ((topSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
+                    (topSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
                     - using them as the subject of extracted triples (suggested), or
                     - linking them to entity/event URIs using owl:sameAs triples
                  */
-                    id = getNameSpaceTypeReference(kafSense);
-                    break;
-                }
+                id = getNameSpaceTypeReference(topSense);
             }
         }
     }

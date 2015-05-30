@@ -44,6 +44,7 @@ public class EventCorefWordnetSim {
     static boolean USEWSD = false;
     static double BESTSENSETHRESHOLD = 0.8;
     static String WNPREFIX = "";
+    static String WNRESOURCE = "";
 
     static public void main (String [] args) {
               if (args.length == 0) {
@@ -94,7 +95,8 @@ public class EventCorefWordnetSim {
                               }
                           } else if (arg.equals("--wn-prefix")&& args.length > (i + 1)) {
                               WNPREFIX = args[i+1].trim();
-
+                          } else if (arg.equals("--wn-resource")&& args.length > (i + 1)) {
+                              WNRESOURCE = args[i+1].trim().toLowerCase();
                           } else if (arg.equals("--proportion") && args.length > (i + 1)) {
                               try {
                                   proportionalthreshold = Integer.parseInt(args[i + 1]);
@@ -155,6 +157,8 @@ public class EventCorefWordnetSim {
                               pathToWNLMF = args[i + 1];
                           } else if (arg.equals("--wn-prefix")&& args.length > (i + 1)) {
                               WNPREFIX = args[i+1].trim();
+                          } else if (arg.equals("--wn-resource")&& args.length > (i + 1)) {
+                              WNRESOURCE = args[i+1].trim().toLowerCase();
                           }
                           else if (arg.equals("--drift-max") && args.length > (i + 1)) {
                               try {
@@ -191,6 +195,8 @@ public class EventCorefWordnetSim {
                           System.out.println("simthreshold = " + simthreshold);
                           System.out.println("proportionalthreshold = " + proportionalthreshold);
                           System.out.println("method = " + method);
+                          System.out.println("wn-prefix = " + WNPREFIX);
+                          System.out.println("wn-resource = " + WNRESOURCE);
                           System.out.println("DRIFTMAX = " + DRIFTMAX);
                           System.out.println("relations = " + relations.toString());
                           if (!folder.isEmpty()) {
@@ -383,10 +389,22 @@ public class EventCorefWordnetSim {
               double bestScore = 0;
               for (int i = 0; i < corefResultSet1.getBestSenses().size(); i++) {
                   KafSense kafSense1 = corefResultSet1.getBestSenses().get(i);
+                  if (!WNRESOURCE.isEmpty()) {
+                      if (kafSense1.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) {
+                          continue;
+                          //// this sense comes from the wrong resource
+                      }
+                  }
                   for (int j = 0; j < corefResultSet2.getBestSenses().size(); j++) {
                       KafSense kafSense2 = corefResultSet2.getBestSenses().get(j);
                       String sense1 = kafSense1.getSensecode();
                       String sense2 = kafSense2.getSensecode();
+                      if (!WNRESOURCE.isEmpty()) {
+                          if (kafSense2.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) {
+                             continue;
+                              //// this sense comes from the wrong resource
+                          }
+                      }
                       if (!WNPREFIX.isEmpty()) {
                           int idx = sense1.indexOf("-");
                           if (idx>-1) {
@@ -394,13 +412,13 @@ public class EventCorefWordnetSim {
                           }
                           idx = sense2.indexOf("-");
                           if (idx>-1) {
-                              sense2 = WNPREFIX+sense2.substring(idx);
+                              sense2 = WNPREFIX + sense2.substring(idx);
                           }
                       }
-                      //System.out.println("sense1 = " + sense1);
-                      //System.out.println("sense2 = " + sense2);
+                    //  System.out.println("sense1 = " + sense1);
+                    //  System.out.println("sense2 = " + sense2);
                       double score = SynsetSim.getSynsetSimLC(wordnetData, sense1,sense2);
-                     // System.out.println("score = " + score);
+                    //  System.out.println("score = " + score);
                       if (score>bestScore) {
                           bestScore = score;
                       }
@@ -452,10 +470,8 @@ public class EventCorefWordnetSim {
                           }
                           /// first try the source lemma
                           CorefMatch corefMatch = null;
-                          double topScore = 0;
                           double score = getSimScoreForCorefSets(corefResultSet, aCorefResultSet);
                           if (score > simthreshold) {
-                              topScore = score;
                               /// merge the sets
                               corefMatch = new CorefMatch();
                               corefMatch.setTargetLemma(aCorefResultSet.getSourceLemma());
