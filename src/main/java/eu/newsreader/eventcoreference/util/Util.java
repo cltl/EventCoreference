@@ -788,9 +788,9 @@ public class Util {
                 semObject.addPhraseCounts(aUri);
             }
         }
-        System.out.println("semObject.getPhrase() = " + semObject.getPhraseCounts().toString());
+    //    System.out.println("semObject.getPhrase() = " + semObject.getPhraseCounts().toString());
         uri = semObject.getTopPhraseAsLabel();
-        System.out.println("semObject topPhrase = " + uri);
+   //     System.out.println("semObject topPhrase = " + uri);
 
         return uri;
     }

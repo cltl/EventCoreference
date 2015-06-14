@@ -4,6 +4,7 @@ import eu.kyotoproject.kaf.KafParticipant;
 import eu.kyotoproject.kaf.KafSense;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by piek on 5/11/14.
@@ -268,6 +269,30 @@ public class RoleLabels {
                 kafSense.getSensecode().endsWith("@Proposition")
                     ) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    static public boolean hasSourceTarget (KafParticipant kafParticipant, Vector<String> communicationVecor) {
+        /**
+         *           <externalRef resource="VerbNet" reference="indicate-78@Topic"/>
+         <externalRef resource="FrameNet" reference="Communication@Message"/>
+         <externalRef resource="FrameNet" reference="Communication@Topic"/>
+         <externalRef resource="FrameNet" reference="Evidence@Proposition"/>
+         */
+        for (int i = 0; i < kafParticipant.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafParticipant.getExternalReferences().get(i);
+            if (communicationVecor.contains(kafSense.getSensecode())) {
+                return true;
+            }
+            int idx = kafSense.getSensecode().lastIndexOf("@");
+            if (idx>-1) {
+                String role = kafSense.getSensecode().substring(idx);
+               // System.out.println("role = " + role);
+                if (communicationVecor.contains(role)) {
+                    return true;
+                }
             }
         }
         return false;

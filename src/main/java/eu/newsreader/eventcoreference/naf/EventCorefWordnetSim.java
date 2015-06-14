@@ -45,6 +45,7 @@ public class EventCorefWordnetSim {
     static double BESTSENSETHRESHOLD = 0.8;
     static String WNPREFIX = "";
     static String WNRESOURCE = "";
+    static boolean REMOVEEVENTCOREFS = false;
 
     static public void main (String [] args) {
               if (args.length == 0) {
@@ -107,6 +108,9 @@ public class EventCorefWordnetSim {
                                   String frameFilePath = args[i+1];
                                   communicationFrame =Util.ReadFileToStringVector(frameFilePath);
                           }
+                          else if (arg.equalsIgnoreCase("--replace")) {
+                              REMOVEEVENTCOREFS = true;
+                          }
                       }
                       if (!pathToWNLMF.isEmpty()) {
                           WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
@@ -114,7 +118,12 @@ public class EventCorefWordnetSim {
                           wordnetLmfSaxParser.parseFile(pathToWNLMF);
                           wordnetData = wordnetLmfSaxParser.wordnetData;
                           //System.out.println("wordnetData = " + wordnetData.hyperRelations.size());
-                          processNafStream(System.in);
+                          //processNafStream(System.in);
+                          KafSaxParser kafSaxParser = new KafSaxParser();
+                          kafSaxParser.parseFile(System.in);
+                          processNaf(kafSaxParser);
+                          kafSaxParser.writeNafToStream(System.out);
+
                       }
                   } else {
                       String pathToNafFile = "";
@@ -185,6 +194,9 @@ public class EventCorefWordnetSim {
                               String frameFilePath = args[i+1];
                               communicationFrame =Util.ReadFileToStringVector(frameFilePath);
                           }
+                          else if (arg.equalsIgnoreCase("--replace")) {
+                              REMOVEEVENTCOREFS = true;
+                          }
                       }
                       if (!pathToWNLMF.isEmpty()) {
                           WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
@@ -208,10 +220,37 @@ public class EventCorefWordnetSim {
                   }
               }
           }
+          static void removeEventCoreferences (KafSaxParser kafSaxParser) {
+              ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
+              for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+                  KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+                  if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                      fixedSets.add(kafCoreferenceSet);
+                  }
+              }
+              kafSaxParser.kafCorefenceArrayList = fixedSets;
+          }
+
+
+
+          static public void processNaf (KafSaxParser kafSaxParser) {
+              if (REMOVEEVENTCOREFS) {
+                  removeEventCoreferences(kafSaxParser);
+              }
+              if (USEWSD) {
+                  processUsingWsd(kafSaxParser);
+              }
+              else {
+                  process(kafSaxParser);
+              }
+          }
 
           static public void processNafStream (InputStream nafStream) {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(nafStream);
+              if (REMOVEEVENTCOREFS) {
+                  removeEventCoreferences(kafSaxParser);
+              }
               if (USEWSD) {
                   processUsingWsd(kafSaxParser);
               }
@@ -224,6 +263,9 @@ public class EventCorefWordnetSim {
           static public void processNafFile (String pathToNafFile) {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(pathToNafFile);
+              if (REMOVEEVENTCOREFS) {
+                  removeEventCoreferences(kafSaxParser);
+              }
               if (USEWSD) {
                   processUsingWsd(kafSaxParser);
               }
@@ -245,6 +287,9 @@ public class EventCorefWordnetSim {
                   File file = files.get(i);
                   KafSaxParser kafSaxParser = new KafSaxParser();
                   kafSaxParser.parseFile(file);
+                  if (REMOVEEVENTCOREFS) {
+                      removeEventCoreferences(kafSaxParser);
+                  }
                   if (USEWSD) {
                       processUsingWsd(kafSaxParser);
                   }
@@ -269,6 +314,22 @@ public class EventCorefWordnetSim {
                   lemma += corefTarget.getLemma()+" ";
               }
               return lemma.trim();
+          }
+
+        static boolean isGrammaticalEvent(KafEvent kafEvent, KafSaxParser kafSaxParser) {
+              for (int j = 0; j < kafEvent.getSpans().size(); j++) {
+                  CorefTarget corefTarget = kafEvent.getSpans().get(j);
+                  KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
+                  if (kafTerm!=null); {
+                      for (int i = 0; i < kafTerm.getSenseTags().size(); i++) {
+                          KafSense kafSense = kafTerm.getSenseTags().get(i);
+                          if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
+                              return true;
+                          }
+                      }
+                  }
+              }
+              return false;
           }
 
           static void process(KafSaxParser kafSaxParser) {
@@ -431,6 +492,7 @@ public class EventCorefWordnetSim {
               String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
               String strEndDate = null;
               ArrayList<CorefResultSet> corefMatchList = new ArrayList<CorefResultSet>();
+              ArrayList<CorefResultSet> grammaticalMatchList = new ArrayList<CorefResultSet>();
 
               /// we create coreference sets for lemmas
               ArrayList<String> lemmaList = new ArrayList<String>();
@@ -438,13 +500,21 @@ public class EventCorefWordnetSim {
               for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
                   KafEvent theKafEvent = kafSaxParser.kafEventArrayList.get(i);
                   theKafEvent.addTermDataToSpans(kafSaxParser);
-                  String lemma = getLemmaFromKafEvent(theKafEvent);
-                  if (lemmaList.contains(lemma)) {
-                      continue;
+                  if (isGrammaticalEvent(theKafEvent, kafSaxParser)) {
+                      //// grammatical events are not considered for coreference on just the lemma or wnsim
+                      String lemma = getLemmaFromKafEvent(theKafEvent);
+                      CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
+                      grammaticalMatchList.add(corefResultSet);
                   }
-                  lemmaList.add(lemma);
-                  CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
-                  for (int j = i+1; j < kafSaxParser.kafEventArrayList.size(); j++) {
+                  else {
+                      //// for all events that are not grammatical
+                      String lemma = getLemmaFromKafEvent(theKafEvent);
+                      if (lemmaList.contains(lemma)) {
+                          continue;
+                      }
+                      lemmaList.add(lemma);
+                      CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
+                      for (int j = i + 1; j < kafSaxParser.kafEventArrayList.size(); j++) {
                           KafEvent aKafEvent = kafSaxParser.kafEventArrayList.get(j);
                           aKafEvent.addTermDataToSpans(kafSaxParser);
                           String aLemma = getLemmaFromKafEvent(aKafEvent);
@@ -452,10 +522,11 @@ public class EventCorefWordnetSim {
                               ArrayList<CorefTarget> anEventCorefTargetList = aKafEvent.getSpans();
                               corefResultSet.addSource(anEventCorefTargetList);
                           }
+                      }
+                      /// we determine the best senses for the lemma sets according to WSD
+                      corefResultSet.getBestSenses(kafSaxParser, BESTSENSETHRESHOLD);
+                      corefMatchList.add(corefResultSet);
                   }
-                  /// we determine the best senses for the lemma sets according to WSD
-                  corefResultSet.getBestSenses(kafSaxParser, BESTSENSETHRESHOLD);
-                  corefMatchList.add(corefResultSet);
               }
 
               //// now we need to compare these lemma lists
@@ -505,6 +576,18 @@ public class EventCorefWordnetSim {
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event");
+                  kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
+              }
+
+              for (int i = 0; i < grammaticalMatchList.size(); i++) {
+                  CorefResultSet corefResultSet = grammaticalMatchList.get(i);
+                  if (corefResultSet==null) {
+                      continue;
+                  }
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
+                  kafCoreferenceSet.setCoid(corefId);
+                  kafCoreferenceSet.setType("event-grammatical");
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
               if (DRIFTMAX>-1) {

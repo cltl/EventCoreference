@@ -285,9 +285,9 @@ public class ClusterEventObjects {
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(nafStream);
         processKafSaxParser(project, kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder);
-        if (perspectiveObjects.size()>0) {
+        /*if (perspectiveObjects.size()>0) {
             GetPerspectiveRelations.perspectiveRelationsToTrig(eventParentFolder, perspectiveObjects);
-        }
+        }*/
     }
 
     static void processKafSaxParser(String project, KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectiveObjects,
@@ -400,13 +400,13 @@ public class ClusterEventObjects {
         //
         //
         //
-        GetPerspectiveRelations.getPerspective (kafSaxParser,
+        /*GetPerspectiveRelations.getPerspective (kafSaxParser,
                 project ,   perspectives,
                 semActors,
                 contextualVector,
                 communicationVector,
                 grammaticalVector);
-
+*/
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());

@@ -1315,7 +1315,7 @@ public class GetSemFromNafFile {
                 OwlTime aTime =new OwlTime();
                 if (aTime.parseTimeExValue(timex.getValue(), docSemTime.getOwlTime())>-1) {
                     ArrayList<String> tokenSpanIds = timex.getSpans();
-                    ArrayList<String> termSpanIds = kafSaxParser.covertTokensSpanToTermSPan(tokenSpanIds);
+                    ArrayList<String> termSpanIds = kafSaxParser.convertTokensSpanToTermSpan(tokenSpanIds);
                     ArrayList<NafMention> mentions = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, termSpanIds);
                     SemTime semTimeRole = new SemTime();
                     semTimeRole.setId(baseUrl + timex.getId());
