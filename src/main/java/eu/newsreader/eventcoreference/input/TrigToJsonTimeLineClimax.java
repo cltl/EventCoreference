@@ -1102,32 +1102,7 @@ public class TrigToJsonTimeLineClimax {
         }
     }
 
-    static void writeJsonObjectArrayOrg (String pathToFolder, String project, ArrayList<JSONObject> objects) {
-        try {
-            try {
-                File folder = new File(pathToFolder);
-                OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + folder.getName()+".timeline.json");
-                JSONObject timeLineObject = JsonEvent.createTimeLineProperty(new File(pathToFolder).getName(), project);
 
-                for (int j = 0; j < objects.size(); j++) {
-                    JSONObject jsonObject = objects.get(j);
-                    timeLineObject.append("events", jsonObject);
-                }
-                String str = "{ \"timeline\":\n";
-                jsonOut.write(str.getBytes());
-                StringWriter out = new StringWriter();
-                timeLineObject.write(out);
-                jsonOut.write(out.toString().getBytes());
-                str ="}\n";
-                jsonOut.write(str.getBytes());
-                jsonOut.close();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     static String getNameSpaceString (String value) {

@@ -32,7 +32,7 @@ public class ParcAttributionTask {
         String comFrameFile = "";
         pathToFolder = "/Users/piek/Desktop/PerspectiveAnnotation/PARC/test/nwr_pipe_output/test";
         extension = ".naf";
-        comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v2_2015/resources/communication.txt";
+        comFrameFile = "/Users/piek/Desktop/PerspectiveAnnotation/PARC/nwr-baseline/resources/communication.txt";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equalsIgnoreCase("--naf-folder") && ((i+1)<args.length)) {
@@ -81,6 +81,8 @@ public class ParcAttributionTask {
 
     public static void perspectiveRelationsToEval (File kafFile, ArrayList<PerspectiveObject> perspectiveObjects, KafSaxParser kafSaxParser) {
         try {
+         //   System.out.println("kafFile.getName() = " + kafFile.getName());
+         //   System.out.println("perspectiveObjects = " + perspectiveObjects.size());
             OutputStream fos = new FileOutputStream(kafFile.getAbsolutePath()+".foreval");
             for (int i = 0; i < perspectiveObjects.size(); i++) {
                 PerspectiveObject perspectiveObject = perspectiveObjects.get(i);
@@ -117,7 +119,7 @@ public class ParcAttributionTask {
 
                     str += "\n";
 
-                    //System.out.println(str);
+                  //  System.out.println(str);
                     fos.write(str.getBytes());
                 }
             }

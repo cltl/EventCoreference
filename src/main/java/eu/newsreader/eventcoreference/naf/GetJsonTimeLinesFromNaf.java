@@ -486,7 +486,8 @@ public class GetJsonTimeLinesFromNaf {
                 SemRelation semRelation = semRelations.get(j);
                 if (semRelation.getObject().equals(semObject.getId())) {
                     /// we have an event involving the object
-                    if (RoleLabels.hasPRIMEPARTICIPANT(semRelation.getPredicates()) || RoleLabels.hasSECONDPARTICIPANT(semRelation.getPredicates())) {
+                    if (RoleLabels.hasPRIMEPARTICIPANT(semRelation.getPredicates()) ||
+                            RoleLabels.hasSECONDPARTICIPANT(semRelation.getPredicates())) {
                         String eventId = semRelation.getSubject();
 
                         SemEvent semEvent = null;

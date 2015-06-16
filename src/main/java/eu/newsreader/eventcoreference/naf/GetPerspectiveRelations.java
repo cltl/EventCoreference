@@ -122,6 +122,8 @@ public class GetPerspectiveRelations {
                             }
                         }
                         if (sourceParticipant!=null && targetParticipant !=null) {
+                          //  System.out.println("targetParticipant.toString() = " + targetParticipant.toString());
+
                             sourceParticipant.setTokenStrings(kafSaxParser);
                             targetParticipant.setTokenStrings(kafSaxParser);
                             PerspectiveObject perspectiveObject = new PerspectiveObject();

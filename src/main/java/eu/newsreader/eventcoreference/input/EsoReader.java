@@ -45,7 +45,7 @@ public class EsoReader extends DefaultHandler {
         while (keys.hasNext()) {
             String key = keys.next();
             if (!subToSuper.containsKey(key)) {
-                tops.add(key);
+                if (!tops.contains(key)) tops.add(key);
             }
         }
         return tops;
@@ -200,4 +200,6 @@ public class EsoReader extends DefaultHandler {
         value += new String(ch, start, length);
         // System.out.println("tagValue:"+value);
     }
+
+
 }

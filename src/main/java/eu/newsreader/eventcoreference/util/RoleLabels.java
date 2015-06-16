@@ -274,7 +274,7 @@ public class RoleLabels {
         return false;
     }
 
-    static public boolean hasSourceTarget (KafParticipant kafParticipant, Vector<String> communicationVecor) {
+    static public boolean hasSourceTarget (KafParticipant kafParticipant, Vector<String> communicationVector) {
         /**
          *           <externalRef resource="VerbNet" reference="indicate-78@Topic"/>
          <externalRef resource="FrameNet" reference="Communication@Message"/>
@@ -283,14 +283,14 @@ public class RoleLabels {
          */
         for (int i = 0; i < kafParticipant.getExternalReferences().size(); i++) {
             KafSense kafSense = kafParticipant.getExternalReferences().get(i);
-            if (communicationVecor.contains(kafSense.getSensecode())) {
+            if (communicationVector.contains(kafSense.getSensecode().toLowerCase())) {
                 return true;
             }
             int idx = kafSense.getSensecode().lastIndexOf("@");
             if (idx>-1) {
                 String role = kafSense.getSensecode().substring(idx);
-               // System.out.println("role = " + role);
-                if (communicationVecor.contains(role)) {
+                if (communicationVector.contains(role.toLowerCase())) {
+                    //  System.out.println("role = " + role);
                     return true;
                 }
             }
