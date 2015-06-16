@@ -17,6 +17,7 @@ public class ResourcesUri {
     //final static public String eso = "http://www.newsreader-project.eu/ontologies/eso/";
     final static public String eso = "http://www.newsreader-project.eu/domain-ontology#";
     final static public String wn = "http://www.newsreader-project.eu/ontologies/wordnet3.0/";
+    final static public String cornetto = "http://www.newsreader-project.eu/ontologies/cornetto2.1/";
     final static public String fn = "http://www.newsreader-project.eu/ontologies/framenet/";
     final static public String vn = "http://www.newsreader-project.eu/ontologies/verbnet/";
     final static public String pb = "http://www.newsreader-project.eu/ontologies/propbank/";
@@ -34,6 +35,8 @@ public class ResourcesUri {
 
 
     static public void prefixModel (Model model) {
+        model.setNsPrefix("wn", ResourcesUri.wn);
+        model.setNsPrefix("cornetto", ResourcesUri.cornetto);
         model.setNsPrefix("fn", ResourcesUri.fn);
         model.setNsPrefix("nwrdata", ResourcesUri.nwrdata);
         model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
