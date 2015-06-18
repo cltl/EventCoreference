@@ -229,15 +229,18 @@ public class ClusterEventObjects {
 
           //  System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
-           /* processKafSaxParser(project,
-                    kafSaxParser, speechFolder, otherFolder, grammaticalFolder,
-                    semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);*/
-            processKafSaxParserOutputFolder(file.getName(), project,
-                    kafSaxParser, perspectiveObjects,speechFolder, otherFolder, grammaticalFolder,
-                    semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-            if (!done.isEmpty()) {
-                File doneFile = new File(file.getAbsolutePath() + done);
-                file.renameTo(doneFile);
+            if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
+                System.out.println("SKIPPING NAF due to empty url in header kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
+            }
+            else {
+              //  System.out.println("kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
+                processKafSaxParserOutputFolder(file.getName(), project,
+                        kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder,
+                        semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+                if (!done.isEmpty()) {
+                    File doneFile = new File(file.getAbsolutePath() + done);
+                    file.renameTo(doneFile);
+                }
             }
         }
         if (perspectiveObjects.size()>0) {
@@ -284,10 +287,15 @@ public class ClusterEventObjects {
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(nafStream);
-        processKafSaxParser(project, kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder);
+        if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
+            System.out.println("SKIPPING NAF due to empty url in header kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
+        }
+        else {
+            processKafSaxParser(project, kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder);
         /*if (perspectiveObjects.size()>0) {
             GetPerspectiveRelations.perspectiveRelationsToTrig(eventParentFolder, perspectiveObjects);
         }*/
+        }
     }
 
     static void processKafSaxParser(String project, KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectiveObjects,

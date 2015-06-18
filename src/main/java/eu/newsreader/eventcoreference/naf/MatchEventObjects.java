@@ -294,6 +294,15 @@ public class MatchEventObjects {
             if (kafSense.getSensecode().toLowerCase().startsWith("ili")) {
                 iliReferences.add(kafSense);
             }
+            else if (kafSense.getResource().toLowerCase().startsWith("cornetto")) {
+                iliReferences.add(kafSense);
+            }
+            else if (kafSense.getResource().toLowerCase().startsWith("wordnet")) {
+                iliReferences.add(kafSense);
+            }
+            else if (kafSense.getResource().toLowerCase().startsWith("wn")) {
+                iliReferences.add(kafSense);
+            }
         }
         return iliReferences;
     }
