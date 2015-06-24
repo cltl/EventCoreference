@@ -108,8 +108,8 @@ public class GetPerspectiveRelations {
                 String eventType = FrameTypes.getEventTypeString(kafEvent.getExternalReferences(), contextualVector, communicationVector, grammaticalVector);
                 if (!eventType.isEmpty()) {
                     if (eventType.equalsIgnoreCase("source")) {
-                        KafParticipant sourceParticipant = null;
-                        KafParticipant targetParticipant = null;
+                        KafParticipant sourceParticipant = new KafParticipant();
+                        KafParticipant targetParticipant = new KafParticipant();
                         /// next we get the A0 and message roles
 
                         for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
@@ -121,7 +121,7 @@ public class GetPerspectiveRelations {
                                 sourceParticipant = kafParticipant;
                             }
                         }
-                        if (sourceParticipant!=null && targetParticipant !=null) {
+                      //  if (sourceParticipant!=null && targetParticipant !=null) {
                           //  System.out.println("targetParticipant.toString() = " + targetParticipant.toString());
 
                             sourceParticipant.setTokenStrings(kafSaxParser);
@@ -148,7 +148,7 @@ public class GetPerspectiveRelations {
                             }
                             perspectiveObjectArrayList.add(perspectiveObject);
                         }
-                    }
+                    //}
                 }
             }
             return perspectiveObjectArrayList;

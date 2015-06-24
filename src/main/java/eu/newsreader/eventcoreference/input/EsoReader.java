@@ -25,7 +25,9 @@ public class EsoReader extends DefaultHandler {
     public HashMap<String, ArrayList<String>> superToSub = new HashMap<String, ArrayList<String>>();
 
     static public void main (String[] args) {
-        String esoPath = "/Users/piek/Desktop/NWR/NWR-ontology/version-0.6/ESO_version_0.6.owl";
+        String esoPath = "";
+      //  esoPath = "/Users/piek/Desktop/NWR/NWR-ontology/version-0.6/ESO_version_0.6.owl";
+        esoPath = "/Users/piek/Desktop/ESO_extended_June17.owl";
         EsoReader esoReader = new EsoReader();
         esoReader.parseFile(esoPath);
         ArrayList<String> tops = esoReader.getTops();

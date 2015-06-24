@@ -230,6 +230,7 @@ public class ClusterEventObjects {
           //  System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
+                System.out.println("file.getName() = " + file.getName());
                 System.out.println("SKIPPING NAF due to empty url in header kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
             }
             else {
