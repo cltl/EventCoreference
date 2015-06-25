@@ -5,6 +5,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,8 +28,8 @@ public class TrigUtil {
                 StmtIterator siter = namedModel.listStatements();
                 while (siter.hasNext()) {
                     Statement s = siter.nextStatement();
-                    String object = getObjectValue(s);
-                    if (object.indexOf(entity) > -1) {
+                    String object = getObjectValue(s).toLowerCase();
+                    if (object.indexOf(entity.toLowerCase()) > -1) {
                         String subject = s.getSubject().getURI();
                         if (!events.contains(subject)) {
                             events.add(subject);
@@ -74,31 +75,8 @@ public class TrigUtil {
     }
 
 
-    static String triplesToString (ArrayList<Statement> statements, String entity) {
-        String str = "";
-        String eventLabels = "";
-        String roles = "";
-        for (int i = 0; i < statements.size(); i++) {
-            Statement statement = statements.get(i);
-            if (!getObjectValue(statement).contains(entity)) {
-                if (statement.getPredicate().toString().toLowerCase().contains("#label")) {
-                    if (!eventLabels.isEmpty()) {
-                        eventLabels += ",";
-                    }
-                    eventLabels += getObjectValue(statement);
-                } else {
-                    roles += "\t" + getValue(statement.getPredicate().toString())
-                            + ":" + getObjectValue(statement);
-                }
-            }
-            str = eventLabels+roles+"\n";
-        }
-        return str;
-    }
-
     static boolean isEventInstance (Statement statement) {
         String predicate = statement.getPredicate().getURI();
-        // System.out.println("predicate = " + predicate);
         if (predicate.endsWith("#type")) {
             String object = "";
             if (statement.getObject().isLiteral()) {
@@ -111,11 +89,23 @@ public class TrigUtil {
                 String value = values[j];
                 String property = getNameSpaceString(value);
                 //  System.out.println("value = " + value);
-                //   System.out.println("property = " + property);
+                //    System.out.println("property = " + property);
                 if (value.endsWith("Event") && property.equalsIgnoreCase("sem")) {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    static boolean isEventTripe (Statement statement) {
+        String subject = statement.getSubject().toString();
+        int idx = subject.lastIndexOf("/");
+        if (idx>-1) {
+            subject = subject.substring(idx);
+        }
+        if (subject.toLowerCase().startsWith("ev#")) {
+            return true;
         }
         return false;
     }
@@ -191,13 +181,40 @@ public class TrigUtil {
             return true;
         }*/
         else {
+          //  System.out.println("s.getPredicate() = " + s.getPredicate());
+
+            return false;
+        }
+    }
+
+    static boolean validLabelTriple (Statement s) {
+       if (s.getPredicate().toString().toLowerCase().contains("#label")) {
+            return true;
+        }
+        else if (s.getPredicate().toString().toLowerCase().contains("#denotedby")) {
+            return true;
+        }
+        else {
+          //  System.out.println("s.getPredicate() = " + s.getPredicate());
+
+            return false;
+        }
+    }
+
+    static boolean validRoleTriple (Statement s) {
+        if (s.getPredicate().toString().toLowerCase().contains("propbank")) {
+            return true;
+        }
+        else {
+          //  System.out.println("s.getPredicate() = " + s.getPredicate());
+
             return false;
         }
     }
 
 
 
-    static boolean gafTriple (Statement s) {
+    static boolean isGafTriple(Statement s) {
         if (s.getPredicate().toString().toLowerCase().contains("#denotedby")) {
             return true;
         }
@@ -257,7 +274,7 @@ public class TrigUtil {
                 }
                 eventLabels += getObjectValue(statement);
             } else {
-                if (gafTriple(statement)) {
+                if (isGafTriple(statement)) {
                     if (!gaf.isEmpty()) {
                         gaf+= "; ";
                     }
@@ -268,7 +285,56 @@ public class TrigUtil {
                             + ":" + getObjectValue(statement);
                 }
             }
-            str = eventLabels+roles+"\t"+gaf+"\n";
+        }
+        if (!roles.isEmpty()) {
+            str = eventLabels + roles + "\t" + gaf + "\n";
+        }
+        return str;
+    }
+
+    static String triplesToString (ArrayList<Statement> statements, String entity) {
+        String str = "";
+        String eventLabels = "";
+        String roles = "";
+        String gaf = "";
+        boolean hasAnotherEntity = false;
+        boolean hasEntity = false;
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+            if (statement.getPredicate().toString().toLowerCase().contains("#label")) {
+                if (!eventLabels.isEmpty()) {
+                    eventLabels += ",";
+                }
+                eventLabels += getObjectValue(statement);
+            }
+            else {
+                if (isGafTriple(statement)) {
+                    if (!gaf.isEmpty()) {
+                        gaf+= "; ";
+                    }
+                    gaf += getMention(statement.getObject().toString());
+                }
+                else {
+                    String objectValue = getObjectValue(statement);
+                    if (objectValue.toLowerCase().contains(entity.toLowerCase())) {
+                        hasEntity = true;
+                      //  System.out.println("entity = "+objectValue);
+                    }
+                    else {
+                        hasAnotherEntity = true;
+                     //   System.out.println("other entity = "+objectValue);
+                    }
+                    roles += "\t" + getValue(statement.getPredicate().toString())
+                            + ":" + objectValue;
+                }
+            }
+        }
+
+        if (hasAnotherEntity && hasEntity) {
+            str = eventLabels + roles + "\t" + gaf + "\n";
+        }
+        else {
+          //  System.out.println("not valid = " + roles);
         }
         return str;
     }
@@ -287,13 +353,13 @@ public class TrigUtil {
         else if (value.indexOf("/sem/") > -1) {
             property = "sem";
         }
+        else if (value.indexOf("/cornetto") > -1) {
+            property = "cornetto";
+        }
         else if (value.indexOf("/sumo/") > -1) {
             property = "sumo";
         }
         else if (value.indexOf("/eso/") > -1) {
-            property = "eso";
-        }
-        else if (value.indexOf("/domain-ontology/") > -1) {
             property = "eso";
         }
         else if (value.indexOf("/domain-ontology") > -1) {
@@ -328,5 +394,31 @@ public class TrigUtil {
         return mentionValue;
     }
 
+    static public void removeObjectFiles(File inputFile) {
+        File[] theFileList = null;
+        if ((inputFile.canRead())) {
+            theFileList = inputFile.listFiles();
+            for (int i = 0; i < theFileList.length; i++) {
+                File newFile = theFileList[i];
+                if (newFile.isDirectory()) {
+                     removeObjectFiles(newFile);
+                } else {
+                    if (newFile.getName().endsWith(".obj")) {
+                        newFile.delete();
+                    }
+                }
+            }
+        } else {
+            System.out.println("Cannot access file:" + inputFile + "#");
+            if (!inputFile.exists()) {
+                System.out.println("File/folder does not exist!");
+            }
+        }
+    }
+
+    static public void main (String[] args) {
+        String pathToFolder = "/Users/piek/Desktop/tweede-kamer/events/grammatical";
+        removeObjectFiles(new File(pathToFolder));
+    }
 
 }

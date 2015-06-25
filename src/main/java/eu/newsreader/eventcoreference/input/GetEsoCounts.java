@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Created by piek on 15/06/15.
  */
-public class GetEsoStats {
+public class GetEsoCounts {
 
 
     static HashMap<String, Integer> esoCounts = new HashMap<String, Integer>();
@@ -35,8 +35,9 @@ public class GetEsoStats {
 
         String trigfolderPath = "";
         String esoFile = "/Users/piek/Desktop/NWR/timeline/vua-naf2jsontimeline_2015/resources/ESO_version_0.6.owl";
-       // trigfolderPath = "/Users/piek/Desktop/tweede-kamer/events/source";
-        trigfolderPath = "/Users/piek/Desktop/tweede-kamer/events/contextual";
+        //trigfolderPath = "/Users/piek/Desktop/tweede-kamer/events/source";
+        //trigfolderPath = "/Users/piek/Desktop/tweede-kamer/test-trig";
+        trigfolderPath = "/Users/piek/Desktop/tweede-kamer/events";
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -64,7 +65,7 @@ public class GetEsoStats {
             File file = trigFiles.get(i);
             if (i%500==0) {
                 System.out.println("i = " + i);
-               // break;
+                //if (i>500) break;
             }
             String timeDescription = file.getParentFile().getName();
             int idx = timeDescription.indexOf("-");
@@ -74,8 +75,6 @@ public class GetEsoStats {
                     timeDescription = timeDescription.substring(0,4);
                 }
             }
-           // System.out.println("timeDescription = " + timeDescription);
-          //  System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
             dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
             Iterator<String> it = dataset.listNames();
             while (it.hasNext()) {
@@ -86,18 +85,17 @@ public class GetEsoStats {
                     while (siter.hasNext()) {
                         Statement s = siter.nextStatement();
                         if (TrigUtil.isEventInstance(s)) {
-                           if (eventCountsPerDate.containsKey(timeDescription)) {
+                            if (eventCountsPerDate.containsKey(timeDescription)) {
                                Integer cnt = eventCountsPerDate.get(timeDescription);
                                cnt++;
                                eventCountsPerDate.put(timeDescription, cnt);
-                           }
-                           else {
+                            }
+                            else {
                                eventCountsPerDate.put(timeDescription, 1);
-                           }
-                            updateEsoCounts(s);
-
+                            }
                         }
-
+                        updateEsoCounts(s);
+                        updateFramenNetCounts(s);
                     }
                 }
             }
@@ -166,17 +164,15 @@ public class GetEsoStats {
             for (int j = 0; j < values.length; j++) {
                 String value = values[j];
                 String property = TrigUtil.getNameSpaceString(value);
-                if (!property.isEmpty() && !property.equalsIgnoreCase("sem")) {
+                if (property.equals("eso")) {
                     value = TrigUtil.getValue(value);
-                    if (property.equals("eso")) {
-                        if (esoCounts.containsKey(value)) {
-                            Integer cnts = esoCounts.get(value);
-                            cnts++;
-                            esoCounts.put(value, cnts);
+                    if (esoCounts.containsKey(value)) {
+                        Integer cnts = esoCounts.get(value);
+                        cnts++;
+                        esoCounts.put(value, cnts);
 
-                        } else {
-                            esoCounts.put(value, 1);
-                        }
+                    } else {
+                        esoCounts.put(value, 1);
                     }
                 }
             }

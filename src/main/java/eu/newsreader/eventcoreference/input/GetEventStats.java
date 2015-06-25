@@ -37,15 +37,12 @@ public class GetEventStats {
         // trigfolderPath = "/Users/piek/Desktop/tweede-kamer/events/contextual";
         trigfolderPath = "/Users/piek/Desktop/tweede-kamer/events/contextual";
 
-        if (!esoFile.isEmpty()) {
-            esoReader.parseFile(esoFile);
-        }
-
         String esoEvent = "";
 
         esoEvent = "Destroying";
-        esoEvent = "Escaping";
-        esoEvent = "Stealing";
+        ArrayList<String> eventTypes = new ArrayList<String>();
+        //esoEvent = "Escaping";
+        //esoEvent = "Stealing";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
@@ -55,66 +52,78 @@ public class GetEventStats {
                 ACTORNAMESPACES = args[i+1];
                 // System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
             }
-            else if (arg.equals("--eso") && args.length>(i+1)) {
+            else if (arg.equals("--event-type") && args.length>(i+1)) {
+                esoEvent = args[i+1];
+            }
+            else if (arg.equals("--eso-owl") && args.length>(i+1)) {
                 esoFile = args[i+1];
                 // System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
             }
         }
+        eventTypes.add(esoEvent);
+        if (!esoFile.isEmpty()) {
+            esoReader.parseFile(esoFile);
+            esoReader.getParentChain(esoEvent, eventTypes);
+        }
+
 
         File trigfolder = new File(trigfolderPath);
         dataset = TDBFactory.createDataset();
         ArrayList<File> trigFiles = Util.makeRecursiveFileList(trigfolder, ".trig");
-        System.out.println("trigFiles.size() = " + trigFiles.size());
-        for (int i = 0; i < trigFiles.size(); i++) {
-            File file = trigFiles.get(i);
-            if (i%500==0) {
-                System.out.println("i = " + i);
-               //if (i>0) break;
-            }
-           // System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
-            dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
-            ArrayList<String> events = getAllEsoEvents(dataset, esoEvent);
-            //System.out.println("events.size() = " + events.size());
-            getAllEventTriples(dataset, events);
-            //System.out.println("eventMap = " + eventMap.size());
-            Model namedModel = dataset.getNamedModel(instanceGraph);
-            StmtIterator siter = namedModel.listStatements();
-            while (siter.hasNext()) {
-                Statement s = siter.nextStatement();
-                if (TrigUtil.validTriple(s)) {
+        try {
+            OutputStream fos = new FileOutputStream(trigfolder.getParentFile()+"/"+trigfolder.getName()+"."+esoEvent+".stats.csv");
+            System.out.println("trigFiles.size() = " + trigFiles.size());
+            for (int i = 0; i < trigFiles.size(); i++) {
+                File file = trigFiles.get(i);
+                if (i%500==0) {
+                    System.out.println("i = " + i);
+                   // if (i>500) break;
+                }
+               // System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
+                eventMap = new HashMap<String, ArrayList<Statement>>();
+                dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
+                ArrayList<String> events = getAllEsoEvents(dataset, eventTypes);
+                //System.out.println("events.size() = " + events.size());
+                getAllEventRoleTriples(dataset, events, eventMap);
+                //System.out.println("eventMap = " + eventMap.size());
+                Model namedModel = dataset.getNamedModel(instanceGraph);
+                StmtIterator siter = namedModel.listStatements();
+                while (siter.hasNext()) {
+                    Statement s = siter.nextStatement();
                     String subject = s.getSubject().getURI();
-                    if (eventMap.containsKey(subject)) {
-                        ArrayList<Statement> triples = eventMap.get(subject);
-                        if (!hasStatement(triples, s)) {
-                            triples.add(s);
+                    if (events.contains(subject)) {
+                        if (TrigUtil.validLabelTriple(s)) {
+                            if (eventMap.containsKey(subject)) {
+                                ArrayList<Statement> triples = eventMap.get(subject);
+                                if (!hasStatement(triples, s)) {
+                                    triples.add(s);
+                                    eventMap.put(subject, triples);
+                                }
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                if (!hasStatement(triples, s)) {
+                                    triples.add(s);
+                                }
+                                eventMap.put(subject, triples);
+                            }
                         }
                     }
                 }
-            }
-            dataset.close();
-            dataset = null;
-        }
-        System.out.println("eventMap.size() = " + eventMap.size());
-        try {
-            OutputStream fos = new FileOutputStream(trigfolder.getParentFile()+"/"+trigfolder.getName()+"."+esoEvent+".stats.csv");
+                dataset.close();
+                dataset = null;
+              //  System.out.println("eventMap.size() = " + eventMap.size());
 
-            String str = "";
-            Set keySet = eventMap.keySet();
-            Iterator<String> keys = keySet.iterator();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                ArrayList<Statement> statements = eventMap.get(key);
-                str = TrigUtil.triplesToString(statements);
-                fos.write(str.getBytes());
-/*
-                for (int i = 0; i < statements.size(); i++) {
-                    Statement statement = statements.get(i);
-                    str = tripleToString(statement)+"\n";
-                    System.out.println(str);
+                String str = "";
+                Set keySet = eventMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    ArrayList<Statement> statements = eventMap.get(key);
+                    str = TrigUtil.triplesToString(statements);
                     fos.write(str.getBytes());
                 }
-*/
             }
+
             fos.close();
 
 
@@ -137,7 +146,7 @@ public class GetEventStats {
         return false;
     }
 
-    static ArrayList<String> getAllEsoEvents (Dataset dataset, String type) {
+    static ArrayList<String> getAllEsoEvents (Dataset dataset, ArrayList<String> esoTypes) {
         ArrayList<String> events = new ArrayList<String>();
         Iterator<String> it = dataset.listNames();
         while (it.hasNext()) {
@@ -147,23 +156,28 @@ public class GetEventStats {
                 StmtIterator siter = namedModel.listStatements();
                 while (siter.hasNext()) {
                     Statement s = siter.nextStatement();
-                  //  System.out.println("s.toString() = " + s.toString());
-                    if (s.getPredicate().toString().endsWith("#type") &&
-                            s.getObject().toString().endsWith(type)) {
-                        String subject = s.getSubject().getURI();
-                        if (!events.contains(subject)) {
-                                events.add(subject);
+                    //  System.out.println("s.toString() = " + s.toString());
+                    if (s.getPredicate().toString().endsWith("#type")) {
+                        for (int i = 0; i < esoTypes.size(); i++) {
+                            String esoType = esoTypes.get(i);
+                            if (s.getObject().toString().endsWith(esoType)) {
+                                String subject = s.getSubject().getURI();
+                                if (!events.contains(subject)) {
+                                    events.add(subject);
+                                }
+                                break;
                             }
                         }
+                    }
                 }
             }
         }
         return events;
     }
 
-    static void getAllEventTriples (Dataset dataset,
-                                          ArrayList<String> events) {
-        HashMap<String, ArrayList<Statement>> triples = new HashMap<String, ArrayList<Statement>>();
+    static void getAllEventRoleTriples (Dataset dataset,
+                                          ArrayList<String> events,
+                                        HashMap<String, ArrayList<Statement>> eventMap) {
         Iterator<String> it = dataset.listNames();
         while (it.hasNext()) {
             String name = it.next();
@@ -172,11 +186,11 @@ public class GetEventStats {
                 StmtIterator siter = namedModel.listStatements();
                 while (siter.hasNext()) {
                     Statement s = siter.nextStatement();
-                    if (TrigUtil.validTriple(s)) {
+                    if (TrigUtil.validRoleTriple(s)) {
                         String subject = s.getSubject().getURI();
                         if (events.contains(subject)) {
-                            if (triples.containsKey(subject)) {
-                                ArrayList<Statement> statements = triples.get(subject);
+                            if (eventMap.containsKey(subject)) {
+                                ArrayList<Statement> statements = eventMap.get(subject);
                                 if (!hasStatement(statements, s)) {
                                     statements.add(s);
                                     eventMap.put(subject, statements);
