@@ -62,10 +62,11 @@ public class GetEventStats {
         }
         eventTypes.add(esoEvent);
         if (!esoFile.isEmpty()) {
+            System.out.println("esoFile = " + esoFile);
             esoReader.parseFile(esoFile);
-            esoReader.getParentChain(esoEvent, eventTypes);
+            esoReader.getDescendants(esoEvent, eventTypes);
         }
-
+        System.out.println("eventTypes.toString() = " + eventTypes.toString());
 
         File trigfolder = new File(trigfolderPath);
         dataset = TDBFactory.createDataset();
