@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class TrigToJsonTimeLineClimax {
 
-
+    static Dataset dataset = TDBFactory.createDataset();
     static final String provenanceGraph = "http://www.newsreader-project.eu/provenance";
     static final String instanceGraph = "http://www.newsreader-project.eu/instances";
     static HashMap<String, ArrayList<Statement>> tripleMapProvenance = new HashMap<String, ArrayList<Statement>>();
@@ -37,6 +37,8 @@ public class TrigToJsonTimeLineClimax {
     static ArrayList<String> topFrames = new ArrayList<String>();
     static int fnLevel = 0;
     static int esoLevel = 0;
+    static int climaxThreshold = 0;
+    static String entityFilter = "";
 
 
 
@@ -69,6 +71,9 @@ public class TrigToJsonTimeLineClimax {
                // System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
             }
 
+            else if (arg.equals("--entity") && args.length>(i+1)) {
+                entityFilter = args[i+1];
+            }
             else if (arg.equals("--frame-relations") && args.length>(i+1)) {
                 fnFile = args[i+1];
             }
@@ -89,6 +94,13 @@ public class TrigToJsonTimeLineClimax {
                     e.printStackTrace();
                 }
             }
+            else if (arg.equals("--climax-level") && args.length>(i+1)) {
+                try {
+                    climaxThreshold = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         //trigfolder = "/tmp/naf2jsonWulzvC/events/contextual";
         System.out.println("fnFile = " + fnFile);
@@ -102,7 +114,6 @@ public class TrigToJsonTimeLineClimax {
             esoReader.parseFile(esoFile);
         }
         iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
-        Dataset dataset = TDBFactory.createDataset();
         ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
         ArrayList<String> provenanceTriples = new ArrayList<String>();
         ArrayList<String> instanceTriples = new ArrayList<String>();
@@ -163,8 +174,7 @@ public class TrigToJsonTimeLineClimax {
                             ArrayList<Statement> triples = tripleMapOthers.get(subject);
                             triples.add(s);
                             tripleMapOthers.put(subject, triples);
-                        }
-                        else {
+                        } else {
 
                             ArrayList<Statement> triples = new ArrayList<Statement>();
                             triples.add(s);
@@ -174,12 +184,44 @@ public class TrigToJsonTimeLineClimax {
                 }
             }
             dataset.close();
+            dataset = null;
         }
         try {
             ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
             writeJsonObjectArray(trigfolder, project, jsonObjects);
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+    static void getEntityEvents (Dataset dataset, String name) {
+        ArrayList<String> events = new ArrayList<String>();
+        Model namedModel = dataset.getNamedModel(name);
+        StmtIterator siter = namedModel.listStatements();
+        while (siter.hasNext()) {
+            Statement s = siter.nextStatement();
+            String subject = s.getSubject().getURI();
+            if (TrigUtil.getObjectValue(s).toLowerCase().indexOf(entityFilter.toLowerCase()) >-1) {
+                if (!events.contains(subject)) {
+                    events.add(subject);
+                }
+            }
+        }
+        siter = namedModel.listStatements();
+        while (siter.hasNext()) {
+            Statement s = siter.nextStatement();
+            String subject = s.getSubject().getURI();
+            if (events.contains(subject)) {
+                if (tripleMapOthers.containsKey(subject)) {
+                    ArrayList<Statement> triples = tripleMapOthers.get(subject);
+                    triples.add(s);
+                    tripleMapOthers.put(subject, triples);
+                } else {
+
+                    ArrayList<Statement> triples = new ArrayList<Statement>();
+                    triples.add(s);
+                    tripleMapOthers.put(subject, triples);
+                }
+            }
         }
     }
 
@@ -348,14 +390,15 @@ public class TrigToJsonTimeLineClimax {
 
                         JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
                         if (jsonClasses.keys().hasNext()) {
-                            jsonObject.put("classes", jsonClasses);
+                            /// TOOK THIS OUT TO SAVE SPACE
+                          //  jsonObject.put("classes", jsonClasses);
                         }
 
                         if (fnLevel>0) {
                             getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
                         }
                         else if (esoLevel>0) {
-                            getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+                         //   getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
                         }
 
                         JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
@@ -413,31 +456,51 @@ public class TrigToJsonTimeLineClimax {
                         }
                         sumClimax += 1.0/sentenceNr;
                     }
+                    else {
+                        //mention = http://www.newsreader-project.eu/data/2008/07/03/6479113.xml#char=359
+                        // if the sentence is not part of the mention than we take the char value
+                        idx = mention.indexOf("char=");
+                        if (idx >-1) {
+                            idx = mention.lastIndexOf("=");
+                            int sentenceNr = Integer.parseInt(mention.substring(idx+1));
+                            if (sentenceNr<earliestEventMention || earliestEventMention==-1) {
+                                earliestEventMention = sentenceNr;
+                                jsonObject.put("sentence", mention.substring(idx + 1));
+                            }
+                            sumClimax += 1.0/sentenceNr;
+                        }
+                       // System.out.println("mention = " + mention);
+                    }
                 }
                 if (sumClimax>maxClimax) {
                     maxClimax = sumClimax;
                 }
+            //    System.out.println("sumClimax = " + sumClimax);
                 jsonObject.put("climax", sumClimax);
             } catch (JSONException e) {
                 //   e.printStackTrace();
             }
         }
+       // System.out.println("maxClimax = " + maxClimax);
         /// next we normalize the climax values and store it in the tree
         for (int i = 0; i < jsonObjects.size(); i++) {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
                 Double climax = Double.parseDouble(jsonObject.get("climax").toString());
-                Double propertion = climax/maxClimax;
-                Integer climaxInteger = new Integer ((int)(100*propertion));
-                jsonObject.put("climax", climaxInteger);
-                climaxObjects.add(jsonObject);
+                Double proportion = climax/maxClimax;
+                Integer climaxInteger = new Integer ((int)(100*proportion));
+                if (climaxInteger>=climaxThreshold) {
+               //     System.out.println("climaxInteger = " + climaxInteger);
+                    jsonObject.put("climax", climaxInteger);
+                    climaxObjects.add(jsonObject);
+                }
 
-                System.out.println("jsonObject.get(\"labels\").toString() = " + jsonObject.get("labels").toString());
+             /*   System.out.println("jsonObject.get(\"labels\").toString() = " + jsonObject.get("labels").toString());
                 System.out.println("jsonObject.get(\"climax\").toString() = " + jsonObject.get("climax").toString());
                 System.out.println("\tmaxClimax = " + maxClimax);
                 System.out.println("\tclimax = " + climax);
                 System.out.println("\tpropertion = " + propertion);
-                System.out.println("\tclimaxInteger = " + climaxInteger);
+                System.out.println("\tclimaxInteger = " + climaxInteger);*/
 
             } catch (JSONException e) {
                 //   e.printStackTrace();
@@ -627,16 +690,30 @@ public class TrigToJsonTimeLineClimax {
                                   int divide) throws JSONException {
         Float size = null;
         object.put("group", groupName);
-        Integer climax = Integer.parseInt(object.get("climax").toString());
-        if (climax > 0) {
-            // size = 5 * Float.valueOf((float) (1.0 * climax / groupClimax));
-            size = Float.valueOf((float) climax / divide);
-
-        } else {
-            size = new Float(1);
+        Double climax = 0.0;
+        try {
+            climax = Double.parseDouble(object.get("climax").toString());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        object.put("size", size.toString());
-        groupObjects.add(object);
+        if (climax >= climaxThreshold) {
+            // size = 5 * Float.valueOf((float) (1.0 * climax / groupClimax));
+            try {
+                if (climax==0) {
+                    size = new Float(1);
+
+                }
+                else {
+                    size = Float.valueOf((float) (climax / divide));
+                }
+                object.put("size", size.toString());
+                groupObjects.add(object);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     static String climaxString (Integer climax) {
@@ -725,7 +802,7 @@ public class TrigToJsonTimeLineClimax {
 
                     ArrayList<JSONObject> coevents = CreateMicrostory.getEventsThroughCoparticipation(jsonObjects, jsonObject);
                     ArrayList<JSONObject> fnevents = CreateMicrostory.getEventsThroughFrameNetBridging(jsonObjects, jsonObject, frameNetReader);
-                    //ArrayList<JSONObject> fnevents = CreateMicrostory.getEventsThroughEsotBridging(jsonObjects, jsonObject, frameNetReader);
+                    //ArrayList<JSONObject> fnevents = CreateMicrostory.getEventsThroughEsoBridging(jsonObjects, jsonObject, frameNetReader);
                     //  System.out.println("coevents = " + coevents.size());
                     //  System.out.println("fnevents = " + fnevents.size());
 
@@ -774,7 +851,10 @@ public class TrigToJsonTimeLineClimax {
                         }
 
                     }
-                    if (intersection.size()==0) {
+
+                    //// The less strict version continues with non-intersecting events....
+                    //// use next commented block to get more...
+/*                    if (intersection.size()==0) {
                         for (int i = 0; i < coevents.size(); i++) {
                             JSONObject object = coevents.get(i);
                             if (!hasObject(groupedObjects, object)) {
@@ -831,7 +911,7 @@ public class TrigToJsonTimeLineClimax {
                                 }
                             }
                         }
-                    }
+                    }*/
 
                     if (DEBUG) System.out.println(debugStr);
 
@@ -855,6 +935,7 @@ public class TrigToJsonTimeLineClimax {
 
         //// now we handle the singleton events
         //// we assign them to the unrelated events group and recalculate the climax score
+/*
         climaxObjects = determineClimaxValues(singletonObjects);
         sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
@@ -865,6 +946,7 @@ public class TrigToJsonTimeLineClimax {
                     jsonObject,
                     10);
         }
+*/
 
 
         if (PRINTEXAMPLE) {
