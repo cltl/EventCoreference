@@ -1708,6 +1708,19 @@ public class Util {
         return mySemPlaces;
     }
 
+
+    public static boolean validPosEvent(KafEvent kafEvent, KafSaxParser kafSaxParser) {
+        for (int j = 0; j < kafEvent.getSpans().size(); j++) {
+            CorefTarget corefTarget = kafEvent.getSpans().get(j);
+            if (kafSaxParser.contentWord(corefTarget.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
     ///////////////////////////////
 
 /*    static public String cleanDbpediaUri(String uri, String ns) {

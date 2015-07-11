@@ -4,6 +4,9 @@ import eu.kyotoproject.kaf.*;
 import vu.wntools.wordnet.WordnetData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by piek on 10/10/14.
@@ -34,6 +37,15 @@ public class CorefResultSet {
         return targets;
     }
 
+    public CorefTarget getLastSource () {
+        if (sources.isEmpty()) {
+            return null;
+        }
+        else {
+            ArrayList<CorefTarget> set = sources.get(sources.size()-1);
+            return set.get(set.size()-1);
+        }
+    }
     public void setTargets(ArrayList<CorefMatch> targets) {
         this.targets = targets;
     }
@@ -53,7 +65,23 @@ public class CorefResultSet {
         this.bestSenses = bestSenses;
     }
 
-    public void getBestSenses (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD) {
+    public boolean hasBestSense (KafSense kafSense) {
+        for (int i = 0; i < bestSenses.size(); i++) {
+            KafSense sense = bestSenses.get(i);
+            if (sense.getSensecode().equals(kafSense.getSensecode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This function assumes that a specific WSD output is used or all senses are considered from multiple systems
+     * takes all senses from that resource
+     * @param kafSaxParser
+     * @param WNRESOURCE
+     */
+    public void getAllSenses (KafSaxParser kafSaxParser, String WNRESOURCE) {
         double bestScore = 0;
         ArrayList<KafSense> kafSenses = new ArrayList<KafSense>();
         for (int i = 0; i < sources.size(); i++) {
@@ -64,11 +92,66 @@ public class CorefResultSet {
                 if (kafTerm!=null) {
                     for (int k = 0; k < kafTerm.getSenseTags().size(); k++) {
                         KafSense kafSense = kafTerm.getSenseTags().get(k);
+                        if (!WNRESOURCE.isEmpty()) {
+                            if (kafSense.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) {
+                                continue;
+                                //// this sense comes from the wrong resource
+                            }
+                        }
+                        else {
+                            //// all senses are valid
+                        }
                         kafSenses.add(kafSense); // adding any KafSense
                         if (kafSense.getConfidence()> bestScore) {
                             bestScore = kafSense.getConfidence();
-                          //  kafSenses.add(kafSense); /// assume that first references are easier to resolve
+                            //  kafSenses.add(kafSense); /// assume that first references are easier to resolve
                         }
+
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < kafSenses.size(); i++) {
+            KafSense kafSense = kafSenses.get(i);
+            if (!hasBestSense(kafSense)) {
+                this.bestSenses.add(kafSense);
+            }
+        }
+    }
+
+    /**
+     * This function assumes that a specific WSD output is used only and
+     * takes the senses that exceed the proportional threshold or are equal to it
+     * @param kafSaxParser
+     * @param BESTSENSETHRESHOLD
+     * @param WNRESOURCE
+     */
+    public void getBestSenses (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD, String WNRESOURCE) {
+        double bestScore = 0;
+        ArrayList<KafSense> kafSenses = new ArrayList<KafSense>();
+        for (int i = 0; i < sources.size(); i++) {
+            ArrayList<CorefTarget> corefTargets = sources.get(i);
+            for (int j = 0; j < corefTargets.size(); j++) {
+                CorefTarget corefTarget = corefTargets.get(j);
+                KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
+                if (kafTerm!=null) {
+                    for (int k = 0; k < kafTerm.getSenseTags().size(); k++) {
+                        KafSense kafSense = kafTerm.getSenseTags().get(k);
+                        if (!WNRESOURCE.isEmpty()) {
+                            if (kafSense.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) {
+                                continue;
+                                //// this sense comes from the wrong resource
+                            }
+                        }
+                        else {
+                            /// all senses are valid
+                        }
+                        kafSenses.add(kafSense); // adding any KafSense
+                        if (kafSense.getConfidence()> bestScore) {
+                            bestScore = kafSense.getConfidence();
+                            //  kafSenses.add(kafSense); /// assume that first references are easier to resolve
+                        }
+
                     }
                 }
             }
@@ -83,6 +166,97 @@ public class CorefResultSet {
             }
         }
         //System.out.println("bestSenses = " + bestSenses.toString());
+    }
+
+    /**
+     * If no specific WSD system is selected, it builds the sets of sense per WSD system and determines the best score for each
+     * Next, it keeps the senses with the scores proportional to the top score that are equal or above the threshold
+     * It then takes the average proportional scores across all WSD systems for each sense and
+     * checks if these are still above or equal to the threshold. In this way, the top senses of all system combined are selected
+     * and other drops out.
+     * @param kafSaxParser
+     * @param BESTSENSETHRESHOLD
+     */
+    public void getBestSenses (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD) {
+        HashMap<String, ArrayList<KafSense>> resourceSenseMap = new HashMap<String, ArrayList<KafSense>>();
+        HashMap<String, Double> resourceScoreMap = new HashMap<String, Double>();
+
+        for (int i = 0; i < sources.size(); i++) {
+            ArrayList<CorefTarget> corefTargets = sources.get(i);
+            for (int j = 0; j < corefTargets.size(); j++) {
+                CorefTarget corefTarget = corefTargets.get(j);
+                KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
+                if (kafTerm!=null) {
+                    for (int k = 0; k < kafTerm.getSenseTags().size(); k++) {
+                        KafSense kafSense = kafTerm.getSenseTags().get(k);
+                        String resource = kafSense.getResource();
+                        if (resourceSenseMap.containsKey(resource)) {
+                            ArrayList<KafSense> senses = resourceSenseMap.get(resource);
+                            senses.add(kafSense);
+                            resourceSenseMap.put(resource, senses);
+                        }
+                        else {
+                            ArrayList<KafSense> senses = new ArrayList<KafSense>();
+                            senses.add(kafSense);
+                            resourceSenseMap.put(resource, senses);
+                        }
+                        if (resourceScoreMap.containsKey(resource)) {
+                            Double score = resourceScoreMap.get(resource);
+                            if (kafSense.getConfidence()> score) {
+                                resourceScoreMap.put(resource, kafSense.getConfidence());
+                            }
+                        }
+                        else {
+                            resourceScoreMap.put(resource, kafSense.getConfidence());
+                        }
+                    }
+                }
+            }
+        }
+        HashMap<String, ArrayList<Double>> senseScores = new HashMap<String, ArrayList<Double>>();
+        Set keySet = resourceSenseMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            Double topScore = resourceScoreMap.get(key);
+            ArrayList<KafSense> kafSenses = resourceSenseMap.get(key);
+            for (int i = 0; i < kafSenses.size(); i++) {
+                KafSense kafSense = kafSenses.get(i);
+                double proportionBestScore = kafSense.getConfidence()/topScore;
+                if (proportionBestScore>=BESTSENSETHRESHOLD) {
+                    // System.out.println("this.getSources().toString() = " + this.getSources().toString());
+                    // System.out.println("proportionBestScore = " + proportionBestScore);
+                    if (senseScores.containsKey(kafSense.getSensecode())) {
+                        ArrayList<Double> scores = senseScores.get(kafSense.getSensecode());
+                        scores.add(proportionBestScore);
+                        senseScores.put(kafSense.getSensecode(), scores);
+                    }
+                    else {
+                        ArrayList<Double> scores = new ArrayList<Double>();
+                        scores.add(proportionBestScore);
+                        senseScores.put(kafSense.getSensecode(), scores);
+                    }
+                }
+            }
+        }
+        keySet = senseScores.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            Double combinedScore = new Double(0);
+            ArrayList<Double> topScores = senseScores.get(key);
+            for (int i = 0; i < topScores.size(); i++) {
+                Double aDouble = topScores.get(i);
+                combinedScore += aDouble;
+            }
+            combinedScore = combinedScore/topScores.size();
+            if (combinedScore>=BESTSENSETHRESHOLD) {
+                KafSense kafSense = new KafSense();
+                kafSense.setSensecode(key);
+                kafSense.setConfidence(combinedScore);
+                this.bestSenses.add(kafSense);
+            }
+        }
     }
 
     public double getAverageMatchScore () {
@@ -180,6 +354,23 @@ public class CorefResultSet {
                 if (!hasSense) {
                     kafCoreferenceSet.addExternalReferences(kafSense);
                 }
+            }
+        }
+        return kafCoreferenceSet;
+    }
+
+    public KafCoreferenceSet castToKafCoreferenceSet () {
+        KafCoreferenceSet kafCoreferenceSet = new KafCoreferenceSet();
+        /// we add all the lemma sources
+        for (int i = 0; i < sources.size(); i++) {
+            ArrayList<CorefTarget> corefTargets = sources.get(i);
+            kafCoreferenceSet.addSetsOfSpans(corefTargets);
+        }
+        for (int i = 0; i < targets.size(); i++) {
+            CorefMatch corefMatch = targets.get(i);
+            for (int j = 0; j < corefMatch.getCorefTargets().size(); j++) {
+                ArrayList<CorefTarget> corefTargets = corefMatch.getCorefTargets().get(j);
+                kafCoreferenceSet.addSetsOfSpans(corefTargets);
             }
         }
         return kafCoreferenceSet;

@@ -3,9 +3,10 @@ package eu.newsreader.eventcoreference.naf;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.CorefMatch;
 import eu.newsreader.eventcoreference.objects.CorefResultSet;
+import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
-import vu.wntools.wnsimilarity.main.SynsetSim;
-import vu.wntools.wnsimilarity.main.WordSim;
+import vu.wntools.wnsimilarity.WordnetSimilarityApi;
+import vu.wntools.wnsimilarity.measures.SimilarityPair;
 import vu.wntools.wordnet.WordnetData;
 import vu.wntools.wordnet.WordnetLmfSaxParser;
 
@@ -23,29 +24,40 @@ import java.util.*;
  */
 public class EventCorefWordnetSim {
     static final String usage = "\nCompares predicates using one of the WN similarity function.\n"+
-            "   --wn-lmf        <path to wordnet file in lmf format\n" +
-            "   --method        <one of the following methods can be used leacock-chodorow, path, wu-palmer>\n"+
-            "   --sim           <similarity threshold below which no coreference is no coreference relation is determined >\n" +
-            "   --relations     <synsets relations that are used for the distance measurement >\n"+
-            "   --drift-max     <maximum number of lowest-common-subsumers allowed >\n"+
-            "   --wsd           <all senses from WSD with proportional score above threshold are used >\n"
+            "   --wn-lmf                <path to wordnet file in lmf format\n" +
+            "   --method                <one of the following methods can be used leacock-chodorow, path, wu-palmer>\n"+
+            "   --sim                   <similarity threshold (double, e.g. 2.5) below which no coreference is no coreference relation is determined >\n" +
+            "   --sim-ont               <fall back similarity threshold (double, e.g. 1.5) if sim is below threshold but there is still an ontology match (ESO or FrameNet) below which no coreference is no coreference relation is determined. This threshold needs to be lower than sim and wordnet-lmf need to have the ESO and FrameNet ontology layer>\n" +
+            "   --relations             <synsets relations that are used for the distance measurement >\n"+
+            "   --drift-max             <maximum number of lowest-common-subsumers allowed >\n"+
+            "   --wsd                   <all senses from WSD with proportional score above threshold (double) are used, e.g. 0.8 means all senses proportionally scoring 80% of the best scoring sense>\n" +
+            "   --wn-prefix             <three letter prefix of the wordnet synset identifier in the >\n" +
+            "   --wn-source             <if terms have been scored by different systems, e.g. ukb or ims, you can restrict the wsd to a system by giving the name. This will match the source field in the external reference of the term.>\n"+
+            "   --source-frames         <List of framenet frames to be treates as source events. No coreference is applied>\n"+
+            "   --contexual-frames      <List of framenet frames to be treates as contexual events. Coreference is applied>\n"+
+            "   --grammatical-frames    <List of framenet frames to be treates as grammatical events. No coreference is applied>\n"+
+            "   --replace               <Using this flag previous output of event-coreference is removed first>\n"
             ;
 
     static final String layer = "coreferences";
     static final String name = "vua-event-coref-intradoc-wn-sim";
-    static final String version = "2.1";
-    static Vector<String> communicationFrame = new Vector<String>();
+    static final String version = "3.1";
+    static Vector<String> sourceFrames = new Vector<String>();
+    static Vector<String> grammaticalFrames = new Vector<String>();
+    static Vector<String> contextualFrames = new Vector<String>();
     static WordnetData wordnetData = null;
     static String method = "";
     static int proportionalthreshold = -1;
     static double simthreshold = -1;
+    static double simOntthreshold = -1;
     static ArrayList<String> relations = new ArrayList<String>();
     static int DRIFTMAX = -1;
     static boolean USEWSD = false;
     static double BESTSENSETHRESHOLD = 0.8;
     static String WNPREFIX = "";
-    static String WNRESOURCE = "";
+    static String WNSOURCE = "";
     static boolean REMOVEEVENTCOREFS = false;
+    static int SOURCEDISTANCE = -1;
 
     static public void main (String [] args) {
               if (args.length == 0) {
@@ -75,9 +87,23 @@ public class EventCorefWordnetSim {
                                   String s = relationString[j];
                                   relations.add(s);
                               }
-                          } else if (arg.equals("--sim") && args.length > (i + 1)) {
+                          }
+                          if (arg.equals("--distance") && args.length>(i+1)) {
+                              try {
+                                  SOURCEDISTANCE = Integer.parseInt(args[i+1]);
+                              } catch (NumberFormatException e) {
+                                  e.printStackTrace();
+                              }
+                          }
+                          else if (arg.equals("--sim") && args.length > (i + 1)) {
                               try {
                                   simthreshold = Double.parseDouble(args[i + 1]);
+                              } catch (NumberFormatException e) {
+                                  // e.printStackTrace();
+                              }
+                          } else if (arg.equals("--sim-ont") && args.length > (i + 1)) {
+                              try {
+                                  simOntthreshold = Double.parseDouble(args[i + 1]);
                               } catch (NumberFormatException e) {
                                   // e.printStackTrace();
                               }
@@ -96,17 +122,26 @@ public class EventCorefWordnetSim {
                               }
                           } else if (arg.equals("--wn-prefix")&& args.length > (i + 1)) {
                               WNPREFIX = args[i+1].trim();
-                          } else if (arg.equals("--wn-resource")&& args.length > (i + 1)) {
-                              WNRESOURCE = args[i+1].trim().toLowerCase();
+                          } else if (arg.equals("--wn-source")&& args.length > (i + 1)) {
+                              WNSOURCE = args[i+1].trim().toLowerCase();
                           } else if (arg.equals("--proportion") && args.length > (i + 1)) {
                               try {
                                   proportionalthreshold = Integer.parseInt(args[i + 1]);
                               } catch (NumberFormatException e) {
                                   // e.printStackTrace();
                               }
-                          } else if (arg.equals("--com-frames") && args.length > (i + 1)) {
+                          }
+                          else if (arg.equals("--source-frames") && args.length > (i + 1)) {
                                   String frameFilePath = args[i+1];
-                                  communicationFrame =Util.ReadFileToStringVector(frameFilePath);
+                                  sourceFrames =Util.ReadFileToStringVector(frameFilePath);
+                          }
+                          else if (arg.equals("--contextual-frames") && args.length > (i + 1)) {
+                                  String frameFilePath = args[i+1];
+                                  contextualFrames =Util.ReadFileToStringVector(frameFilePath);
+                          }
+                          else if (arg.equals("--grammatical-frames") && args.length > (i + 1)) {
+                                  String frameFilePath = args[i+1];
+                                  grammaticalFrames =Util.ReadFileToStringVector(frameFilePath);
                           }
                           else if (arg.equalsIgnoreCase("--replace")) {
                               REMOVEEVENTCOREFS = true;
@@ -166,8 +201,8 @@ public class EventCorefWordnetSim {
                               pathToWNLMF = args[i + 1];
                           } else if (arg.equals("--wn-prefix")&& args.length > (i + 1)) {
                               WNPREFIX = args[i+1].trim();
-                          } else if (arg.equals("--wn-resource")&& args.length > (i + 1)) {
-                              WNRESOURCE = args[i+1].trim().toLowerCase();
+                          } else if (arg.equals("--wn-source")&& args.length > (i + 1)) {
+                              WNSOURCE = args[i+1].trim().toLowerCase();
                           }
                           else if (arg.equals("--drift-max") && args.length > (i + 1)) {
                               try {
@@ -176,9 +211,23 @@ public class EventCorefWordnetSim {
                                    e.printStackTrace();
                               }
                           }
+                          if (arg.equals("--distance") && args.length>(i+1)) {
+                              try {
+                                  SOURCEDISTANCE = Integer.parseInt(args[i+1]);
+                              } catch (NumberFormatException e) {
+                                  e.printStackTrace();
+                              }
+                          }
                           else if (arg.equals("--sim") && args.length > (i + 1)) {
                               try {
                                   simthreshold = Double.parseDouble(args[i + 1]);
+                              } catch (NumberFormatException e) {
+                                   e.printStackTrace();
+                              }
+                          }
+                          else if (arg.equals("--sim-ont") && args.length > (i + 1)) {
+                              try {
+                                  simOntthreshold = Double.parseDouble(args[i + 1]);
                               } catch (NumberFormatException e) {
                                    e.printStackTrace();
                               }
@@ -190,9 +239,17 @@ public class EventCorefWordnetSim {
                                    e.printStackTrace();
                               }
                           }
-                          else if (arg.equals("--com-frames") && args.length > (i + 1)) {
+                          else if (arg.equals("--source-frames") && args.length > (i + 1)) {
                               String frameFilePath = args[i+1];
-                              communicationFrame =Util.ReadFileToStringVector(frameFilePath);
+                              sourceFrames =Util.ReadFileToStringVector(frameFilePath);
+                          }
+                          else if (arg.equals("--contextual-frames") && args.length > (i + 1)) {
+                              String frameFilePath = args[i+1];
+                              contextualFrames =Util.ReadFileToStringVector(frameFilePath);
+                          }
+                          else if (arg.equals("--grammatical-frames") && args.length > (i + 1)) {
+                              String frameFilePath = args[i+1];
+                              grammaticalFrames =Util.ReadFileToStringVector(frameFilePath);
                           }
                           else if (arg.equalsIgnoreCase("--replace")) {
                               REMOVEEVENTCOREFS = true;
@@ -205,11 +262,14 @@ public class EventCorefWordnetSim {
                           wordnetData = wordnetLmfSaxParser.wordnetData;
                           System.out.println("wordnetData relations = " + wordnetData.hyperRelations.size());
                           System.out.println("simthreshold = " + simthreshold);
+                          System.out.println("simthreshold-ont = " + simOntthreshold);
+                          System.out.println("best-sense-threshold = " + BESTSENSETHRESHOLD);
                           System.out.println("proportionalthreshold = " + proportionalthreshold);
                           System.out.println("method = " + method);
                           System.out.println("wn-prefix = " + WNPREFIX);
-                          System.out.println("wn-resource = " + WNRESOURCE);
+                          System.out.println("wn-resource = " + WNSOURCE);
                           System.out.println("DRIFTMAX = " + DRIFTMAX);
+                          System.out.println("SOURCEDISTANCE = " + SOURCEDISTANCE);
                           System.out.println("relations = " + relations.toString());
                           if (!folder.isEmpty()) {
                               processNafFolder(new File(folder), extension);
@@ -237,12 +297,7 @@ public class EventCorefWordnetSim {
               if (REMOVEEVENTCOREFS) {
                   removeEventCoreferences(kafSaxParser);
               }
-              if (USEWSD) {
-                  processUsingWsd(kafSaxParser);
-              }
-              else {
-                  process(kafSaxParser);
-              }
+              process(kafSaxParser, USEWSD);
           }
 
           static public void processNafStream (InputStream nafStream) {
@@ -251,12 +306,7 @@ public class EventCorefWordnetSim {
               if (REMOVEEVENTCOREFS) {
                   removeEventCoreferences(kafSaxParser);
               }
-              if (USEWSD) {
-                  processUsingWsd(kafSaxParser);
-              }
-              else {
-                  process(kafSaxParser);
-              }
+              process(kafSaxParser, USEWSD);
               kafSaxParser.writeNafToStream(System.out);
           }
 
@@ -266,12 +316,7 @@ public class EventCorefWordnetSim {
               if (REMOVEEVENTCOREFS) {
                   removeEventCoreferences(kafSaxParser);
               }
-              if (USEWSD) {
-                  processUsingWsd(kafSaxParser);
-              }
-              else {
-                  process(kafSaxParser);
-              }
+              process(kafSaxParser, USEWSD);
               try {
                   OutputStream fos = new FileOutputStream(pathToNafFile+".event-coref.naf");
                   kafSaxParser.writeNafToStream(fos);
@@ -282,20 +327,19 @@ public class EventCorefWordnetSim {
           }
 
           static public void processNafFolder (File pathToNafFolder, String extension) {
+
               ArrayList<File> files = Util.makeFlatFileList(pathToNafFolder, extension);
               for (int i = 0; i < files.size(); i++) {
                   File file = files.get(i);
+                 // System.out.println("file.getName() = " + file.getName());
                   KafSaxParser kafSaxParser = new KafSaxParser();
                   kafSaxParser.parseFile(file);
                   if (REMOVEEVENTCOREFS) {
                       removeEventCoreferences(kafSaxParser);
                   }
-                  if (USEWSD) {
-                      processUsingWsd(kafSaxParser);
-                  }
-                  else {
-                      process(kafSaxParser);
-                  }
+
+                  process(kafSaxParser, USEWSD);
+
                   try {
                       FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".coref");
                       kafSaxParser.writeNafToStream(fos);
@@ -316,199 +360,76 @@ public class EventCorefWordnetSim {
               return lemma.trim();
           }
 
-        static boolean isGrammaticalEvent(KafEvent kafEvent, KafSaxParser kafSaxParser) {
-              for (int j = 0; j < kafEvent.getSpans().size(); j++) {
-                  CorefTarget corefTarget = kafEvent.getSpans().get(j);
-                  KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
-                  if (kafTerm!=null); {
-                      for (int i = 0; i < kafTerm.getSenseTags().size(); i++) {
-                          KafSense kafSense = kafTerm.getSenseTags().get(i);
-                          if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
-                              return true;
-                          }
-                      }
-                  }
-              }
-              return false;
-          }
 
-          static void process(KafSaxParser kafSaxParser) {
+      static void process(KafSaxParser kafSaxParser, boolean USEWSD) {
               String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
               String strEndDate = null;
               ArrayList<CorefResultSet> corefMatchList = new ArrayList<CorefResultSet>();
+              ArrayList<CorefResultSet> grammaticalCorefMatchList = new ArrayList<CorefResultSet>();
+              ArrayList<CorefResultSet> sourceCorefMatchList = new ArrayList<CorefResultSet>();
+
 
               /// we create coreference sets for lemmas
               ArrayList<String> lemmaList = new ArrayList<String>();
-
               for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
                   KafEvent theKafEvent = kafSaxParser.kafEventArrayList.get(i);
+                  if (!Util.validPosEvent(theKafEvent, kafSaxParser)) {
+                     continue; //// we only accept predicates with valid POS
+                  }
+                  Integer sentenceId = -1;
+                  try {
+                      KafTerm kafTerm = kafSaxParser.getTerm(theKafEvent.getSpanIds().get(0)); /// get the term from the first span
+                      sentenceId = Integer.parseInt(kafSaxParser.getSentenceId(kafTerm));
+                  } catch (NumberFormatException e) {
+                      e.printStackTrace();
+                  }
                   theKafEvent.addTermDataToSpans(kafSaxParser);
                   String lemma = getLemmaFromKafEvent(theKafEvent);
-                  if (lemmaList.contains(lemma)) {
-                      continue;
+                  String eventType = FrameTypes.getEventTypeString(theKafEvent.getExternalReferences(), contextualFrames, sourceFrames, grammaticalFrames);
+                  if (eventType.equals(FrameTypes.GRAMMATICAL)) {
+                      //// grammatical events are not considered for coreference on just the lemma or wnsim
+                      CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
+                      grammaticalCorefMatchList.add(corefResultSet);
                   }
-                  lemmaList.add(lemma);
-                  CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
-                  for (int j = i+1; j < kafSaxParser.kafEventArrayList.size(); j++) {
-                          KafEvent aKafEvent = kafSaxParser.kafEventArrayList.get(j);
-                          aKafEvent.addTermDataToSpans(kafSaxParser);
-                          String aLemma = getLemmaFromKafEvent(aKafEvent);
-                          if (lemma.equals(aLemma)) {
-                              ArrayList<CorefTarget> anEventCorefTargetList = aKafEvent.getSpans();
-                              corefResultSet.addSource(anEventCorefTargetList);
-                          }
-                  }
-                  corefMatchList.add(corefResultSet);
-              }
-
-              //// now we need to compare these lemma lists
-              for (int i = 0; i < corefMatchList.size(); i++) {
-                  CorefResultSet corefResultSet = corefMatchList.get(i);
-                  if (corefResultSet!=null) {
-                      /// now we check all the other candidate sets to see if any can be merged
-                      for (int j = i + 1; j < corefMatchList.size(); j++) {
-                          CorefResultSet aCorefResultSet = corefMatchList.get(j);
-                          if (aCorefResultSet==null) {
-                              continue;
-                          }
-                          /// first try the source lemma
-                          CorefMatch corefMatch = null;
-                          double topScore = 0;
-                          double score = WordSim.getWordSimLC(wordnetData, corefResultSet.getSourceLemma(),
-                                  aCorefResultSet.getSourceLemma());
-                          if (score > simthreshold) {
-                              topScore = score;
-                              /// merge the sets
-                              corefMatch = new CorefMatch();
-                              corefMatch.setTargetLemma(aCorefResultSet.getSourceLemma());
-                              corefMatch.setScore(score);
-                              corefMatch.setLowestCommonSubsumer(WordSim.match);
-                              corefMatch.setCorefTargets(aCorefResultSet.getSources());
-                          }
-
-                          /// next try previous matches; greedy version
-                          /// we do not need to chain any more
-                          /// if the previous matches provide a better score, we take that one.
-                          /// so if the source did result in match, the targets can still generate a match and of the targets provide a better match we take that one
-                          for (int k = 0; k < corefResultSet.getTargets().size(); k++) {
-                              CorefMatch previousCorefMatch = corefResultSet.getTargets().get(k);
-                              score = WordSim.getWordSimLC(wordnetData, previousCorefMatch.getTargetLemma(),
-                                      aCorefResultSet.getSourceLemma());
-                              if ((score > topScore) && (score > simthreshold)) {
-                                  /// merge the sets
-                                  corefMatch = new CorefMatch();
-                                  corefMatch.setTargetLemma(aCorefResultSet.getSourceLemma());
-                                  corefMatch.setScore(score);
-                                  corefMatch.setLowestCommonSubsumer(WordSim.match);
-                                  corefMatch.setCorefTargets(aCorefResultSet.getSources());
+                  else if (eventType.equals(FrameTypes.SOURCE)) {
+                      if (sourceCorefMatchList.isEmpty())   {
+                          CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
+                          sourceCorefMatchList.add(corefResultSet);
+                      }
+                      else if (SOURCEDISTANCE==-1) {
+                          CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
+                          sourceCorefMatchList.add(corefResultSet);
+                      }
+                      else {
+                          //// we get the last lemma resul set and check the sentencId
+                          //// we iterate over the list in reverse order
+                          boolean MATCH = false;
+                          for (int j = sourceCorefMatchList.size()-1; j>0;j--) {
+                              CorefResultSet corefResultSet = sourceCorefMatchList.get(j);
+                              if (corefResultSet.getSourceLemma().equals(lemma)) {
+                                  CorefTarget lastCorefTarget = corefResultSet.getLastSource();
+                                  try {
+                                      Integer lastSentenceId = Integer.parseInt(lastCorefTarget.getSentenceId());
+                                      if (sentenceId-lastSentenceId>SOURCEDISTANCE) {
+                                          MATCH = true;
+                                          ArrayList<CorefTarget> anEventCorefTargetList = theKafEvent.getSpans();
+                                          corefResultSet.addSource(anEventCorefTargetList);
+                                          break;
+                                      }
+                                  } catch (NumberFormatException e) {
+                                      e.printStackTrace();
+                                  }
                               }
                           }
-
-                          // if we have a match, we add it as a target and we set the merged set to null since we do not need to handle it anymore
-                          if (corefMatch!=null) {
-                              corefResultSet.addTarget(corefMatch);
-                              ///// we empty this set now
-                              //aCorefResultSet = null;
-                              corefMatchList.set(j, null);
+                          if (!MATCH) {
+                              //// source events are not considered for coreference on just the lemma or wnsim if their distance is too far apart
+                              CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
+                              sourceCorefMatchList.add(corefResultSet);
                           }
                       }
-                    //  Scoring.normalizeCorefMatch(corefResultSet.getTargets());
-                    //  corefResultSet.setTargets(Scoring.pruneCoref(corefResultSet.getTargets(), proportionalthreshold));
-                  }
-              }
-              /// chaining is only necessary for the non-greedy version
-              /// corefMatchList = ChainCorefSets.chainResultSets(corefMatchList);
-
-              for (int i = 0; i < corefMatchList.size(); i++) {
-                  CorefResultSet corefResultSet = corefMatchList.get(i);
-                  if (corefResultSet==null) {
-                      continue;
-                  }
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
-                  String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
-                  kafCoreferenceSet.setCoid(corefId);
-                  kafCoreferenceSet.setType("event");
-                  kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
-              }
-              if (DRIFTMAX>-1) {
-                  fixEventCoreferenceSets(kafSaxParser);
-              }
-              strEndDate = eu.kyotoproject.util.DateUtil.createTimestamp();
-              String host = "";
-              try {
-                  host = InetAddress.getLocalHost().getHostName();
-              } catch (UnknownHostException e) {
-                  e.printStackTrace();
-              }
-              LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate, host);
-              kafSaxParser.getKafMetaData().addLayer(layer, lp);
-
-          }
-
-
-          static double getSimScoreForCorefSets(CorefResultSet corefResultSet1, CorefResultSet corefResultSet2) {
-              double bestScore = 0;
-              for (int i = 0; i < corefResultSet1.getBestSenses().size(); i++) {
-                  KafSense kafSense1 = corefResultSet1.getBestSenses().get(i);
-                  if (!WNRESOURCE.isEmpty()) {
-                      if (kafSense1.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) {
-                          continue;
-                          //// this sense comes from the wrong resource
-                      }
-                  }
-                  for (int j = 0; j < corefResultSet2.getBestSenses().size(); j++) {
-                      KafSense kafSense2 = corefResultSet2.getBestSenses().get(j);
-                      String sense1 = kafSense1.getSensecode();
-                      String sense2 = kafSense2.getSensecode();
-                      if (!WNRESOURCE.isEmpty()) {
-                          if (kafSense2.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) {
-                             continue;
-                              //// this sense comes from the wrong resource
-                          }
-                      }
-                      if (!WNPREFIX.isEmpty()) {
-                          int idx = sense1.indexOf("-");
-                          if (idx>-1) {
-                              sense1 = WNPREFIX+sense1.substring(idx);
-                          }
-                          idx = sense2.indexOf("-");
-                          if (idx>-1) {
-                              sense2 = WNPREFIX + sense2.substring(idx);
-                          }
-                      }
-                    //  System.out.println("sense1 = " + sense1);
-                    //  System.out.println("sense2 = " + sense2);
-                      double score = SynsetSim.getSynsetSimLC(wordnetData, sense1,sense2);
-                    //  System.out.println("score = " + score);
-                      if (score>bestScore) {
-                          bestScore = score;
-                      }
-                  }
-              }
-              return bestScore;
-          }
-
-          static void processUsingWsd(KafSaxParser kafSaxParser) {
-              String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
-              String strEndDate = null;
-              ArrayList<CorefResultSet> corefMatchList = new ArrayList<CorefResultSet>();
-              ArrayList<CorefResultSet> grammaticalMatchList = new ArrayList<CorefResultSet>();
-
-              /// we create coreference sets for lemmas
-              ArrayList<String> lemmaList = new ArrayList<String>();
-
-              for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
-                  KafEvent theKafEvent = kafSaxParser.kafEventArrayList.get(i);
-                  theKafEvent.addTermDataToSpans(kafSaxParser);
-                  if (isGrammaticalEvent(theKafEvent, kafSaxParser)) {
-                      //// grammatical events are not considered for coreference on just the lemma or wnsim
-                      String lemma = getLemmaFromKafEvent(theKafEvent);
-                      CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
-                      grammaticalMatchList.add(corefResultSet);
                   }
                   else {
-                      //// for all events that are not grammatical
-                      String lemma = getLemmaFromKafEvent(theKafEvent);
+                      //// for all event lemmas that are not grammatical and not source or that are source but within sentence boundary
                       if (lemmaList.contains(lemma)) {
                           continue;
                       }
@@ -523,13 +444,21 @@ public class EventCorefWordnetSim {
                               corefResultSet.addSource(anEventCorefTargetList);
                           }
                       }
+                      if (!USEWSD) {
+                         corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                      }
                       /// we determine the best senses for the lemma sets according to WSD
-                      corefResultSet.getBestSenses(kafSaxParser, BESTSENSETHRESHOLD);
+                      if (WNSOURCE.isEmpty()) {
+                          corefResultSet.getBestSenses(kafSaxParser, BESTSENSETHRESHOLD);
+                      }
+                      else {
+                          corefResultSet.getBestSenses(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                      }
                       corefMatchList.add(corefResultSet);
                   }
               }
 
-              //// now we need to compare these lemma lists
+              //// now we need to compare these lemma lists but not the source and grammatical sets
               for (int i = 0; i < corefMatchList.size(); i++) {
                   CorefResultSet corefResultSet = corefMatchList.get(i);
                   if (corefResultSet!=null) {
@@ -541,19 +470,39 @@ public class EventCorefWordnetSim {
                           }
                           /// first try the source lemma
                           CorefMatch corefMatch = null;
-                          double score = getSimScoreForCorefSets(corefResultSet, aCorefResultSet);
-                          if (score > simthreshold) {
-                              /// merge the sets
-                              corefMatch = new CorefMatch();
-                              corefMatch.setTargetLemma(aCorefResultSet.getSourceLemma());
-                              corefMatch.setScore(score);
-                              corefMatch.setLowestCommonSubsumer(SynsetSim.match);
-                              corefMatch.setCorefTargets(aCorefResultSet.getSources());
+                          //SimilarityPair similarityPair = getSimScoreForCorefSets(corefResultSet, aCorefResultSet);
+                          SimilarityPair similarityPair = getSimScoreForCorefSetsIgnoreOntology(corefResultSet, aCorefResultSet);
+                          if (similarityPair!=null && similarityPair.getScore()>-1) {
+
+                              if (similarityPair.getScore() > simthreshold) {
+                                  /// merge the sets
+                                  corefMatch = new CorefMatch();
+                                  corefMatch.setTargetLemma(aCorefResultSet.getSourceLemma());
+                                  corefMatch.setScore(similarityPair.getScore());
+                                  corefMatch.setLowestCommonSubsumer(similarityPair.getMatch());
+                                  corefMatch.setCorefTargets(aCorefResultSet.getSources());
+                              }
+                          }
+                          else {
+                              similarityPair = getSimScoreForCorefSets(corefResultSet, aCorefResultSet);
+                              if (similarityPair!=null) {
+                                  if ((similarityPair.getMatch().indexOf("fn:") > -1) || (similarityPair.getMatch().indexOf("eso:") > -1)) {
+                                      if (similarityPair.getScore() > simOntthreshold) {
+                                          corefMatch = new CorefMatch();
+                                          corefMatch.setTargetLemma(aCorefResultSet.getSourceLemma());
+                                          corefMatch.setScore(similarityPair.getScore());
+                                          corefMatch.setLowestCommonSubsumer(similarityPair.getMatch());
+                                          corefMatch.setCorefTargets(aCorefResultSet.getSources());
+                                      }
+                                  }
+                              }
                           }
 
 
                           // if we have a match, we add it as a target and we set the merged set to null since we do not need to handle it anymore
                           if (corefMatch!=null) {
+                           //   System.out.println(similarityPair.getMatch()+" = " + similarityPair.getScore() + ":" + simthreshold + ":" + SynsetSim.match);
+
                               corefResultSet.addTarget(corefMatch);
                               ///// we empty this set now
                               //aCorefResultSet = null;
@@ -579,15 +528,26 @@ public class EventCorefWordnetSim {
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
 
-              for (int i = 0; i < grammaticalMatchList.size(); i++) {
-                  CorefResultSet corefResultSet = grammaticalMatchList.get(i);
+              for (int i = 0; i < grammaticalCorefMatchList.size(); i++) {
+                  CorefResultSet corefResultSet = grammaticalCorefMatchList.get(i);
                   if (corefResultSet==null) {
                       continue;
                   }
                   KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
-                  kafCoreferenceSet.setType("event-grammatical");
+                  kafCoreferenceSet.setType("event");
+                  kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
+              }
+              for (int i = 0; i < sourceCorefMatchList.size(); i++) {
+                  CorefResultSet corefResultSet = sourceCorefMatchList.get(i);
+                  if (corefResultSet==null) {
+                      continue;
+                  }
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
+                  kafCoreferenceSet.setCoid(corefId);
+                  kafCoreferenceSet.setType("event");
                   kafSaxParser.kafCorefenceArrayList.add(kafCoreferenceSet);
               }
               if (DRIFTMAX>-1) {
@@ -603,9 +563,85 @@ public class EventCorefWordnetSim {
               LP lp = new LP(name,version, strBeginDate, strBeginDate, strEndDate, host);
               kafSaxParser.getKafMetaData().addLayer(layer, lp);
 
-          }
+      }
 
-        static void fixEventCoreferenceSets (KafSaxParser kafSaxParser) {
+    static SimilarityPair getSimScoreForCorefSetsIgnoreOntology(CorefResultSet corefResultSet1, CorefResultSet corefResultSet2) {
+        SimilarityPair topPair = null;
+        for (int i = 0; i < corefResultSet1.getBestSenses().size(); i++) {
+            KafSense kafSense1 = corefResultSet1.getBestSenses().get(i);
+            for (int j = 0; j < corefResultSet2.getBestSenses().size(); j++) {
+                KafSense kafSense2 = corefResultSet2.getBestSenses().get(j);
+                String sense1 = kafSense1.getSensecode();
+                String sense2 = kafSense2.getSensecode();
+                if (!WNPREFIX.isEmpty()) {
+                    int idx = sense1.indexOf("-");
+                    if (idx>-1) {
+                        sense1 = WNPREFIX+sense1.substring(idx);
+                    }
+                    idx = sense2.indexOf("-");
+                    if (idx>-1) {
+                        sense2 = WNPREFIX + sense2.substring(idx);
+                    }
+                }
+                // System.out.println("sense1 = " + sense1);
+                // System.out.println("sense2 = " + sense2);
+                SimilarityPair pair = WordnetSimilarityApi.synsetLeacockChodorowSimilarityIgnoreOntology(wordnetData, sense1, sense2);
+                if (topPair==null)  {
+                    /// this is the first result
+                    topPair = pair;
+                }
+                else if (pair.getScore()>topPair.getScore()) {
+                    // this is a better result
+                    topPair = pair;
+                }
+/*
+                System.out.println("score = " + topPair.getScore());
+                System.out.println("topPair.getMatch() = " + topPair.getMatch());
+*/
+            }
+        }
+        return topPair;
+    }
+
+    static SimilarityPair getSimScoreForCorefSets(CorefResultSet corefResultSet1, CorefResultSet corefResultSet2) {
+        SimilarityPair topPair = null;
+        for (int i = 0; i < corefResultSet1.getBestSenses().size(); i++) {
+            KafSense kafSense1 = corefResultSet1.getBestSenses().get(i);
+            for (int j = 0; j < corefResultSet2.getBestSenses().size(); j++) {
+                KafSense kafSense2 = corefResultSet2.getBestSenses().get(j);
+                String sense1 = kafSense1.getSensecode();
+                String sense2 = kafSense2.getSensecode();
+                if (!WNPREFIX.isEmpty()) {
+                    int idx = sense1.indexOf("-");
+                    if (idx>-1) {
+                        sense1 = WNPREFIX+sense1.substring(idx);
+                    }
+                    idx = sense2.indexOf("-");
+                    if (idx>-1) {
+                        sense2 = WNPREFIX + sense2.substring(idx);
+                    }
+                }
+                // System.out.println("sense1 = " + sense1);
+                // System.out.println("sense2 = " + sense2);
+                SimilarityPair pair = WordnetSimilarityApi.synsetLeacockChodorowSimilarity(wordnetData, sense1, sense2);
+                if (topPair==null)  {
+                    /// this is the first result
+                    topPair = pair;
+                }
+                else if (pair.getScore()>topPair.getScore()) {
+                    /// this is a better result
+                    topPair = pair;
+                }
+/*
+                System.out.println("score = " + topPair.getScore());
+                System.out.println("topPair.getMatch() = " + topPair.getMatch());
+*/
+            }
+        }
+        return topPair;
+    }
+
+    static void fixEventCoreferenceSets (KafSaxParser kafSaxParser) {
             ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
             for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
                 KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);

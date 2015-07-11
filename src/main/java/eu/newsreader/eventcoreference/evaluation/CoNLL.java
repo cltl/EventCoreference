@@ -3,14 +3,215 @@ package eu.newsreader.eventcoreference.evaluation;
 import eu.kyotoproject.kaf.CorefTarget;
 import eu.kyotoproject.kaf.KafCoreferenceSet;
 import eu.kyotoproject.kaf.KafWordForm;
+import eu.newsreader.eventcoreference.util.Util;
 
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by piek on 12/13/14.
  */
 public class CoNLL {
+
+     static public class CorefStatistics {
+         private int nCorefSets;
+         private int nMentions;
+         private int nLemmas;
+         private int singletons;
+         private int multitons;
+
+         public CorefStatistics() {
+             this.nCorefSets = 0;
+             this.multitons = 0;
+             this.nLemmas = 0;
+             this.nMentions = 0;
+             this.singletons = 0;
+         }
+
+         public int getnCorefSets() {
+             return nCorefSets;
+         }
+
+         public void addCorefSets(int n) {
+             this.nCorefSets+=n;
+         }
+
+
+         public int getMultitons() {
+             return multitons;
+         }
+
+         public void addMultitons(int n) {
+             this.multitons+=n;
+         }
+
+         public double getAvergageLemmas() {
+             return (double) nLemmas/multitons;
+         }
+
+         public void addLemmas(int n) {
+             this.nLemmas+=n;
+         }
+
+         public double getAverageMentions() {
+             return (double) nMentions/multitons;
+         }
+
+         public void addMentions(int n) {
+             this.nMentions+=n;
+         }
+
+         public int getSingletons() {
+             return singletons;
+         }
+
+         public void addSingletons(int n) {
+             this.singletons+=n;
+         }
+
+         public String toString() {
+             String str = "# coref sets\t"+this.getnCorefSets()+"\n";
+             str += "# singletons\t"+this.getSingletons()+"\n";
+             str += "# multitons\t"+this.getMultitons()+"\n";
+             str += "Average mentions\t"+this.getAverageMentions()+"\n";
+             str += "Average lemmas\t"+this.getAvergageLemmas()+"\n";
+             return str;
+         }
+     }
+
+    static public void main (String[] args) {
+        String pathToKeyFolder = "";
+        String pathToResponseFolder = "";
+        pathToKeyFolder = "/Users/piek/Desktop/NWR/NWR-benchmark/coreference/corpus_CONLL-wn-sim-2.5-wsd8-ims-ukb-top/corpus_stock_market/events/key/";
+        pathToResponseFolder = "/Users/piek/Desktop/NWR/NWR-benchmark/coreference/corpus_CONLL-wn-sim-2.5-wsd8-ims-ukb-top/corpus_stock_market/events/response/";
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("--key-folder") && args.length>(i+1)) {
+                pathToKeyFolder = args[i+1];
+            }
+            else if (arg.equals("--response-folder") && args.length>(i+1)) {
+                pathToResponseFolder = args[i+1];
+            }
+        }
+
+        File inputKeyFolder = new File(pathToKeyFolder);
+        File inputResponseFolder = new File(pathToResponseFolder);
+        CorefStatistics corefKeyStatistics = new CorefStatistics();
+        CorefStatistics corefResponseStatistics = new CorefStatistics();
+        try {
+            OutputStream fos = new FileOutputStream(inputKeyFolder.getParentFile()+"/"+"corefOverview.csv");
+            ArrayList<File> keyFiles = Util.makeRecursiveFileList(inputKeyFolder);
+            for (int i = 0; i < keyFiles.size(); i++) {
+                File file = keyFiles.get(i);
+                readCorefSetFromCoNLL(file, fos, corefKeyStatistics, "key");
+            }
+            ArrayList<File> responseFiles = Util.makeRecursiveFileList(inputResponseFolder);
+            for (int i = 0; i < responseFiles.size(); i++) {
+                File file = responseFiles.get(i);
+                readCorefSetFromCoNLL(file, fos, corefResponseStatistics, "response");
+            }
+            String str = "KEY:\n"+corefKeyStatistics.toString();
+            fos.write(str.getBytes());
+            str = "RESPONSE:\n"+corefResponseStatistics.toString();
+            fos.write(str.getBytes());
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void readCorefSetFromCoNLL (File file, OutputStream fos, CorefStatistics corefStatistics, String result){
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader in = new BufferedReader(isr);
+            String inputLine = "";
+            String fileName = file.getName();
+            int idx = fileName.indexOf(".");
+            if (idx>-1) {
+                fileName = fileName.substring(0, idx);
+            }
+            HashMap<String, ArrayList<String>> labelSet = new HashMap<String, ArrayList<String>>();
+            HashMap<String, ArrayList<String>> tokenIdSet = new HashMap<String, ArrayList<String>>();
+            if (in.ready()&&(inputLine = in.readLine()) != null) {
+                ///skip first line
+            }
+            while (in.ready()&&(inputLine = in.readLine()) != null) {
+                if (inputLine.trim().length()>0) {
+                    String [] fields = inputLine.split("\t");
+                    if (fields.length==5) {
+                        String token = fields[3];
+                        String tokenId = fields[2];
+                        String corefId = fields[4];
+                        if (corefId.startsWith("(")) {
+                            corefId= corefId.substring(1);
+                        }
+                        if (corefId.endsWith(")")) {
+                            corefId = corefId.substring(0, corefId.length()-1);
+                        }
+                        if (!corefId.equals("-")) {
+                            if (labelSet.containsKey(corefId)) {
+                                ArrayList<String> mentions = labelSet.get(corefId);
+                                mentions.add(token);
+                                labelSet.put(corefId, mentions);
+                            }
+                            else {
+                                ArrayList<String> mentions = new ArrayList<String>();
+                                mentions.add(token);
+                                labelSet.put(corefId, mentions);
+                            }
+                            if (tokenIdSet.containsKey(corefId)) {
+                                ArrayList<String> tokenIds = tokenIdSet.get(corefId);
+                                tokenIds.add(tokenId);
+                                tokenIdSet.put(corefId, tokenIds);
+                            }
+                            else {
+                                ArrayList<String> tokenIds = new ArrayList<String>();
+                                tokenIds.add(tokenId);
+                                tokenIdSet.put(corefId, tokenIds);
+                            }
+                        }
+                    }
+                }
+            }
+            in.close();
+            Set keySet = labelSet.keySet();
+            Iterator<String> keys = keySet.iterator();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                corefStatistics.addCorefSets(1);
+                ArrayList<String> tokens = labelSet.get(key);
+                ArrayList<String> tokenIds = tokenIdSet.get(key);
+                if (tokens.size()==1) {
+                    corefStatistics.addSingletons(1);
+                }
+                else {
+                    corefStatistics.addMultitons(1);
+                    corefStatistics.addMentions(tokens.size());
+                    ArrayList<String> lemmas = new ArrayList<String>();
+                    for (int i = 0; i < tokens.size(); i++) {
+                        String token = tokens.get(i);
+                        if (!lemmas.contains(token)) lemmas.add(token);
+                    }
+                    corefStatistics.addLemmas(lemmas.size());
+                }
+
+                String str = fileName+"\t"+key+"\t"+result;
+                for (int i = 0; i < tokens.size(); i++) {
+                    String token = tokens.get(i);
+                    String tokenId = tokenIds.get(i);
+                    str += "\t"+tokenId+"\t"+token;
+                }
+                str += "\n";
+                fos.write(str.getBytes());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     /**
