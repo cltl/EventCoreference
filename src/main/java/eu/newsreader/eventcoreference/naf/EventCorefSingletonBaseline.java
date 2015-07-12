@@ -22,8 +22,10 @@ public class EventCorefSingletonBaseline {
     static final String layer = "coreferences";
     static final String name = "vua-event-coref-intradoc-singleton-baseline";
     static final String version = "1.0";
+    static boolean REMOVEEVENTCOREFS = false;
 
-          static public void main (String [] args) {
+
+    static public void main (String [] args) {
               if (args.length==0) {
                   processNafStream(System.in);
               }
@@ -39,8 +41,11 @@ public class EventCorefSingletonBaseline {
                       else if (arg.equals("--naf-folder") && args.length>(i+1)) {
                           folder = args[i+1];
                       }
-                      if (arg.equals("--extension") && args.length>(i+1)) {
+                      else if (arg.equals("--extension") && args.length>(i+1)) {
                           extension = args[i+1];
+                      }
+                      else if (arg.equalsIgnoreCase("--replace")) {
+                          REMOVEEVENTCOREFS = true;
                       }
                   }
                   if (!folder.isEmpty()) {
@@ -55,6 +60,9 @@ public class EventCorefSingletonBaseline {
           static public void processNafStream (InputStream nafStream) {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(nafStream);
+              if (REMOVEEVENTCOREFS) {
+                  Util.removeEventCoreferences(kafSaxParser);
+              }
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
           }
@@ -62,16 +70,22 @@ public class EventCorefSingletonBaseline {
           static public void processNafFile (String pathToNafFile) {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(pathToNafFile);
+              if (REMOVEEVENTCOREFS) {
+                  Util.removeEventCoreferences(kafSaxParser);
+              }
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
           }
 
           static public void processNafFolder (File pathToNafFolder, String extension) {
-              ArrayList<File> files = Util.makeFlatFileList(pathToNafFolder, extension);
+              ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
               for (int i = 0; i < files.size(); i++) {
                   File file = files.get(i);
                   KafSaxParser kafSaxParser = new KafSaxParser();
                   kafSaxParser.parseFile(file);
+                  if (REMOVEEVENTCOREFS) {
+                      Util.removeEventCoreferences(kafSaxParser);
+                  }
                   process(kafSaxParser);
                   try {
                       FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".coref");

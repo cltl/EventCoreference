@@ -73,7 +73,7 @@ public class NafCoref {
             }
         }
         else if (!folder.isEmpty()) {
-            ArrayList<File> files = Util.makeFlatFileList(new File(folder), fileExtension);
+            ArrayList<File> files = Util.makeRecursiveFileList(new File(folder), fileExtension);
             for (int i = 0; i < files.size(); i++) {
                 File file = files.get(i);
                 kafSaxParser.parseFile(file.getAbsolutePath());

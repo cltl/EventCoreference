@@ -280,22 +280,12 @@ public class EventCorefWordnetSim {
                   }
               }
           }
-          static void removeEventCoreferences (KafSaxParser kafSaxParser) {
-              ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
-              for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
-                  KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
-                  if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
-                      fixedSets.add(kafCoreferenceSet);
-                  }
-              }
-              kafSaxParser.kafCorefenceArrayList = fixedSets;
-          }
 
 
 
           static public void processNaf (KafSaxParser kafSaxParser) {
               if (REMOVEEVENTCOREFS) {
-                  removeEventCoreferences(kafSaxParser);
+                  Util.removeEventCoreferences(kafSaxParser);
               }
               process(kafSaxParser, USEWSD);
           }
@@ -304,7 +294,7 @@ public class EventCorefWordnetSim {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(nafStream);
               if (REMOVEEVENTCOREFS) {
-                  removeEventCoreferences(kafSaxParser);
+                  Util.removeEventCoreferences(kafSaxParser);
               }
               process(kafSaxParser, USEWSD);
               kafSaxParser.writeNafToStream(System.out);
@@ -314,7 +304,7 @@ public class EventCorefWordnetSim {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(pathToNafFile);
               if (REMOVEEVENTCOREFS) {
-                  removeEventCoreferences(kafSaxParser);
+                  Util.removeEventCoreferences(kafSaxParser);
               }
               process(kafSaxParser, USEWSD);
               try {
@@ -328,14 +318,14 @@ public class EventCorefWordnetSim {
 
           static public void processNafFolder (File pathToNafFolder, String extension) {
 
-              ArrayList<File> files = Util.makeFlatFileList(pathToNafFolder, extension);
+              ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
               for (int i = 0; i < files.size(); i++) {
                   File file = files.get(i);
                  // System.out.println("file.getName() = " + file.getName());
                   KafSaxParser kafSaxParser = new KafSaxParser();
                   kafSaxParser.parseFile(file);
                   if (REMOVEEVENTCOREFS) {
-                      removeEventCoreferences(kafSaxParser);
+                      Util.removeEventCoreferences(kafSaxParser);
                   }
 
                   process(kafSaxParser, USEWSD);

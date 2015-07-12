@@ -25,6 +25,17 @@ public class Util {
     static public final int SPANMINPARTICIPANT = 2;
     static public final int SPANMAXCOREFERENTSET = 5;
 
+    static public void removeEventCoreferences (KafSaxParser kafSaxParser) {
+        ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                fixedSets.add(kafCoreferenceSet);
+            }
+        }
+        kafSaxParser.kafCorefenceArrayList = fixedSets;
+    }
+
     /**
      * Required to be able to write Composite SemEvent Objects to existing object files
      */

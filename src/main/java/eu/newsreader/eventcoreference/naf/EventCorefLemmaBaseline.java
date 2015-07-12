@@ -28,6 +28,8 @@ public class EventCorefLemmaBaseline {
     static Vector<String> grammaticalFrames = new Vector<String>();
     static Vector<String> contextualFrames = new Vector<String>();
     static int SOURCEDISTANCE = -1;
+    static boolean REMOVEEVENTCOREFS = false;
+
 
     static public void main (String [] args) {
               if (args.length==0) {
@@ -67,6 +69,9 @@ public class EventCorefLemmaBaseline {
                           String frameFilePath = args[i+1];
                           grammaticalFrames =Util.ReadFileToStringVector(frameFilePath);
                       }
+                      else if (arg.equalsIgnoreCase("--replace")) {
+                          REMOVEEVENTCOREFS = true;
+                      }
                   }
                   if (!folder.isEmpty()) {
                       processNafFolder (new File (folder), extension);
@@ -80,6 +85,9 @@ public class EventCorefLemmaBaseline {
           static public void processNafStream (InputStream nafStream) {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(nafStream);
+              if (REMOVEEVENTCOREFS) {
+                  Util.removeEventCoreferences(kafSaxParser);
+              }
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
           }
@@ -87,16 +95,22 @@ public class EventCorefLemmaBaseline {
           static public void processNafFile (String pathToNafFile) {
               KafSaxParser kafSaxParser = new KafSaxParser();
               kafSaxParser.parseFile(pathToNafFile);
+              if (REMOVEEVENTCOREFS) {
+                  Util.removeEventCoreferences(kafSaxParser);
+              }
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
           }
 
           static public void processNafFolder (File pathToNafFolder, String extension) {
-              ArrayList<File> files = Util.makeFlatFileList(pathToNafFolder, extension);
+              ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
               for (int i = 0; i < files.size(); i++) {
                   File file = files.get(i);
                   KafSaxParser kafSaxParser = new KafSaxParser();
                   kafSaxParser.parseFile(file);
+                  if (REMOVEEVENTCOREFS) {
+                      Util.removeEventCoreferences(kafSaxParser);
+                  }
                   if (SOURCEDISTANCE ==-1) {
                       process(kafSaxParser);
                   }
