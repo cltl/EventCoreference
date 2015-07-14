@@ -93,7 +93,9 @@ public class CorefResultSet {
                     for (int k = 0; k < kafTerm.getSenseTags().size(); k++) {
                         KafSense kafSense = kafTerm.getSenseTags().get(k);
                         if (!WNRESOURCE.isEmpty()) {
-                            if (kafSense.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) {
+                            //// next function should be changed to getSource when this attribute is used
+                            if ((kafSense.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) &&
+                                (kafSense.getSource().toLowerCase().indexOf(WNRESOURCE)==-1)){
                                 continue;
                                 //// this sense comes from the wrong resource
                             }
@@ -120,13 +122,13 @@ public class CorefResultSet {
     }
 
     /**
-     * This function assumes that a specific WSD output is used only and
-     * takes the senses that exceed the proportional threshold or are equal to it
+     * This function takes the senses that exceed the proportional threshold or are equal to it.
+     * It considers all the CorefTargets in a coreference set. Each target matches a term  and each term has senses with scores from various WSD systems
      * @param kafSaxParser
      * @param BESTSENSETHRESHOLD
      * @param WNRESOURCE
      */
-    public void getBestSenses (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD, String WNRESOURCE) {
+  /*  public void getBestSenses (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD, String WNRESOURCE) {
         double bestScore = 0;
         ArrayList<KafSense> kafSenses = new ArrayList<KafSense>();
         for (int i = 0; i < sources.size(); i++) {
@@ -138,7 +140,9 @@ public class CorefResultSet {
                     for (int k = 0; k < kafTerm.getSenseTags().size(); k++) {
                         KafSense kafSense = kafTerm.getSenseTags().get(k);
                         if (!WNRESOURCE.isEmpty()) {
-                            if (kafSense.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) {
+                            //// next function should be changed to getSource when this attribute is used
+                            if ((kafSense.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) &&
+                                    (kafSense.getSource().toLowerCase().indexOf(WNRESOURCE)==-1)){
                                 continue;
                                 //// this sense comes from the wrong resource
                             }
@@ -166,7 +170,7 @@ public class CorefResultSet {
             }
         }
         //System.out.println("bestSenses = " + bestSenses.toString());
-    }
+    }*/
 
     /**
      * If no specific WSD system is selected, it builds the sets of sense per WSD system and determines the best score for each
@@ -177,7 +181,7 @@ public class CorefResultSet {
      * @param kafSaxParser
      * @param BESTSENSETHRESHOLD
      */
-    public void getBestSenses (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD) {
+/*    public void getBestSenses (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD) {
         HashMap<String, ArrayList<KafSense>> resourceSenseMap = new HashMap<String, ArrayList<KafSense>>();
         HashMap<String, Double> resourceScoreMap = new HashMap<String, Double>();
 
@@ -193,6 +197,116 @@ public class CorefResultSet {
                         if (resourceSenseMap.containsKey(resource)) {
                             ArrayList<KafSense> senses = resourceSenseMap.get(resource);
                             senses.add(kafSense);
+                            resourceSenseMap.put(resource, senses);
+                        }
+                        else {
+                            ArrayList<KafSense> senses = new ArrayList<KafSense>();
+                            senses.add(kafSense);
+                            resourceSenseMap.put(resource, senses);
+                        }
+                        if (resourceScoreMap.containsKey(resource)) {
+                            Double score = resourceScoreMap.get(resource);
+                            if (kafSense.getConfidence()> score) {
+                                resourceScoreMap.put(resource, kafSense.getConfidence());
+                            }
+                        }
+                        else {
+                            resourceScoreMap.put(resource, kafSense.getConfidence());
+                        }
+                    }
+                }
+            }
+        }
+        HashMap<String, ArrayList<Double>> senseScores = new HashMap<String, ArrayList<Double>>();
+        Set keySet = resourceSenseMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            Double topScore = resourceScoreMap.get(key);
+            ArrayList<KafSense> kafSenses = resourceSenseMap.get(key);
+            for (int i = 0; i < kafSenses.size(); i++) {
+                KafSense kafSense = kafSenses.get(i);
+                double proportionBestScore = kafSense.getConfidence()/topScore;
+                if (proportionBestScore>=BESTSENSETHRESHOLD) {
+                    // System.out.println("this.getSources().toString() = " + this.getSources().toString());
+                    // System.out.println("proportionBestScore = " + proportionBestScore);
+                    if (senseScores.containsKey(kafSense.getSensecode())) {
+                        ArrayList<Double> scores = senseScores.get(kafSense.getSensecode());
+                        scores.add(proportionBestScore);
+                        senseScores.put(kafSense.getSensecode(), scores);
+                    }
+                    else {
+                        ArrayList<Double> scores = new ArrayList<Double>();
+                        scores.add(proportionBestScore);
+                        senseScores.put(kafSense.getSensecode(), scores);
+                    }
+                }
+            }
+        }
+        keySet = senseScores.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            Double combinedScore = new Double(0);
+            ArrayList<Double> topScores = senseScores.get(key);
+            for (int i = 0; i < topScores.size(); i++) {
+                Double aDouble = topScores.get(i);
+                combinedScore += aDouble;
+            }
+            combinedScore = combinedScore/topScores.size();
+            if (combinedScore>=BESTSENSETHRESHOLD) {
+                KafSense kafSense = new KafSense();
+                kafSense.setSensecode(key);
+                kafSense.setConfidence(combinedScore);
+                this.bestSenses.add(kafSense);
+            }
+        }
+    }*/
+
+    /**
+     * We cumulate the scores of the senses across all targets of the corefset and per WSD system.
+     * If WNSOURCE is empty, the map has different sets for each resource present in the term layer.
+     * IF WNSOURCE is NOT empty, we only consider the matching output of the WSD system
+     * We make the score proportional to the best scoring sense per system and we average over the different systems.
+     * Only the senses proportionally over the threshold are considered.
+     * @param kafSaxParser
+     * @param BESTSENSETHRESHOLD
+     */
+    public void getBestSensesAfterCumulation (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD, String WNRESOURCE) {
+        HashMap<String, ArrayList<KafSense>> resourceSenseMap = new HashMap<String, ArrayList<KafSense>>();
+        HashMap<String, Double> resourceScoreMap = new HashMap<String, Double>();
+
+        for (int i = 0; i < sources.size(); i++) {
+            ArrayList<CorefTarget> corefTargets = sources.get(i);
+            for (int j = 0; j < corefTargets.size(); j++) {
+                CorefTarget corefTarget = corefTargets.get(j);
+                KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
+                if (kafTerm!=null) {
+                    for (int k = 0; k < kafTerm.getSenseTags().size(); k++) {
+                        KafSense kafSense = kafTerm.getSenseTags().get(k);
+                        String resource = kafSense.getResource();
+                        if (!WNRESOURCE.isEmpty()) {
+                            //// next function should be changed to getSource when this attribute is used
+                            if ((kafSense.getResource().toLowerCase().indexOf(WNRESOURCE)==-1) &&
+                                    (kafSense.getSource().toLowerCase().indexOf(WNRESOURCE)==-1)){
+                                continue;
+                                //// this sense comes from the wrong resource
+                            }
+                        }
+                        if (resourceSenseMap.containsKey(resource)) {
+                            ArrayList<KafSense> senses = resourceSenseMap.get(resource);
+                            boolean MATCH = false;
+                            for (int l = 0; l < senses.size(); l++) {
+                                KafSense sense = senses.get(l);
+                                if (sense.getSensecode().equals(kafSense.getSensecode())) {
+                                    /// we add the confidence score
+                                    MATCH = true;
+                                    sense.setConfidence((sense.getConfidence()+kafSense.getConfidence()));
+                                    kafSense = sense;
+                                    break;
+                                }
+                            }
+                            if (!MATCH) senses.add(kafSense);
                             resourceSenseMap.put(resource, senses);
                         }
                         else {
