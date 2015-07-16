@@ -264,7 +264,8 @@ public class EventCorefWordnetSim {
                           System.out.println("simthreshold = " + simthreshold);
                           System.out.println("simthreshold-ont = " + simOntthreshold);
                           System.out.println("best-sense-threshold = " + BESTSENSETHRESHOLD);
-                          System.out.println("proportionalthreshold = " + proportionalthreshold);
+                         // System.out.println("proportionalthreshold = " + proportionalthreshold);
+                          System.out.println("REMOVEEVENTCOREFS = " + REMOVEEVENTCOREFS);
                           System.out.println("method = " + method);
                           System.out.println("wn-prefix = " + WNPREFIX);
                           System.out.println("wn-resource = " + WNSOURCE);

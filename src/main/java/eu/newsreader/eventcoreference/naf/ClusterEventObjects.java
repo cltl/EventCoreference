@@ -46,16 +46,17 @@ public class ClusterEventObjects {
             "--frame-relations      <path>   <path to FrameNet file with relations>\n" +
             "--microstories         <integer><Number of sentences to restrict the analysis>\n" +
             "--bridging                      <Whether or not microstories are extended through bridging relations>\n";
-    static Vector<String> communicationVector = null;
-    static Vector<String> grammaticalVector = null;
-    static Vector<String> contextualVector = null;
-    static FrameNetReader frameNetReader = new FrameNetReader();
-    static final int TIMEEXPRESSIONMAX = 5;
-    static boolean MICROSTORIES = false;
-    static Integer SENTENCERANGE = 0;
-    static boolean BRIDGING = false;
-    static String done = "";
-    static boolean ADDITIONALROLES = false;
+    static public Vector<String> communicationVector = null;
+    static public Vector<String> grammaticalVector = null;
+    static public Vector<String> contextualVector = null;
+    static public FrameNetReader frameNetReader = new FrameNetReader();
+    static public final int TIMEEXPRESSIONMAX = 5;
+    static public boolean MICROSTORIES = false;
+    static public Integer SENTENCERANGE = 0;
+    static public boolean BRIDGING = false;
+    static public String done = "";
+    static public boolean ADDITIONALROLES = false;
+
     static public void main (String [] args) {
         if (args.length==0) {
             System.out.println(USAGE);

@@ -765,10 +765,17 @@ public class GetSemFromNafFile {
                     kafParticipant.setTokenStrings(kafSaxParser);
                     if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
                         String uri = "";
-                        try {
-                            uri = URLEncoder.encode(kafParticipant.getTokenString(), "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            //  e.printStackTrace();
+                        KafMarkable kafMarkable = Util.getBestMatchingMarkable(kafSaxParser, kafParticipant);
+                        if (kafMarkable!=null) {
+                          //  System.out.println("kafMarkable.getId() = " + kafMarkable.getId());
+                            uri = Util.getBestMarkableUri(kafMarkable);
+                        }
+                        else {
+                            try {
+                                uri = entityUri+URLEncoder.encode(kafParticipant.getTokenString(), "UTF-8").toLowerCase();
+                            } catch (UnsupportedEncodingException e) {
+                                //  e.printStackTrace();
+                            }
                         }
                         if (!uri.isEmpty()) {
                             if (mentionMap.containsKey(uri)) {
@@ -798,7 +805,7 @@ public class GetSemFromNafFile {
           //  System.out.println("key = " + key);
             ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = mentionMap.get(key);
             SemActor semActor = new SemActor();
-            semActor.setId(entityUri + key);
+            semActor.setId(key);
             ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
             semActor.setNafMentions(mentions);
             semActor.addPhraseCountsForMentions(kafSaxParser);
@@ -815,6 +822,7 @@ public class GetSemFromNafFile {
 */
         }
     }
+
 
 
     /**
@@ -1630,7 +1638,7 @@ public class GetSemFromNafFile {
 
     static public void main (String [] args) {
         String pathToNafFile = "";
-        pathToNafFile = "/Users/piek/Desktop/7236196.xml.19k351u4o.xml";
+        pathToNafFile = "/Users/piek/Desktop/English Pipeline/naf3.0/obama_v3_event_coref_in.xml";
         String project = "cars";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -1649,7 +1657,7 @@ public class GetSemFromNafFile {
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(pathToNafFile);
-        processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
        // System.out.println("semActors.size() = " + semActors.size());
        // processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
        // System.out.println("semActors.size() = " + semActors.size());

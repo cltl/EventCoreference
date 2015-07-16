@@ -5,10 +5,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-import eu.kyotoproject.kaf.KafFactuality;
-import eu.kyotoproject.kaf.KafSaxParser;
-import eu.kyotoproject.kaf.KafSense;
-import eu.kyotoproject.kaf.KafTerm;
+import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.util.Util;
 import org.w3c.dom.Document;
@@ -30,6 +27,7 @@ public class SemObject implements Serializable {
     private String uri;
     private double score;
     private ArrayList<KafSense> concepts;
+    private ArrayList<KafTopic> topics;
     private ArrayList<PhraseCount> phraseCounts;
     private ArrayList<KafSense> lcs;
     private String label;
@@ -44,7 +42,33 @@ public class SemObject implements Serializable {
         this.score = 0;
         this.concepts = new ArrayList<KafSense>();
         this.phraseCounts = new ArrayList<PhraseCount>();
+        this.topics = new ArrayList<KafTopic>();
     }
+
+    public ArrayList<KafTopic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(ArrayList<KafTopic> topics) {
+        this.topics = topics;
+    }
+
+    public boolean hasTopic(KafTopic topic) {
+        for (int i = 0; i < topics.size(); i++) {
+            KafTopic kafTopic = topics.get(i);
+            if (kafTopic.getTopic().equals(topic.getTopic())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addTopic(KafTopic topic) {
+        if (!hasTopic(topic)) {
+            this.topics.add(topic);
+        }
+    }
+
 
 
     public void setFactuality(KafSaxParser kafSaxParser) {

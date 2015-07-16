@@ -30,8 +30,8 @@ import java.util.Set;
 public class MatchEventObjects {
 
     static boolean DEBUG = false;
-    static String MATCHTYPE= "LEMMA";  // ILI OR ILILEMMA
-    static boolean VERBOSEMENTIONS = false;
+    public static String MATCHTYPE= "ILI";  // ILI OR ILILEMMA
+    public static boolean VERBOSEMENTIONS = false;
     static final String usage = "MatchEventObjects reads obj files stored in time-folders with CompositeEventObjects and outputs a single RDF-TRiG file\n" +
             "The parameters are:\n" +
             "--event-folder  <path>     <Path to the event folder that has subfolders for each time-description, e.g. \"e-2012-03-29\". Object file (*.obj) should be stored in these subfolders\n" +

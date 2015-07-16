@@ -765,6 +765,15 @@ public class Util {
         return uri;
     }
 
+    static public String getBestMarkableUri (KafMarkable kafMarkable) {
+        String uri="";
+        KafSense topSense = getBestScoringExternalReference(kafMarkable.getExternalReferences());
+        if (topSense!=null) {
+            uri = topSense.getSensecode();
+        }
+        return uri;
+    }
+
     static public String getBestEntityUriWithReranking (KafEntity kafEntity) {
         String uri="";
         boolean RERANK = false;
@@ -886,6 +895,75 @@ public class Util {
             }
         }
 
+        return topObject;
+    }
+
+    /**
+     * Compares all Markables with a KafParticipant from the SRL layer to return the object that has a mention with the largest span overlap.
+     * If none of the objects exceeds or equal to the SPANMATCHTHRESHOLD, null is returned
+     *
+     * KafParticipants (roles in the SRL) have span with a head attribute.
+     * However, very often the preposition or relative clause complement is marked as the head
+     * while these are never part of the entity or coreferece span. We therefore ignore the head attribute
+     * and only consider the content words.
+     * WE COUNT OVERLAP FOR POS=N,V,A,G ONLY
+     *
+     * @param kafSaxParser
+     * @param kafParticipant
+     * @return
+     */
+    static public KafMarkable getBestMatchingMarkable(KafSaxParser kafSaxParser,
+                                                  KafParticipant kafParticipant) {
+
+        KafMarkable topObject = null;
+        int topScore = 0;
+        int nContentWordsKafParticipant = kafSaxParser.getNumberContentWords(kafParticipant.getSpanIds());
+        for (int i = 0; i < kafSaxParser.kafMarkablesArrayList.size(); i++) {
+            KafMarkable kafMarkable = kafSaxParser.kafMarkablesArrayList.get(i);
+            int matchCount = 0;
+            int nContentWordsNafMention = 0;
+            for (int k = 0; k < kafMarkable.getSpans().size(); k++) {
+                String wid = kafMarkable.getSpans().get(k); //// markables have wf as spane elements!!!!!
+                KafTerm kafTerm = kafSaxParser.getTermForWordId(wid);
+                if (kafTerm!=null) {
+                    if (kafSaxParser.contentWord(kafTerm.getTid())) {
+                        nContentWordsNafMention++;
+                        for (int l = 0; l < kafParticipant.getSpans().size(); l++) {
+                            CorefTarget corefTarget = kafParticipant.getSpans().get(l);
+                           // System.out.println("corefTarget.getId() = " + corefTarget.getId());
+                           // System.out.println("kafTerm.getId() = " + kafTerm.getTid());
+                            if (corefTarget.getId().equals(kafTerm.getTid())) {
+                                matchCount++;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        /// NOT A CONTENT WORD
+                    }
+                }
+            }
+            if ((nContentWordsNafMention>0) && (nContentWordsKafParticipant>0)) {
+                int matchScoreObject = ((matchCount * 100) / nContentWordsNafMention);
+                int matchScoreParticipant = ((matchCount * 100) / nContentWordsKafParticipant);
+                int matchScoreAverage = (matchScoreObject + matchScoreParticipant) / 2;
+/*
+                System.out.println("nContentWordsKafParticipant = " + nContentWordsKafParticipant);
+                System.out.println("nContentWordsNafMention = " + nContentWordsNafMention);
+                System.out.println("matchCount = " + matchCount);
+                System.out.println("matchScoreAverage = " + matchScoreAverage);
+                System.out.println("kafParticipant = " + kafParticipant.getTokenString());
+*/
+                if (matchScoreAverage>0) {
+                    if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
+                        if (matchScoreAverage > topScore) {
+                            topScore = matchScoreAverage;
+                            topObject = kafMarkable;
+                        }
+                    }
+                }
+            }
+        }
         return topObject;
     }
 
