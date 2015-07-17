@@ -67,8 +67,8 @@ public class ParcAttributionTask {
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
         ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
 
-
-        GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+        boolean ADDITIONALROLES = true;
+        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
         GetPerspectiveRelations.getPerspective(kafSaxParser,
                 project, perspectiveObjects,
                 semActors,

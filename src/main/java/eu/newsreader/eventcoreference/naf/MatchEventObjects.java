@@ -107,7 +107,7 @@ public class MatchEventObjects {
         }
         if (!pathToSourceDataFile.isEmpty()) {
             sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
-            System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
+         //   System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
         }
         processEventFoldersSingleOutputFile(new File(pathToEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
 
@@ -234,53 +234,7 @@ public class MatchEventObjects {
                 CompositeEvent compositeEvent = myCompositeEvents.get(i);
                 finalCompositeEvents.add(compositeEvent);
             }
-            //// NEXT IS REPLACED BY CHAINING
-            /*for (int j = 0; j < myCompositeEvents.size(); j++) {
-                boolean match = false;
-                boolean same = false;
-                CompositeEvent myCompositeEvent = myCompositeEvents.get(j);
-                if (DEBUG) System.out.println("myCompositeEvent.getEvent().getURI() = " + myCompositeEvent.getEvent().getURI());
-                for (int k = 0; k < finalCompositeEvents.size(); k++) {
-                    CompositeEvent finalCompositeEvent = finalCompositeEvents.get(k);
-                    // checkCompositeEvents(myCompositeEvent, finalCompositeEvent);
-                    if (DEBUG) {
-                        System.out.println("finalCompositeEvent.getEvent().getURI() = " + finalCompositeEvent.getEvent().getURI());
-                        for (int i = 0; i < myCompositeEvent.getMySemActors().size(); i++) {
-                            SemActor semActor = myCompositeEvent.getMySemActors().get(i);
-                            System.out.println("my semActor.getURI() = " + semActor.getURI());
-                        }
-                        for (int i = 0; i < finalCompositeEvent.getMySemActors().size(); i++) {
-                            SemActor semActor = finalCompositeEvent.getMySemActors().get(i);
-                            System.out.println("final semActor.getURI() = " + semActor.getURI());
-                        }
-                    }
-                    if (myCompositeEvent.getEvent().getId().equals(finalCompositeEvent.getEvent().getId())) {
-                        same = true;
-                        //// to be sure we do not duplicate events already stored
-                    }
-                    else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType)) {
-                        match = true;
-                        finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
-                        finalCompositeEvent.mergeObjects(myCompositeEvent);
-                        finalCompositeEvent.mergeRelations(myCompositeEvent);
-                        finalCompositeEvent.mergeFactRelations(myCompositeEvent);
-                        /// we thus merge with the first matching event and do not consider others that may be better!!!!!
-                        /// In theory: there cannot be another candidate because we do a logical match: if match always merge and all are merged
-                        //// If we do a scoring match we need to adjust this:
-                        /// the comparison and merge loop needs to be adjusted to get the best candidate for merge
-                        /// we could score each candidate and maintain the top scoring one
-                        //  System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
-                        break;
-                    }
-                }
-                if (!match && !same) {
-                    if (DEBUG) System.out.println("NO MATCH");
-                    finalCompositeEvents.add(myCompositeEvent);
-                }
-                else {
-                    if (DEBUG) System.out.println("MATCH");
-                }
-            }*/
+
             /// we update the finalLemmaEventMap. finalCompositeEvents have either been extended or merged with existing
             finalLemmaEventMap.put(lemma, finalCompositeEvents);
         }

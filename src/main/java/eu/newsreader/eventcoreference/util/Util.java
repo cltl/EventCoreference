@@ -5,9 +5,7 @@ import eu.newsreader.eventcoreference.objects.*;
 
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,6 +22,213 @@ public class Util {
     static public final int SPANMAXPARTICIPANT = 6;
     static public final int SPANMINPARTICIPANT = 2;
     static public final int SPANMAXCOREFERENTSET = 5;
+
+
+    static public ArrayList<String> getTermsIdsForTimex (KafSaxParser kafSaxParser, String timexId) {
+        ArrayList<String> termIds = new ArrayList<String>();
+        for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
+            KafTimex kafTimex = kafSaxParser.kafTimexLayer.get(i);
+            if (kafTimex.getId().equals(timexId)) {
+                return kafTimex.getSpans();
+            }
+        }
+        return termIds;
+    }
+    static public boolean futureEvent (SemObject semEvent) {
+        for (int j = 0; j < semEvent.getNafMentions().size(); j++) {
+            NafMention nafMention = semEvent.getNafMentions().get(j);
+            for (int i = 0; i < nafMention.getFactuality().size(); i++) {
+                KafFactuality kafFactuality = nafMention.getFactuality().get(i);
+                if (kafFactuality.getPrediction().equalsIgnoreCase("FUT")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Needed because SRL and NERC can independently claim a mention as an entity or event. In that case, we give preference to the entity status
+     *
+     * @param semEvents
+     * @param semActors
+     */
+    static public void filterOverlapEventsEntities(ArrayList<SemObject> semEvents, ArrayList<SemObject> semActors) {
+        for (int i = 0; i < semEvents.size(); i++) {
+            SemObject semEvent = semEvents.get(i);
+            for (int j = 0; j < semActors.size(); j++) {
+                SemObject semActor = semActors.get(j);
+                for (int k = 0; k < semEvent.getNafMentions().size(); k++) {
+                    NafMention nafMention = semEvent.getNafMentions().get(k);
+                    if (Util.hasMention(semActor.getNafMentions(), nafMention)) {
+                        semEvents.remove(semEvent);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    static public void fixEventCoreferenceSets(KafSaxParser kafSaxParser) {
+        ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                if (kafCoreferenceSet.getExternalReferences().size() > 3) {
+                    HashMap<String, KafCoreferenceSet> corefMap = new HashMap<String, KafCoreferenceSet>();
+                    int nSubSets = 0;
+                    for (int j = 0; j < kafCoreferenceSet.getSetsOfSpans().size(); j++) {
+                        ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(j);
+                        String lemma = "";
+                        for (int k = 0; k < corefTargets.size(); k++) {
+                            CorefTarget corefTarget = corefTargets.get(k);
+                            KafTerm kafTerm = kafSaxParser.getTerm(corefTarget.getId());
+                            if (kafTerm != null) {
+                                lemma += kafTerm.getLemma() + " ";
+                            }
+                        }
+                        lemma = lemma.trim();
+                        if (corefMap.containsKey(lemma)) {
+                            KafCoreferenceSet kafCoreferenceSetNew = corefMap.get(lemma);
+                            kafCoreferenceSetNew.addSetsOfSpans(corefTargets);
+                            corefMap.put(lemma, kafCoreferenceSetNew);
+                        } else {
+                            nSubSets++;
+                            KafCoreferenceSet kafCoreferenceSetNew = new KafCoreferenceSet();
+                            String corefId = kafCoreferenceSet.getCoid() + "_" + nSubSets;
+                            kafCoreferenceSetNew.setCoid(corefId);
+                            kafCoreferenceSetNew.setType(kafCoreferenceSet.getType());
+                            kafCoreferenceSetNew.addSetsOfSpans(corefTargets);
+                            corefMap.put(lemma, kafCoreferenceSetNew);
+                        }
+                    }
+                    Set keySet = corefMap.keySet();
+                    Iterator<String> keys = keySet.iterator();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                        KafCoreferenceSet kafCoreferenceSetNew = corefMap.get(key);
+                        fixedSets.add(kafCoreferenceSetNew);
+                    }
+                } else {
+                    fixedSets.add(kafCoreferenceSet);
+                }
+            } else {
+                fixedSets.add(kafCoreferenceSet);
+            }
+        }
+        kafSaxParser.kafCorefenceArrayList = fixedSets;
+    }
+
+    static public void fixExternalReferencesSrl(KafSaxParser kafSaxParser) {
+        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+            KafEvent event = kafSaxParser.getKafEventArrayList().get(i);
+            fixExternalReferences(event);
+            for (int j = 0; j < event.getParticipants().size(); j++) {
+                KafParticipant kafParticipant = event.getParticipants().get(j);
+                fixExternalReferences(kafParticipant);
+            }
+        }
+    }
+
+    static public void fixExternalReferencesEntities(KafSaxParser kafSaxParser) {
+        for (int i = 0; i < kafSaxParser.kafEntityArrayList.size(); i++) {
+            KafEntity entity = kafSaxParser.kafEntityArrayList.get(i);
+            fixExternalReferences(entity);
+        }
+    }
+
+    static public void fixExternalReferences(KafEvent kafEvent) {
+        ArrayList<KafSense> newKafSenses = new ArrayList<KafSense>();
+        for (int i = 0; i < kafEvent.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEvent.getExternalReferences().get(i);
+            if (kafSense.getResource().endsWith("+")) {
+                kafSense.setResource(kafSense.getResource().substring(0, kafSense.getResource().length() - 1));
+                // System.out.println("kafSense.getResource() = " + kafSense.getResource());
+            }
+            if (!kafSense.getResource().endsWith("-")) {
+                newKafSenses.add(kafSense);
+            }
+        }
+        kafEvent.setExternalReferences(newKafSenses);
+    }
+
+    static public void fixExternalReferences(KafEntity kafEntity) {
+        boolean RERANK = false;
+        ArrayList<KafSense> newKafSenses = new ArrayList<KafSense>();
+        for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEntity.getExternalReferences().get(i);
+            if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
+                newKafSenses.add(kafSense);
+                RERANK = true;
+            } else {
+                if (kafSense.getChildren().size() > 0) {
+                   /*
+                   In this case, we assume that the child is the English equivalent.
+                   We prefer the English equivalent over the non-English reference
+                   <externalRef confidence="1.0" reference="http://nl.dbpedia.org/resource/Allerzielen" reftype="nl" resource="spotlight_v1">
+                        <externalRef confidence="1.0" reference="http://dbpedia.org/resource/All_Souls'_Day" reftype="en" resource="wikipedia-db-nlEn"/>
+                   </externalRef>
+                   */
+                    for (int j = 0; j < kafSense.getChildren().size(); j++) {
+                        KafSense sense = kafSense.getChildren().get(j);
+                        if (sense.getRefType().equals("en")) {
+                            newKafSenses.add(sense);
+                            RERANK = true;
+                        }
+                    }
+                }
+            }
+        }
+        if (RERANK) {
+            //  System.out.println("RERANKED");
+            kafEntity.setExternalReferences(newKafSenses);
+        }
+    }
+
+
+    static public void useEnglishExternalReferences(KafEntity kafEntity) {
+        boolean RERANK = false;
+        ArrayList<KafSense> newKafSenses = new ArrayList<KafSense>();
+        for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEntity.getExternalReferences().get(i);
+            if (kafSense.getChildren().size() > 0) {
+               /*
+               In this case, we assume that the child is the English equivalent.
+               We prefer the English equivalent over the non-English reference
+               <externalRef confidence="1.0" reference="http://nl.dbpedia.org/resource/Allerzielen" reftype="nl" resource="spotlight_v1">
+                    <externalRef confidence="1.0" reference="http://dbpedia.org/resource/All_Souls'_Day" reftype="en" resource="wikipedia-db-nlEn"/>
+               </externalRef>
+               */
+                for (int j = 0; j < kafSense.getChildren().size(); j++) {
+                    KafSense sense = kafSense.getChildren().get(j);
+                    if (sense.getRefType().equals("en")) {
+                        newKafSenses.add(sense);
+                        RERANK = true;
+                    }
+                }
+            }
+        }
+        if (RERANK) {
+            //  System.out.println("RERANKED");
+            kafEntity.setExternalReferences(newKafSenses);
+        }
+    }
+
+
+    static public void fixExternalReferences(KafParticipant kafParticipant) {
+        ArrayList<KafSense> newKafSenses = new ArrayList<KafSense>();
+        for (int i = 0; i < kafParticipant.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafParticipant.getExternalReferences().get(i);
+            if (kafSense.getResource().endsWith("+")) {
+                kafSense.setResource(kafSense.getResource().substring(0, kafSense.getResource().length() - 1));
+                // System.out.println("kafSense.getResource() = " + kafSense.getResource());
+            }
+            if (!kafSense.getResource().endsWith("-")) {
+                newKafSenses.add(kafSense);
+            }
+        }
+        kafParticipant.setExternalReferences(newKafSenses);
+    }
 
     static public void removeEventCoreferences (KafSaxParser kafSaxParser) {
         ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
@@ -53,7 +258,7 @@ public class Util {
 
     }
 
-    /**
+    /**  @DEPRECATED
      * all mentions are checked against the stored relations if the value and the event are already stored.
      * If so only the mention is added, otherwise a new fact relation is created
      * @param nafMention
@@ -62,7 +267,7 @@ public class Util {
      * @param baseUrl
      * @param subjectId
      */
-    static public void addMentionToFactRelations (NafMention nafMention,
+/*    static public void addMentionToFactRelations (NafMention nafMention,
                                                   ArrayList<SemRelation> factRelations,
                                                   String factValue,
                                                   String baseUrl,
@@ -89,7 +294,7 @@ public class Util {
             semRelation.setObject(nafMention.getFactuality().getPrediction());
             factRelations.add(semRelation);
         }
-    }
+    }*/
 
     /**
      * A single termId overlap is sufficient to fire true
@@ -1107,15 +1312,6 @@ public class Util {
     }
 
 
-    static public void setFactuality(KafSaxParser kafSaxParser, NafMention nafMention) {
-        for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
-            KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
-            if (nafMention.getTokensIds().contains(kafFactuality.getId())) {
-                //   System.out.println("nafMention.toString() = " + nafMention.toString());
-                nafMention.setFactuality(kafFactuality);
-            }
-        }
-    }
 
     /**
      * Checks if two SemObject have a mention in the same sentence
@@ -1532,11 +1728,11 @@ public class Util {
         return false;
     }
 
-    /**
-     *      Mention URI = News URI + "#char=START_OFFSET,END_OFFSET"
-     * @param kafSaxParser
-     * @param corefTargets
-     */
+       /**
+         *      Mention URI = News URI + "#char=START_OFFSET,END_OFFSET"
+         * @param kafSaxParser
+         * @param corefTargets
+         */
     static public NafMention getNafMentionForCorefTargets (String baseUri, KafSaxParser kafSaxParser, ArrayList<CorefTarget> corefTargets) {
         NafMention mention = new NafMention();
         int firstOffSet = -1;

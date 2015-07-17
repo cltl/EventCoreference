@@ -236,7 +236,8 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
 
         //resource.addProperty(RDF.type, Sem.Time);
 
-        Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
+       // Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
+        Resource interval = model.createResource(ResourcesUri.owltime + "Instance");
         resource.addProperty(RDF.type, interval);
 
         Resource value = model.createResource(this.getOwlTime().getDateString());
@@ -274,4 +275,44 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
             resource.addProperty(property, value);
         }
     }
+
+    /*
+    :DurationDescription
+      a       owl:Class ;
+      rdfs:subClassOf
+              [ a       owl:Restriction ;
+                owl:maxCardinality 1 ;
+                owl:onProperty :seconds
+              ] ;
+      rdfs:subClassOf
+              [ a       owl:Restriction ;
+                owl:maxCardinality 1 ;
+                owl:onProperty :minutes
+              ] ;
+      rdfs:subClassOf
+              [ a       owl:Restriction ;
+                owl:maxCardinality 1 ;
+                owl:onProperty :hours
+              ] ;
+      rdfs:subClassOf
+              [ a       owl:Restriction ;
+                owl:maxCardinality 1 ;
+                owl:onProperty :days
+              ] ;
+      rdfs:subClassOf
+              [ a       owl:Restriction ;
+                owl:maxCardinality 1 ;
+                owl:onProperty :weeks
+              ] ;
+      rdfs:subClassOf
+              [ a       owl:Restriction ;
+                owl:maxCardinality 1 ;
+                owl:onProperty :months
+              ] ;
+      rdfs:subClassOf
+              [ a       owl:Restriction ;
+                owl:maxCardinality 1 ;
+                owl:onProperty :years
+              ] .
+     */
 }

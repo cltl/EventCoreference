@@ -352,6 +352,11 @@ public class EventCorefWordnetSim {
           }
 
 
+    /**
+     * THIS version is simpler but perfoms less
+     * @param kafSaxParser
+     * @param USEWSD
+     */
       static void processNEW (KafSaxParser kafSaxParser, boolean USEWSD) {
               String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
               String strEndDate = null;
@@ -428,12 +433,17 @@ public class EventCorefWordnetSim {
               for (int i = 0; i < corefMatchList.size(); i++) {
                   CorefResultSet corefResultSet = corefMatchList.get(i);
                   if (corefResultSet!=null) {
+
                       if (!USEWSD) {
+                          //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
                           corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                      }
+                      else {
+                          //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
+                          corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
                       }
                       /// we determine the best senses for the lemma sets according to WSD
 
-                      corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
                       /// now we check all the other candidate sets to see if any can be merged
                       for (int j = i + 1; j < corefMatchList.size(); j++) {
                           CorefResultSet aCorefResultSet = corefMatchList.get(j);
@@ -622,6 +632,7 @@ public class EventCorefWordnetSim {
                       }
                       lemmaList.add(lemma);
                       CorefResultSet corefResultSet = new CorefResultSet(lemma, theKafEvent.getSpans());
+                      /// greedy forward loop that graps all further lemma occurrence
                       for (int j = i + 1; j < kafSaxParser.kafEventArrayList.size(); j++) {
                           KafEvent aKafEvent = kafSaxParser.kafEventArrayList.get(j);
                           aKafEvent.addTermDataToSpans(kafSaxParser);
@@ -631,20 +642,43 @@ public class EventCorefWordnetSim {
                               corefResultSet.addSource(anEventCorefTargetList);
                           }
                       }
-
-                      if (!USEWSD) {
-                          //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
-                         corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
-                      }
-                      else {
-                          //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                          corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
-                      }
-
                       corefMatchList.add(corefResultSet);
                   }
               }
-
+            /// We now get the dominant senses for the
+            for (int i = 0; i < grammaticalCorefMatchList.size(); i++) {
+                CorefResultSet corefResultSet = grammaticalCorefMatchList.get(i);
+                if (!USEWSD) {
+                    //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                }
+                else {
+                    //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                }
+            }
+            for (int i = 0; i < sourceCorefMatchList.size(); i++) {
+                CorefResultSet corefResultSet = sourceCorefMatchList.get(i);
+                if (!USEWSD) {
+                    //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                }
+                else {
+                    //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                }
+            }
+            for (int i = 0; i < corefMatchList.size(); i++) {
+                CorefResultSet corefResultSet = corefMatchList.get(i);
+                if (!USEWSD) {
+                    //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                }
+                else {
+                    //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                }
+            }
               //// now we need to compare these lemma lists but not the source and grammatical sets
               for (int i = 0; i < corefMatchList.size(); i++) {
                   CorefResultSet corefResultSet = corefMatchList.get(i);

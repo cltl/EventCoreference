@@ -88,9 +88,9 @@ public class GetJsonTimeLinesFromNaf {
             KafSaxParser kafSaxParser = new KafSaxParser();
             kafSaxParser.parseFile(pathToNafFile);
             //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
-            GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
+            Util.fixEventCoreferenceSets(kafSaxParser);
             //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
-            GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
+            Util.fixExternalReferencesSrl(kafSaxParser);
 
         }
         else if (!pathToFolder.isEmpty()) {
@@ -106,10 +106,10 @@ public class GetJsonTimeLinesFromNaf {
                         File file = files.get(i);
                         kafSaxParser.parseFile(file);
                         //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
-                        GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
+                        Util.fixEventCoreferenceSets(kafSaxParser);
                         //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
-                        GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
-                        GetSemFromNafFile.fixExternalReferencesEntities(kafSaxParser);
+                        Util.fixExternalReferencesSrl(kafSaxParser);
+                        Util.fixExternalReferencesEntities(kafSaxParser);
 
                         ArrayList<JSONObject> dates = processNafFileToJson(file, project, kafSaxParser);
                         for (int j = 0; j < dates.size(); j++) {
@@ -195,7 +195,7 @@ public class GetJsonTimeLinesFromNaf {
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
         GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
-        GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
+        Util.filterOverlapEventsEntities(semEvents, semActors);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
@@ -465,7 +465,7 @@ public class GetJsonTimeLinesFromNaf {
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
         GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
-        GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
+        Util.filterOverlapEventsEntities(semEvents, semActors);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");

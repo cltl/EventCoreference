@@ -3,10 +3,7 @@ package eu.newsreader.eventcoreference.objects;
 import eu.kyotoproject.kaf.*;
 import vu.wntools.wordnet.WordnetData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by piek on 10/10/14.
@@ -116,6 +113,7 @@ public class CorefResultSet {
         for (int i = 0; i < kafSenses.size(); i++) {
             KafSense kafSense = kafSenses.get(i);
             if (!hasBestSense(kafSense)) {
+                kafSense.setSource("all_senses");
                 this.bestSenses.add(kafSense);
             }
         }
@@ -275,7 +273,6 @@ public class CorefResultSet {
     public void getBestSensesAfterCumulation (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD, String WNRESOURCE) {
         HashMap<String, ArrayList<KafSense>> resourceSenseMap = new HashMap<String, ArrayList<KafSense>>();
         HashMap<String, Double> resourceScoreMap = new HashMap<String, Double>();
-
         for (int i = 0; i < sources.size(); i++) {
             ArrayList<CorefTarget> corefTargets = sources.get(i);
             for (int j = 0; j < corefTargets.size(); j++) {
@@ -327,6 +324,7 @@ public class CorefResultSet {
                 }
             }
         }
+        HashMap<String, ArrayList<String>> senseResources = new HashMap<String, ArrayList<String>>();
         HashMap<String, ArrayList<Double>> senseScores = new HashMap<String, ArrayList<Double>>();
         Set keySet = resourceSenseMap.keySet();
         Iterator<String> keys = keySet.iterator();
@@ -336,6 +334,18 @@ public class CorefResultSet {
             ArrayList<KafSense> kafSenses = resourceSenseMap.get(key);
             for (int i = 0; i < kafSenses.size(); i++) {
                 KafSense kafSense = kafSenses.get(i);
+                if (senseResources.containsKey(kafSense.getSensecode())) {
+                    ArrayList<String> resources = senseResources.get(kafSense.getSensecode());
+                    if (!resources.contains(kafSense.getResource())) {
+                        resources.add(kafSense.getResource());
+                        senseResources.put(kafSense.getSensecode(), resources);
+                    }
+                }
+                else {
+                    ArrayList<String> resources = new ArrayList<String>();
+                    resources.add(kafSense.getResource());
+                    senseResources.put(kafSense.getSensecode(), resources);
+                }
                 double proportionBestScore = kafSense.getConfidence()/topScore;
                 if (proportionBestScore>=BESTSENSETHRESHOLD) {
                     // System.out.println("this.getSources().toString() = " + this.getSources().toString());
@@ -359,6 +369,21 @@ public class CorefResultSet {
             String key = keys.next();
             Double combinedScore = new Double(0);
             ArrayList<Double> topScores = senseScores.get(key);
+            ArrayList<String> resources = senseResources.get(key);
+            String topResource = "none";
+            int cnt = 0;
+            if (resources!=null) {
+                for (int i = 0; i < resources.size(); i++) {
+                    String s = resources.get(i);
+                    if (!s.equals(topResource)) {
+                        int occ = Collections.frequency(resources, s);
+                       // System.out.println("occ = " + occ);
+                        if (occ >= cnt) {
+                            topResource = s;
+                        }
+                    }
+                }
+            }
             for (int i = 0; i < topScores.size(); i++) {
                 Double aDouble = topScores.get(i);
                 combinedScore += aDouble;
@@ -368,6 +393,8 @@ public class CorefResultSet {
                 KafSense kafSense = new KafSense();
                 kafSense.setSensecode(key);
                 kafSense.setConfidence(combinedScore);
+                kafSense.setSource("dominant_sense");
+                kafSense.setResource(topResource);
                 this.bestSenses.add(kafSense);
             }
         }
@@ -455,6 +482,7 @@ public class CorefResultSet {
                 kafSense.setSensecode(corefMatch.getLowestCommonSubsumer());
                 kafSense.setConfidence(corefMatch.getScore());
                 kafSense.setResource(wnResource);
+                kafSense.setSource("lowest_common_subsumer");
                 boolean hasSense = false;
                 for (int j = 0; j < kafCoreferenceSet.getExternalReferences().size(); j++) {
                     KafSense sense = kafCoreferenceSet.getExternalReferences().get(j);
@@ -469,6 +497,10 @@ public class CorefResultSet {
                     kafCoreferenceSet.addExternalReferences(kafSense);
                 }
             }
+        }
+        for (int i = 0; i < bestSenses.size(); i++) {
+            KafSense kafSense = bestSenses.get(i);
+            kafCoreferenceSet.addExternalReferences(kafSense);
         }
         return kafCoreferenceSet;
     }

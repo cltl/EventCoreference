@@ -73,7 +73,7 @@ public class Naf2SemTest {
 
         if (!pathToSourceDataFile.isEmpty()) {
             sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
-            System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
+           // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
         }
         MatchEventObjects.MATCHTYPE = MATCHTYPE;
         MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;

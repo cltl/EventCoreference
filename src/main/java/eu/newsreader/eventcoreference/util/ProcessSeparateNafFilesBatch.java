@@ -17,6 +17,7 @@ import java.util.ArrayList;
  */
 public class ProcessSeparateNafFilesBatch {
 
+    static boolean ADDITIONALROLES = true;
 
     static public void main (String [] args) {
         try {
@@ -48,7 +49,7 @@ public class ProcessSeparateNafFilesBatch {
                 ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
                 ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
                 ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-                GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+                GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");
                 JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null, false);
                 fos.close();

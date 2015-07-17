@@ -19,7 +19,7 @@ public class NafMention implements Serializable {
     private String offSetEnd;
     private ArrayList<String> tokensIds;
     private ArrayList<String> termsIds;
-    private KafFactuality factuality;
+    private ArrayList<KafFactuality> factualities;
 
 
     public NafMention(String baseUri) {
@@ -31,7 +31,7 @@ public class NafMention implements Serializable {
         this.sentenceText = "";
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
-        this.factuality = new KafFactuality();
+        this.factualities = new ArrayList<KafFactuality>();
     }
 
     public NafMention() {
@@ -43,7 +43,7 @@ public class NafMention implements Serializable {
         this.sentenceText = "";
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
-        this.factuality = new KafFactuality();
+        this.factualities = new ArrayList<KafFactuality>();
     }
 
     public String getPhraseFromMention (KafSaxParser kafSaxParser) {
@@ -106,13 +106,22 @@ public class NafMention implements Serializable {
         return phrase;
     }
 
-    public KafFactuality getFactuality() {
-        return factuality;
+    public ArrayList<KafFactuality> getFactuality() {
+        return factualities;
     }
 
-    public void setFactuality(KafFactuality factuality) {
-        this.factuality = factuality;
+    public void addFactuality(KafSaxParser kafSaxParser) {
+        for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
+            KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
+                /// in naf.v2 factuality uses tokens as span, in naf.v3 factuality uses terms as spans
+            System.out.println("kafFactuality.getSpans().toString() = " + kafFactuality.getSpans().toString());
+                if (this.getTermsIds().contains(kafFactuality.getId())) {
+                    System.out.println("nafMention.toString() = " + this.getTermsIds().toString());
+                    this.factualities.add(kafFactuality);
+                }
+            }
     }
+
 
     public String getBaseUri() {
         return baseUri;

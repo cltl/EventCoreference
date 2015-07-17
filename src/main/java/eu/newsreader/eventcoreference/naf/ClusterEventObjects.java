@@ -207,7 +207,6 @@ public class ClusterEventObjects {
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
-        System.out.println("files.size() = " + files.size());
 
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
@@ -244,9 +243,11 @@ public class ClusterEventObjects {
                     file.renameTo(doneFile);
                 }
             }
-        }
-        if (perspectiveObjects.size()>0) {
-            GetPerspectiveRelations.perspectiveRelationsToTrig(eventFolder, perspectiveObjects);
+
+            if (perspectiveObjects.size()>0) {
+                String perspectiveFilePath = file.getAbsolutePath()+".perspective.trig";
+                GetPerspectiveRelations.perspectiveRelationsToTrig(perspectiveFilePath, perspectiveObjects);
+            }
         }
 
     }
@@ -294,9 +295,9 @@ public class ClusterEventObjects {
         }
         else {
             processKafSaxParser(project, kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder);
-        /*if (perspectiveObjects.size()>0) {
-            GetPerspectiveRelations.perspectiveRelationsToTrig(eventParentFolder, perspectiveObjects);
-        }*/
+            if (perspectiveObjects.size()>0) {
+                GetPerspectiveRelations.perspectiveRelationsToTrigStream(System.out, perspectiveObjects);
+            }
         }
     }
 
@@ -326,7 +327,7 @@ public class ClusterEventObjects {
     ) throws IOException {
 
         if (MICROSTORIES) {
-            GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
 
             System.out.println("all semEvents.size() = " + semEvents.size());
             System.out.println("all semActors.size() = " + semActors.size());
@@ -397,26 +398,16 @@ public class ClusterEventObjects {
                 System.out.println("Final semEvent.getURI() = " + semObject.getURI());
             }*/
         }
-        else if (ADDITIONALROLES) {
 
-            // if cross-lingual useEnglishExternalReferences
-            GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-        }
-        else {
-            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-        }
+        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
 
-        //// create the perspective output here...
-        //
-        //
-        //
-        /*GetPerspectiveRelations.getPerspective (kafSaxParser,
-                project ,   perspectives,
+        GetPerspectiveRelations.getPerspective(kafSaxParser,
+                project, perspectives,
                 semActors,
                 contextualVector,
                 communicationVector,
                 grammaticalVector);
-*/
+
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());
@@ -528,215 +519,7 @@ public class ClusterEventObjects {
         }
     }
 
-    /**
-     * @Deprecated
-     * @param nafFileName
-     * @param project
-     * @param kafSaxParser
-     * @param speechFolder
-     * @param otherFolder
-     * @param grammaticalFolder
-     * @param semEvents
-     * @param semActors
-     * @param semPlaces
-     * @param semTimes
-     * @param semRelations
-     * @param factRelations
-     * @throws IOException
-     */
-    static void processKafSaxParserOutputFolderOrg(String nafFileName, String project, KafSaxParser kafSaxParser,
-                                    File speechFolder, File otherFolder, File grammaticalFolder,
-                                    ArrayList<SemObject> semEvents ,
-                                    ArrayList<SemObject> semActors,
-                                    ArrayList<SemObject> semPlaces,
-                                    ArrayList<SemObject> semTimes,
-                                    ArrayList<SemRelation> semRelations,
-                                    ArrayList<SemRelation> factRelations
-    ) throws IOException {
 
-        if (MICROSTORIES) {
-            GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-
-            System.out.println("all semEvents.size() = " + semEvents.size());
-            System.out.println("all semActors.size() = " + semActors.size());
-            ArrayList<SemObject> microSemEvents = CreateMicrostory.getMicroEvents(SENTENCERANGE, semEvents);
-            ArrayList<SemObject> microSemActors = CreateMicrostory.getMicroActors(SENTENCERANGE, semActors);
-
-            System.out.println("microSemEvents (sentence range:"+SENTENCERANGE+ ") = " + microSemEvents.size());
-            System.out.println("microSemActors (sentence range:"+SENTENCERANGE+ ") = " + microSemActors.size());
-
-/*            for (int i = 0; i < microSemEvents.size(); i++) {
-                SemObject semObject = microSemEvents.get(i);
-                System.out.println("micro semEvent.getURI() = " + semObject.getURI());
-            }*/
-            if (BRIDGING) {
-                ArrayList<SemObject> coparticipationEvents = CreateMicrostory.getEventsThroughCoparticipation(semEvents, microSemEvents, microSemActors, semRelations);
-                ArrayList<SemObject> coparticipationActors = CreateMicrostory.getActorsThroughCoparticipation(microSemEvents, semActors, microSemActors, semRelations);
-                System.out.println("events after co-participation = " + coparticipationEvents.size());
-                System.out.println("actors after co-participation = " + coparticipationActors.size());
-                ArrayList<SemObject> fnBridgingEvents = new ArrayList<SemObject>();
-                if (frameNetReader.subToSuperFrame.size()>0) {
-                    fnBridgingEvents = CreateMicrostory.getEventsThroughFrameNetBridging(semEvents, microSemEvents, frameNetReader);
-                    System.out.println("events after fn bridging = " + fnBridgingEvents.size());
-                }
-
-                ArrayList<SemObject> eventRelationEvents = CreateMicrostory.getEventsThroughNafEventRelations(semEvents, microSemEvents, kafSaxParser);
-                System.out.println("events after bridging through NAF event relations = " + eventRelationEvents.size());
-
-                semEvents = microSemEvents;
-                semActors = microSemActors;
-
-
-                for (int i = 0; i < coparticipationEvents.size(); i++) {
-                    SemObject semEvent = coparticipationEvents.get(i);
-                    if (!Util.hasObjectUri(semEvents, semEvent.getURI())) {
-                        semEvents.add(semEvent);
-                    }
-                }
-                for (int i = 0; i < fnBridgingEvents.size(); i++) {
-                    SemObject semEvent = fnBridgingEvents.get(i);
-                    if (!Util.hasObjectUri(semEvents, semEvent.getURI())) {
-                        semEvents.add(semEvent);
-                    }
-                }
-                for (int i = 0; i < eventRelationEvents.size(); i++) {
-                    SemObject semEvent = eventRelationEvents.get(i);
-                    if (!Util.hasObjectUri(semEvents, semEvent.getURI())) {
-                        semEvents.add(semEvent);
-                    }
-                }
-
-                for (int i = 0; i < coparticipationActors.size(); i++) {
-                    SemObject semObject = coparticipationActors.get(i);
-                    if (!Util.hasObjectUri(semActors, semObject.getURI())) {
-                        semActors.add(semObject);
-                    }
-                }
-            }
-            else {
-                semEvents = microSemEvents;
-                semActors = microSemActors;
-            }
-
-
-            System.out.println("final microstory semEvents = " + semEvents.size());
-            System.out.println("final microstory semActors = " + semActors.size());
-/*            for (int i = 0; i < semEvents.size(); i++) {
-                SemObject semObject = semEvents.get(i);
-                System.out.println("Final semEvent.getURI() = " + semObject.getURI());
-            }*/
-        }
-        else if (ADDITIONALROLES) {
-            GetSemFromNafFile.processNafFileWithAdditionalRoles(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-        }
-        else {
-                GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-        }
-        // We need to create output objects that are more informative than the Trig output and store these in files per date
-        //System.out.println("semTimes = " + semTimes.size());
-        for (int j = 0; j < semEvents.size(); j++) {
-            SemEvent mySemEvent = (SemEvent) semEvents.get(j);
-            ArrayList<SemTime> myTimes = Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
-            //   System.out.println("myTimes.size() = " + myTimes.size());
-            ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
-            ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
-            ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
-            if (myRelations.size() == 0) {
-                continue;
-            }
-            ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
-            CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
-            File folder = otherFolder;
-            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, communicationVector, grammaticalVector);
-            if (!eventType.isEmpty()) {
-                if (eventType.equalsIgnoreCase("source")) {
-                    folder = speechFolder;
-                } else if (eventType.equalsIgnoreCase("grammatical")) {
-                    folder = grammaticalFolder;
-                }
-            }
-            File timeFile = null;
-
-            ArrayList<SemTime> outputTimes = myTimes;
-            // eventFos.writeObject(compositeEvent);
-            /// now we need to write the event data and relations to the proper time folder for comparison
-/*                if (outputTimes.size() == 0) {
-                    /// we use the doc times as fall back;
-                    outputTimes = compositeEvent.getMyDocTimes();
-                }*/
-            if (outputTimes.size() == 0) {
-                /// timeless
-                timeFile = new File(folder.getAbsolutePath() + "/" + "e-" + "timeless");
-            } else if (outputTimes.size() == 1) {
-                /// time: same year or exact?
-                SemTime myTime = outputTimes.get(0);
-                String timePhrase = "-" + myTime.getOwlTime().toString();
-                timeFile = new File(folder.getAbsolutePath() + "/" + "e" + timePhrase);
-            } else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
-                /// special case if multiple times, what to do? create a period?
-                //// ?????
-                TreeSet<String> treeSet = new TreeSet<String>();
-                String timePhrase = "";
-                for (int k = 0; k < outputTimes.size(); k++) {
-                    SemTime semTime = (SemTime) outputTimes.get(k);
-                    timePhrase = semTime.getOwlTime().toString();
-                    if (!treeSet.contains(timePhrase)) {
-                        treeSet.add(timePhrase);
-                    }
-                }
-                timePhrase = "";
-                Iterator keys = treeSet.iterator();
-                while (keys.hasNext()) {
-                    timePhrase += "-" + keys.next();
-                }
-                timeFile = new File(folder.getAbsolutePath() + "/" + "e" + timePhrase);
-            }
-            if (timeFile != null) {
-                if (!timeFile.exists()) {
-                    timeFile.mkdir();
-                }
-                if (timeFile.exists()) {
-                    //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
-                    File randomFile = null;
-                    if (!nafFileName.isEmpty()) {
-                        randomFile = new File(timeFile.getAbsolutePath() + "/" + nafFileName + ".obj");
-                    }
-                    else {
-                        randomFile = File.createTempFile("event", ".obj", timeFile);
-                    }
-                    if (randomFile!=null && randomFile.exists()) {
-                        //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
-                        OutputStream os = new FileOutputStream(randomFile, true);
-                        Util.AppendableObjectOutputStream eventFos = new Util.AppendableObjectOutputStream(os);
-                        try {
-                            eventFos.writeObject(compositeEvent);
-                        } catch (IOException e) {
-                            //e.printStackTrace();
-                        }
-                        os.flush();
-                        os.close();
-                        eventFos.flush();
-                        eventFos.close();
-                    } else {
-                        //  System.out.println("timeFile.getName() = " + timeFile.getName());
-                        OutputStream os = new FileOutputStream(randomFile);
-                        ObjectOutputStream eventFos = new ObjectOutputStream(os);
-                        try {
-                            eventFos.writeObject(compositeEvent);
-                        } catch (IOException e) {
-                            // e.printStackTrace();
-                        }
-                        os.flush();
-                        os.close();
-                        eventFos.flush();
-                        eventFos.close();
-                    }
-                }
-            } else {
-                //   System.out.println("timeFile = " + timeFile);
-            }
-        }
-    }
 
 
 }

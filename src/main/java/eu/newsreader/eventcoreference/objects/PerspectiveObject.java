@@ -4,6 +4,7 @@ import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import eu.kyotoproject.kaf.KafFactuality;
 import eu.kyotoproject.kaf.KafParticipant;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
@@ -163,8 +164,9 @@ public class PerspectiveObject {
             for (int i = 0; i < targetEventMentions.size(); i++) {
                 NafMention mention = targetEventMentions.get(i);
                 str += "target event mention = " + mention+"\n";
-                if (!mention.getFactuality().getPrediction().isEmpty()) {
-                    str += "fv = " + mention.getFactuality().getPrediction() + "\n";
+                for (int j = 0; j < mention.getFactuality().size(); j++) {
+                    KafFactuality kafFactuality = mention.getFactuality().get(j);
+                    str += "fv = " + kafFactuality.getPrediction() + "\n";
                 }
             }
         }
@@ -184,13 +186,10 @@ nwr:hasAttribution nwrontology:attrPOSCERTNF .
 :NGChryslerAtt nwr:hasAttribution nwrontology:attrPOSCERTNF .
 }
          */
-      //  System.out.println("source = " + source.getTokenString());
-      //  System.out.println("sourceEntity = " + sourceEntity.getURI());
-      //  System.out.println("targetEventMentions = " + targetEventMentions.size());
+
         if ((targetEventMentions.size()>0)) {
        // if ((targetEventMentions.size()>0) && !sourceEntity.getURI().isEmpty()) {
             String id = documentUri + predicateId+","+source.getId()+","+target.getId();
-         //   System.out.println("id = " + id);
 
             /// we create a named graph to store all the attribution values for all the target events associated with the perspective
             Model namedGraph = ds.getNamedModel(id);
@@ -198,17 +197,22 @@ nwr:hasAttribution nwrontology:attrPOSCERTNF .
                 NafMention mention = targetEventMentions.get(i);
                 /// the mention of the target event is the subject
                 Resource subject = namedGraph.createResource(mention.toString());
-                if (!mention.getFactuality().getPrediction().isEmpty()) {
+              //  System.out.println("mention.toStringFull() = " + mention.toStringFull());
+                for (int j = 0; j < mention.getFactuality().size(); j++) {
+                    KafFactuality kafFactuality = mention.getFactuality().get(j);
+                    System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
                     Property property = namedGraph.createProperty(ResourcesUri.gaf , "hasAttribution");
-                    Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + mention.getFactuality().getPrediction());
+                    Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + kafFactuality.getPrediction());
                     subject.addProperty(property, factPropertyValue); /// creates the literal as value
+                }
+                /*if (!mention.getFactuality().getPrediction().isEmpty()) {
 
                 }
                 else {
                     Property property = namedGraph.createProperty(ResourcesUri.gaf , "hasAttribution");
                     Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + "POSCERTNF");
                     subject.addProperty(property, factPropertyValue); /// creates the literal as value
-                }
+                }*/
             }
             //:NGZetsche prov:wasAttributedTo dbpedia:Dieter_Zetsche .
             Resource subject = ds.getDefaultModel().createResource(id);

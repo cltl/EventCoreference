@@ -25,6 +25,7 @@ public class SemObject implements Serializable {
 
     private String id;
     private String uri;
+    private ArrayList<String> nafIds;
     private double score;
     private ArrayList<KafSense> concepts;
     private ArrayList<KafTopic> topics;
@@ -36,6 +37,7 @@ public class SemObject implements Serializable {
     public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
+        this.nafIds = new ArrayList<String>();
         this.label = "";
         this.uri = "";
         this.lcs = new ArrayList<KafSense>();
@@ -43,6 +45,14 @@ public class SemObject implements Serializable {
         this.concepts = new ArrayList<KafSense>();
         this.phraseCounts = new ArrayList<PhraseCount>();
         this.topics = new ArrayList<KafTopic>();
+    }
+
+    public ArrayList<String> getNafIds() {
+        return nafIds;
+    }
+
+    public void addNafId(String nafId) {
+        if (!this.nafIds.contains(nafId)) this.nafIds.add(nafId);
     }
 
     public ArrayList<KafTopic> getTopics() {
@@ -69,17 +79,24 @@ public class SemObject implements Serializable {
         }
     }
 
+    public ArrayList<String> getTermIds () {
+        ArrayList<String> termIds = new ArrayList<String>();
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            for (int j = 0; j < nafMention.getTermsIds().size(); j++) {
+                String termId = nafMention.getTermsIds().get(j);
+                termIds.add(termId);
+            }
+        }
+        return termIds;
+    }
 
-
-    public void setFactuality(KafSaxParser kafSaxParser) {
+    public void addFactuality(KafSaxParser kafSaxParser) {
         for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
             KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
             for (int j = 0; j < nafMentions.size(); j++) {
                 NafMention nafMention = nafMentions.get(j);
-                if (nafMention.getTokensIds().contains(kafFactuality.getId())) {
-                  //   System.out.println("nafMention.toString() = " + nafMention.toString());
-                    nafMention.setFactuality(kafFactuality);
-                }
+                nafMention.addFactuality(kafSaxParser);
             }
         }
     }

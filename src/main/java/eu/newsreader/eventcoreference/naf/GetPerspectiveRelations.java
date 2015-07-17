@@ -141,7 +141,7 @@ public class GetPerspectiveRelations {
                                     if (targetParticipant.getSpanIds().containsAll(event.getSpanIds())) {
                                         /// this event is embedded inside the target
                                         NafMention nafMention = Util.getNafMentionForTermIdArrayList(baseUri, kafSaxParser, event.getSpanIds());
-                                        Util.setFactuality(kafSaxParser, nafMention);
+                                        nafMention.addFactuality(kafSaxParser);
                                         perspectiveObject.addTargetEventMention(nafMention);
                                     }
                                 }
@@ -233,9 +233,9 @@ public class GetPerspectiveRelations {
             return sourcePerspectives;
         }
 
-    public static void perspectiveRelationsToTrig (File pathToEventFolder, ArrayList<PerspectiveObject> perspectiveObjects) {
+    public static void perspectiveRelationsToTrig (String pathToTrigFile, ArrayList<PerspectiveObject> perspectiveObjects) {
         try {
-            OutputStream fos = new FileOutputStream(pathToEventFolder.getAbsolutePath()+"/perspective.trig");
+            OutputStream fos = new FileOutputStream(pathToTrigFile);
             Dataset ds = TDBFactory.createDataset();
             Model defaultModel = ds.getDefaultModel();
             ResourcesUri.prefixModel(defaultModel);
@@ -248,6 +248,17 @@ public class GetPerspectiveRelations {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+    }
+
+    public static void perspectiveRelationsToTrigStream (OutputStream fos, ArrayList<PerspectiveObject> perspectiveObjects) {
+
+                Dataset ds = TDBFactory.createDataset();
+                Model defaultModel = ds.getDefaultModel();
+                ResourcesUri.prefixModel(defaultModel);
+              //  Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/perspective");
+                ResourcesUri.prefixModelGaf(defaultModel);
+                JenaSerialization.addJenaPerspectiveObjects(ds, perspectiveObjects);
+                RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
     }
 
 

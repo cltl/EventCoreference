@@ -4,12 +4,9 @@ import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.timeline.EntityTimeLine;
-import eu.newsreader.eventcoreference.util.EventTypes;
 import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.TimeLanguage;
 import eu.newsreader.eventcoreference.util.Util;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +18,8 @@ import java.util.*;
  * Created by piek on 10/22/14.
  */
 public class GetTimeLinesFromNafFolder {
+    //NEEDS TO BE REBUILT. GETSEMFROMNAF IS OUT OF DATE
+
     /**
      * TimeLine:
      Steve Jobs
@@ -96,7 +95,7 @@ public class GetTimeLinesFromNafFolder {
                 //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
                 ///GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
                 //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
-                GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
+                Util.fixExternalReferencesSrl(kafSaxParser);
 
                 //// CONSIDERS RERANKER RESULTS AND PREFERS ENGLISH REFERENCES
                 //GetSemFromNafFile.fixExternalReferencesEntities(kafSaxParser);
@@ -104,7 +103,7 @@ public class GetTimeLinesFromNafFolder {
 
 
                 //// get single time lines for whole folder
-                processNafFileFromFolder(file.getName(), project, kafSaxParser, eventType);
+                //processNafFileFromFolder(file.getName(), project, kafSaxParser, eventType);
                 Set keySet = entityTimeLineHashMap.keySet();
                 Iterator<String> keys = keySet.iterator();
                 while (keys.hasNext()) {
@@ -192,23 +191,17 @@ public class GetTimeLinesFromNafFolder {
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        String baseUrl = "";
-        String entityUri = ResourcesUri.nwrdata+project+"/entities/";
-        if (!kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
-            baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
-            if (!baseUrl.toLowerCase().startsWith("http")) {
-                baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
-            }
-        }
-        else {
-            baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName() + ID_SEPARATOR;
-        }
-        GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
-        GetSemFromNafFile.processNafFileForRemainingSrlActors(entityUri, baseUrl, kafSaxParser, semActors);
-        SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-        GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
-        GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
-        processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
+        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
+        GetSemFromNafFile.processNafFile(project,
+                kafSaxParser,
+                semEvents,
+                semActors,
+                semPlaces,
+                semTimes,
+                semRelations,
+                factRelations,
+                true);
+
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
             JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, null, null, true);
@@ -456,256 +449,6 @@ public class GetTimeLinesFromNafFolder {
 
 
 
-    static public ArrayList<JSONObject> processNafFileToJson (File file, String project, KafSaxParser kafSaxParser) throws JSONException {
-        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
-        String timeLineText = "";
-        TimeLanguage.setLanguage(kafSaxParser.getLanguage());
-        ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
-        ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
-        ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        String baseUrl = "";
-        String entityUri = ResourcesUri.nwrdata+project+"/entities/";
-        if (!kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
-            baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
-            if (!baseUrl.toLowerCase().startsWith("http")) {
-                baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
-            }
-        }
-        else {
-            baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName() + ID_SEPARATOR;
-        }
-
-        //GetSemFromNafFile.processNafFileForActorPlaceInstances(baseUrl, kafSaxParser, semActors, semPlaces);
-        GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
-        SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-        //GetSemFromNafFile.processNafFileForEventInstances(baseUrl, kafSaxParser, semEvents);
-        GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
-        GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
-        processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
-        try {
-            OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, null, null, true);
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < semActors.size(); i++) {
-            SemObject semObject = semActors.get(i);
-            timeLineText = semObject.getId();
-/*            for (int j = 0; j < semObject.getNafMentions().size(); j++) {
-                NafMention nafMention = semObject.getNafMentions().get(j);
-                timeLineText += nafMention.getTermsIds().toString()+"["+nafMention.getPhraseFromMention(kafSaxParser)+"];";
-            }*/
-            ArrayList<String> coveredEvents = new ArrayList<String>();
-            for (int j = 0; j < semRelations.size(); j++) {
-                SemRelation semRelation = semRelations.get(j);
-                if (semRelation.getObject().equals(semObject.getId())) {
-                    /// we have an event involving the object
-                    if (RoleLabels.hasPRIMEPARTICIPANT(semRelation.getPredicates()) || RoleLabels.hasSECONDPARTICIPANT(semRelation.getPredicates())) {
-                        String eventId = semRelation.getSubject();
-
-                        SemEvent semEvent = null;
-                        for (int l = 0; l < semEvents.size(); l++) {
-                            if (semEvents.get(l).getId().equals(eventId)) {
-                                semEvent = (SemEvent) semEvents.get(l);
-                                break;
-                            }
-                        }
-                        if ((semEvent!=null) && (!coveredEvents.contains(semEvent.getId()))) {
-                            coveredEvents.add(semEvent.getId());
-                            /// This is the event involving this actor
-                            /// Now get the time
-                            //System.out.println("semEvent.getTopPhraseAsLabel() = " + semEvent.getTopPhraseAsLabel());
-                            ArrayList<String> coveredTimes = new ArrayList<String>();
-                            for (int m = 0; m < semRelations.size(); m++) {
-                                SemRelation relation = semRelations.get(m);
-                                if (relation.getSubject().equals(eventId))  {
-                                    if (relation.getPredicates().contains("hasSemTime")) {
-                                        String timeId = relation.getObject();
-                                        for (int n = 0; n < semTimes.size(); n++) {
-                                            SemTime semTime = (SemTime) semTimes.get(n);
-                                            if (semTime.getId().equals(timeId)) {
-                                                String timeString = semTime.getOwlTime().toString().replaceAll("-", ",");
-                                                if (!coveredTimes.contains(timeString)) {
-                                                    coveredTimes.add(timeString);
-                                                    ArrayList<String> coveredEventMentions = new ArrayList<String>();
-                                                    JSONObject date = JsonEvent.createJsonDate(timeString, timeString, timeLineText);
-                                                    String eventTypes = getEventTypeString(semEvent);
-                                                    for (int o = 0; o < semEvent.getNafMentions().size(); o++) {
-                                                        NafMention nafMention = semEvent.getNafMentions().get(o);
-                                                        String sentenceId = "";
-                                                        for (int p = 0; p < nafMention.getTokensIds().size(); p++) {
-                                                            String tokenId = nafMention.getTokensIds().get(p);
-                                                            KafWordForm kafWordForm = kafSaxParser.getWordForm(tokenId);
-                                                            sentenceId += kafWordForm.getSent();
-                                                        }
-                                                        String value = "\t" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
-                                                        if (!coveredEventMentions.contains(value)) {
-                                                            //  timeLine += "\t" + file.getName() + "-" + sentenceId.trim() + "-" + semEvent.getTopPhraseAsLabel()+nafMention.getTermsIds().toString();
-                                                            date.put("headline", timeLineText.substring(timeLineText.lastIndexOf("/")+1)+"--"+semEvent.getTopPhraseAsLabel());
-                                                            coveredEventMentions.add(value);
-                                                        }
-                                                        break;
-                                                    }
-                                                    date.put("classname", eventTypes);
-                                                    jsonObjectArrayList.add(date);
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                          //  System.out.println("NO EVENTS");
-                        }
-                    }
-                }
-            }
-        }
-        return jsonObjectArrayList;
-    }
-
-
-    ///// OUT OF DATE. NEEDS TO BE UPDATED FOR ENTITY BASED AND EVENT BASED PROCESSING
-    static public void processNafFileFromFolder (String fileName, String project, KafSaxParser kafSaxParser, String eventType) {
-        ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
-        ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
-        ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-
-        TimeLanguage.setLanguage(kafSaxParser.getLanguage());
-        String baseUrl = "";
-        String entityUri = ResourcesUri.nwrdata+project+"/entities/";
-
-        if (!kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
-            baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
-            if (!baseUrl.toLowerCase().startsWith("http")) {
-                baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
-            }
-        }
-        else {
-           // baseUrl = ResourcesUri.nwrdata + project + "/" + fileName + ID_SEPARATOR;
-            baseUrl = fileName;
-        }
-        GetSemFromNafFile.processNafFileForActorInstances(baseUrl, kafSaxParser, semActors);
-        GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
-        SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-        GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
-        GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
-        processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
-        for (int i = 0; i < semActors.size(); i++) {
-            SemObject semObject = semActors.get(i);
-            ArrayList<String> coveredEvents = new ArrayList<String>();
-            for (int j = 0; j < semRelations.size(); j++) {
-                SemRelation semRelation = semRelations.get(j);
-                if (semRelation.getObject().equals(semObject.getId())) {
-                    /// we have an event involving the object
-                    if (RoleLabels.hasPRIMEPARTICIPANT(semRelation.getPredicates()) || RoleLabels.hasSECONDPARTICIPANT(semRelation.getPredicates())) {
-                        String eventId = semRelation.getSubject();
-
-                        SemEvent semEvent = null;
-                        for (int l = 0; l < semEvents.size(); l++) {
-                            if (semEvents.get(l).getId().equals(eventId)) {
-                                semEvent = (SemEvent) semEvents.get(l);
-                                break;
-                            }
-                        }
-                        if (semEvent.getPhrase().length()<=3) {
-                            semEvent = null;
-                            continue;
-                        }
-                        boolean EVENTTYPE = false;
-                        for (int k = 0; k < semEvent.getConcepts().size(); k++) {
-                            KafSense kafSense = semEvent.getConcepts().get(k);
-                            if (eventType.equalsIgnoreCase("contextual")) {
-                                if (EventTypes.isCONTEXTUAL(kafSense.getSensecode())) {
-                                    EVENTTYPE = true;
-                                    break;
-                                }
-                            }
-                            if (eventType.equalsIgnoreCase("communication")) {
-                                if (EventTypes.isCOMMUNICATION(kafSense.getSensecode())) {
-                                    EVENTTYPE = true;
-                                    break;
-                                }
-                            }
-                            if (eventType.equalsIgnoreCase("grammatical")) {
-                                if (EventTypes.isGRAMMATICAL(kafSense.getSensecode())) {
-                                    EVENTTYPE = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!EVENTTYPE) {
-                            semEvent = null;
-                            continue;
-                        }
-                        if ((semEvent!=null) && (!coveredEvents.contains(semEvent.getId()))) {
-                            coveredEvents.add(semEvent.getId());
-                            /// This is the event involving this actor
-                            /// Now get the time
-                            //System.out.println("semEvent.getTopPhraseAsLabel() = " + semEvent.getTopPhraseAsLabel());
-                            ArrayList<String> coveredTimes = new ArrayList<String>();
-                            for (int m = 0; m < semRelations.size(); m++) {
-                                SemRelation relation = semRelations.get(m);
-                                if (relation.getSubject().equals(eventId))  {
-                                    if (relation.getPredicates().contains("hasSemTime")) {
-                                        String timeId = relation.getObject();
-                                        for (int n = 0; n < semTimes.size(); n++) {
-                                            SemTime semTime = (SemTime) semTimes.get(n);
-                                            if (semTime.getId().equals(timeId)) {
-                                                String timeString = semTime.getOwlTime().toString();
-                                                if (!coveredTimes.contains(timeString)) {
-                                                    coveredTimes.add(timeString);
-                                                    if (entityTimeLineHashMap.containsKey(semObject.getURI())) {
-                                                       EntityTimeLine entityTimeLine = entityTimeLineHashMap.get(semObject.getId());
-                                                       entityTimeLine.addEntityNafMentions(semObject.getNafMentions());
-                                                       entityTimeLine.addTimeEventNafMentions(timeString, semEvent.getNafMentions());
-                                                       entityTimeLineHashMap.put(semObject.getId(), entityTimeLine);
-                                                    }
-                                                    else {
-                                                        EntityTimeLine entityTimeLine = new EntityTimeLine();
-                                                        entityTimeLine.setEntityId(semObject.getURI());
-                                                        entityTimeLine.addEntityNafMentions(semObject.getNafMentions());
-                                                        entityTimeLine.addTimeEventNafMentions(timeString, semEvent.getNafMentions());
-                                                        entityTimeLineHashMap.put(semObject.getURI(), entityTimeLine);
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if (coveredTimes.size()==0) {
-                                if (entityTimeLineHashMap.containsKey(semObject.getURI())) {
-                                    EntityTimeLine entityTimeLine = entityTimeLineHashMap.get(semObject.getId());
-                                    entityTimeLine.addEntityNafMentions(semObject.getNafMentions());
-                                    entityTimeLine.addTimeEventNafMentions(docSemTime.getOwlTime().toString(), semEvent.getNafMentions());
-                                    entityTimeLineHashMap.put(semObject.getURI(), entityTimeLine);
-                                }
-                                else {
-                                    EntityTimeLine entityTimeLine = new EntityTimeLine();
-                                    entityTimeLine.setEntityId(semObject.getId());
-                                    entityTimeLine.addEntityNafMentions(semObject.getNafMentions());
-                                    entityTimeLine.addTimeEventNafMentions(docSemTime.getOwlTime().toString(), semEvent.getNafMentions());
-                                    entityTimeLineHashMap.put(semObject.getURI(), entityTimeLine);
-                                }
-                            }
-                        }
-                        else {
-                          //  System.out.println("NO EVENTS");
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Main function to get the SEM relations.

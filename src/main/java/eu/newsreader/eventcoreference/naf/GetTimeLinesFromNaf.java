@@ -19,6 +19,9 @@ import java.util.Vector;
  * Created by piek on 10/22/14.
  */
 public class GetTimeLinesFromNaf {
+
+    //NEEDS TO BE REBUILT. GETSEMFROMNAF IS OUT OF DATE
+
     /**
      * TimeLine:
      Steve Jobs
@@ -128,9 +131,9 @@ public class GetTimeLinesFromNaf {
             KafSaxParser kafSaxParser = new KafSaxParser();
             kafSaxParser.parseFile(pathToNafFile);
             //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
-            GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
+            Util.fixEventCoreferenceSets(kafSaxParser);
             //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
-            GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
+            Util.fixExternalReferencesSrl(kafSaxParser);
             reduceSentenceIdentifiers(kafSaxParser);
             String timeLines = processNafFile(new File(pathToNafFile), project, kafSaxParser, processType);
             try {
@@ -162,7 +165,7 @@ public class GetTimeLinesFromNaf {
                         //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
                         ///  GetSemFromNafFile.fixEventCoreferenceSets(kafSaxParser);
                         //// THIS IS NEEDED TO FILTER ESO MAPPING AND IGNORE OTHERS
-                        GetSemFromNafFile.fixExternalReferencesSrl(kafSaxParser);
+                        Util.fixExternalReferencesSrl(kafSaxParser);
                         //GetSemFromNafFile.fixExternalReferencesEntities(kafSaxParser);
                         reduceSentenceIdentifiers(kafSaxParser);
 
@@ -253,7 +256,7 @@ public class GetTimeLinesFromNaf {
         else {
             GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         }
-        GetSemFromNafFile.processNafFileForRemainingSrlActors(entityUri, baseUrl, kafSaxParser, semActors);
+        //GetSemFromNafFile.processNafFileForRemainingSrlActors(entityUri, baseUrl, kafSaxParser, semActors);
         SemTime docSemTime = GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         if (NOEVENTCOREF) {
             GetSemFromNafFile.processNafFileForEventWithoutCoreferenceSets(baseUrl, kafSaxParser, semEvents);
