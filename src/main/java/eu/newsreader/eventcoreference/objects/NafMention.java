@@ -6,6 +6,7 @@ import eu.kyotoproject.kaf.KafWordForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by piek on 1/22/14.
@@ -114,12 +115,12 @@ public class NafMention implements Serializable {
         for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
             KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
                 /// in naf.v2 factuality uses tokens as span, in naf.v3 factuality uses terms as spans
-            System.out.println("kafFactuality.getSpans().toString() = " + kafFactuality.getSpans().toString());
-                if (this.getTermsIds().contains(kafFactuality.getId())) {
-                    System.out.println("nafMention.toString() = " + this.getTermsIds().toString());
+            if (!Collections.disjoint(termsIds, kafFactuality.getSpans())) {
                     this.factualities.add(kafFactuality);
-                }
+             //   System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
+             //   System.out.println("this.factualities.size() = " + this.factualities.size());
             }
+        }
     }
 
 

@@ -149,18 +149,231 @@ public class ClusterEventObjects {
 */
 
         try {
-            if (pathToNafFolder.isEmpty())  {
-                processStreamEvents(projectName, System.in, new File(pathToEventFolder));
-            }
-            else{
-                processFolderEvents(projectName, new File(pathToNafFolder), new File(pathToEventFolder), extension);
-            }
+            processFolderEvents(projectName, new File(pathToNafFolder), new File(pathToEventFolder), extension);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
     }
 
     public static void processFolderEvents (String project, File pathToNafFolder, File eventParentFolder, String extension
+
+    ) throws IOException {
+        File eventFolder = new File(eventParentFolder + "/events");
+        if (!eventFolder.exists()) {
+            eventFolder.mkdir();
+        }
+        if (!eventFolder.exists()) {
+            System.out.println("Cannot create the eventFolder = " + eventFolder);
+            return;
+        }
+        File speechFolder = new File(eventFolder + "/" + "source");
+        if (!speechFolder.exists()) {
+            speechFolder.mkdir();
+        }
+        if (!speechFolder.exists()) {
+            System.out.println("Cannot create the speechFolder = " + speechFolder);
+            return;
+        }
+        File otherFolder = new File(eventFolder + "/" + "contextual");
+        if (!otherFolder.exists()) {
+            otherFolder.mkdir();
+        }
+        if (!otherFolder.exists()) {
+            System.out.println("Cannot create the otherFolder = " + otherFolder);
+            return;
+        }
+        File grammaticalFolder = new File(eventFolder + "/" + "grammatical");
+        if (!grammaticalFolder.exists()) {
+            grammaticalFolder.mkdir();
+        }
+        if (!grammaticalFolder.exists()) {
+            System.out.println("Cannot create the grammaticalFolder = " + grammaticalFolder);
+            return;
+        }
+
+        KafSaxParser kafSaxParser = new KafSaxParser();
+
+
+
+        ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
+
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+           // System.out.println("file.getName() = " + file.getName());
+/*            if (!file.getName().startsWith("7YXG-CS51-2RYC-J2CN.xml")) {
+                     continue;
+            }*/
+
+            if (i % 500 == 0) {
+               // System.out.println("i = " + i);
+                //  System.out.println("file.getName() = " + file.getAbsolutePath());
+            }
+
+
+          //  System.out.println("file.getName() = " + file.getName());
+            kafSaxParser.parseFile(file.getAbsolutePath());
+            if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
+                System.out.println("file.getName() = " + file.getName());
+                System.out.println("SKIPPING NAF due to empty url in header kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
+            }
+            else {
+              //  System.out.println("kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
+                processKafSaxParserOutputFolder(file.getAbsolutePath(), project,
+                        kafSaxParser, speechFolder, otherFolder, grammaticalFolder);
+                if (!done.isEmpty()) {
+                    File doneFile = new File(file.getAbsolutePath() + done);
+                    file.renameTo(doneFile);
+                }
+            }
+
+
+        }
+
+    }
+
+    static void processKafSaxParserOutputFolder(String nafFilePath,
+                                                String project,
+                                                KafSaxParser kafSaxParser,
+                                                File speechFolder, File otherFolder, File grammaticalFolder
+    ) throws IOException {
+        String nafFileName = new File (nafFilePath).getName();
+        ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
+        ArrayList<SemObject> semActors = new ArrayList<SemObject>();
+        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
+        ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
+        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
+        ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
+
+        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
+
+
+        // We need to create output objects that are more informative than the Trig output and store these in files per date
+        //System.out.println("semTimes = " + semTimes.size());
+        for (int j = 0; j < semEvents.size(); j++) {
+            SemEvent mySemEvent = (SemEvent) semEvents.get(j);
+            ArrayList<SemTime> myTimes = Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
+            //   System.out.println("myTimes.size() = " + myTimes.size());
+            ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
+            ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
+            ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
+            if (myRelations.size() == 0) {
+                continue;
+            }
+            ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
+            CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
+            File folder = otherFolder;
+            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, communicationVector, grammaticalVector);
+            if (!eventType.isEmpty()) {
+                if (eventType.equalsIgnoreCase("source")) {
+                    folder = speechFolder;
+                } else if (eventType.equalsIgnoreCase("grammatical")) {
+                    folder = grammaticalFolder;
+                }
+            }
+            File timeFile = null;
+
+            ArrayList<SemTime> outputTimes = myTimes;
+            // eventFos.writeObject(compositeEvent);
+            /// now we need to write the event data and relations to the proper time folder for comparison
+/*                if (outputTimes.size() == 0) {
+                    /// we use the doc times as fall back;
+                    outputTimes = compositeEvent.getMyDocTimes();
+                }*/
+            TreeSet<String> treeSet = new TreeSet<String>();
+
+            if (outputTimes.size() == 0) {
+                /// timeless
+                String timePhrase = "timeless";
+                treeSet.add(timePhrase);
+            } else if (outputTimes.size() == 1) {
+                /// time: same year or exact?
+                SemTime myTime = outputTimes.get(0);
+                String timePhrase = myTime.getOwlTime().toString();
+                treeSet.add(timePhrase);
+            } else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
+                /// special case if multiple times, what to do? create a period?
+                //// ?????
+
+                //// we now duplicate the event to multiple time folders
+                String timePhrase = "";
+                for (int k = 0; k < outputTimes.size(); k++) {
+                    SemTime semTime = (SemTime) outputTimes.get(k);
+                    timePhrase = semTime.getOwlTime().toString();
+                    if (!treeSet.contains(timePhrase)) {
+                        treeSet.add(timePhrase);
+                    }
+                }
+            }
+            if (treeSet.size()>0) {
+                Iterator keys = treeSet.iterator();
+                while (keys.hasNext()) {
+                    String timePhrase = "-" + keys.next();
+                    timeFile = new File(folder.getAbsolutePath() + "/" + "e" + timePhrase);
+                    if (!timeFile.exists()) {
+                        timeFile.mkdir();
+                    }
+                    if (timeFile.exists()) {
+                        //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
+                        File randomFile = null;
+                        if (!nafFileName.isEmpty()) {
+                            randomFile = new File(timeFile.getAbsolutePath() + "/" + nafFileName + ".obj");
+                        }
+                        else {
+                            randomFile = File.createTempFile("event", ".obj", timeFile);
+                        }
+                        if (randomFile!=null && randomFile.exists()) {
+                            //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
+                            OutputStream os = new FileOutputStream(randomFile, true);
+                            Util.AppendableObjectOutputStream eventFos = new Util.AppendableObjectOutputStream(os);
+                            try {
+                                eventFos.writeObject(compositeEvent);
+                            } catch (IOException e) {
+                                //e.printStackTrace();
+                            }
+                            os.flush();
+                            os.close();
+                            eventFos.flush();
+                            eventFos.close();
+                        } else {
+                            //  System.out.println("timeFile.getName() = " + timeFile.getName());
+                            OutputStream os = new FileOutputStream(randomFile);
+                            ObjectOutputStream eventFos = new ObjectOutputStream(os);
+                            try {
+                                eventFos.writeObject(compositeEvent);
+                            } catch (IOException e) {
+                                // e.printStackTrace();
+                            }
+                            os.flush();
+                            os.close();
+                            eventFos.flush();
+                            eventFos.close();
+                        }
+                    }
+                }
+
+            } else {
+                //   System.out.println("timeFile = " + timeFile);
+            }
+        }
+
+        perspectiveObjects = GetPerspectiveRelations.getPerspective(kafSaxParser,
+                project,
+                semActors,
+                contextualVector,
+                communicationVector,
+                grammaticalVector);
+
+        if (perspectiveObjects.size()>0) {
+            String perspectiveFilePath = nafFilePath+".perspective.trig";
+            GetPerspectiveRelations.perspectiveRelationsToTrig(perspectiveFilePath, perspectiveObjects);
+        }
+    }
+
+
+    public static void processFolderEventsORG (String project, File pathToNafFolder, File eventParentFolder, String extension
 
     ) throws IOException {
         File eventFolder = new File(eventParentFolder + "/events");
@@ -226,6 +439,7 @@ public class ClusterEventObjects {
             semPlaces = new ArrayList<SemObject>();
             semRelations = new ArrayList<SemRelation>();
             factRelations = new ArrayList<SemRelation>();
+            perspectiveObjects = new ArrayList<PerspectiveObject>();
 
           //  System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file.getAbsolutePath());
@@ -252,68 +466,7 @@ public class ClusterEventObjects {
 
     }
 
-    public static void processStreamEvents (String project, InputStream nafStream, File eventParentFolder
 
-    ) throws IOException {
-        File eventFolder = new File(eventParentFolder + "/events");
-        if (!eventFolder.exists()) {
-            eventFolder.mkdir();
-        }
-        if (!eventFolder.exists()) {
-            System.out.println("Cannot create the eventFolder = " + eventFolder);
-            return;
-        }
-        File speechFolder = new File(eventFolder + "/" + "source");
-        if (!speechFolder.exists()) {
-            speechFolder.mkdir();
-        }
-        if (!speechFolder.exists()) {
-            System.out.println("Cannot create the speechFolder = " + speechFolder);
-            return;
-        }
-        File otherFolder = new File(eventFolder + "/" + "contextual");
-        if (!otherFolder.exists()) {
-            otherFolder.mkdir();
-        }
-        if (!otherFolder.exists()) {
-            System.out.println("Cannot create the otherFolder = " + otherFolder);
-            return;
-        }
-        File grammaticalFolder = new File(eventFolder + "/" + "grammatical");
-        if (!grammaticalFolder.exists()) {
-            grammaticalFolder.mkdir();
-        }
-        if (!grammaticalFolder.exists()) {
-            System.out.println("Cannot create the grammaticalFolder = " + grammaticalFolder);
-            return;
-        }
-        ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
-        KafSaxParser kafSaxParser = new KafSaxParser();
-        kafSaxParser.parseFile(nafStream);
-        if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
-            System.out.println("SKIPPING NAF due to empty url in header kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
-        }
-        else {
-            processKafSaxParser(project, kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder);
-            if (perspectiveObjects.size()>0) {
-                GetPerspectiveRelations.perspectiveRelationsToTrigStream(System.out, perspectiveObjects);
-            }
-        }
-    }
-
-    static void processKafSaxParser(String project, KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectiveObjects,
-                        File speechFolder,
-                        File otherFolder,
-                        File grammaticalFolder) throws IOException {
-        ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
-        ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
-        ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-        processKafSaxParserOutputFolder("", project, kafSaxParser, perspectiveObjects,speechFolder, otherFolder, grammaticalFolder,
-                semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
-    }
 
 
     static void processKafSaxParserOutputFolder(String nafFileName, String project, KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectives,
@@ -401,12 +554,19 @@ public class ClusterEventObjects {
 
         GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
 
-        GetPerspectiveRelations.getPerspective(kafSaxParser,
-                project, perspectives,
+        perspectives = GetPerspectiveRelations.getPerspective(kafSaxParser,
+                project,
                 semActors,
                 contextualVector,
                 communicationVector,
                 grammaticalVector);
+
+/*        GetPerspectiveRelations.getPerspective(kafSaxParser,
+                project, perspectives,
+                semActors,
+                contextualVector,
+                communicationVector,
+                grammaticalVector);*/
 
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
@@ -518,6 +678,8 @@ public class ClusterEventObjects {
             }
         }
     }
+
+
 
 
 

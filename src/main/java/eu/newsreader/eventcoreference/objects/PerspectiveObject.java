@@ -170,6 +170,10 @@ public class PerspectiveObject {
                 }
             }
         }
+        for (int i = 0; i < nafMention.getFactuality().size(); i++) {
+            KafFactuality kafFactuality = nafMention.getFactuality().get(i);
+            str += "perspective = "+ kafFactuality.getPrediction()+"\n";
+        }
         return str;
     }
 
@@ -198,21 +202,23 @@ nwr:hasAttribution nwrontology:attrPOSCERTNF .
                 /// the mention of the target event is the subject
                 Resource subject = namedGraph.createResource(mention.toString());
               //  System.out.println("mention.toStringFull() = " + mention.toStringFull());
-                for (int j = 0; j < mention.getFactuality().size(); j++) {
-                    KafFactuality kafFactuality = mention.getFactuality().get(j);
-                    System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
+                if (mention.getFactuality().size()==0) {
+                    //// default perspective
+/*
                     Property property = namedGraph.createProperty(ResourcesUri.gaf , "hasAttribution");
-                    Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + kafFactuality.getPrediction());
+                    Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + "DEFAULTPOSCERTNF");
                     subject.addProperty(property, factPropertyValue); /// creates the literal as value
-                }
-                /*if (!mention.getFactuality().getPrediction().isEmpty()) {
-
+*/
                 }
                 else {
-                    Property property = namedGraph.createProperty(ResourcesUri.gaf , "hasAttribution");
-                    Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + "POSCERTNF");
-                    subject.addProperty(property, factPropertyValue); /// creates the literal as value
-                }*/
+                    System.out.println("mention.getFactuality().size() = " + mention.getFactuality().size());
+                    for (int j = 0; j < mention.getFactuality().size(); j++) {
+                        KafFactuality kafFactuality = mention.getFactuality().get(j);
+                        Property property = namedGraph.createProperty(ResourcesUri.gaf, "hasAttribution");
+                        Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + kafFactuality.getPrediction());
+                        subject.addProperty(property, factPropertyValue); /// creates the literal as value
+                    }
+                }
             }
             //:NGZetsche prov:wasAttributedTo dbpedia:Dieter_Zetsche .
             Resource subject = ds.getDefaultModel().createResource(id);
