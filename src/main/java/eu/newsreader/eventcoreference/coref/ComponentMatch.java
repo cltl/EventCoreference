@@ -227,13 +227,13 @@ public class ComponentMatch {
         return false;
     }
 
-    /**
+    /** @DEPRECATED
      * Contextual events need at least 1 participant to match and 1 location
      * @param compositeEvent1
      * @param compositeEvent2
      * @return
      */
-    public static boolean compareCompositeEventContextual(CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
+    /*public static boolean compareCompositeEventContextual(CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
         if (compositeEvent1.getMySemActors().size()==0 && compositeEvent2.getMySemActors().size()==0) {
             //// there are no participants
             if (compositeEvent1.getMySemPlaces().size()> 0 && compositeEvent2.getMySemPlaces().size()>0) {
@@ -258,6 +258,27 @@ public class ComponentMatch {
                 else {
                     return true;
                 }
+            }
+        }
+        /// if we get up to here we can assume a match
+        return true;
+    }*/
+
+    /**
+     * Contextual events need at least 1 participant to match and 1 location
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @return
+     */
+    public static boolean compareCompositeEventContextual(CompositeEvent compositeEvent1,
+                                                          CompositeEvent compositeEvent2) {
+        if (compositeEvent1.getMySemActors().size()==0 && compositeEvent2.getMySemActors().size()==0) {
+            return false;
+        }
+        else {
+            /// match at least one actor
+            if (! compareActor (compositeEvent1.getMySemActors(), compositeEvent2.getMySemActors())) {
+                return  false;
             }
         }
         /// if we get up to here we can assume a match

@@ -24,10 +24,8 @@ public class JenaSerialization {
     static public void serializeJena (OutputStream stream,
                                       ArrayList<SemObject> semEvents,
                                       ArrayList<SemObject> semActors,
-                                      ArrayList<SemObject> semPlaces,
                                       ArrayList<SemObject> semTimes,
                                       ArrayList<SemRelation> semRelations,
-                                      ArrayList<SemRelation> factRelations,
                                       HashMap<String, SourceMeta> sourceMetaHashMap,
                                       boolean VERBOSE_MENTIONS) {
 
@@ -59,12 +57,6 @@ public class JenaSerialization {
             semActor.addToJenaModel(instanceModel, Sem.Actor, VERBOSE_MENTIONS);
         }
 
-        //  System.out.println("PLACES");
-        for (int i = 0; i < semPlaces.size(); i++) {
-            SemObject semPlace = semPlaces.get(i);
-           // semPlace.addToJenaModel(instanceModel, Sem.Place);
-            semPlace.addToJenaModel(instanceModel, Sem.Place, VERBOSE_MENTIONS);
-        }
         // System.out.println("TIMES");
         for (int i = 0; i < semTimes.size(); i++) {
             SemTime semTime = (SemTime) semTimes.get(i);
@@ -87,18 +79,6 @@ public class JenaSerialization {
             //semRelation.addToJenaDataSet(ds, relationModel, provenanceModel);
         }
 
-        if (factRelations!=null && factRelations.size()>0) {
-            // System.out.println("FACTUALITIES");
-            for (int i = 0; i < factRelations.size(); i++) {
-                SemRelation semRelation = factRelations.get(i);
-                if (sourceMetaHashMap != null) {
-                    semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
-
-                } else {
-                    semRelation.addToJenaDataSet(ds, provenanceModel);
-                }
-            }
-        }
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
        // RDFDataMgr.write(stream, ds, RDFFormat.RDFJSON);
@@ -187,19 +167,26 @@ public class JenaSerialization {
                 }
 
                 //  System.out.println("PLACES");
-                for (int i = 0; i < compositeEvent.getMySemPlaces().size(); i++) {
+                /*for (int i = 0; i < compositeEvent.getMySemPlaces().size(); i++) {
                     SemPlace semPlace = (SemPlace) compositeEvent.getMySemPlaces().get(i);
                     //semPlace.addToJenaModel(instanceModel, Sem.Place);
                     semPlace.addToJenaModel(instanceModel, Sem.Place, VERBOSE_MENTIONS);
-                }
+                }*/
 
                 // System.out.println("TIMES");
                 // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
                 for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
                     SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
-                    //semTime.addToJenaModel(instanceModel, Sem.Time);
                     //semTime.addToJenaModelTimeInterval(instanceModel);
-                    semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+                    if (semTime.getType().equalsIgnoreCase("QUARTER")) {
+                        semTime.addToJenaModelTimeQuarterIntervalCondensed(instanceModel);
+                    }
+                    else if (semTime.getType().equalsIgnoreCase("DURATION")) {
+                        semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+                    }
+                    else  { /// DATE
+                        semTime.addToJenaModelDocTimeInstant(instanceModel);
+                    }
                 }
 
                 for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
@@ -211,7 +198,7 @@ public class JenaSerialization {
                         semRelation.addToJenaDataSet(ds, provenanceModel);
                     }
                 }
-                for (int j = 0; j < compositeEvent.getMySemFactRelations().size(); j++) {
+               /* for (int j = 0; j < compositeEvent.getMySemFactRelations().size(); j++) {
                     SemRelation semRelation = compositeEvent.getMySemFactRelations().get(j);
                     if (sourceMetaHashMap!=null) {
                         semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
@@ -220,7 +207,7 @@ public class JenaSerialization {
                     else {
                         semRelation.addToJenaDataSet(ds, provenanceModel);
                     }
-                }
+                }*/
             }
         }
 

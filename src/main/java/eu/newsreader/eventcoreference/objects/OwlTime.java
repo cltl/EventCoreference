@@ -244,7 +244,7 @@ public class OwlTime implements Serializable {
 
     }
 
-    public int parseTimeExValue (String timeExValue, OwlTime docOwlTime) {
+    public int parseTimeExValue (String timeExValue) {
         int foundTime = -1;
         if (timeExValue.equalsIgnoreCase("xx-xx-xx")) {
             return foundTime;
@@ -302,6 +302,10 @@ public class OwlTime implements Serializable {
             this.instance = timeExValue;
             if (fields[0].length() == 4) {
                 try {
+                    if (fields[1].toLowerCase().startsWith("q")) {
+                    ///quarters Q1, Q2, Q3, Q4 e.g. <timex3 id="tmx2" type="DATE" value="1988-Q4">
+                        this.month =  fields[1];
+                    }
                     if (!fields[1].equalsIgnoreCase("xx")) this.month = (new Integer(fields[1])).toString();
                 } catch (NumberFormatException e) {
                     // e.printStackTrace();
@@ -311,6 +315,16 @@ public class OwlTime implements Serializable {
                 } catch (NumberFormatException e) {
                     //  e.printStackTrace();
                 }
+            }
+            foundTime = 1;
+        }
+        else if (fields.length==1) {
+            /// only the year is given
+            this.instance = timeExValue;
+            try {
+                this.year = (new Integer(fields[0])).toString();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
             foundTime = 1;
         }
@@ -438,6 +452,8 @@ public class OwlTime implements Serializable {
             resource.addProperty(unit, day);
         }
     }
+
+
 
     public void addToJenaModelOwlTimeDuration (Model model) {
                  /*

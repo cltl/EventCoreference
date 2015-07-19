@@ -87,9 +87,13 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
      */
 
    private OwlTime owlTime;
+   private OwlTime owlTimeBegin;
+   private OwlTime owlTimeEnd;
 
    public SemTime() {
        owlTime = new OwlTime();
+       owlTimeBegin = new OwlTime();
+       owlTimeEnd = new OwlTime();
     }
 
 
@@ -145,6 +149,22 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         this.owlTime = owlTime;
     }
 
+    public OwlTime getOwlTimeBegin() {
+        return owlTimeBegin;
+    }
+
+    public void setOwlTimeBegin(OwlTime owlTimeBegin) {
+        this.owlTimeBegin = owlTimeBegin;
+    }
+
+    public OwlTime getOwlTimeEnd() {
+        return owlTimeEnd;
+    }
+
+    public void setOwlTimeEnd(OwlTime owlTimeEnd) {
+        this.owlTimeEnd = owlTimeEnd;
+    }
+
     public void addToJenaModelTimeInstant(Model model, OwlTime owlTime) {
         this.getOwlTime().addToJenaModelOwlTimeInstant(model);
 
@@ -172,7 +192,35 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
     }
 
     public void addToJenaModelDocTimeInstant(Model model) {
-        if (this.getNafMentions().size() > 0) {
+
+        this.getOwlTime().addToJenaModelOwlTimeInstant(model);
+
+        Resource resource = model.createResource(this.getURI());
+        resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+
+        /*for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+        }*/
+
+        //resource.addProperty(RDF.type, Sem.Time);
+        // System.out.println("this.getOwlTime().toString() = " + this.getOwlTime().toString());
+        Resource interval = model.createResource(ResourcesUri.owltime + "Instant");
+        resource.addProperty(RDF.type, interval);
+
+        Resource value = model.createResource(this.getOwlTime().getDateString());
+        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+        resource.addProperty(property, value);
+
+        for (int i = 0; i < this.getNafMentions().size(); i++) {
+            NafMention nafMention = this.getNafMentions().get(i);
+            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
+            Resource targetResource = model.createResource(nafMention.toString());
+            resource.addProperty(gaf, targetResource);
+
+        }
+
+       /* if (this.getNafMentions().size() > 0) {
             OwlTime owlTime = new OwlTime();
             owlTime.parsePublicationDate(this.getPhraseCounts().get(0).getPhrase());
             owlTime.addToJenaModelOwlTimeInstant(model);
@@ -192,7 +240,7 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
             resource.addProperty(property, value);
 
 
-        }
+        }*/
     }
 
     public void addToJenaModelTimeInterval(Model model) {
@@ -235,12 +283,46 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         }*/
 
         //resource.addProperty(RDF.type, Sem.Time);
-
+       // System.out.println("this.getOwlTime().toString() = " + this.getOwlTime().toString());
         Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
         resource.addProperty(RDF.type, interval);
 
         Resource value = model.createResource(this.getOwlTime().getDateString());
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+        resource.addProperty(property, value);
+
+        for (int i = 0; i < this.getNafMentions().size(); i++) {
+            NafMention nafMention = this.getNafMentions().get(i);
+            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
+            Resource targetResource = model.createResource(nafMention.toString());
+            resource.addProperty(gaf, targetResource);
+
+        }
+
+    }
+
+    public void addToJenaModelTimeQuarterIntervalCondensed(Model model) {
+        this.interpretQuarter();
+        this.getOwlTimeBegin().addToJenaModelOwlTimeInstant(model);
+        this.getOwlTimeEnd().addToJenaModelOwlTimeInstant(model);
+
+        Resource resource = model.createResource(this.getURI());
+        resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+
+        /*for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+        }*/
+
+        Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
+        resource.addProperty(RDF.type, interval);
+
+        Resource value = model.createResource(this.getOwlTimeBegin().getDateString());
+        Property property = model.createProperty(ResourcesUri.owl + "hasBeginning");
+        resource.addProperty(property, value);
+
+        value = model.createResource(this.getOwlTimeEnd().getDateString());
+        property = model.createProperty(ResourcesUri.owl + "hasEnd");
         resource.addProperty(property, value);
 
         for (int i = 0; i < this.getNafMentions().size(); i++) {
@@ -314,4 +396,73 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
                 owl:onProperty :years
               ] .
      */
+
+
+
+    public SemRelation createSemTimeRelation (String baseUrl,
+                                              int timexRelationCount,
+                                              String predicate,
+                                              String semEventId,
+                                              NafMention mention) {
+        SemRelation semRelation = new SemRelation();
+        String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
+        semRelation.setId(relationInstanceId);
+        semRelation.addMention(mention);
+        semRelation.addPredicate(predicate);
+        semRelation.setSubject(semEventId);
+        semRelation.setObject(this.getId());
+        return semRelation;
+    }
+
+    public SemRelation createSemTimeRelation (String baseUrl,
+                                              int timexRelationCount,
+                                              String predicate,
+                                              String semEventId) {
+        SemRelation semRelation = new SemRelation();
+        String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
+        semRelation.setId(relationInstanceId);
+        semRelation.addPredicate(predicate);
+        semRelation.setSubject(semEventId);
+        semRelation.setObject(this.getId());
+        return semRelation;
+    }
+
+    public void interpretQuarter () {
+                 /*
+             nwr:20010101
+        owltime:day "1"^^xsd:int ;
+        owltime:month "1"^^xsd:int ;
+        owltime:year "2001"^^xsd:int .
+          */
+
+        this.owlTimeBegin.setYear(owlTime.getYear());
+        this.owlTimeBegin.setDay("1");
+        this.owlTimeEnd.setYear(owlTime.getYear());
+        if (!this.owlTime.getMonth().isEmpty()) {
+            if (this.owlTime.getMonth().equalsIgnoreCase("q1")) {
+                this.owlTimeBegin.setMonth("1");
+                this.owlTimeEnd.setMonth("3");
+                this.owlTimeEnd.setDay("30");
+            }
+            else if (this.owlTime.getMonth().equalsIgnoreCase("q2")) {
+                this.owlTimeBegin.setMonth("4");
+                this.owlTimeEnd.setMonth("6");
+                this.owlTimeEnd.setDay("30");
+            }
+            else if (this.owlTime.getMonth().equalsIgnoreCase("q3")) {
+
+                this.owlTimeBegin.setMonth("7");
+                this.owlTimeEnd.setMonth("9");
+                this.owlTimeEnd.setDay("30");
+            }
+            else if (this.owlTime.getMonth().equalsIgnoreCase("q4")) {
+
+                this.owlTimeBegin.setMonth("10");
+                this.owlTimeEnd.setMonth("12");
+                this.owlTimeEnd.setDay("31");
+            }
+        }
+    }
+
+
 }

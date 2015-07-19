@@ -24,6 +24,16 @@ public class Util {
     static public final int SPANMAXCOREFERENTSET = 5;
 
 
+    static public SemObject getSemTime(ArrayList<SemObject> semTimeArrayList, String timexId) {
+        for (int i = 0; i < semTimeArrayList.size(); i++) {
+            SemObject time = semTimeArrayList.get(i);
+            if (time.getId().equals(timexId)) {
+                return time;
+            }
+        }
+        return null;
+    }
+
     static public ArrayList<String> getTermsIdsForTimex (KafSaxParser kafSaxParser, String timexId) {
         ArrayList<String> termIds = new ArrayList<String>();
         for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
@@ -39,8 +49,15 @@ public class Util {
             NafMention nafMention = semEvent.getNafMentions().get(j);
             for (int i = 0; i < nafMention.getFactuality().size(); i++) {
                 KafFactuality kafFactuality = nafMention.getFactuality().get(i);
-                if (kafFactuality.getPrediction().equalsIgnoreCase("FUT")) {
-                    return true;
+
+                // <factValue confidence="0.91" resource="nwr:AttributionTime" value="FUTURE"/>
+                for (int k = 0; k < kafFactuality.getFactValueArrayList().size(); k++) {
+                    KafFactValue kafFactValue = kafFactuality.getFactValueArrayList().get(k);
+                    if (kafFactValue.getResource().toLowerCase().endsWith("attributiontime") &&
+                            kafFactValue.getValue().toLowerCase().equals("future")) {
+                        return true;
+
+                    }
                 }
             }
         }

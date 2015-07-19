@@ -204,18 +204,15 @@ nwr:hasAttribution nwrontology:attrPOSCERTNF .
               //  System.out.println("mention.toStringFull() = " + mention.toStringFull());
                 if (mention.getFactuality().size()==0) {
                     //// default perspective
-/*
                     Property property = namedGraph.createProperty(ResourcesUri.gaf , "hasAttribution");
-                    Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + "DEFAULTPOSCERTNF");
+                    Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + "attrDEFAULTPOSCERTNF");
                     subject.addProperty(property, factPropertyValue); /// creates the literal as value
-*/
                 }
                 else {
-                    System.out.println("mention.getFactuality().size() = " + mention.getFactuality().size());
                     for (int j = 0; j < mention.getFactuality().size(); j++) {
                         KafFactuality kafFactuality = mention.getFactuality().get(j);
                         Property property = namedGraph.createProperty(ResourcesUri.gaf, "hasAttribution");
-                        Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + kafFactuality.getPrediction());
+                        Property factPropertyValue = namedGraph.createProperty(ResourcesUri.nwrvalue + "attr"+kafFactuality.getPrediction());
                         subject.addProperty(property, factPropertyValue); /// creates the literal as value
                     }
                 }

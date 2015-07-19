@@ -157,7 +157,7 @@ public class MatchEventObjects {
                         finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                         finalCompositeEvent.mergeObjects(myCompositeEvent);
                         finalCompositeEvent.mergeRelations(myCompositeEvent);
-                        finalCompositeEvent.mergeFactRelations(myCompositeEvent);
+                       // finalCompositeEvent.mergeFactRelations(myCompositeEvent);
                         break;
                     }
                 }

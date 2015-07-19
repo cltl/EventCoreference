@@ -36,18 +36,14 @@ public class GetSemFromNafFile {
      * @param kafSaxParser
      * @param semEvents
      * @param semActors
-     * @param semPlaces
      * @param semTimes
      * @param semRelations
-     * @param factRelations
      */
     static public void processNafFile(String project, KafSaxParser kafSaxParser,
                                       ArrayList<SemObject> semEvents,
                                       ArrayList<SemObject> semActors,
-                                      ArrayList<SemObject> semPlaces,
                                       ArrayList<SemObject> semTimes,
                                       ArrayList<SemRelation> semRelations,
-                                      ArrayList<SemRelation> factRelations,
                                       boolean ADDITIONALROLES
     ) {
 
@@ -76,14 +72,15 @@ public class GetSemFromNafFile {
         if (ADDITIONALROLES) {
             processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
         }
-        SemTime docSemTime = processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
+        processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
 
         processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
 
         //// THIS FIX IS NEEDED BECAUSE SOMETIMES SRL GENERATES IDENTICAL SPANS FOR PREDICATES AND ACTORS. WE REMOVE EVENTS THAT ARE IDENTICAL WITH ACTORS
         Util.filterOverlapEventsEntities(semEvents, semActors);
 
-        processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, docSemTime);
+        processNafFileForRelations(baseUrl,
+                kafSaxParser, semEvents, semActors, semTimes, semRelations);
     }
 
 
@@ -474,8 +471,15 @@ public class GetSemFromNafFile {
     }
 
 
-
-    static SemTime processNafFileForTimeInstances(String baseUrl, KafSaxParser kafSaxParser,
+    /**
+     * This function interprets all timex elements and returns the document creation time as a SemTime object (which is also inserted as a the
+     * first SemTime object in the array
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semTimes
+     * @return
+     */
+    static SemTime processNafFileForTimeInstancesAndDocumentCreationTime(String baseUrl, KafSaxParser kafSaxParser,
                                                   ArrayList<SemObject> semTimes
     ) {
         SemTime docSemTime = new SemTime();
@@ -502,7 +506,7 @@ public class GetSemFromNafFile {
             if (!timex.getValue().trim().isEmpty() && !timex.getValue().startsWith("XXXX-")) {
                 //System.out.println("timex.getValue() = " + timex.getId()+":"+timex.getValue());
                 OwlTime aTime = new OwlTime();
-                if (aTime.parseTimeExValue(timex.getValue(), docSemTime.getOwlTime()) > -1) {
+                if (aTime.parseTimeExValue(timex.getValue()) > -1) {
                     ArrayList<String> tokenSpanIds = timex.getSpans();
                     ArrayList<String> termSpanIds = kafSaxParser.convertTokensSpanToTermSpan(tokenSpanIds);
                     ArrayList<NafMention> mentions = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, termSpanIds);
@@ -516,42 +520,67 @@ public class GetSemFromNafFile {
             }
         }
 
-        //// WE TAKE THIS OUT SINCE TIMEX COVERS ALL
-        //// we get time references from the SRL layer
-/*        HashMap<String, ArrayList<ArrayList<CorefTarget>>> timeReferences = Util.getTimeMentionsHashMapFromSrl (kafSaxParser, docSemTime.getOwlTime());
-        Set keySet = timeReferences.keySet();
-        Iterator keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            if ((Util.hasAlphaNumeric(key))) {
-                OwlTime aTime = new OwlTime();
-                // System.out.println("key = " + key);
-                if (aTime.parseStringDateWithDocTimeYearFallBack(key, docSemTime.getOwlTime()) > -1) {
-                    ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = timeReferences.get(key);
-                    SemTime semTimeRole = new SemTime();
-                    String id = "";
-                    try {
-                        id = URLEncoder.encode(key, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        // e.printStackTrace();
-                    }
-                    if (!id.isEmpty()) {
-                        semTimeRole.setId(baseUrl + id);
-                        //semTimeRole.setId(baseUrl + Util.alphaNumericUri(key));
-                        ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
+        for (int i = 0; i < semTimes.size(); i++) {
+            SemObject semObject = semTimes.get(i);
+            System.out.println("semObject.getId() = " + semObject.getId());
+            System.out.println("semObject.getTermIds().toString() = " + semObject.getTermIds().toString());
+        }
+
+        return docSemTime;
+    }
+
+
+    /**
+     * This function interprets all timex elements and does NOT return the document creation time as a SemTime object.
+     * We assume that the first SemTime object is tmx0, which represents the document creation time
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semTimes
+     * @return
+     */
+    static void processNafFileForTimeInstances(String baseUrl, KafSaxParser kafSaxParser,
+                                                  ArrayList<SemObject> semTimes
+    ) {
+        if (kafSaxParser.kafTimexLayer.size()>0) {
+
+            for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
+                KafTimex timex = kafSaxParser.kafTimexLayer.get(i);
+                if (!timex.getValue().trim().isEmpty() &&
+                        (!timex.getValue().startsWith("XXXX-"))  /// year unknown
+                         &&
+                        (!timex.getValue().equalsIgnoreCase("PRESENT_REF"))
+                         &&
+                        (!timex.getValue().startsWith("P"))     /// periods, e.g. "PXY", "P9M", "P4Y",
+                        ){
+                    OwlTime aTime = new OwlTime();
+                    if (aTime.parseTimeExValue(timex.getValue()) > -1) {
+                     //   System.out.println("timex.getValue() = " + timex.getId()+":"+timex.getValue());
+                        ArrayList<String> tokenSpanIds = timex.getSpans();
+                        ArrayList<String> termSpanIds = kafSaxParser.convertTokensSpanToTermSpan(tokenSpanIds);
+                        ArrayList<NafMention> mentions = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, termSpanIds);
+                        SemTime semTimeRole = new SemTime();
+                        if (aTime.getMonth().toLowerCase().startsWith("q"))  {
+                            semTimeRole.setType("QUARTER");
+                        }
+                        else {
+                            semTimeRole.setType(timex.getType());
+                        }
+                        semTimeRole.setId(baseUrl + timex.getId());
                         semTimeRole.setNafMentions(mentions);
                         semTimeRole.addPhraseCountsForMentions(kafSaxParser);
                         semTimeRole.setOwlTime(aTime);
                         Util.addObject(semTimes, semTimeRole);
                     }
-                } else {
-                    //// phrase contains no useable info
                 }
             }
-            //System.out.println("aTime.toString() = " + aTime.toString());
-        }*/
 
-        return docSemTime;
+            /// PRINT CHECK
+            /*for (int i = 0; i < semTimes.size(); i++) {
+                SemObject semObject = semTimes.get(i);
+                System.out.println("semObject.getId() = " + semObject.getId());
+                System.out.println("semObject.getTermIds().toString() = " + semObject.getTermIds().toString());
+            }*/
+        }
     }
 
 
@@ -562,20 +591,14 @@ public class GetSemFromNafFile {
      * @param kafSaxParser
      * @param semEvents
      * @param semActors
-     * @param semPlaces
      * @param semTimes
      * @param semRelations
-     * @param factRelations
-     * @param docSemTime
      */
     static void processNafFileForRelations(String baseUrl, KafSaxParser kafSaxParser,
                                            ArrayList<SemObject> semEvents,
                                            ArrayList<SemObject> semActors,
-                                           ArrayList<SemObject> semPlaces,
                                            ArrayList<SemObject> semTimes,
-                                           ArrayList<SemRelation> semRelations,
-                                           ArrayList<SemRelation> factRelations,
-                                           SemTime docSemTime
+                                           ArrayList<SemRelation> semRelations
     ) {
         ////@DEPRECATED factuality is now extracted through the perspective module separately
         /*   We check the factuality of each event mention by checking NafMention against the span of
@@ -604,7 +627,6 @@ public class GetSemFromNafFile {
           - same + preceding + following sentence
           - make a difference for SRL and Timex
          */
-        int docTimeRelationCount = 0;
         int timexRelationCount = 0;
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
@@ -614,189 +636,119 @@ public class GetSemFromNafFile {
                 for (int k = 0; k < kafPredicateAnchor.getSpans().size(); k++) {
                     String predicateSpan =  kafPredicateAnchor.getSpans().get(k);
                     if (semEvent.getNafIds().contains(predicateSpan)) {
-                        String beginTime = kafPredicateAnchor.getBeginPoint();
-                        String endTime = kafPredicateAnchor.getEndPoint();
-                        String anchorTime = kafPredicateAnchor.getAnchorTime();
-                        if (!beginTime.isEmpty()) {
-                            ArrayList<String> termIds = Util.getTermsIdsForTimex(kafSaxParser, beginTime);
-
+                        SemTime semBeginTime = (SemTime) Util.getSemTime(semTimes, kafPredicateAnchor.getBeginPoint());
+                        SemTime semEndTime = (SemTime) Util.getSemTime(semTimes, kafPredicateAnchor.getEndPoint());
+                        SemTime semAnchorTime = (SemTime) Util.getSemTime(semTimes, kafPredicateAnchor.getAnchorTime());
+                        if (semBeginTime!=null) {
                             timexRelationCount++;
-                            SemRelation semRelation = new SemRelation();
-                            //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                            String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
-                            semRelation.setId(relationInstanceId);
-                            // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
-                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                            semRelation.addMention(mention);
-                            semRelation.addPredicate("hasBeginTime");
-                            semRelation.setSubject(semEvent.getId());
-                            semRelation.setObject(beginTime);
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semBeginTime.getTermIds());
+                            SemRelation semRelation = semBeginTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemBeginTime", semEvent.getId(), mention);
                             semRelations.add(semRelation);
-                            // System.out.println("semRelation = " + semRelation.getSubject());
-                            // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                         }
-                        if (!endTime.isEmpty()) {
-                            ArrayList<String> termIds = Util.getTermsIdsForTimex(kafSaxParser, endTime);
+                        if (semEndTime!=null) {
                             timexRelationCount++;
-                            SemRelation semRelation = new SemRelation();
-                            //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                            String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
-                            semRelation.setId(relationInstanceId);
-                            // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
-                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                            semRelation.addMention(mention);
-                            semRelation.addPredicate("hasStartTime");
-                            semRelation.setSubject(semEvent.getId());
-                            semRelation.setObject(endTime);
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semEndTime.getTermIds());
+                            SemRelation semRelation = semEndTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemEndTime", semEvent.getId(), mention);
                             semRelations.add(semRelation);
-                            // System.out.println("semRelation = " + semRelation.getSubject());
-                            // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                         }
-                        if (!anchorTime.isEmpty()) {
-                            ArrayList<String> termIds = Util.getTermsIdsForTimex(kafSaxParser, anchorTime);
-                            timexRelationCount++;
-                            SemRelation semRelation = new SemRelation();
-                            //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                            String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
-                            semRelation.setId(relationInstanceId);
-                            // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
-                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                            semRelation.addMention(mention);
-                            semRelation.addPredicate("hasSemTime");
-                            semRelation.setSubject(semEvent.getId());
-                            semRelation.setObject(anchorTime);
+                        if (semAnchorTime!=null) {                            timexRelationCount++;
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semAnchorTime.getTermIds());
+                            SemRelation semRelation = semAnchorTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId(), mention);
                             semRelations.add(semRelation);
-                            // System.out.println("semRelation = " + semRelation.getSubject());
-                            // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                         }
                         timeAnchor = true;
                     }
                 }
-
             }
 
-            if (!timeAnchor) {
+
+/*            if (!timeAnchor) {
                  if (Util.futureEvent(semEvent)) {
                      timexRelationCount++;
-                     SemRelation semRelation = new SemRelation();
-                     //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                     String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
-                     semRelation.setId(relationInstanceId);
-                     // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                      NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semEvent.getTermIds());
-                     semRelation.addMention(mention);
-                     semRelation.addPredicate("hasSemTime");
-                     semRelation.setSubject(semEvent.getId());
-                     semRelation.setObject("FUT");
+                     SemRelation semRelation = SemTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId(), "FUTURE", mention);
                      semRelations.add(semRelation);
-                     // System.out.println("semRelation = " + semRelation.getSubject());
-                     // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                      timeAnchor = true;
+
                  }
-            }
+            }*/
+
+
 
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
-                    SemObject semTime = semTimes.get(l);
+                    SemTime semTime = (SemTime) semTimes.get(l);
                     ArrayList<String> termIds = Util.sameSentenceRange(semEvent, semTime);
                     if (termIds.size() > 0) {
                         /// create sem relations
                         timexRelationCount++;
-                        SemRelation semRelation = new SemRelation();
-                        //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                        String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
-                        semRelation.setId(relationInstanceId);
-                        // System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                         NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                        semRelation.addMention(mention);
-                        semRelation.addPredicate("hasSemTime");
-                        semRelation.setSubject(semEvent.getId());
-                        semRelation.setObject(semTime.getId());
+                        SemRelation semRelation = semTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId(), mention);
                         semRelations.add(semRelation);
-                        // System.out.println("semRelation = " + semRelation.getSubject());
-                        // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                         timeAnchor = true;
-                        //  break;
+                        //  break;*/
                     }
                 }
             }
 
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
-                    SemObject semTime = semTimes.get(l);
+                    SemTime semTime = (SemTime) semTimes.get(l);
                     ArrayList<String> termIds = Util.range1SentenceRange(semEvent, semTime);
                     if (termIds.size() > 0) {
                         /// create sem relations
                         timexRelationCount++;
-                        SemRelation semRelation = new SemRelation();
-                        //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                        String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
-                        semRelation.setId(relationInstanceId);
-                        //System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                         NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                        semRelation.addMention(mention);
-                        semRelation.addPredicate("hasSemTime");
-                        semRelation.setSubject(semEvent.getId());
-                        semRelation.setObject(semTime.getId());
+                        SemRelation semRelation = semTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId(), mention);
                         semRelations.add(semRelation);
-                        // System.out.println("semRelation = " + semRelation.getSubject());
-                        // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                         timeAnchor = true;
-                        //  break;
+                        //  break;*/
                     }
                 }
             }
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
-                    SemObject semTime = semTimes.get(l);
+                    SemTime semTime = (SemTime) semTimes.get(l);
                     ArrayList<String> termIds = Util.rangemin2plus1SentenceRange(semEvent, semTime);
                     if (termIds.size() > 0) {
                         /// create sem relations
                         timexRelationCount++;
-                        SemRelation semRelation = new SemRelation();
-                        //String relationInstanceId = baseUrl+"timeRelation_"+timexRelationCount;
-                        String relationInstanceId = baseUrl + "tr" + timexRelationCount;  // shorter form for triple store
-                        semRelation.setId(relationInstanceId);
-                        //System.out.println(semTime.getId() + ": termsIds.toString() = " + termIds.toString());
                         NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                        semRelation.addMention(mention);
-                        semRelation.addPredicate("hasSemTime");
-                        semRelation.setSubject(semEvent.getId());
-                        semRelation.setObject(semTime.getId());
+                        SemRelation semRelation = semTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId(), mention);
                         semRelations.add(semRelation);
-                        // System.out.println("semRelation = " + semRelation.getSubject());
-                        // System.out.println("semRelation.getObject() = " + semRelation.getObject());
                         timeAnchor = true;
                         // break;
                     }
                 }
             }
             /*
-               If there is no anchoring of an event to an SemTime object, we connect it here to the document time
+               If there is no anchoring of an event to an SemTime object, we connect it here to the document time.
+               Previous version derived the document creation time from the NAF header. We now leave this up to the TimePro
+               module which creates the tmx0 for the default anchoring of the document
+               
              */
             if (!timeAnchor) {
                 /// timeless event
                 /// in all cases there is no time relations we link it to the docTime
                 // System.out.println("docSemTime.toString() = " + docSemTime.toString());
-                if (!docSemTime.getPhrase().isEmpty()) {
-                    /// in all cases there is no time relations we link it to the docTime
-                    docTimeRelationCount++;
-                    SemRelation semRelation = new SemRelation();
-                    // String relationInstanceId = baseUrl + "docTime_" + docTimeRelationCount;
-                    String relationInstanceId = baseUrl + "dt" + docTimeRelationCount; // shorter form for triple store
-                    semRelation.setId(relationInstanceId);
-                    //// Since the doctime has no reference in the text, we use the mentions of the events to point to
-                    semRelation.setNafMentions(semEvent.getNafMentions());
-                    semRelation.addPredicate("hasSemTime");
-                    semRelation.setSubject(semEvent.getId());
-                    semRelation.setObject(docSemTime.getId());
-                    semRelations.add(semRelation);
+                SemTime docSemTime = new SemTime();
+                for (int j = 0; j < semTimes.size(); j++) {
+                    SemTime semTime = (SemTime) semTimes.get(j);
+                    if (semTime.getId().toLowerCase().endsWith("tmx0")) {
+                        docSemTime = semTime;
+                        break;
+                    }
                 }
+               // System.out.println("docSemTime.getOwlTime().toString() = " + docSemTime.getOwlTime().toString());
+                /// in all cases there is no time relations we link it to the docTime, which is timex0
+                timexRelationCount++;
+                SemRelation semRelation = docSemTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId());
+                semRelations.add(semRelation);
             }
         }
 
 
-        // NEXT WE RELATE ACTORS AND PLACES TO EVENTS
+        // NEXT WE RELATE ACTORS TO EVENTS
         ///
         // THIS IS NOT EASY DUE TO THE COMPLEX OVERLAP IN SPAN ACROSS ENTITIES AND ROLES IN SRL
         // IF THE SEMOBJECT IS BASED ON AN PARTICIPANT (SRL ROLE) IT IS OK
@@ -871,32 +823,6 @@ public class GetSemFromNafFile {
                             semRelations.add(semRelation);
                         }
                     }
-                    semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semPlaces);
-                    for (int l = 0; l < semObjects.size(); l++) {
-                        SemObject semObject = semObjects.get(l);
-                        if (semObject != null) {
-                            SemRelation semRelation = new SemRelation();
-                            String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
-                            semRelation.setId(relationInstanceId);
-
-                            ArrayList<String> termsIds = kafEvent.getSpanIds();
-                            for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
-                                String s = kafParticipant.getSpanIds().get(j);
-                                termsIds.add(s);
-                            }
-                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
-                            semRelation.addMention(mention);
-                            semRelation.addPredicate("hasSemPlace");
-                            semRelation.addPredicate(RoleLabels.normalizeProbBankValue(kafParticipant.getRole()));
-                            for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
-                                KafSense kafSense = kafParticipant.getExternalReferences().get(j);
-                                semRelation.addPredicate(kafSense.getResource() + ":" + kafSense.getSensecode());
-                            }
-                            semRelation.setSubject(semEventId);
-                            semRelation.setObject(semObject.getId());
-                            semRelations.add(semRelation);
-                        }
-                    }
                 }
             }
         }
@@ -918,13 +844,11 @@ public class GetSemFromNafFile {
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(pathToNafFile);
         boolean ADDITIONALROLES = true;
-        processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
+        processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
         // System.out.println("semActors.size() = " + semActors.size());
         // processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
         // System.out.println("semActors.size() = " + semActors.size());
@@ -933,7 +857,7 @@ public class GetSemFromNafFile {
             String pathToTrigFile = pathToNafFile + ".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
             JenaSerialization.serializeJena(fos,
-                    semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null, false);
+                    semEvents, semActors, semTimes, semRelations, null, false);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

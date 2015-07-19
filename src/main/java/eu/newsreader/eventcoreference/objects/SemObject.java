@@ -24,6 +24,7 @@ import java.util.ArrayList;
 public class SemObject implements Serializable {
 
     private String id;
+    private String type;
     private String uri;
     private ArrayList<String> nafIds;
     private double score;
@@ -37,6 +38,7 @@ public class SemObject implements Serializable {
     public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
+        this.type = "";
         this.nafIds = new ArrayList<String>();
         this.label = "";
         this.uri = "";
@@ -45,6 +47,14 @@ public class SemObject implements Serializable {
         this.concepts = new ArrayList<KafSense>();
         this.phraseCounts = new ArrayList<PhraseCount>();
         this.topics = new ArrayList<KafTopic>();
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public ArrayList<String> getNafIds() {

@@ -242,12 +242,10 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
-        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
+        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
 
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
@@ -256,14 +254,13 @@ public class ClusterEventObjects {
             SemEvent mySemEvent = (SemEvent) semEvents.get(j);
             ArrayList<SemTime> myTimes = Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
             //   System.out.println("myTimes.size() = " + myTimes.size());
-            ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
             ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
             ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
             if (myRelations.size() == 0) {
                 continue;
             }
-            ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
-            CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
+           // ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
+            CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
             File folder = otherFolder;
             String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, communicationVector, grammaticalVector);
             if (!eventType.isEmpty()) {
@@ -372,6 +369,21 @@ public class ClusterEventObjects {
         }
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////// OLD CODE BELOW //////////////////////////////////////////////////
+    /////////////////////////////////// OLD CODE BELOW //////////////////////////////////////////////////
+    /////////////////////////////////// OLD CODE BELOW //////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static void processFolderEventsORG (String project, File pathToNafFolder, File eventParentFolder, String extension
 
@@ -414,9 +426,7 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
         ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
@@ -436,9 +446,7 @@ public class ClusterEventObjects {
             semEvents = new ArrayList<SemObject>();
             semActors = new ArrayList<SemObject>();
             semTimes = new ArrayList<SemObject>();
-            semPlaces = new ArrayList<SemObject>();
             semRelations = new ArrayList<SemRelation>();
-            factRelations = new ArrayList<SemRelation>();
             perspectiveObjects = new ArrayList<PerspectiveObject>();
 
           //  System.out.println("file.getName() = " + file.getName());
@@ -451,7 +459,7 @@ public class ClusterEventObjects {
               //  System.out.println("kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
                 processKafSaxParserOutputFolder(file.getName(), project,
                         kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder,
-                        semEvents, semActors, semPlaces, semTimes, semRelations, factRelations);
+                        semEvents, semActors, semTimes, semRelations);
                 if (!done.isEmpty()) {
                     File doneFile = new File(file.getAbsolutePath() + done);
                     file.renameTo(doneFile);
@@ -473,14 +481,12 @@ public class ClusterEventObjects {
                                     File speechFolder, File otherFolder, File grammaticalFolder,
                                     ArrayList<SemObject> semEvents ,
                                     ArrayList<SemObject> semActors,
-                                    ArrayList<SemObject> semPlaces,
                                     ArrayList<SemObject> semTimes,
-                                    ArrayList<SemRelation> semRelations,
-                                    ArrayList<SemRelation> factRelations
+                                    ArrayList<SemRelation> semRelations
     ) throws IOException {
 
         if (MICROSTORIES) {
-            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
+            GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
 
             System.out.println("all semEvents.size() = " + semEvents.size());
             System.out.println("all semActors.size() = " + semActors.size());
@@ -552,7 +558,7 @@ public class ClusterEventObjects {
             }*/
         }
 
-        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
+        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
 
         perspectives = GetPerspectiveRelations.getPerspective(kafSaxParser,
                 project,
@@ -575,14 +581,12 @@ public class ClusterEventObjects {
             SemEvent mySemEvent = (SemEvent) semEvents.get(j);
             ArrayList<SemTime> myTimes = Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
             //   System.out.println("myTimes.size() = " + myTimes.size());
-            ArrayList<SemPlace> myPlaces = Util.castToPlace(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semPlaces));
             ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
             ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
             if (myRelations.size() == 0) {
                 continue;
             }
-            ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
-            CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myPlaces, myTimes, myRelations, myFacts);
+            CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
             File folder = otherFolder;
             String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, communicationVector, grammaticalVector);
             if (!eventType.isEmpty()) {
@@ -597,22 +601,32 @@ public class ClusterEventObjects {
             ArrayList<SemTime> outputTimes = myTimes;
             // eventFos.writeObject(compositeEvent);
             /// now we need to write the event data and relations to the proper time folder for comparison
-/*                if (outputTimes.size() == 0) {
-                    /// we use the doc times as fall back;
-                    outputTimes = compositeEvent.getMyDocTimes();
-                }*/
+            SemTime docTime = null;
+            for (int i = 0; i < outputTimes.size(); i++) {
+                SemTime semTime = outputTimes.get(i);
+                if (semTime.getId().equalsIgnoreCase("tmx0")) {
+                    docTime = semTime; ///// why did not this happen before??
+                }
+            }
             TreeSet<String> treeSet = new TreeSet<String>();
 
             if (outputTimes.size() == 0) {
-                /// timeless
-                String timePhrase = "timeless";
-                treeSet.add(timePhrase);
-            } else if (outputTimes.size() == 1) {
+                if (Util.futureEvent(mySemEvent)) {
+                    String timePhrase = "future";
+                    treeSet.add(timePhrase);
+                }
+                else {
+                    String timePhrase = "timeless";
+                    treeSet.add(timePhrase);
+                }
+            }
+            else if (outputTimes.size() == 1) {
                 /// time: same year or exact?
                 SemTime myTime = outputTimes.get(0);
                 String timePhrase = myTime.getOwlTime().toString();
                 treeSet.add(timePhrase);
-            } else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
+            }
+            else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
                 /// special case if multiple times, what to do? create a period?
                 //// ?????
 

@@ -118,6 +118,12 @@ public class SemRelation implements Serializable {
         if (type.equalsIgnoreCase("hassemtime")) {
             return Sem.hasTime;
         }
+        else if (type.equalsIgnoreCase("hassembegintime")) {
+            return Sem.hasBeginTime;
+        }
+        else if (type.equalsIgnoreCase("hassemendtime")) {
+            return Sem.hasEndTime;
+        }
         else if (type.equalsIgnoreCase("hassemplace")) {
             return Sem.hasPlace;
         }

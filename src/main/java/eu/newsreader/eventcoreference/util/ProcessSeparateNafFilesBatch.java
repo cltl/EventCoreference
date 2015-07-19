@@ -46,12 +46,10 @@ public class ProcessSeparateNafFilesBatch {
                 ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
                 ArrayList<SemObject> semActors = new ArrayList<SemObject>();
                 ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-                ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
                 ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-                ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
-                GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, ADDITIONALROLES);
+                GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");
-                JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, factRelations, null, false);
+                JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, false);
                 fos.close();
             }
         } catch (IOException e) {

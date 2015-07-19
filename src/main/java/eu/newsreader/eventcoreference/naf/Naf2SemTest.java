@@ -1,6 +1,5 @@
 package eu.newsreader.eventcoreference.naf;
 
-import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.objects.SourceMeta;
 import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
 import eu.newsreader.eventcoreference.util.Util;
@@ -19,12 +18,7 @@ public class Naf2SemTest {
     static Vector<String> communicationVector = null;
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
-    static FrameNetReader frameNetReader = new FrameNetReader();
-    static final int TIMEEXPRESSIONMAX = 5;
-    static boolean MICROSTORIES = false;
-    static Integer SENTENCERANGE = 0;
-    static boolean BRIDGING = false;
-    static String done = "";
+
     static boolean ADDITIONALROLES = false;
 
     static String MATCHTYPE= "ILI";  // ILI OR ILILEMMA

@@ -189,22 +189,18 @@ public class GetTimeLinesFromNafFolder {
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
-        ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        ArrayList<SemRelation> factRelations = new ArrayList<SemRelation>();
         GetSemFromNafFile.processNafFile(project,
                 kafSaxParser,
                 semEvents,
                 semActors,
-                semPlaces,
                 semTimes,
                 semRelations,
-                factRelations,
                 true);
 
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semPlaces, semTimes, semRelations, null, null, true);
+            JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, true);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

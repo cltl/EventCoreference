@@ -14,37 +14,35 @@ public class CompositeEvent implements Serializable{
     private SemObject event;
    // private ArrayList<SemTime> myDocTimes;
     private ArrayList<SemTime> mySemTimes;
-    private ArrayList<SemPlace> mySemPlaces;
+    //private ArrayList<SemPlace> mySemPlaces;
     private ArrayList<SemActor> mySemActors;
     private ArrayList<SemRelation> mySemRelations;
-    private ArrayList<SemRelation> mySemFactRelations;
+   // private ArrayList<SemRelation> mySemFactRelations;
 
     public CompositeEvent() {
         this.event = new SemObject();
       //  this.myDocTimes = new ArrayList<SemTime>();
         this.mySemTimes = new ArrayList<SemTime>();
-        this.mySemPlaces = new ArrayList<SemPlace>();
+       // this.mySemPlaces = new ArrayList<SemPlace>();
         this.mySemActors = new ArrayList<SemActor>();
         this.mySemRelations = new ArrayList<SemRelation>();
-        this.mySemFactRelations = new ArrayList<SemRelation>();
+      //  this.mySemFactRelations = new ArrayList<SemRelation>();
     }
 
 
 
     public CompositeEvent(SemEvent event,
                           ArrayList<SemActor> mySemActors,
-                          ArrayList<SemPlace> mySemPlaces,
                           ArrayList<SemTime> mySemTimes,
-                          ArrayList<SemRelation> mySemRelations,
-                          ArrayList<SemRelation> mySemFactRelations
+                          ArrayList<SemRelation> mySemRelations
                           ) {
       //  this.myDocTimes = new ArrayList<SemTime>();
         this.event = event;
         this.mySemTimes = mySemTimes;
-        this.mySemPlaces = mySemPlaces;
+       // this.mySemPlaces = mySemPlaces;
         this.mySemActors = mySemActors;
         this.mySemRelations = mySemRelations;
-        this.mySemFactRelations = mySemFactRelations;
+      //  this.mySemFactRelations = mySemFactRelations;
     }
 
 
@@ -81,6 +79,7 @@ public class CompositeEvent implements Serializable{
         return myDocTimes;
     }*/
 
+/*
     public ArrayList<SemPlace> getMySemPlaces() {
         return mySemPlaces;
     }
@@ -92,6 +91,7 @@ public class CompositeEvent implements Serializable{
     public void addMySemPlace(SemPlace mySemPlace) {
         this.mySemPlaces.add(mySemPlace);
     }
+*/
 
     public ArrayList<SemActor> getMySemActors() {
         return mySemActors;
@@ -117,6 +117,7 @@ public class CompositeEvent implements Serializable{
         this.mySemRelations.add(mySemRelation);
     }
 
+/*
     public ArrayList<SemRelation> getMySemFactRelations() {
         return mySemFactRelations;
     }
@@ -129,6 +130,7 @@ public class CompositeEvent implements Serializable{
         this.mySemFactRelations.add(mySemFactRelation);
     }
 
+*/
     /*
     @TODO fix true time value matches
      */
@@ -167,6 +169,7 @@ public class CompositeEvent implements Serializable{
 
 
 
+/*
     public void mergeFactRelations (CompositeEvent event) {
          for (int i = 0; i < event.getMySemFactRelations().size(); i++) {
             SemRelation semRelation = event.getMySemFactRelations().get(i);
@@ -186,6 +189,7 @@ public class CompositeEvent implements Serializable{
             }
         }
     }
+*/
 
     public void mergeObjects (CompositeEvent event) {
          for (int i = 0; i < event.getMySemActors().size(); i++) {
@@ -207,7 +211,7 @@ public class CompositeEvent implements Serializable{
             }
         }
 
-        for (int i = 0; i < event.getMySemPlaces().size(); i++) {
+       /* for (int i = 0; i < event.getMySemPlaces().size(); i++) {
             SemPlace semPlace1 = event.getMySemPlaces().get(i);
             boolean match = false;
             for (int j = 0; j < this.getMySemPlaces().size(); j++) {
@@ -223,7 +227,7 @@ public class CompositeEvent implements Serializable{
                //  System.out.println("adding semPlace1 = " + semPlace1.toString());
                  this.mySemPlaces.add(semPlace1);
             }
-        }
+        }*/
         for (int i = 0; i < event.getMySemTimes().size(); i++) {
             SemTime semTime1 = event.getMySemTimes().get(i);
             boolean match = false;
