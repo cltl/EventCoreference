@@ -119,6 +119,8 @@ public class SemRelation implements Serializable {
             return Sem.hasTime;
         }
         else if (type.equalsIgnoreCase("hassembegintime")) {
+
+            //sem:hasBeginTimeStamp
             return Sem.hasBeginTime;
         }
         else if (type.equalsIgnoreCase("hassemendtime")) {

@@ -416,27 +416,41 @@ public class ComponentMatch {
 
     public static ArrayList<SemObject> getMySemObjects (SemObject event, ArrayList<SemRelation> semRelations, ArrayList<SemObject> semObjects) {
         ArrayList<SemObject> mySemObjects = new ArrayList<SemObject>();
+        
         for (int i = 0; i < semRelations.size(); i++) {
             SemRelation semRelation = semRelations.get(i);
-            for (int j = 0; j < semObjects.size(); j++) {
-                SemObject semObject = semObjects.get(j);
-                if (semRelation.getSubject().equals(event.getId()) &&
-                        semRelation.getObject().equals(semObject.getId())) {
+            if (semRelation.getSubject().equals(event.getId())) {
+                //// this SemRelation applies to our event
+                /// we get the objects of the relation and add them to the list
 /*
-                    System.out.println("semRelation = " + semRelation.getSubject());
-                    System.out.println("semRelation = " + semRelation.getPredicate());
-                    System.out.println("semRelation = " + semRelation.getObject());
+                if (event.getId().endsWith("6")) {
+                    System.out.println("event = " + event.getId());
+                    System.out.println("semRelation.object() = " + semRelation.getObject());
+                }
 */
-                    boolean has = false;
-                    for (int k = 0; k < mySemObjects.size(); k++) {
-                        SemObject object = mySemObjects.get(k);
-                        if (object.getId().equals(semObject.getId())) {
-                           has = true;
-                           break;
+                for (int j = 0; j < semObjects.size(); j++) {
+                    SemObject semObject = semObjects.get(j);
+                    if (semRelation.getObject().equals(semObject.getId())) {
+
+/*
+                        if (event.getId().endsWith("6")) {
+                            System.out.println("semRelation = " + semRelation.getSubject());
+                            System.out.println("semRelation = " + semRelation.getPredicates().toString());
+                            System.out.println("semRelation = " + semRelation.getObject());
                         }
-                    }
-                    if (!has) {
-                        mySemObjects.add(semObject);
+*/
+
+                        boolean has = false;
+                        for (int k = 0; k < mySemObjects.size(); k++) {
+                            SemObject object = mySemObjects.get(k);
+                            if (object.getId().equals(semObject.getId())) {
+                                has = true;
+                                break;
+                            }
+                        }
+                        if (!has) {
+                            mySemObjects.add(semObject);
+                        }
                     }
                 }
             }

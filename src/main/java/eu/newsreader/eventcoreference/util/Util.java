@@ -405,6 +405,7 @@ public class Util {
         }
         return false;
     }
+
     static public boolean hasObjectUri(ArrayList<SemObject> objects, String objectURI) {
         for (int i = 0; i < objects.size(); i++) {
             SemObject semObject = objects.get(i);

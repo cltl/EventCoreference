@@ -555,9 +555,6 @@ public class GetSemFromNafFile {
                     OwlTime aTime = new OwlTime();
                     if (aTime.parseTimeExValue(timex.getValue()) > -1) {
                      //   System.out.println("timex.getValue() = " + timex.getId()+":"+timex.getValue());
-                        ArrayList<String> tokenSpanIds = timex.getSpans();
-                        ArrayList<String> termSpanIds = kafSaxParser.convertTokensSpanToTermSpan(tokenSpanIds);
-                        ArrayList<NafMention> mentions = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, termSpanIds);
                         SemTime semTimeRole = new SemTime();
                         if (aTime.getMonth().toLowerCase().startsWith("q"))  {
                             semTimeRole.setType("QUARTER");
@@ -565,9 +562,20 @@ public class GetSemFromNafFile {
                         else {
                             semTimeRole.setType(timex.getType());
                         }
+
                         semTimeRole.setId(baseUrl + timex.getId());
-                        semTimeRole.setNafMentions(mentions);
-                        semTimeRole.addPhraseCountsForMentions(kafSaxParser);
+
+                        ArrayList<String> tokenSpanIds = timex.getSpans();
+                        if (tokenSpanIds.size()==0) {
+                            /// maybe tmx0 or another timex without spans (apparently there are cases like that)
+                            semTimeRole.addPhraseCounts(aTime.getDateString());
+                        }
+                        else {
+                            ArrayList<String> termSpanIds = kafSaxParser.convertTokensSpanToTermSpan(tokenSpanIds);
+                            ArrayList<NafMention> mentions = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, termSpanIds);
+                            semTimeRole.setNafMentions(mentions);
+                            semTimeRole.addPhraseCountsForMentions(kafSaxParser);
+                        }
                         semTimeRole.setOwlTime(aTime);
                         Util.addObject(semTimes, semTimeRole);
                     }
@@ -627,6 +635,14 @@ public class GetSemFromNafFile {
           - same + preceding + following sentence
           - make a difference for SRL and Timex
          */
+        SemTime docSemTime = new SemTime();
+        for (int j = 0; j < semTimes.size(); j++) {
+            SemTime semTime = (SemTime) semTimes.get(j);
+            if (semTime.getId().toLowerCase().endsWith("tmx0")) {
+                docSemTime = semTime;
+                break;
+            }
+        }
         int timexRelationCount = 0;
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
@@ -644,36 +660,25 @@ public class GetSemFromNafFile {
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semBeginTime.getTermIds());
                             SemRelation semRelation = semBeginTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemBeginTime", semEvent.getId(), mention);
                             semRelations.add(semRelation);
+                            timeAnchor = true;
                         }
                         if (semEndTime!=null) {
                             timexRelationCount++;
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semEndTime.getTermIds());
                             SemRelation semRelation = semEndTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemEndTime", semEvent.getId(), mention);
                             semRelations.add(semRelation);
+                            timeAnchor = true;
                         }
-                        if (semAnchorTime!=null) {                            timexRelationCount++;
+                        if (semAnchorTime!=null) {
+                            timexRelationCount++;
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semAnchorTime.getTermIds());
                             SemRelation semRelation = semAnchorTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId(), mention);
                             semRelations.add(semRelation);
+                            timeAnchor = true;
                         }
-                        timeAnchor = true;
                     }
                 }
             }
-
-
-/*            if (!timeAnchor) {
-                 if (Util.futureEvent(semEvent)) {
-                     timexRelationCount++;
-                     NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semEvent.getTermIds());
-                     SemRelation semRelation = SemTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId(), "FUTURE", mention);
-                     semRelations.add(semRelation);
-                     timeAnchor = true;
-
-                 }
-            }*/
-
-
 
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
@@ -731,22 +736,23 @@ public class GetSemFromNafFile {
                 /// timeless event
                 /// in all cases there is no time relations we link it to the docTime
                 // System.out.println("docSemTime.toString() = " + docSemTime.toString());
-                SemTime docSemTime = new SemTime();
-                for (int j = 0; j < semTimes.size(); j++) {
-                    SemTime semTime = (SemTime) semTimes.get(j);
-                    if (semTime.getId().toLowerCase().endsWith("tmx0")) {
-                        docSemTime = semTime;
-                        break;
-                    }
-                }
+
                // System.out.println("docSemTime.getOwlTime().toString() = " + docSemTime.getOwlTime().toString());
                 /// in all cases there is no time relations we link it to the docTime, which is timex0
+              //  System.out.println("semEvent = " + semEvent.getId());
+              //  System.out.println("docSemTime.getId() = " + docSemTime.getId());
+
                 timexRelationCount++;
                 SemRelation semRelation = docSemTime.createSemTimeRelation(baseUrl, timexRelationCount,"hasSemTime", semEvent.getId());
                 semRelations.add(semRelation);
             }
         }
 
+       /* for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+            System.out.println(semRelation.getSubject()+":"+semRelation.getPredicates().toString()+":"+semRelation.getObject());
+        }
+*/
 
         // NEXT WE RELATE ACTORS TO EVENTS
         ///
@@ -766,7 +772,6 @@ public class GetSemFromNafFile {
             - if so use the instanceId
             - if not create a new instanceId
          */
-        // DONE BUT STILL NEEDS TO BE TESTED
 
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
@@ -799,11 +804,6 @@ public class GetSemFromNafFile {
                             SemRelation semRelation = new SemRelation();
                             String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
                             semRelation.setId(relationInstanceId);
-/*
-                            if (kafParticipant.getId().equals("rl130")) {
-                                System.out.println(semObject.getId());
-                            }
-*/
                             ArrayList<String> termsIds = kafEvent.getSpanIds();
                             for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
                                 String s = kafParticipant.getSpanIds().get(j);

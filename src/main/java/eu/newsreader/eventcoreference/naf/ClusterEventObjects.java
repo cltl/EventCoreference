@@ -611,14 +611,8 @@ public class ClusterEventObjects {
             TreeSet<String> treeSet = new TreeSet<String>();
 
             if (outputTimes.size() == 0) {
-                if (Util.futureEvent(mySemEvent)) {
-                    String timePhrase = "future";
-                    treeSet.add(timePhrase);
-                }
-                else {
                     String timePhrase = "timeless";
                     treeSet.add(timePhrase);
-                }
             }
             else if (outputTimes.size() == 1) {
                 /// time: same year or exact?
@@ -639,6 +633,8 @@ public class ClusterEventObjects {
                         treeSet.add(timePhrase);
                     }
                 }
+
+                /// if
             }
             if (treeSet.size()>0) {
                 Iterator keys = treeSet.iterator();
