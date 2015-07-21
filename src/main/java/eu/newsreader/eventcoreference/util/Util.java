@@ -25,12 +25,14 @@ public class Util {
 
 
     static public SemObject getSemTime(ArrayList<SemObject> semTimeArrayList, String timexId) {
-        for (int i = 0; i < semTimeArrayList.size(); i++) {
-            SemObject time = semTimeArrayList.get(i);
-          //  System.out.println("time.getId() = " + time.getId());
-          //  System.out.println("timexId = " + timexId);
-            if (time.getId().endsWith(timexId)) {
-                return time;
+        if (!timexId.isEmpty()){
+            for (int i = 0; i < semTimeArrayList.size(); i++) {
+                SemObject time = semTimeArrayList.get(i);
+                //  System.out.println("time.getId() = " + time.getId());
+                //  System.out.println("timexId = " + timexId);
+                if (time.getId().endsWith(timexId)) {
+                    return time;
+                }
             }
         }
         return null;
