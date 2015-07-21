@@ -120,7 +120,7 @@ public class SemRelation implements Serializable {
         }
         else if (type.equalsIgnoreCase("hassembegintime")) {
 
-            //sem:hasBeginTimeStamp
+            //BiographyNet uses sem:hasBeginTimeStamp
             return Sem.hasBeginTime;
         }
         else if (type.equalsIgnoreCase("hassemendtime")) {
@@ -161,7 +161,7 @@ public class SemRelation implements Serializable {
             else if (source.equalsIgnoreCase("eso")) {
                 //// IN CASE THE ESO CONSTRAINTS DO NOT INCLUDE THE VERB TYPE
                 int idx = value.indexOf("@");
-                //Removing@translocation-theme
+                //e.g Removing@translocation-theme
                 if (idx>-1) {
                     value = value.substring(idx+1);
                 }

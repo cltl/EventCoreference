@@ -272,38 +272,84 @@ public class ClusterEventObjects {
             }
             File timeFile = null;
 
+
+
+
+
             ArrayList<SemTime> outputTimes = myTimes;
-            // eventFos.writeObject(compositeEvent);
-            /// now we need to write the event data and relations to the proper time folder for comparison
-/*                if (outputTimes.size() == 0) {
-                    /// we use the doc times as fall back;
-                    outputTimes = compositeEvent.getMyDocTimes();
-                }*/
+
             TreeSet<String> treeSet = new TreeSet<String>();
 
+
+
             if (outputTimes.size() == 0) {
-                /// timeless
                 String timePhrase = "timeless";
                 treeSet.add(timePhrase);
-            } else if (outputTimes.size() == 1) {
+            }
+            else if (outputTimes.size() == 1) {
                 /// time: same year or exact?
                 SemTime myTime = outputTimes.get(0);
                 String timePhrase = myTime.getOwlTime().toString();
                 treeSet.add(timePhrase);
-            } else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
+            }
+            else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
                 /// special case if multiple times, what to do? create a period?
                 //// ?????
 
-                //// we now duplicate the event to multiple time folders
                 String timePhrase = "";
-                for (int k = 0; k < outputTimes.size(); k++) {
-                    SemTime semTime = (SemTime) outputTimes.get(k);
-                    timePhrase = semTime.getOwlTime().toString();
+                /// we first create the periods
+                ArrayList<String> beginPoints = new ArrayList<String>();
+                ArrayList<String> endPoints = new ArrayList<String>();
+                for (int i = 0; i < myRelations.size(); i++) {
+                    SemRelation semRelation = myRelations.get(i);
+                    for (int k = 0; k < semRelation.getPredicates().size(); k++) {
+                        String predicate = semRelation.getPredicates().get(k);
+                        if (predicate.toLowerCase().endsWith("begintime")) {
+                            beginPoints.add(semRelation.getObject());
+                        }
+                        else if (predicate.toLowerCase().endsWith("endtime")) {
+                            endPoints.add(semRelation.getObject());
+                        }
+                    }
+                }
+           //     System.out.println("beginPoints = " + beginPoints.toString());
+           //     System.out.println("endPoints = " + endPoints.toString());
+                /// we first add the beginpoints to the time phrase
+                for (int i = 0; i < outputTimes.size(); i++) {
+                    SemTime semTime = outputTimes.get(i);
+                    if (beginPoints.contains(semTime.getId())) {
+                        if (!timePhrase.isEmpty()) timePhrase += "-";
+                        timePhrase += semTime.getOwlTime().toString();
+                    }
+                }
+                /// next we add the endpoints to the time phrase
+                for (int i = 0; i < outputTimes.size(); i++) {
+                    SemTime semTime = outputTimes.get(i);
+                    if (endPoints.contains(semTime.getId())) {
+                        if (!timePhrase.isEmpty()) timePhrase += "-";
+                        timePhrase += semTime.getOwlTime().toString();
+                    }
+                }
+                if (!timePhrase.isEmpty()) {
+                    /// we now have a indication of a period with at least a begin and end point and possibly both
                     if (!treeSet.contains(timePhrase)) {
                         treeSet.add(timePhrase);
                     }
                 }
+                else {
+                    ///// the time info is not considered a period and therefore we create separate time buckets for each timex associated with the event
+                    //// we now duplicate the event to multiple time folders
+                    for (int k = 0; k < outputTimes.size(); k++) {
+                        SemTime semTime = (SemTime) outputTimes.get(k);
+                        timePhrase = semTime.getOwlTime().toString();
+                        if (!treeSet.contains(timePhrase)) {
+                            treeSet.add(timePhrase);
+                        }
+                    }
+                }
+
             }
+
             if (treeSet.size()>0) {
                 Iterator keys = treeSet.iterator();
                 while (keys.hasNext()) {
@@ -385,7 +431,7 @@ public class ClusterEventObjects {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void processFolderEventsORG (String project, File pathToNafFolder, File eventParentFolder, String extension
+/*    public static void processFolderEventsORG (String project, File pathToNafFolder, File eventParentFolder, String extension
 
     ) throws IOException {
         File eventFolder = new File(eventParentFolder + "/events");
@@ -434,9 +480,9 @@ public class ClusterEventObjects {
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
            // System.out.println("file.getName() = " + file.getName());
-/*            if (!file.getName().startsWith("7YXG-CS51-2RYC-J2CN.xml")) {
+*//*            if (!file.getName().startsWith("7YXG-CS51-2RYC-J2CN.xml")) {
                      continue;
-            }*/
+            }*//*
 
             if (i % 500 == 0) {
                // System.out.println("i = " + i);
@@ -457,7 +503,7 @@ public class ClusterEventObjects {
             }
             else {
               //  System.out.println("kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
-                processKafSaxParserOutputFolder(file.getName(), project,
+                processKafSaxParserOutputFolderORG(file.getName(), project,
                         kafSaxParser, perspectiveObjects, speechFolder, otherFolder, grammaticalFolder,
                         semEvents, semActors, semTimes, semRelations);
                 if (!done.isEmpty()) {
@@ -477,7 +523,7 @@ public class ClusterEventObjects {
 
 
 
-    static void processKafSaxParserOutputFolder(String nafFileName, String project, KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectives,
+    static void processKafSaxParserOutputFolderORG(String nafFileName, String project, KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectives,
                                     File speechFolder, File otherFolder, File grammaticalFolder,
                                     ArrayList<SemObject> semEvents ,
                                     ArrayList<SemObject> semActors,
@@ -496,10 +542,10 @@ public class ClusterEventObjects {
             System.out.println("microSemEvents (sentence range:"+SENTENCERANGE+ ") = " + microSemEvents.size());
             System.out.println("microSemActors (sentence range:"+SENTENCERANGE+ ") = " + microSemActors.size());
 
-/*            for (int i = 0; i < microSemEvents.size(); i++) {
+*//*            for (int i = 0; i < microSemEvents.size(); i++) {
                 SemObject semObject = microSemEvents.get(i);
                 System.out.println("micro semEvent.getURI() = " + semObject.getURI());
-            }*/
+            }*//*
             if (BRIDGING) {
                 ArrayList<SemObject> coparticipationEvents = CreateMicrostory.getEventsThroughCoparticipation(semEvents, microSemEvents, microSemActors, semRelations);
                 ArrayList<SemObject> coparticipationActors = CreateMicrostory.getActorsThroughCoparticipation(microSemEvents, semActors, microSemActors, semRelations);
@@ -552,10 +598,10 @@ public class ClusterEventObjects {
 
             System.out.println("final microstory semEvents = " + semEvents.size());
             System.out.println("final microstory semActors = " + semActors.size());
-/*            for (int i = 0; i < semEvents.size(); i++) {
+*//*            for (int i = 0; i < semEvents.size(); i++) {
                 SemObject semObject = semEvents.get(i);
                 System.out.println("Final semEvent.getURI() = " + semObject.getURI());
-            }*/
+            }*//*
         }
 
         GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
@@ -567,12 +613,6 @@ public class ClusterEventObjects {
                 communicationVector,
                 grammaticalVector);
 
-/*        GetPerspectiveRelations.getPerspective(kafSaxParser,
-                project, perspectives,
-                semActors,
-                contextualVector,
-                communicationVector,
-                grammaticalVector);*/
 
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
@@ -599,42 +639,75 @@ public class ClusterEventObjects {
             File timeFile = null;
 
             ArrayList<SemTime> outputTimes = myTimes;
-            // eventFos.writeObject(compositeEvent);
             /// now we need to write the event data and relations to the proper time folder for comparison
-            SemTime docTime = null;
-            for (int i = 0; i < outputTimes.size(); i++) {
-                SemTime semTime = outputTimes.get(i);
-                if (semTime.getId().equalsIgnoreCase("tmx0")) {
-                    docTime = semTime; ///// why did not this happen before??
-                }
-            }
             TreeSet<String> treeSet = new TreeSet<String>();
 
             if (outputTimes.size() == 0) {
                     String timePhrase = "timeless";
                     treeSet.add(timePhrase);
             }
-            else if (outputTimes.size() == 1) {
+            *//*else if (outputTimes.size() == 1) {
                 /// time: same year or exact?
                 SemTime myTime = outputTimes.get(0);
                 String timePhrase = myTime.getOwlTime().toString();
                 treeSet.add(timePhrase);
-            }
+            }*//*
             else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
                 /// special case if multiple times, what to do? create a period?
                 //// ?????
 
-                //// we now duplicate the event to multiple time folders
                 String timePhrase = "";
-                for (int k = 0; k < outputTimes.size(); k++) {
-                    SemTime semTime = (SemTime) outputTimes.get(k);
-                    timePhrase = semTime.getOwlTime().toString();
+                /// we first create the periods
+                ArrayList<String> beginPoints = new ArrayList<String>();
+                ArrayList<String> endPoints = new ArrayList<String>();
+                for (int i = 0; i < myRelations.size(); i++) {
+                    SemRelation semRelation = myRelations.get(i);
+                    for (int k = 0; k < semRelation.getPredicates().size(); k++) {
+                        String predicate = semRelation.getPredicates().get(k);
+                        if (predicate.toLowerCase().endsWith("begintime")) {
+                             beginPoints.add(semRelation.getObject());
+                        }
+                        else if (predicate.toLowerCase().endsWith("endtime")) {
+                            endPoints.add(semRelation.getObject());
+                        }
+                    }
+                }
+                System.out.println("beginPoints = " + beginPoints.toString());
+                System.out.println("endPoints = " + endPoints.toString());
+                /// we first add the beginpoints to the time phrase
+                for (int i = 0; i < outputTimes.size(); i++) {
+                    SemTime semTime = outputTimes.get(i);
+                    if (beginPoints.contains(semTime.getId())) {
+                        if (!timePhrase.isEmpty()) timePhrase += "-";
+                        timePhrase += semTime.getOwlTime().toString();
+                    }
+                }
+                /// next we add the endpoints to the time phrase
+                for (int i = 0; i < outputTimes.size(); i++) {
+                    SemTime semTime = outputTimes.get(i);
+                    if (beginPoints.contains(semTime.getId())) {
+                        if (!timePhrase.isEmpty()) timePhrase += "-";
+                        timePhrase += semTime.getOwlTime().toString();
+                    }
+                }
+                if (!timePhrase.isEmpty()) {
+                    /// we now have a indication of a period with at least a begin and end point and possibly both
                     if (!treeSet.contains(timePhrase)) {
                         treeSet.add(timePhrase);
                     }
                 }
+                else {
+                    ///// the time info is not considered a period and therefore we create separate time buckets for each timex associated with the event
+                    //// we now duplicate the event to multiple time folders
+                    for (int k = 0; k < outputTimes.size(); k++) {
+                        SemTime semTime = (SemTime) outputTimes.get(k);
+                        timePhrase = semTime.getOwlTime().toString();
+                        if (!treeSet.contains(timePhrase)) {
+                            treeSet.add(timePhrase);
+                        }
+                    }
+                }
 
-                /// if
             }
             if (treeSet.size()>0) {
                 Iterator keys = treeSet.iterator();
@@ -687,7 +760,7 @@ public class ClusterEventObjects {
                 //   System.out.println("timeFile = " + timeFile);
             }
         }
-    }
+    }*/
 
 
 

@@ -422,23 +422,9 @@ public class ComponentMatch {
             if (semRelation.getSubject().equals(event.getId())) {
                 //// this SemRelation applies to our event
                 /// we get the objects of the relation and add them to the list
-/*
-                if (event.getId().endsWith("6")) {
-                    System.out.println("event = " + event.getId());
-                    System.out.println("semRelation.object() = " + semRelation.getObject());
-                }
-*/
                 for (int j = 0; j < semObjects.size(); j++) {
                     SemObject semObject = semObjects.get(j);
                     if (semRelation.getObject().equals(semObject.getId())) {
-
-/*
-                        if (event.getId().endsWith("6")) {
-                            System.out.println("semRelation = " + semRelation.getSubject());
-                            System.out.println("semRelation = " + semRelation.getPredicates().toString());
-                            System.out.println("semRelation = " + semRelation.getObject());
-                        }
-*/
 
                         boolean has = false;
                         for (int k = 0; k < mySemObjects.size(); k++) {

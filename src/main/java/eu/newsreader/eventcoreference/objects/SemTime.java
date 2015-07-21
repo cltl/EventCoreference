@@ -17,74 +17,6 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 public class SemTime extends SemObject implements Serializable {
-  /*
-  <semEvent id="e30" lcs="raid" score="2.4849066497880004" synset="eng-30-02020027-v" label="raid" mentions="2">
-	<mentions>
-	<event-mention>
-		<event>
-			<target termId="t285" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" synset="eng-30-02020027-v" rank="0.257681" word="raid"/>
-		<event>
-		<participants>
-			<participant id="p30" lcs="eng-30-00007846-n" score="2.639057329615259" synset="eng-30-10210137-n" label="rebel" mentions="26">
-					<target termId="t288" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" synset="eng-30-11346710-n" rank="0.227748" word="town"/>
-			</participant>
-			<participant id="p93" lcs="" score="0.0" synset="" label="Khalanga" mentions="1">
-					<target termId="t2810" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" synset="" rank="0.0" word="Khalanga"/>
-			</participant>
-			<participant id="p34" lcs="eng-30-08008335-n" score="2.639057329615259" synset="eng-30-08209687-n" label="police" mentions="16">
-					<target termId="t2827" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" synset="eng-30-08337324-n" rank="0.143377" word="office"/>
-					<target termId="t2830" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" synset="eng-30-08051946-n" rank="0.0895559" word="court"/>
-			</participant>
-		</participants>
-		<times>
-			<time id="e3" lcs="eng-30-15163157-n" score="2.890371757896165" synset="eng-30-15163979-n" label="Monday" mentions="9">
-					<target termId="t284" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" synset="eng-30-15164570-n" rank="1.0" word="Saturday"/>
-			</time>
-		</times>
-		<locations>
-		</locations>
-	</event-mention>
-
-   */
-
-    /*
-    2. time aspects
-
-I see that you define the time instances with a prefix “tl:”,
-referring to the timeline ontology.
-Are you suggesting to use that ontology to model time,
-or are you using the prefix to define the URI of the time instance?
-In the former case, additional assertions have to be added to define the object
-(e.g. type - tl:Instant, tl:Interval - , tl:start, etc),
-otherwise we just end up with an instance with a label attached to it,
-which cannot be actually exploited.
-In the latter case, we don’t need to introduce this namespace,
-we can directly use the nwr one.
-
-Note that the "additional assertions" comment applies also
-if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the example.trig in attachment).
-
-	#acquisition event between two companies (actor_01, actor_02), at a certain date/time
-    nwr:event_01
-        a rsem:Event, newsEvents:Acquisition ;
-        rsem:hasActor nwr:actor_01, nwr:actor_02 ;
-        rsem:hasTime nwr:time_01 .
-
-    nwr:actor_01
-        a rsem:Actor, dbpedia:Company .
-
-    nwr:actor_02
-        a rsem:Actor, dbpedia:Company .
-
-    nwr:time_01
-        a rsem:Time, owltime:Instant ;
-        owltime:inDateTime nwr:20010101 .
-
-    nwr:20010101
-        owltime:day "1"^^xsd:int ;
-        owltime:month "1"^^xsd:int ;
-        owltime:year "2001"^^xsd:int .
-     */
 
    private OwlTime owlTime;
    private OwlTime owlTimeBegin;
@@ -109,37 +41,6 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         str += "</semEvent>\n";
         return str;
     }
-
-
-    /*
-   <semEvent id="e30" lcs="raid" score="2.4849066497880004" synset="eng-30-02020027-v" label="raid" mentions="2">
-     <mentions>
-     <event-mention>
-         <event>
-             <target termId="t285" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" synset="eng-30-02020027-v" rank="0.257681" word="raid"/>
-         <event>
-         <participants>
-             <participant id="p30" lcs="eng-30-00007846-n" score="2.639057329615259" synset="eng-30-10210137-n" label="rebel" mentions="26">
-                     <target termId="t288" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" synset="eng-30-11346710-n" rank="0.227748" word="town"/>
-             </participant>
-             <participant id="p93" lcs="" score="0.0" synset="" label="Khalanga" mentions="1">
-                     <target termId="t2810" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" synset="" rank="0.0" word="Khalanga"/>
-             </participant>
-             <participant id="p34" lcs="eng-30-08008335-n" score="2.639057329615259" synset="eng-30-08209687-n" label="police" mentions="16">
-                     <target termId="t2827" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" synset="eng-30-08337324-n" rank="0.143377" word="office"/>
-                     <target termId="t2830" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.5596157879354228" synset="eng-30-08051946-n" rank="0.0895559" word="court"/>
-             </participant>
-         </participants>
-         <times>
-             <time id="e3" lcs="eng-30-15163157-n" score="2.890371757896165" synset="eng-30-15163979-n" label="Monday" mentions="9">
-                     <target termId="t284" docId="AFP_ENG_20040823.0382.src.xml.txt.blk.tok.stp.tbf.xml.isi-term.ont.kaf" sentenceId="28" corefScore="0.0" synset="eng-30-15164570-n" rank="1.0" word="Saturday"/>
-             </time>
-         </times>
-         <locations>
-         </locations>
-     </event-mention>
- 
-    */
 
     public OwlTime getOwlTime() {
         return owlTime;
@@ -220,27 +121,7 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
 
         }
 
-       /* if (this.getNafMentions().size() > 0) {
-            OwlTime owlTime = new OwlTime();
-            owlTime.parsePublicationDate(this.getPhraseCounts().get(0).getPhrase());
-            owlTime.addToJenaModelOwlTimeInstant(model);
 
-            Resource resource = model.createResource(this.getURI());
-            for (int i = 0; i < this.getPhraseCounts().size(); i++) {
-                PhraseCount phraseCount = this.getPhraseCounts().get(i);
-                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-            }
-
-            resource.addProperty(RDF.type, Sem.Time);
-
-            Resource aResource = model.createResource(ResourcesUri.owltime + "Instant");
-            resource.addProperty(RDF.type, aResource);
-            Resource value = model.createResource(owlTime.getDateString());
-            Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
-            resource.addProperty(property, value);
-
-
-        }*/
     }
 
     public void addToJenaModelTimeInterval(Model model) {
@@ -271,16 +152,16 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
 
     }
 
-    public void addToJenaModelTimeIntervalCondensed(Model model) {
+/*    public void addToJenaModelTimeIntervalCondensed(Model model) {
         this.getOwlTime().addToJenaModelOwlTimeInstant(model);
 
         Resource resource = model.createResource(this.getURI());
         resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
 
-        /*for (int i = 0; i < phraseCounts.size(); i++) {
+        *//*for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-        }*/
+        }*//*
 
         //resource.addProperty(RDF.type, Sem.Time);
        // System.out.println("this.getOwlTime().toString() = " + this.getOwlTime().toString());
@@ -299,10 +180,9 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
 
         }
 
-    }
+    }*/
 
-    public void addToJenaModelTimeQuarterIntervalCondensed(Model model) {
-        this.interpretQuarter();
+    public void addToJenaModelTimeIntervalCondensed(Model model) {
         this.getOwlTimeBegin().addToJenaModelOwlTimeInstant(model);
         this.getOwlTimeEnd().addToJenaModelOwlTimeInstant(model);
 
@@ -318,11 +198,11 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         resource.addProperty(RDF.type, interval);
 
         Resource value = model.createResource(this.getOwlTimeBegin().getDateString());
-        Property property = model.createProperty(ResourcesUri.owl + "hasBeginning");
+        Property property = model.createProperty(ResourcesUri.owltime + "hasBeginning");
         resource.addProperty(property, value);
 
         value = model.createResource(this.getOwlTimeEnd().getDateString());
-        property = model.createProperty(ResourcesUri.owl + "hasEnd");
+        property = model.createProperty(ResourcesUri.owltime + "hasEnd");
         resource.addProperty(property, value);
 
         for (int i = 0; i < this.getNafMentions().size(); i++) {
@@ -427,14 +307,7 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
         return semRelation;
     }
 
-    public void interpretQuarter () {
-                 /*
-             nwr:20010101
-        owltime:day "1"^^xsd:int ;
-        owltime:month "1"^^xsd:int ;
-        owltime:year "2001"^^xsd:int .
-          */
-
+    public void interpretQuarterAsPeriod () {
         this.owlTimeBegin.setYear(owlTime.getYear());
         this.owlTimeBegin.setDay("1");
         this.owlTimeEnd.setYear(owlTime.getYear());
@@ -462,6 +335,47 @@ if we adopt the owl:time ontology (our suggestion - see nwr:20010101 in the exam
                 this.owlTimeEnd.setDay("31");
             }
         }
+    }
+
+    public void interpretMonthAsPeriod () {
+                 /*
+             nwr:20010101
+        owltime:day "1"^^xsd:int ;
+        owltime:month "1"^^xsd:int ;
+        owltime:year "2001"^^xsd:int .
+          */
+
+        this.owlTimeBegin.setYear(owlTime.getYear());
+        this.owlTimeBegin.setMonth(owlTime.getMonth());
+        this.owlTimeBegin.setDay("1");
+        this.owlTimeEnd.setYear(owlTime.getYear());
+        this.owlTimeEnd.setMonth(owlTime.getMonth());
+        if (!this.owlTime.getMonth().isEmpty()) {
+            if (this.owlTime.getMonth().equalsIgnoreCase("1") ||
+                    this.owlTime.getMonth().equalsIgnoreCase("4") ||
+                    this.owlTime.getMonth().equalsIgnoreCase("7") ||
+                    this.owlTime.getMonth().equalsIgnoreCase("8") ||
+                    this.owlTime.getMonth().equalsIgnoreCase("10") ||
+                    this.owlTime.getMonth().equalsIgnoreCase("12")
+                    ) {
+                this.owlTimeEnd.setDay("31");
+            }
+            else if (this.owlTime.getMonth().equalsIgnoreCase("2")) {
+                this.owlTimeEnd.setDay("28");
+            }
+            else {
+                this.owlTimeEnd.setDay("30");
+            }
+        }
+    }
+
+    public void interpretYearAsPeriod () {
+        this.owlTimeBegin.setYear(owlTime.getYear());
+        this.owlTimeBegin.setDay("1");
+        this.owlTimeBegin.setMonth("1");
+        this.owlTimeEnd.setYear(owlTime.getYear());
+        this.owlTimeEnd.setDay("1");
+        this.owlTimeEnd.setMonth("31");
     }
 
 

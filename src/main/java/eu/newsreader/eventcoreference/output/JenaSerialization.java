@@ -166,22 +166,22 @@ public class JenaSerialization {
                     semActor.addToJenaModel(instanceModel, Sem.Actor, VERBOSE_MENTIONS);
                 }
 
-                //  System.out.println("PLACES");
-                /*for (int i = 0; i < compositeEvent.getMySemPlaces().size(); i++) {
-                    SemPlace semPlace = (SemPlace) compositeEvent.getMySemPlaces().get(i);
-                    //semPlace.addToJenaModel(instanceModel, Sem.Place);
-                    semPlace.addToJenaModel(instanceModel, Sem.Place, VERBOSE_MENTIONS);
-                }*/
 
                 // System.out.println("TIMES");
                 // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
                 for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
                     SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
                     //semTime.addToJenaModelTimeInterval(instanceModel);
-                    if (semTime.getType().equalsIgnoreCase("QUARTER")) {
-                        semTime.addToJenaModelTimeQuarterIntervalCondensed(instanceModel);
+                    if (semTime.getType().equalsIgnoreCase(TimeTypes.YEAR)) {
+                        semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                     }
-                    else if (semTime.getType().equalsIgnoreCase("DURATION")) {
+                    else if (semTime.getType().equalsIgnoreCase(TimeTypes.QUARTER)) {
+                        semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+                    }
+                    else if (semTime.getType().equalsIgnoreCase(TimeTypes.MONTH)) {
+                        semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+                    }
+                    else if (semTime.getType().equalsIgnoreCase(TimeTypes.DURATION)) {
                         semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                     }
                     else  { /// DATE
