@@ -286,16 +286,17 @@ public class ClusterEventObjects {
                 String timePhrase = "timeless";
                 treeSet.add(timePhrase);
             }
+            else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
+                String timePhrase = "timeless";
+                treeSet.add(timePhrase);
+            }
             else if (outputTimes.size() == 1) {
                 /// time: same year or exact?
                 SemTime myTime = outputTimes.get(0);
                 String timePhrase = myTime.getOwlTime().toString();
                 treeSet.add(timePhrase);
             }
-            else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
-                /// special case if multiple times, what to do? create a period?
-                //// ?????
-
+            else  {
                 String timePhrase = "";
                 /// we first create the periods
                 ArrayList<String> beginPoints = new ArrayList<String>();
