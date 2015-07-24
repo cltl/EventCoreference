@@ -3,6 +3,7 @@ package eu.newsreader.eventcoreference.naf;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
+import eu.newsreader.eventcoreference.objects.SemTime;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class GetSemFromNafStream {
         }
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(System.in);

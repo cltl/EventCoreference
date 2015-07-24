@@ -24,7 +24,7 @@ public class JenaSerialization {
     static public void serializeJena (OutputStream stream,
                                       ArrayList<SemObject> semEvents,
                                       ArrayList<SemObject> semActors,
-                                      ArrayList<SemObject> semTimes,
+                                      ArrayList<SemTime> semTimes,
                                       ArrayList<SemRelation> semRelations,
                                       HashMap<String, SourceMeta> sourceMetaHashMap,
                                       boolean VERBOSE_MENTIONS) {
@@ -36,9 +36,12 @@ public class JenaSerialization {
         Dataset ds = TDBFactory.createDataset();
         Model defaultModel = ds.getDefaultModel();
         ResourcesUri.prefixModel(defaultModel);
+        ResourcesUri.prefixModelNwr(defaultModel);
+        ResourcesUri.prefixModelGaf(defaultModel);
 
         Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
         ResourcesUri.prefixModelGaf(provenanceModel);
+        ResourcesUri.prefixModelNwr(defaultModel);
 
         Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
         ResourcesUri.prefixModel(instanceModel);
@@ -60,8 +63,25 @@ public class JenaSerialization {
         // System.out.println("TIMES");
         for (int i = 0; i < semTimes.size(); i++) {
             SemTime semTime = (SemTime) semTimes.get(i);
-            //semTime.addToJenaModel(instanceModel, Sem.Time);
-            semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            if (semTime.getType().equalsIgnoreCase(TimeTypes.YEAR)) {
+                semTime.addToJenaModelDocTimeInstant(instanceModel);
+                //OR
+                // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            }
+            else if (semTime.getType().equalsIgnoreCase(TimeTypes.QUARTER)) {
+                semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            }
+            else if (semTime.getType().equalsIgnoreCase(TimeTypes.MONTH)) {
+                semTime.addToJenaModelDocTimeInstant(instanceModel);
+                //OR
+                // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            }
+            else if (semTime.getType().equalsIgnoreCase(TimeTypes.DURATION)) {
+                semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            }
+            else  { /// DATE
+                semTime.addToJenaModelDocTimeInstant(instanceModel);
+            }
         }
 
         //System.out.println("RELATIONS");
@@ -86,17 +106,7 @@ public class JenaSerialization {
        // writer.write(ds.getDefaultModel(), stream, RDFFormat.RDFJSON);
        // writer.write(ds.getDefaultModel(), );
         // defaultModel.write(stream);
-        //  RDFWriter writer = defaultModel.getWriter();
-        // writer.
-        //writer.setErrorHandler(myErrorHandler);
-/*        writer.setProperty("showXmlDeclaration","true");
-        writer.setProperty("tab","8");
-        writer.setProperty("relativeURIs","same-document,relative");
-        for (int i = 0; i < ds..size(); i++) {
-            Object o =  ds..get(i);
 
-        }
-        writer.write(defaultModel, stream);*/
     }
 
     static void replaceEventIdsWithILIids (CompositeEvent compositeEvent) {
@@ -152,6 +162,7 @@ public class JenaSerialization {
             ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
             for (int c = 0; c < compositeEvents.size(); c++) {
                 CompositeEvent compositeEvent = compositeEvents.get(c);
+                System.out.println("compositeEvent.toString() = " + compositeEvent.toString());
                 if (USEILIURI) {
                     replaceEventIdsWithILIids(compositeEvent);
                 }
@@ -173,13 +184,17 @@ public class JenaSerialization {
                     SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
                     //semTime.addToJenaModelTimeInterval(instanceModel);
                     if (semTime.getType().equalsIgnoreCase(TimeTypes.YEAR)) {
-                        semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+                        semTime.addToJenaModelDocTimeInstant(instanceModel);
+                        //OR
+                       // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                     }
                     else if (semTime.getType().equalsIgnoreCase(TimeTypes.QUARTER)) {
                         semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                     }
                     else if (semTime.getType().equalsIgnoreCase(TimeTypes.MONTH)) {
-                        semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+                        semTime.addToJenaModelDocTimeInstant(instanceModel);
+                        //OR
+                        // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                     }
                     else if (semTime.getType().equalsIgnoreCase(TimeTypes.DURATION)) {
                         semTime.addToJenaModelTimeIntervalCondensed(instanceModel);

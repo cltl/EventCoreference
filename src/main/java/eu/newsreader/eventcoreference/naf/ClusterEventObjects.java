@@ -241,7 +241,7 @@ public class ClusterEventObjects {
         String nafFileName = new File (nafFilePath).getName();
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
@@ -252,9 +252,9 @@ public class ClusterEventObjects {
         //System.out.println("semTimes = " + semTimes.size());
         for (int j = 0; j < semEvents.size(); j++) {
             SemEvent mySemEvent = (SemEvent) semEvents.get(j);
-            ArrayList<SemTime> myTimes = Util.castToTime(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semTimes));
+            ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
             //   System.out.println("myTimes.size() = " + myTimes.size());
-            ArrayList<SemActor> myActors = Util.castToActor(ComponentMatch.getMySemObjects(mySemEvent, semRelations, semActors));
+            ArrayList<SemActor> myActors =ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
             ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
             if (myRelations.size() == 0) {
                 continue;
@@ -286,14 +286,27 @@ public class ClusterEventObjects {
                 String timePhrase = "timeless";
                 treeSet.add(timePhrase);
             }
-            else if (outputTimes.size() <= TIMEEXPRESSIONMAX) {
+            else if (outputTimes.size() > TIMEEXPRESSIONMAX) {
                 String timePhrase = "timeless";
                 treeSet.add(timePhrase);
             }
             else if (outputTimes.size() == 1) {
                 /// time: same year or exact?
-                SemTime myTime = outputTimes.get(0);
-                String timePhrase = myTime.getOwlTime().toString();
+                SemTime semTime = outputTimes.get(0);
+                String timePhrase = "";
+
+                if (Util.futureTimeRelation(semTime, myRelations)) {
+                    timePhrase = "future";
+/*
+                    System.out.println("compositeEvent.getEvent().getId() = " + compositeEvent.getEvent().getId());
+                    System.out.println("compositeEvent.getEvent().getNafMentions().get(0).toStringFull() = " + compositeEvent.getEvent().getNafMentions().get(0).toStringFull());
+                    System.out.println("compositeEvent.getMySemActors().size() = " + compositeEvent.getMySemActors().size());
+                    System.out.println("compositeEvent.getMySemRelations().size() = " + compositeEvent.getMySemRelations().size());
+*/
+                }
+                else {
+                    timePhrase = semTime.getOwlTime().toString();
+                }
                 treeSet.add(timePhrase);
             }
             else  {
@@ -305,10 +318,10 @@ public class ClusterEventObjects {
                     SemRelation semRelation = myRelations.get(i);
                     for (int k = 0; k < semRelation.getPredicates().size(); k++) {
                         String predicate = semRelation.getPredicates().get(k);
-                        if (predicate.toLowerCase().endsWith("begintime")) {
+                        if (predicate.endsWith(Sem.hasBeginTimeStamp.getLocalName())) {
                             beginPoints.add(semRelation.getObject());
                         }
-                        else if (predicate.toLowerCase().endsWith("endtime")) {
+                        else if (predicate.toLowerCase().endsWith(Sem.hasEndTimeStamp.getLocalName())) {
                             endPoints.add(semRelation.getObject());
                         }
                     }
@@ -342,9 +355,24 @@ public class ClusterEventObjects {
                     //// we now duplicate the event to multiple time folders
                     for (int k = 0; k < outputTimes.size(); k++) {
                         SemTime semTime = (SemTime) outputTimes.get(k);
-                        timePhrase = semTime.getOwlTime().toString();
-                        if (!treeSet.contains(timePhrase)) {
-                            treeSet.add(timePhrase);
+                        if (Util.futureTimeRelation(semTime, myRelations)) {
+                            timePhrase = "future";
+
+                        }
+                        else {
+                            timePhrase = semTime.getOwlTime().toString();
+                        }
+
+                        if (timePhrase.isEmpty()) {
+                            /*System.out.println("semTime.getOwlTime() = " + semTime.getOwlTime());
+                            System.out.println("semTime.getOwlTimeBegin() = " + semTime.getOwlTimeBegin());
+                            System.out.println("semTime.getId() = " + semTime.getId());
+                            System.out.println("semTime.getType() = " + semTime.getType());*/
+                        }
+                        else {
+                            if (!treeSet.contains(timePhrase)) {
+                                treeSet.add(timePhrase);
+                            }
                         }
                     }
                 }
@@ -355,6 +383,11 @@ public class ClusterEventObjects {
                 Iterator keys = treeSet.iterator();
                 while (keys.hasNext()) {
                     String timePhrase = "-" + keys.next();
+                    //System.out.println("timePhrase = " + timePhrase);
+
+                   // System.out.println("compositeEvent = " + compositeEvent.toString());
+
+                  //  System.out.println("timePhrase = " + timePhrase);
                     timeFile = new File(folder.getAbsolutePath() + "/" + "e" + timePhrase);
                     if (!timeFile.exists()) {
                         timeFile.mkdir();
@@ -368,34 +401,46 @@ public class ClusterEventObjects {
                         else {
                             randomFile = File.createTempFile("event", ".obj", timeFile);
                         }
+                        ////////// NOTE /////////////////////////////
+                        ////////// To write to object file, all the classes need to be defined with "implements Serializable {"
+                        ////////// If not you get a wirte object error for that class:
+                        ////// java.io.NotSerializableException: eu.kyotoproject.kaf.KafFactValue
+                        //////  at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1165)
+                        //////  at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:329)
+
                         if (randomFile!=null && randomFile.exists()) {
-                            //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
+                               System.out.println("appending to timeFile.getName() = " + timeFile.getName());
                             OutputStream os = new FileOutputStream(randomFile, true);
                             Util.AppendableObjectOutputStream eventFos = new Util.AppendableObjectOutputStream(os);
                             try {
                                 eventFos.writeObject(compositeEvent);
                             } catch (IOException e) {
-                                //e.printStackTrace();
-                            }
-                            os.flush();
-                            os.close();
-                            eventFos.flush();
-                            eventFos.close();
-                        } else {
-                            //  System.out.println("timeFile.getName() = " + timeFile.getName());
-                            OutputStream os = new FileOutputStream(randomFile);
-                            ObjectOutputStream eventFos = new ObjectOutputStream(os);
-                            try {
-                                eventFos.writeObject(compositeEvent);
-                            } catch (IOException e) {
-                                // e.printStackTrace();
+                                e.printStackTrace();
                             }
                             os.flush();
                             os.close();
                             eventFos.flush();
                             eventFos.close();
                         }
+                        else if (randomFile!=null) {
+                              System.out.println("timeFile.getName() = " + timeFile.getName());
+                            OutputStream os = new FileOutputStream(randomFile);
+                            ObjectOutputStream eventFos = new ObjectOutputStream(os);
+                            try {
+                                eventFos.writeObject(compositeEvent);
+                            } catch (IOException e) {
+                                 e.printStackTrace();
+                            }
+                            os.flush();
+                            os.close();
+                            eventFos.flush();
+                            eventFos.close();
+                        }
+                        else {
+                            System.out.println("Could not create the naf.object file in:"+timeFile);
+                        }
                     }
+                 //   break;
                 }
 
             } else {

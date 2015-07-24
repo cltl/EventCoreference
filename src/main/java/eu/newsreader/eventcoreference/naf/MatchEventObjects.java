@@ -196,6 +196,7 @@ public class MatchEventObjects {
         else {
             System.out.println("UNKNOWN MATCH TYPE:"+ MATCHTYPE);
         }
+        System.out.println("localEventMap.size() = " + localEventMap.size());
         Set keySet = localEventMap.keySet();
         Iterator keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -265,20 +266,22 @@ public class MatchEventObjects {
         HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
         if (file.exists() ) {
             int cnt = 0;
-          //  DEBUG = false;
             if (DEBUG) System.out.println("file = " + file.getName());
             try {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois =  new ObjectInputStream(fis);
                 Object obj = null;
+                if (DEBUG) {
+                    if (fis.available() <= 0) {
+                        System.out.println("fis.available() = " + fis.available());
+                    }
+                }
                 while (fis.available()>0) {
                     while ((obj = ois.readObject()) != null) {
                         cnt++;
+                        System.out.println("cnt = " + cnt);
                         if (obj instanceof CompositeEvent) {
                             CompositeEvent compositeEvent = (CompositeEvent) obj;
-/*                            if (!compositeEvent.getEvent().getPhrase().equals("production")) {
-                                continue;
-                            }*/
                             if (DEBUG) {
                                 System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
                                 System.out.println("compositeEvent.getEvent().getPhraseCounts().size() = " + compositeEvent.getEvent().getPhraseCounts().size());
@@ -323,12 +326,16 @@ public class MatchEventObjects {
                     fis.close();
                 }
             } catch (Exception e) {
-               //  System.out.println("file = " + file.getAbsolutePath());
-              //   e.printStackTrace();
+                if (DEBUG) {
+                    System.out.println("Error reading object file = " + file.getAbsolutePath());
+                    e.printStackTrace();
+                }
             }
             if (DEBUG) System.out.println(file.getName()+" nr objects read = " + cnt);
         }
-        DEBUG = false;
+        else {
+            if (DEBUG) System.out.println("Does not exist file.getAbsolutePath() = " + file.getAbsolutePath());
+        }
         return eventMap;
     }
 
@@ -553,6 +560,7 @@ public class MatchEventObjects {
                     compareObjectFileWithFinalEvents(file, finalLemmaEventMap, eventType);
                     if (DEBUG) System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
                 }
+                System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
                 chaining(finalLemmaEventMap, eventType);
                 JenaSerialization.addJenaCompositeEvents(ds,
                         instanceModel,

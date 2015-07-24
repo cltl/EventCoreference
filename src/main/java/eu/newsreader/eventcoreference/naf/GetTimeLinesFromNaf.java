@@ -236,7 +236,7 @@ public class GetTimeLinesFromNaf {
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         String baseUrl = "";
@@ -361,7 +361,7 @@ public class GetTimeLinesFromNaf {
 
     static String getTimeLineString (SemEvent semEvent,
                                      ArrayList<SemRelation> semRelations,
-                                     ArrayList<SemObject> semTimes,
+                                     ArrayList<SemTime> semTimes,
                                      String entityRoles,
                                      KafSaxParser kafSaxParser) {
         String timeLine = "";
@@ -406,7 +406,7 @@ public class GetTimeLinesFromNaf {
 
     static public String processNafFileEntityBased (ArrayList<SemObject> semEvents,
                                                     ArrayList<SemObject> semActors ,
-                                                    ArrayList<SemObject> semTimes,
+                                                    ArrayList<SemTime> semTimes,
                                                     ArrayList<SemRelation> semRelations,
                                                     KafSaxParser kafSaxParser
                                                      ) {
@@ -460,7 +460,7 @@ public class GetTimeLinesFromNaf {
 
     static public String processNafFileEventBased (ArrayList<SemObject> semEvents,
                                                    ArrayList<SemObject> semActors ,
-                                                   ArrayList<SemObject> semTimes,
+                                                   ArrayList<SemTime> semTimes,
                                                    ArrayList<SemRelation> semRelations,
                                                    KafSaxParser kafSaxParser
     ) {
@@ -649,7 +649,7 @@ public class GetTimeLinesFromNaf {
                                             ArrayList<SemObject> semEvents,
                                             ArrayList<SemObject> semActors,
                                             ArrayList<SemObject> semPlaces,
-                                            ArrayList<SemObject> semTimes,
+                                            ArrayList<SemTime> semTimes,
                                             ArrayList<SemRelation> semRelations
     ) {
 

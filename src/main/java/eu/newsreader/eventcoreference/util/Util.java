@@ -24,10 +24,48 @@ public class Util {
     static public final int SPANMAXCOREFERENTSET = 5;
 
 
-    static public SemObject getSemTime(ArrayList<SemObject> semTimeArrayList, String timexId) {
+    static public String getValueForTimex (ArrayList<KafTimex> timexs, String timexId) {
+        String value = "";
+        for (int i = 0; i < timexs.size(); i++) {
+            KafTimex kafTimex = timexs.get(i);
+            if (kafTimex.getId().equals(timexId)) {
+                return kafTimex.getValue();
+            }
+
+        }
+        return value;
+    }
+
+    static public boolean futureTimeRelation (SemTime semTime, ArrayList<SemRelation> semRelations) {
+        for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+            for (int k = 0; k < semRelation.getPredicates().size(); k++) {
+                String predicate = semRelation.getPredicates().get(k);
+                if (predicate.endsWith(Sem.hasEarliestBeginTimeStamp.getLocalName())) {
+                    if (semRelation.getObject().equals(semTime.getId())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    static public SemTime getDocumentCreationTime(ArrayList<SemTime> semTimeArrayList) {
+            for (int i = 0; i < semTimeArrayList.size(); i++) {
+                SemTime time = semTimeArrayList.get(i);
+                if (time.getFunctionInDocument().equalsIgnoreCase("CREATION_TIME")) {
+                    return time;
+
+            }
+        }
+        return null;
+    }
+
+    static public SemTime getSemTime(ArrayList<SemTime> semTimeArrayList, String timexId) {
         if (!timexId.isEmpty()){
             for (int i = 0; i < semTimeArrayList.size(); i++) {
-                SemObject time = semTimeArrayList.get(i);
+                SemTime time = semTimeArrayList.get(i);
                 //  System.out.println("time.getId() = " + time.getId());
                 //  System.out.println("timexId = " + timexId);
                 if (time.getId().endsWith(timexId)) {
@@ -48,24 +86,24 @@ public class Util {
         }
         return termIds;
     }
-    static public boolean futureEvent (SemObject semEvent) {
+
+    static public KafFactuality futureEvent (SemObject semEvent) {
         for (int j = 0; j < semEvent.getNafMentions().size(); j++) {
             NafMention nafMention = semEvent.getNafMentions().get(j);
             for (int i = 0; i < nafMention.getFactuality().size(); i++) {
                 KafFactuality kafFactuality = nafMention.getFactuality().get(i);
-
                 // <factValue confidence="0.91" resource="nwr:AttributionTime" value="FUTURE"/>
                 for (int k = 0; k < kafFactuality.getFactValueArrayList().size(); k++) {
                     KafFactValue kafFactValue = kafFactuality.getFactValueArrayList().get(k);
                     if (kafFactValue.getResource().toLowerCase().endsWith("attributiontime") &&
                             kafFactValue.getValue().toLowerCase().equals("future")) {
-                        return true;
-
+                    //    System.out.println("kafFactValue.getValue() = " + kafFactValue.getValue());
+                        return kafFactuality;
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 
     /**

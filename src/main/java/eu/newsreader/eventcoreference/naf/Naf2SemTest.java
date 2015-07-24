@@ -21,7 +21,7 @@ public class Naf2SemTest {
 
     static boolean ADDITIONALROLES = false;
 
-    static String MATCHTYPE= "ILI";  // ILI OR ILILEMMA
+    static String MATCHTYPE= "ILILEMMA";  // ILI OR ILILEMMA
     static boolean VERBOSEMENTIONS = false;
 
     static public void main (String[] args) {
@@ -39,12 +39,6 @@ public class Naf2SemTest {
             communicationVector = Util.ReadFileToStringVector(comFrameFile);
             grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
             contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
-/*
-        System.out.println("communicationVector = " + communicationVector.size());
-        System.out.println("contextualVector = " + contextualVector.size());
-        System.out.println("grammaticalVector = " + grammaticalVector.size());
-*/
-
             try {
                 ClusterEventObjects.communicationVector = communicationVector;
                 ClusterEventObjects.grammaticalVector = grammaticalVector;
@@ -67,13 +61,16 @@ public class Naf2SemTest {
 
         if (!pathToSourceDataFile.isEmpty()) {
             sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
-           // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
+          //  System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
         }
         MatchEventObjects.MATCHTYPE = MATCHTYPE;
         MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;
+        MatchEventObjects.DEBUG = true;
+
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
         eventType = "contextual";
         MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+
 
         pathToObjEventFolder = pathToEventFolder+"/events/source";
         eventType = "source";

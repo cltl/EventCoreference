@@ -1,0 +1,67 @@
+package eu.newsreader.eventcoreference.naf;
+
+import eu.newsreader.eventcoreference.objects.SourceMeta;
+import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
+import eu.newsreader.eventcoreference.util.Util;
+import vu.wntools.wordnet.WordnetData;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Vector;
+
+/**
+ * Created by piek on 23/07/15.
+ */
+public class NafObjectToSemTest {
+    static Vector<String> communicationVector = null;
+    static Vector<String> grammaticalVector = null;
+    static Vector<String> contextualVector = null;
+
+    static boolean ADDITIONALROLES = false;
+
+    static String MATCHTYPE= "ILI";  // ILI OR ILILEMMA
+    static boolean VERBOSEMENTIONS = false;
+
+    static public void main (String[] args) {
+
+        String pathToEventFolder ="/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test";
+        String projectName  = "cars";
+        String extension = ".xml";
+        String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/communication.txt";
+        String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/contextual.txt";
+        String grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/grammatical.txt";
+        ADDITIONALROLES = true;
+
+        //// read resources
+        communicationVector = Util.ReadFileToStringVector(comFrameFile);
+        grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
+        contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
+
+
+        String eventType = "";
+        HashMap<String, SourceMeta> sourceMetaHashMap = null;
+        WordnetData wordnetData = null;
+        double conceptMatchThreshold = 0;
+        double phraseMatchThreshold = 1;
+        String pathToSourceDataFile = "";
+        pathToSourceDataFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/LN-coremetadata.txt";
+
+        if (!pathToSourceDataFile.isEmpty()) {
+            sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
+           // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
+        }
+        MatchEventObjects.MATCHTYPE = MATCHTYPE;
+        MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;
+        String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
+        eventType = "contextual";
+       // MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+        MatchEventObjects.DEBUG = true;
+        pathToObjEventFolder = pathToEventFolder+"/events/source";
+        eventType = "source";
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+
+        pathToObjEventFolder = pathToEventFolder + "/events/grammatical";
+        eventType = "grammatical";
+      //  MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+    }
+}

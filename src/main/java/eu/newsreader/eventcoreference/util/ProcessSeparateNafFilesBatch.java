@@ -45,7 +45,7 @@ public class ProcessSeparateNafFilesBatch {
                 SemTime docSemTime = new SemTime();
                 ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
                 ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-                ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+                ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
                 ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
                 GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");

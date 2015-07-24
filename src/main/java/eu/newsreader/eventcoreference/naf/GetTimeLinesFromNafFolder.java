@@ -188,7 +188,7 @@ public class GetTimeLinesFromNafFolder {
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         GetSemFromNafFile.processNafFile(project,
                 kafSaxParser,
@@ -217,7 +217,7 @@ public class GetTimeLinesFromNafFolder {
 
     static public String processNafFileEntityBased (ArrayList<SemObject> semEvents,
                                                     ArrayList<SemObject> semActors ,
-                                                    ArrayList<SemObject> semTimes,
+                                                    ArrayList<SemTime> semTimes,
                                                     ArrayList<SemRelation> semRelations,
                                                     KafSaxParser kafSaxParser
                                                      ) {
@@ -325,7 +325,7 @@ public class GetTimeLinesFromNafFolder {
 
     static public String processNafFileEventBased (ArrayList<SemObject> semEvents,
                                                    ArrayList<SemObject> semActors ,
-                                                   ArrayList<SemObject> semTimes,
+                                                   ArrayList<SemTime> semTimes,
                                                    ArrayList<SemRelation> semRelations,
                                                    KafSaxParser kafSaxParser
     ) {

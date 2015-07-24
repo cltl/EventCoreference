@@ -176,7 +176,7 @@ public class GetJsonTimeLinesFromNaf {
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         String baseUrl = "";
@@ -443,7 +443,7 @@ public class GetJsonTimeLinesFromNaf {
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemObject> semPlaces = new ArrayList<SemObject>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         String baseUrl = "";
@@ -676,7 +676,7 @@ public class GetJsonTimeLinesFromNaf {
                                             ArrayList<SemObject> semEvents,
                                             ArrayList<SemObject> semActors,
                                             ArrayList<SemObject> semPlaces,
-                                            ArrayList<SemObject> semTimes,
+                                            ArrayList<SemTime> semTimes,
                                             ArrayList<SemRelation> semRelations
     ) {
 

@@ -66,15 +66,21 @@ public class Sem {
      */
     public static final ObjectProperty hasTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasTime" );
 
-    /** <p>Has BeginTime is used to indicate at which time an Event started. Has time points to a symbolic representation
+/*
+    */
+/** <p>Has BeginTime is used to indicate at which time an Event started. Has time points to a symbolic representation
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
-     */
+     *//*
+
     public static final ObjectProperty hasBeginTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasBeginTime" );
 
-    /** <p>Has EndTime is used to indicate at which time an Event ended. Has time points to a symbolic representation
+    */
+/** <p>Has EndTime is used to indicate at which time an Event ended. Has time points to a symbolic representation
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
-     */
+     *//*
+
     public static final ObjectProperty hasEndTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasEndTime" );
+*/
 
     /** <p>Has place type is used to assign a type to a place.</p> */
     public static final ObjectProperty placeType = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/placeType" );
@@ -101,6 +107,11 @@ public class Sem {
      *  roleType. Types can be both classes and individuals, cf. OWL 2 punning.</p>
      */
     public static final ObjectProperty type = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/type" );
+
+    /** <p>Has future timestamp is used to indicate the future with respect to a time instant.
+     *  </p>
+     */
+    public static final DatatypeProperty hasFutureTimeStamp = m_model.createDatatypeProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasFutureTimeStamp" );
 
     /** <p>Has begin timestamp is used to indicate the beginning of a time interval.
      *  Omitting the hasBeginTimeStamp while stating a hasEndTimeStamp is interpreted

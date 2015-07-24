@@ -6,6 +6,7 @@ import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.objects.NafMention;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
+import eu.newsreader.eventcoreference.objects.SemTime;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.Util;
 import org.json.JSONArray;
@@ -52,7 +53,7 @@ public class CreateMicrostory {
         }
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(pathToNafFile);

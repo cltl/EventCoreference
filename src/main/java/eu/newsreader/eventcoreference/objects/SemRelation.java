@@ -115,21 +115,25 @@ public class SemRelation implements Serializable {
 
 
     public Property getSemRelationType (String type) {
-        if (type.equalsIgnoreCase("hassemtime")) {
+        if (type.equals(Sem.hasTime.getLocalName())) {
             return Sem.hasTime;
         }
-        else if (type.equalsIgnoreCase("hassembegintime")) {
+        else if (type.equals(Sem.hasBeginTimeStamp.getLocalName())) {
 
             //BiographyNet uses sem:hasBeginTimeStamp
-            return Sem.hasBeginTime;
+            return Sem.hasBeginTimeStamp;
         }
-        else if (type.equalsIgnoreCase("hassemendtime")) {
-            return Sem.hasEndTime;
+        else if (type.equals(Sem.hasEndTimeStamp.getLocalName())) {
+            return Sem.hasEndTimeStamp;
         }
-        else if (type.equalsIgnoreCase("hassemplace")) {
+        else if (type.equals(Sem.hasEarliestBeginTimeStamp.getLocalName())) {
+          //  return Sem.hasFutureTimeStamp;
+            return Sem.hasEarliestBeginTimeStamp;
+        }
+        else if (type.equals(Sem.hasPlace.getLocalName())) {
             return Sem.hasPlace;
         }
-        else if (type.equalsIgnoreCase("hassemactor")) {
+        else if (type.equals(Sem.hasActor.getLocalName())) {
             return Sem.hasActor;
         }
         else {
@@ -198,7 +202,8 @@ public class SemRelation implements Serializable {
                 Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue + predicate);
                 subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
             } else {
-                if (predicate.toLowerCase().startsWith("hassem")) {
+              //  System.out.println("predicate.toLowerCase() = " + predicate.toLowerCase());
+                if (predicate.toLowerCase().startsWith("has")) {
                     semProperty = getSemRelationType(predicate);
                 } else {
                     predicate = getRoleRelation(predicate);
@@ -251,8 +256,9 @@ public class SemRelation implements Serializable {
 
             //http://www.newsreader-project.eu/data/cars/2003/10/10/49RC-C8V0-01D6-W1FX.xml
             //http://www.newsreader-project.eu/data/cars/2003/01/01/47KF-XY70-010F-G3GG.xml
+            //System.out.println("nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
             if (sourceMetaHashMap.containsKey(nafMention.getBaseUriWithoutId())) {
-               // System.out.println("nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
+                //System.out.println("nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
 
                 SourceMeta sourceMeta = sourceMetaHashMap.get(nafMention.getBaseUriWithoutId());
                 Property property = provenanceModel.createProperty(ResourcesUri.prov+"wasAttributedTo");
@@ -266,8 +272,8 @@ public class SemRelation implements Serializable {
                 }
             }
             else {
-               // System.out.println("No meta nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
-              //  System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
+                //System.out.println("No meta nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
+                //System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
             }
         }
     }

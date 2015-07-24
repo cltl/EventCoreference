@@ -4,6 +4,7 @@ import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.objects.PerspectiveObject;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
+import eu.newsreader.eventcoreference.objects.SemTime;
 import eu.newsreader.eventcoreference.util.TimeLanguage;
 import eu.newsreader.eventcoreference.util.Util;
 
@@ -61,7 +62,7 @@ public class ParcAttributionTask {
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemObject> semTimes = new ArrayList<SemObject>();
+        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 

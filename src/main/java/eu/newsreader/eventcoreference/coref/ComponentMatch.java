@@ -424,8 +424,68 @@ public class ComponentMatch {
                 /// we get the objects of the relation and add them to the list
                 for (int j = 0; j < semObjects.size(); j++) {
                     SemObject semObject = semObjects.get(j);
-                    if (semRelation.getObject().equals(semObject.getId())) {
 
+                    if (semRelation.getObject().equals(semObject.getId())) {
+                        boolean has = false;
+                        for (int k = 0; k < mySemObjects.size(); k++) {
+                            SemObject object = mySemObjects.get(k);
+                            if (object.getId().equals(semObject.getId())) {
+                                has = true;
+                                break;
+                            }
+                        }
+                        if (!has) {
+                            mySemObjects.add(semObject);
+                        }
+                    }
+                }
+            }
+        }
+        return mySemObjects;
+    }
+
+    public static ArrayList<SemActor> getMySemActors (SemObject event, ArrayList<SemRelation> semRelations, ArrayList<SemObject> semObjects) {
+        ArrayList<SemActor> mySemObjects = new ArrayList<SemActor>();
+
+        for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+            if (semRelation.getSubject().equals(event.getId())) {
+                //// this SemRelation applies to our event
+                /// we get the objects of the relation and add them to the list
+                for (int j = 0; j < semObjects.size(); j++) {
+                    SemObject semObject = semObjects.get(j);
+
+                    if (semRelation.getObject().equals(semObject.getId())) {
+                        boolean has = false;
+                        for (int k = 0; k < mySemObjects.size(); k++) {
+                            SemObject object = mySemObjects.get(k);
+                            if (object.getId().equals(semObject.getId())) {
+                                has = true;
+                                break;
+                            }
+                        }
+                        if (!has) {
+                            mySemObjects.add((SemActor)semObject);
+                        }
+                    }
+                }
+            }
+        }
+        return mySemObjects;
+    }
+
+    public static ArrayList<SemTime> getMySemTimes (SemObject event, ArrayList<SemRelation> semRelations, ArrayList<SemTime> semObjects) {
+        ArrayList<SemTime> mySemObjects = new ArrayList<SemTime>();
+
+        for (int i = 0; i < semRelations.size(); i++) {
+            SemRelation semRelation = semRelations.get(i);
+            if (semRelation.getSubject().equals(event.getId())) {
+                //// this SemRelation applies to our event
+                /// we get the objects of the relation and add them to the list
+                for (int j = 0; j < semObjects.size(); j++) {
+                    SemTime semObject = semObjects.get(j);
+
+                    if (semRelation.getObject().equals(semObject.getId())) {
                         boolean has = false;
                         for (int k = 0; k < mySemObjects.size(); k++) {
                             SemObject object = mySemObjects.get(k);

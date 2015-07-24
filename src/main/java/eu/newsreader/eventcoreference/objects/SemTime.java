@@ -21,8 +21,10 @@ public class SemTime extends SemObject implements Serializable {
    private OwlTime owlTime;
    private OwlTime owlTimeBegin;
    private OwlTime owlTimeEnd;
+    private String functionInDocument;
 
    public SemTime() {
+       functionInDocument = "";
        owlTime = new OwlTime();
        owlTimeBegin = new OwlTime();
        owlTimeEnd = new OwlTime();
@@ -40,6 +42,14 @@ public class SemTime extends SemObject implements Serializable {
         str += "</mentions>\n";
         str += "</semEvent>\n";
         return str;
+    }
+
+    public String getFunctionInDocument() {
+        return functionInDocument;
+    }
+
+    public void setFunctionInDocument(String functionInDocument) {
+        this.functionInDocument = functionInDocument;
     }
 
     public OwlTime getOwlTime() {
@@ -65,6 +75,7 @@ public class SemTime extends SemObject implements Serializable {
     public void setOwlTimeEnd(OwlTime owlTimeEnd) {
         this.owlTimeEnd = owlTimeEnd;
     }
+
 
     public void addToJenaModelTimeInstant(Model model, OwlTime owlTime) {
         this.getOwlTime().addToJenaModelOwlTimeInstant(model);
@@ -152,35 +163,23 @@ public class SemTime extends SemObject implements Serializable {
 
     }
 
-/*    public void addToJenaModelTimeIntervalCondensed(Model model) {
-        this.getOwlTime().addToJenaModelOwlTimeInstant(model);
+
+/*
+    public void addToJenaModelFutureCondensed(Model model) {
+        this.getOwlTimeBegin().addToJenaModelOwlTimeInstant(model);
 
         Resource resource = model.createResource(this.getURI());
         resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
 
-        *//*for (int i = 0; i < phraseCounts.size(); i++) {
-            PhraseCount phraseCount = phraseCounts.get(i);
-            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-        }*//*
-
-        //resource.addProperty(RDF.type, Sem.Time);
-       // System.out.println("this.getOwlTime().toString() = " + this.getOwlTime().toString());
         Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
         resource.addProperty(RDF.type, interval);
 
-        Resource value = model.createResource(this.getOwlTime().getDateString());
-        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+        Resource value = model.createResource(this.getOwlTimeBegin().getDateString());
+        Property property = model.createProperty(ResourcesUri.owltime + "hasBeginning");
         resource.addProperty(property, value);
 
-        for (int i = 0; i < this.getNafMentions().size(); i++) {
-            NafMention nafMention = this.getNafMentions().get(i);
-            Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
-            Resource targetResource = model.createResource(nafMention.toString());
-            resource.addProperty(gaf, targetResource);
-
-        }
-
-    }*/
+    }
+*/
 
     public void addToJenaModelTimeIntervalCondensed(Model model) {
         this.getOwlTimeBegin().addToJenaModelOwlTimeInstant(model);
@@ -212,7 +211,6 @@ public class SemTime extends SemObject implements Serializable {
             resource.addProperty(gaf, targetResource);
 
         }
-
     }
 
     public void addToJenaModelDocTimeInterval(Model model) {
