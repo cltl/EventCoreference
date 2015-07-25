@@ -7,6 +7,7 @@ import vu.wntools.wordnet.WordnetData;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -50,7 +51,26 @@ public class Naf2SemTest {
                 e.printStackTrace();
             }
 
-
+        ArrayList<String> roleArrayList0 = new ArrayList<String>();
+        roleArrayList0.add("a0");
+        ArrayList<String> roleArrayList1 = new ArrayList<String>();
+        roleArrayList1.add("a0");
+        roleArrayList1.add("a1");
+        ArrayList<String> roleArrayList2 = new ArrayList<String>();
+        roleArrayList1.add("a0");
+        roleArrayList1.add("a1");
+        roleArrayList1.add("a2");
+        ArrayList<String> roleArrayList3 = new ArrayList<String>();
+        roleArrayList1.add("a0");
+        roleArrayList1.add("a1");
+        roleArrayList1.add("a2");
+        roleArrayList1.add("a3");
+        ArrayList<String> roleArrayList4 = new ArrayList<String>();
+        roleArrayList1.add("a0");
+        roleArrayList1.add("a1");
+        roleArrayList1.add("a2");
+        roleArrayList1.add("a3");
+        roleArrayList1.add("a4");
         String eventType = "";
         HashMap<String, SourceMeta> sourceMetaHashMap = null;
         WordnetData wordnetData = null;
@@ -65,19 +85,31 @@ public class Naf2SemTest {
         }
         MatchEventObjects.MATCHTYPE = MATCHTYPE;
         MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;
-        MatchEventObjects.DEBUG = true;
+      //  MatchEventObjects.DEBUG = true;
 
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
         eventType = "contextual";
-        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+                conceptMatchThreshold, phraseMatchThreshold,
+                sourceMetaHashMap, wordnetData, eventType, roleArrayList1);
 
 
         pathToObjEventFolder = pathToEventFolder+"/events/source";
         eventType = "source";
-        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+                conceptMatchThreshold, phraseMatchThreshold,
+                sourceMetaHashMap, wordnetData, eventType,roleArrayList2);
 
         pathToObjEventFolder = pathToEventFolder + "/events/grammatical";
         eventType = "grammatical";
-        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+                conceptMatchThreshold, phraseMatchThreshold,
+                sourceMetaHashMap, wordnetData, eventType, roleArrayList3);
+
+        pathToObjEventFolder = pathToEventFolder + "/events/future";
+        eventType = "future";
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+                conceptMatchThreshold, phraseMatchThreshold,
+                sourceMetaHashMap, wordnetData, eventType, roleArrayList3);
     }
 }

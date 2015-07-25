@@ -24,6 +24,20 @@ public class Util {
     static public final int SPANMAXCOREFERENTSET = 5;
 
 
+    static public ArrayList<String> getObjectsForPredicate (ArrayList<SemRelation> semRelations, String predicate) {
+        ArrayList objects = new ArrayList();
+        for (int j = 0; j < semRelations.size(); j++) {
+            SemRelation semRelation = semRelations.get(j);
+            for (int k = 0; k < semRelation.getPredicates().size(); k++) {
+                String relationPredicate = semRelation.getPredicates().get(k);
+                if (relationPredicate.toLowerCase().endsWith(predicate.toLowerCase())) {
+                    objects.add(semRelation.getObject());
+                }
+            }
+        }
+        return objects;
+    }
+
     static public String getValueForTimex (ArrayList<KafTimex> timexs, String timexId) {
         String value = "";
         for (int i = 0; i < timexs.size(); i++) {
@@ -54,7 +68,7 @@ public class Util {
     static public SemTime getDocumentCreationTime(ArrayList<SemTime> semTimeArrayList) {
             for (int i = 0; i < semTimeArrayList.size(); i++) {
                 SemTime time = semTimeArrayList.get(i);
-                if (time.getFunctionInDocument().equalsIgnoreCase("CREATION_TIME")) {
+                if (time.getFunctionInDocument().equals(KafTimex.functionInDocumentCreationTime)) {
                     return time;
 
             }
@@ -92,12 +106,11 @@ public class Util {
             NafMention nafMention = semEvent.getNafMentions().get(j);
             for (int i = 0; i < nafMention.getFactuality().size(); i++) {
                 KafFactuality kafFactuality = nafMention.getFactuality().get(i);
-                // <factValue confidence="0.91" resource="nwr:AttributionTime" value="FUTURE"/>
                 for (int k = 0; k < kafFactuality.getFactValueArrayList().size(); k++) {
                     KafFactValue kafFactValue = kafFactuality.getFactValueArrayList().get(k);
-                    if (kafFactValue.getResource().toLowerCase().endsWith("attributiontime") &&
-                            kafFactValue.getValue().toLowerCase().equals("future")) {
-                    //    System.out.println("kafFactValue.getValue() = " + kafFactValue.getValue());
+                    if (kafFactValue.getResource().endsWith(KafFactValue.resourceAttributionTense) &&
+                            kafFactValue.getValue().equals(KafFactValue.FUTURE)) {
+
                         return kafFactuality;
                     }
                 }

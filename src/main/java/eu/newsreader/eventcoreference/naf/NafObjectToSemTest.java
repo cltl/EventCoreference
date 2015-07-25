@@ -6,6 +6,7 @@ import eu.newsreader.eventcoreference.util.Util;
 import vu.wntools.wordnet.WordnetData;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -27,6 +28,18 @@ public class NafObjectToSemTest {
         String pathToEventFolder ="/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test";
         String projectName  = "cars";
         String extension = ".xml";
+
+        ArrayList<String> roleArrayList0 = new ArrayList<String>();
+        roleArrayList0.add("a0");
+        ArrayList<String> roleArrayList1 = new ArrayList<String>();
+        roleArrayList1.add("a0,a1");
+        ArrayList<String> roleArrayList2 = new ArrayList<String>();
+        roleArrayList1.add("a0,a1,a2");
+        ArrayList<String> roleArrayList3 = new ArrayList<String>();
+        roleArrayList1.add("a0,a1,a2,a3");
+        ArrayList<String> roleArrayList4 = new ArrayList<String>();
+        roleArrayList1.add("a0,a1,a2,a3,a4");
+
         String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/communication.txt";
         String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/contextual.txt";
         String grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/grammatical.txt";
@@ -54,14 +67,26 @@ public class NafObjectToSemTest {
         MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
         eventType = "contextual";
-       // MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+                conceptMatchThreshold, phraseMatchThreshold,
+                sourceMetaHashMap, wordnetData, eventType, roleArrayList1);
         MatchEventObjects.DEBUG = true;
         pathToObjEventFolder = pathToEventFolder+"/events/source";
         eventType = "source";
-        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+                conceptMatchThreshold, phraseMatchThreshold,
+                sourceMetaHashMap, wordnetData, eventType, roleArrayList2);
 
         pathToObjEventFolder = pathToEventFolder + "/events/grammatical";
         eventType = "grammatical";
-      //  MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder), conceptMatchThreshold, phraseMatchThreshold, sourceMetaHashMap, wordnetData, eventType);
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+                conceptMatchThreshold, phraseMatchThreshold,
+                sourceMetaHashMap, wordnetData, eventType, roleArrayList3);
+
+        pathToObjEventFolder = pathToEventFolder + "/events/future";
+        eventType = "future";
+        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+                conceptMatchThreshold, phraseMatchThreshold,
+                sourceMetaHashMap, wordnetData, eventType, roleArrayList3);
     }
 }

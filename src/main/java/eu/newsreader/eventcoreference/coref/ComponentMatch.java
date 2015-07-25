@@ -6,11 +6,87 @@ import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by piek on 5/2/14.
  */
 public class ComponentMatch {
+
+    public static boolean compareCompositeEvent(CompositeEvent compositeEvent1,
+                                                CompositeEvent compositeEvent2,
+                                                String eventType,
+                                                ArrayList<String> roleArrayList) {
+        ArrayList<String> neededRoles = new ArrayList<String>();
+        if (EventTypes.isCONTEXTUAL(eventType)) {
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList, neededRoles);
+        }
+        else if (EventTypes.isCOMMUNICATION(eventType)) {
+            neededRoles.add("a0");
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList, neededRoles);
+        }
+        else if (EventTypes.isGRAMMATICAL(eventType)) {
+            neededRoles.add("a1");
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList, neededRoles);
+        }
+        else if (EventTypes.isFUTURE(eventType)) {
+            neededRoles.add("a0");
+            neededRoles.add("a1");
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList,neededRoles);
+        }
+        return false;
+
+    }
+    /**
+     * For each of the roles in the role ArrayList there needs to be match
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @return
+     */
+    public static boolean compareCompositeEvent(CompositeEvent compositeEvent1,
+                                                CompositeEvent compositeEvent2,
+                                                ArrayList<String> roleArrayList, ArrayList<String> neededRoles) {
+        int roleMatchCount = 0;
+        if (compositeEvent1.getMySemActors().size()==0 && compositeEvent2.getMySemActors().size()==0) {
+            return false;
+        }
+        else {
+            for (int i = 0; i < roleArrayList.size(); i++) {
+                String propBankRole = roleArrayList.get(i);
+                // System.out.println("propBankRole = " + propBankRole);
+                ArrayList roleObjects1 = Util.getObjectsForPredicate(compositeEvent1.getMySemRelations(), propBankRole);
+                ArrayList roleObjects2 = Util.getObjectsForPredicate(compositeEvent2.getMySemRelations(), propBankRole);
+                if (roleObjects1.size()==0 && roleObjects2.size()==0) {
+                    /// both events do not have this participant
+                    if (!neededRoles.contains(propBankRole) || neededRoles.size()==0) {
+                        roleMatchCount++;
+                        /// we count this as a match
+                    }
+                }
+                else {
+                    if (!Collections.disjoint(roleObjects1, roleObjects2)) {
+                        //  System.out.println("roleObjects1 = " + roleObjects1.toString());
+                        //  System.out.println("roleObjects2 = " + roleObjects1.toString());
+                        roleMatchCount++;
+                    } else {
+                        //  System.out.println("DISJOINT");
+                        //  System.out.println("roleObjects1 = " + roleObjects1.toString());
+                        //  System.out.println("roleObjects2 = " + roleObjects1.toString());
+                    }
+                }
+
+            }
+        }
+        if (roleMatchCount==roleArrayList.size()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
+
     /**
      * Compares two time objects to determine if they exclude each other or not
      * @param mySemTimes
@@ -176,7 +252,10 @@ public class ComponentMatch {
         return true;
     }
 
+
+
     /**
+     * @DEPRECATED
      * Main function for comparing composite events subdivided by the eventType. For each composite event we assume that the event type matches,
      * the event itself matches given a threshold and matching function and the time matches (possibly also the place)
      * @param compositeEvent1
@@ -184,7 +263,7 @@ public class ComponentMatch {
      * @param eventType
      * @return
      */
-    public static boolean compareCompositeEvent (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2, String eventType) {
+/*    public static boolean compareCompositeEvent (CompositeEvent compositeEvent1, CompositeEvent compositeEvent2, String eventType, ArrayList<String> roleArrayList) {
         if (EventTypes.isCONTEXTUAL(eventType)) {
            return compareCompositeEventContextual(compositeEvent1, compositeEvent2);
         }
@@ -195,7 +274,7 @@ public class ComponentMatch {
                 return compareCompositeEventGrammatical(compositeEvent1, compositeEvent2);
         }
         return false;
-    }
+    }*/
 
     /**
      * In the case of a communication or cognition event, we require that the PRIMEPARTICIPANT is identical.
@@ -227,42 +306,6 @@ public class ComponentMatch {
         return false;
     }
 
-    /** @DEPRECATED
-     * Contextual events need at least 1 participant to match and 1 location
-     * @param compositeEvent1
-     * @param compositeEvent2
-     * @return
-     */
-    /*public static boolean compareCompositeEventContextual(CompositeEvent compositeEvent1, CompositeEvent compositeEvent2) {
-        if (compositeEvent1.getMySemActors().size()==0 && compositeEvent2.getMySemActors().size()==0) {
-            //// there are no participants
-            if (compositeEvent1.getMySemPlaces().size()> 0 && compositeEvent2.getMySemPlaces().size()>0) {
-                if (!comparePlace(compositeEvent1.getMySemPlaces(), compositeEvent2.getMySemPlaces())) {
-                    return false;
-                }
-            }
-            else {
-                return true;
-            }
-        }
-        else {
-            /// match at least one actor
-            if (! compareActor (compositeEvent1.getMySemActors(), compositeEvent2.getMySemActors())) {
-                return  false;
-            }
-            /// if there is a place linked to both, also match at least one place
-            if (compositeEvent1.getMySemPlaces().size()> 0 && compositeEvent2.getMySemPlaces().size()>0) {
-                if (!comparePlace(compositeEvent1.getMySemPlaces(), compositeEvent2.getMySemPlaces())) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
-        }
-        /// if we get up to here we can assume a match
-        return true;
-    }*/
 
     /**
      * Contextual events need at least 1 participant to match and 1 location

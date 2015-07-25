@@ -162,7 +162,7 @@ public class JenaSerialization {
             ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
             for (int c = 0; c < compositeEvents.size(); c++) {
                 CompositeEvent compositeEvent = compositeEvents.get(c);
-                System.out.println("compositeEvent.toString() = " + compositeEvent.toString());
+               // System.out.println("compositeEvent.toString() = " + compositeEvent.toString());
                 if (USEILIURI) {
                     replaceEventIdsWithILIids(compositeEvent);
                 }

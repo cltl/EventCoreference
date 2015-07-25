@@ -548,7 +548,12 @@ public class GetSemFromNafFile {
                         (!timex.getValue().startsWith("XXXX-"))  /// year unknown
                          &&
                         (!timex.getValue().equalsIgnoreCase("PRESENT_REF"))
-                        ){
+                         &&
+                        (!timex.getValue().equalsIgnoreCase("FUTURE_REF"))
+                         &&
+                        (!timex.getValue().equalsIgnoreCase("PAST_REF"))
+                        )
+                {
                     if (timex.getType().equalsIgnoreCase("duration")) {  /// periods, e.g. "PXY", "P9M", "P4Y",
                         SemTime semTime = new SemTime();
                         semTime.setType(TimeTypes.DURATION);
@@ -566,21 +571,26 @@ public class GetSemFromNafFile {
                                 semTime.setOwlTimeEnd(aTime);
                             }
                         }
-                        semTime.setId(baseUrl + timex.getId());
-
-                        ArrayList<String> tokenSpanIds = timex.getSpans();
-                        if (tokenSpanIds.size()> 0) {
-                            ArrayList<String> termSpanIds = kafSaxParser.convertTokensSpanToTermSpan(tokenSpanIds);
-                            ArrayList<NafMention> mentions = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, termSpanIds);
-                            semTime.setNafMentions(mentions);
-                            semTime.addPhraseCountsForMentions(kafSaxParser);
+                        if (timex.getBeginPoint().isEmpty() && timex.getEndPoint().isEmpty()) {
+                            //// This duration is not anchored so we ignore it
+                            /*if (semTime.getOwlTime().getMonth().isEmpty()) {
+                                semTime.interpretYearAsPeriod();
+                            } else if (semTime.getOwlTime().getDay().isEmpty()) {
+                                semTime.interpretMonthAsPeriod();
+                            }*/
                         }
-                        semTimes.add(semTime);
-                        /*if (semTime.getOwlTime().getMonth().isEmpty()) {
-                            semTime.interpretYearAsPeriod();
-                        } else if (semTime.getOwlTime().getDay().isEmpty()) {
-                            semTime.interpretMonthAsPeriod();
-                        }*/
+                        else {
+                            semTime.setId(baseUrl + timex.getId());
+
+                            ArrayList<String> tokenSpanIds = timex.getSpans();
+                            if (tokenSpanIds.size() > 0) {
+                                ArrayList<String> termSpanIds = kafSaxParser.convertTokensSpanToTermSpan(tokenSpanIds);
+                                ArrayList<NafMention> mentions = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, termSpanIds);
+                                semTime.setNafMentions(mentions);
+                                semTime.addPhraseCountsForMentions(kafSaxParser);
+                            }
+                            semTimes.add(semTime);
+                        }
                     }
                     else {
                         OwlTime aTime = new OwlTime();
@@ -897,6 +907,7 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test/obama_v3_event_coref_out.xml";
         pathToNafFile = "/Users/piek/Desktop/English Pipeline/timex-duration/89284_Apple_to_lower_UK_iTunes.naf.coref";
         pathToNafFile = "/Users/piek/Desktop/English Pipeline/timex-duration/116834_Japan_enters.naf.coref";
+        pathToNafFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test/58T2-K531-JCDY-Y0X2.xml";
         String project = "cars";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
