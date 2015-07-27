@@ -238,8 +238,8 @@ public class OwlTime implements Serializable {
             // empty day is acceptable given matching year and month
             return true;
         }
-        System.out.println("this.getDateString() = " + this.getDateString());
-        System.out.println();
+      //  System.out.println("this.getDateString() = " + this.getDateString());
+      //  System.out.println();
         return true;  //// all fields match and are non-empty
 
     }

@@ -24,6 +24,21 @@ public class Util {
     static public final int SPANMAXCOREFERENTSET = 5;
 
 
+    static public boolean hasCrossDocumentReferences (CompositeEvent compositeEvent) {
+        for (int i = 0; i < compositeEvent.getEvent().getNafMentions().size(); i++) {
+            NafMention nafMention = compositeEvent.getEvent().getNafMentions().get(i);
+            String baseUri = nafMention.getBaseUriWithoutId();
+            for (int j = i+1; j < compositeEvent.getEvent().getNafMentions().size(); j++) {
+                NafMention nafMention2 = compositeEvent.getEvent().getNafMentions().get(j);
+                String baseUri2 = nafMention2.getBaseUriWithoutId();
+                if (!baseUri.equals(baseUri2)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     static public ArrayList<String> getObjectsForPredicate (ArrayList<SemRelation> semRelations, String predicate) {
         ArrayList objects = new ArrayList();
         for (int j = 0; j < semRelations.size(); j++) {
@@ -2022,6 +2037,12 @@ public class Util {
         }
         if (semTime1!=null && semTime2!=null) {
             if (semTime1.getOwlTime().getDateString().equals(semTime2.getOwlTime().getDateString())){
+                return true;
+            }
+            else if (semTime1.getOwlTimeBegin().getDateString().equals(semTime2.getOwlTimeBegin().getDateString())){
+                return true;
+            }
+            else if (semTime1.getOwlTimeEnd().getDateString().equals(semTime2.getOwlTimeEnd().getDateString())){
                 return true;
             }
         }

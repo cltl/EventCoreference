@@ -30,7 +30,8 @@ import java.util.Set;
 public class MatchEventObjects {
 
     static boolean DEBUG = false;
-    public static String MATCHTYPE= "ILI";  // ILI OR ILILEMMA
+    public static String MATCHTYPE= "ILILEMMA";  // ILI OR ILILEMMA
+    public static boolean LCS = false;
     public static boolean VERBOSEMENTIONS = false;
     static final String usage = "MatchEventObjects reads obj files stored in time-folders with CompositeEventObjects and outputs a single RDF-TRiG file\n" +
             "The parameters are:\n" +
@@ -38,6 +39,7 @@ public class MatchEventObjects {
             "--wordnet-lmf   <path>     <(OPTIONAL, not yet used) Path to a WordNet-LMF file\n>" +
             "--concept-match <double>   <(OPTIONAL, not yet used) threshold for conceptual matches of events>\n" +
             "--phrase-match  <double>   <(OPTIONAL, not yet used) threshold for phrase matches of events>\n" +
+            "--lcs                      <(OPTIONAL) use lowest-common-subsumers\n"+
             "--match-type    <string>   <(OPTIONAL) Indicates what is used to match events across resources. Default value is \"LEMMA\". Values:\"LEMMA\", \"ILI\", \"ILILEMMA\">\n" +
             "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
             "--event-type    <string>   <(OPTIONAL) Indicate the type of events for establishing event coreference more or less strict. Values are \"contetxual\", \"source\", \"grammatical\">\n" +
@@ -96,6 +98,9 @@ public class MatchEventObjects {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
+            }
+            else if (arg.equals("--lcs")) {
+                LCS = true;
             }
             else if (arg.equals("--match-type") && args.length>(i+1)) {
                 MATCHTYPE = args[i+1];
@@ -174,8 +179,13 @@ public class MatchEventObjects {
                     }
                     else if (ComponentMatch.compareCompositeEvent(  myCompositeEvent, finalCompositeEvent, eventType, roleArrayList)) {
                         match = true;
-                        //System.out.println("myCompositeEvent = " + myCompositeEvent.toString());
-                        //System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+
+                        if (DEBUG) {
+                            if (!myCompositeEvent.getEvent().getId().substring(0, myCompositeEvent.getEvent().getId().lastIndexOf("#")).equals(finalCompositeEvent.getEvent().getId().substring(0, finalCompositeEvent.getEvent().getId().lastIndexOf("#")))) {
+                                System.out.println("myCompositeEvent = " + myCompositeEvent.toString());
+                                System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                            }
+                        }
                         finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                         finalCompositeEvent.mergeObjects(myCompositeEvent);
                         finalCompositeEvent.mergeRelations(myCompositeEvent);
@@ -252,7 +262,8 @@ public class MatchEventObjects {
         if (DEBUG) System.out.println();
     }
 
-    public static ArrayList<KafSense> getILIreferences (SemObject semEvent) {
+
+    public static ArrayList<KafSense> getILIreferences(SemObject semEvent) {
         ArrayList<KafSense> iliReferences = new ArrayList<KafSense>();
         for (int i = 0; i < semEvent.getConcepts().size(); i++) {
             KafSense kafSense = semEvent.getConcepts().get(i);
@@ -296,7 +307,7 @@ public class MatchEventObjects {
                                 System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
                                 System.out.println("compositeEvent.getEvent().getPhraseCounts().size() = " + compositeEvent.getEvent().getPhraseCounts().size());
                             }
-                            ArrayList<KafSense> iliReferences = getILIreferences(compositeEvent.getEvent());
+                            ArrayList<KafSense> iliReferences = compositeEvent.getEvent().getConcepts();
                             if (iliReferences.size()>0) {
                                 for (int i = 0; i < iliReferences.size(); i++) {
                                     KafSense kafSense = iliReferences.get(i);
@@ -311,7 +322,26 @@ public class MatchEventObjects {
                                     }
                                 }
                             }
-                            else {
+                            if (LCS) {
+                                ArrayList<KafSense> lcsReferences = compositeEvent.getEvent().getLcs();
+                                if (lcsReferences.size() > 0) {
+                                    for (int i = 0; i < lcsReferences.size(); i++) {
+                                        KafSense kafSense = lcsReferences.get(i);
+                                        if (eventMap.containsKey(kafSense.getSensecode())) {
+                                            ArrayList<CompositeEvent> events = eventMap.get(kafSense.getSensecode());
+                                            events.add(compositeEvent);
+                                            eventMap.put(kafSense.getSensecode(), events);
+                                        } else {
+                                            ArrayList<CompositeEvent> events = new ArrayList<CompositeEvent>();
+                                            events.add(compositeEvent);
+                                            eventMap.put(kafSense.getSensecode(), events);
+                                        }
+                                    }
+                                }
+                            }
+                            /// IF THERE ARE NO ILI-REFERENCES THEN LEMMAS ARE USED TO COMPARE EVENTS
+                            /// ILI REFERENCES CAN KEEP LEMMAS SEPARATE IF THEY POINT TO DIFFERENT SENSE
+                            if (iliReferences.size()==0) {
                                 ArrayList<PhraseCount> phrases = compositeEvent.getEvent().getPhraseCounts();
                                 for (int i = 0; i < phrases.size(); i++) {
                                     PhraseCount phraseCount = phrases.get(i);
@@ -369,7 +399,7 @@ public class MatchEventObjects {
                             if (DEBUG)
                                 System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
 
-                            ArrayList<KafSense> iliReferences = getILIreferences(compositeEvent.getEvent());
+                            ArrayList<KafSense> iliReferences = compositeEvent.getEvent().getConcepts();
                             if (iliReferences.size()>0) {
                                 for (int i = 0; i < iliReferences.size(); i++) {
                                     KafSense kafSense = iliReferences.get(i);
@@ -381,6 +411,23 @@ public class MatchEventObjects {
                                         ArrayList<CompositeEvent> events = new ArrayList<CompositeEvent>();
                                         events.add(compositeEvent);
                                         eventMap.put(kafSense.getSensecode(), events);
+                                    }
+                                }
+                            }
+                            if (LCS) {
+                                ArrayList<KafSense> lcsReferences = compositeEvent.getEvent().getLcs();
+                                if (lcsReferences.size() > 0) {
+                                    for (int i = 0; i < lcsReferences.size(); i++) {
+                                        KafSense kafSense = lcsReferences.get(i);
+                                        if (eventMap.containsKey(kafSense.getSensecode())) {
+                                            ArrayList<CompositeEvent> events = eventMap.get(kafSense.getSensecode());
+                                            events.add(compositeEvent);
+                                            eventMap.put(kafSense.getSensecode(), events);
+                                        } else {
+                                            ArrayList<CompositeEvent> events = new ArrayList<CompositeEvent>();
+                                            events.add(compositeEvent);
+                                            eventMap.put(kafSense.getSensecode(), events);
+                                        }
                                     }
                                 }
                             }
@@ -403,6 +450,7 @@ public class MatchEventObjects {
     }
 
     public static HashMap<String, ArrayList<CompositeEvent>> readLemmaEventHashMapFromObjectFile (File file) {
+       // DEBUG = true;
         HashMap<String, ArrayList<CompositeEvent>> eventMap = new HashMap<String, ArrayList<CompositeEvent>>();
         if (file.exists() ) {
             int cnt = 0;
@@ -416,9 +464,6 @@ public class MatchEventObjects {
                         cnt++;
                         if (obj instanceof CompositeEvent) {
                             CompositeEvent compositeEvent = (CompositeEvent) obj;
-/*                            if (!compositeEvent.getEvent().getPhrase().equals("production")) {
-                                continue;
-                            }*/
                             if (DEBUG)
                                 System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
                             if (eventMap.containsKey(compositeEvent.getEvent().getPhrase())) {
@@ -444,7 +489,7 @@ public class MatchEventObjects {
             }
             if (DEBUG) System.out.println(file.getName()+" nr objects read = " + cnt);
         }
-
+      //  DEBUG = false;
         return eventMap;
     }
 

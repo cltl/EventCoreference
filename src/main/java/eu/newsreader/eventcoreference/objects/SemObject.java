@@ -380,6 +380,40 @@ public class SemObject implements Serializable {
     }
 
     public void addConcepts(ArrayList<KafSense> concepts) {
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            boolean HAS = false;
+            for (int j = 0; j < this.concepts.size(); j++) {
+                KafSense sense = this.concepts.get(j);
+                if (kafSense.getSensecode().equals(sense.getSensecode())) {
+                    HAS = true;
+                    break;
+                }
+            }
+            if (!HAS) {
+                addConcept(kafSense);
+            }
+        }
+        this.concepts.addAll(concepts);
+    }
+
+    public void addConceptsExcept(ArrayList<KafSense> concepts, String resource) {
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            if (!kafSense.getResource().equalsIgnoreCase(resource)) {
+                boolean HAS = false;
+                for (int j = 0; j < this.concepts.size(); j++) {
+                    KafSense sense = this.concepts.get(j);
+                    if (kafSense.getSensecode().equals(sense.getSensecode())) {
+                        HAS = true;
+                        break;
+                    }
+                }
+                if (!HAS) {
+                    addConcept(kafSense);
+                }
+            }
+        }
         this.concepts.addAll(concepts);
     }
 

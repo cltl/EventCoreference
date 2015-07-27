@@ -53,24 +53,27 @@ public class Naf2SemTest {
 
         ArrayList<String> roleArrayList0 = new ArrayList<String>();
         roleArrayList0.add("a0");
+        ArrayList<String> roleArrayList01 = new ArrayList<String>();
+        roleArrayList01.add("a0");
+        roleArrayList01.add("a1");
         ArrayList<String> roleArrayList1 = new ArrayList<String>();
-        roleArrayList1.add("a0");
         roleArrayList1.add("a1");
-        ArrayList<String> roleArrayList2 = new ArrayList<String>();
-        roleArrayList1.add("a0");
-        roleArrayList1.add("a1");
-        roleArrayList1.add("a2");
-        ArrayList<String> roleArrayList3 = new ArrayList<String>();
-        roleArrayList1.add("a0");
-        roleArrayList1.add("a1");
-        roleArrayList1.add("a2");
-        roleArrayList1.add("a3");
-        ArrayList<String> roleArrayList4 = new ArrayList<String>();
-        roleArrayList1.add("a0");
-        roleArrayList1.add("a1");
-        roleArrayList1.add("a2");
-        roleArrayList1.add("a3");
-        roleArrayList1.add("a4");
+        ArrayList<String> roleArrayList012 = new ArrayList<String>();
+        roleArrayList012.add("a0");
+        roleArrayList012.add("a1");
+        roleArrayList012.add("a2");
+        ArrayList<String> roleArrayList12 = new ArrayList<String>();
+        roleArrayList12.add("a1");
+        roleArrayList12.add("a2");
+        ArrayList<String> roleArrayList0123 = new ArrayList<String>();
+        roleArrayList0123.add("a0");
+        roleArrayList0123.add("a1");
+        roleArrayList0123.add("a2");
+        roleArrayList0123.add("a3");
+        ArrayList<String> roleArrayList123 = new ArrayList<String>();
+        roleArrayList123.add("a1");
+        roleArrayList123.add("a2");
+        roleArrayList123.add("a3");
         String eventType = "";
         HashMap<String, SourceMeta> sourceMetaHashMap = null;
         WordnetData wordnetData = null;
@@ -83,8 +86,10 @@ public class Naf2SemTest {
             sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
           //  System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
         }
-        MatchEventObjects.MATCHTYPE = MATCHTYPE;
+
         MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;
+        MatchEventObjects.MATCHTYPE = "ILILEMMA";
+        MatchEventObjects.LCS = true;
       //  MatchEventObjects.DEBUG = true;
 
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
@@ -94,22 +99,30 @@ public class Naf2SemTest {
                 sourceMetaHashMap, wordnetData, eventType, roleArrayList1);
 
 
+        MatchEventObjects.MATCHTYPE = "ILILEMMA";
+        MatchEventObjects.LCS = false;
+
         pathToObjEventFolder = pathToEventFolder+"/events/source";
         eventType = "source";
         MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
                 conceptMatchThreshold, phraseMatchThreshold,
-                sourceMetaHashMap, wordnetData, eventType,roleArrayList2);
+                sourceMetaHashMap, wordnetData, eventType,roleArrayList12);
+
+        MatchEventObjects.MATCHTYPE = "LEMMA";
+        MatchEventObjects.LCS = false;
 
         pathToObjEventFolder = pathToEventFolder + "/events/grammatical";
         eventType = "grammatical";
         MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
                 conceptMatchThreshold, phraseMatchThreshold,
-                sourceMetaHashMap, wordnetData, eventType, roleArrayList3);
+                sourceMetaHashMap, wordnetData, eventType, roleArrayList12);
 
+        MatchEventObjects.MATCHTYPE = "LEMMA";
+        MatchEventObjects.LCS = false;
         pathToObjEventFolder = pathToEventFolder + "/events/future";
         eventType = "future";
         MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
                 conceptMatchThreshold, phraseMatchThreshold,
-                sourceMetaHashMap, wordnetData, eventType, roleArrayList3);
+                sourceMetaHashMap, wordnetData, eventType, null);
     }
 }

@@ -101,7 +101,8 @@ public class GetSemFromNafFile {
                 //// this is an event coreference set
                 //// no we get all the predicates for this set.
                 SemEvent semEvent = new SemEvent();
-                semEvent.addLcses(kafCoreferenceSet.getExternalReferences());
+                semEvent.addLcses(kafCoreferenceSet.getLcsFromExternalReferences());
+                semEvent.addConcepts(kafCoreferenceSet.getExternalReferencesWithoutLCS());
                 for (int j = 0; j < kafSaxParser.getKafEventArrayList().size(); j++) {
                     KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
                     if (Util.hasCorefTargetArrayList(event.getSpans(), kafCoreferenceSet.getSetsOfSpans())) {
@@ -109,7 +110,9 @@ public class GetSemFromNafFile {
                         ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
                         semEvent.addNafMentions(mentionArrayList);
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
-                        semEvent.addConcepts(event.getExternalReferences());
+                     //   semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
+                        semEvent.addConceptsExcept(event.getExternalReferences(), "WordNet");  /// these are concepts added by the SRL except for the WordNet references since we assume they come from the coreference sets
+
                     }
                 }
                 semEvent.addPhraseCountsForMentions(kafSaxParser);
@@ -908,6 +911,7 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/English Pipeline/timex-duration/89284_Apple_to_lower_UK_iTunes.naf.coref";
         pathToNafFile = "/Users/piek/Desktop/English Pipeline/timex-duration/116834_Japan_enters.naf.coref";
         pathToNafFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test/58T2-K531-JCDY-Y0X2.xml";
+        pathToNafFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test/4M1J-3MC0-TWKJ-V1W8.xml";
         String project = "cars";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];

@@ -30,13 +30,13 @@ public class ComponentMatch {
             return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList, neededRoles);
         }
         else if (EventTypes.isFUTURE(eventType)) {
-            neededRoles.add("a0");
-            neededRoles.add("a1");
-            return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList,neededRoles);
+            ///// For FUTURE events we demand that all participants match except the temporal relations
+            return compareCompositeEventToMatchAllProbBankRoles(compositeEvent1, compositeEvent2);
         }
         return false;
 
     }
+
     /**
      * For each of the roles in the role ArrayList there needs to be match
      * @param compositeEvent1
@@ -45,39 +45,110 @@ public class ComponentMatch {
      */
     public static boolean compareCompositeEvent(CompositeEvent compositeEvent1,
                                                 CompositeEvent compositeEvent2,
-                                                ArrayList<String> roleArrayList, ArrayList<String> neededRoles) {
+                                                ArrayList<String> roleArrayList, ArrayList<String> minimallyRequiredRoles) {
         int roleMatchCount = 0;
+       // System.out.println("roleArrayList = " + roleArrayList.toString());
         if (compositeEvent1.getMySemActors().size()==0 && compositeEvent2.getMySemActors().size()==0) {
             return false;
         }
         else {
             for (int i = 0; i < roleArrayList.size(); i++) {
                 String propBankRole = roleArrayList.get(i);
-                // System.out.println("propBankRole = " + propBankRole);
+              //   System.out.println("propBankRole = " + propBankRole);
                 ArrayList roleObjects1 = Util.getObjectsForPredicate(compositeEvent1.getMySemRelations(), propBankRole);
                 ArrayList roleObjects2 = Util.getObjectsForPredicate(compositeEvent2.getMySemRelations(), propBankRole);
                 if (roleObjects1.size()==0 && roleObjects2.size()==0) {
                     /// both events do not have this participant
-                    if (!neededRoles.contains(propBankRole) || neededRoles.size()==0) {
+                    if (!minimallyRequiredRoles.contains(propBankRole) || minimallyRequiredRoles.size()==0) {
                         roleMatchCount++;
-                        /// we count this as a match
+                        /// we count this as a match unless it is a minimallyRequired role
                     }
                 }
                 else {
                     if (!Collections.disjoint(roleObjects1, roleObjects2)) {
-                        //  System.out.println("roleObjects1 = " + roleObjects1.toString());
-                        //  System.out.println("roleObjects2 = " + roleObjects1.toString());
+                      //  System.out.println("NOT DISJOINT");
+                      //  System.out.println("roleObjects1 = " + roleObjects1.toString());
+                      //    System.out.println("roleObjects2 = " + roleObjects1.toString());
                         roleMatchCount++;
                     } else {
-                        //  System.out.println("DISJOINT");
-                        //  System.out.println("roleObjects1 = " + roleObjects1.toString());
-                        //  System.out.println("roleObjects2 = " + roleObjects1.toString());
+                       //   System.out.println("DISJOINT");
+                       //   System.out.println("roleObjects1 = " + roleObjects1.toString());
+                      //    System.out.println("roleObjects2 = " + roleObjects1.toString());
                     }
                 }
 
             }
         }
         if (roleMatchCount==roleArrayList.size()) {
+           // System.out.println("roleMatchCount = " + roleMatchCount);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * For each of the roles in the role ArrayList there needs to be match
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @return
+     */
+    public static boolean compareCompositeEventToMatchAllProbBankRoles(CompositeEvent compositeEvent1,
+                                                CompositeEvent compositeEvent2) {
+        int roleMatchCount = 0;
+        ArrayList<String> roleArrayList1 = new ArrayList<String>();
+        ArrayList<String> roleArrayList2 = new ArrayList<String>();
+        if (compositeEvent1.getMySemActors().size()==0 && compositeEvent2.getMySemActors().size()==0) {
+            return false;
+        }
+        else {
+            /// We make a list of the propbank roles that are associated with the event of compositeEvent1
+            for (int i = 0; i < compositeEvent1.getMySemRelations().size(); i++) {
+                SemRelation semRelation = compositeEvent1.getMySemRelations().get(i);
+                for (int j = 0; j < semRelation.getPredicates().size(); j++) {
+                    String predicate = semRelation.getPredicates().get(j);
+                    if (predicate.toLowerCase().indexOf("propbank")>-1) {
+                        if (!roleArrayList1.contains(predicate)) {
+                            roleArrayList1.add(predicate);
+                        }
+                    }
+                }
+            }
+            /// We make a list of the propbank roles that are associated with the event of compositeEvent2
+            for (int i = 0; i < compositeEvent2.getMySemRelations().size(); i++) {
+                SemRelation semRelation = compositeEvent2.getMySemRelations().get(i);
+                for (int j = 0; j < semRelation.getPredicates().size(); j++) {
+                    String predicate = semRelation.getPredicates().get(j);
+                    if (predicate.toLowerCase().indexOf("propbank")>-1) {
+                        if (!roleArrayList2.contains(predicate)) {
+                            roleArrayList2.add(predicate);
+                        }
+                    }
+                }
+            }
+            /// if the lists of roles do not match
+            if (Collections.disjoint(roleArrayList1, roleArrayList2)) {
+                return false;
+            }
+            /// Next we check the objects for each of the roles to see if there is a match
+            for (int i = 0; i < roleArrayList1.size(); i++) {
+                String propBankRole = roleArrayList1.get(i);
+                // System.out.println("propBankRole = " + propBankRole);
+                ArrayList roleObjects1 = Util.getObjectsForPredicate(compositeEvent1.getMySemRelations(), propBankRole);
+                ArrayList roleObjects2 = Util.getObjectsForPredicate(compositeEvent2.getMySemRelations(), propBankRole);
+                if (!Collections.disjoint(roleObjects1, roleObjects2)) {
+                    //  System.out.println("roleObjects1 = " + roleObjects1.toString());
+                    //  System.out.println("roleObjects2 = " + roleObjects1.toString());
+                    roleMatchCount++;
+                } else {
+                    //  System.out.println("DISJOINT");
+                    //  System.out.println("roleObjects1 = " + roleObjects1.toString());
+                    //  System.out.println("roleObjects2 = " + roleObjects1.toString());
+                }
+            }
+        }
+        if (roleMatchCount==roleArrayList1.size()) {
             return true;
         }
         else {
@@ -97,15 +168,23 @@ public class ComponentMatch {
                                        ArrayList<SemTime> semTimes) {
 
         for (int i = 0; i < mySemTimes.size(); i++) {
-            SemObject mySemTime = mySemTimes.get(i);
-            OwlTime myOwlTime = new OwlTime();
-            myOwlTime.parseStringDate(mySemTime.getPhrase());
+            SemTime mySemTime = mySemTimes.get(i);
             for (int j = 0; j < semTimes.size(); j++) {
-                SemObject semTime = semTimes.get(j);
-                OwlTime owlTime = new OwlTime();
-                owlTime.parseStringDate(semTime.getPhrase());
+                SemTime semTime = semTimes.get(j);
                 /// replace this by exact time matches....
-                if (myOwlTime.matchTimeEmbedded(owlTime)) {
+                if (mySemTime.getOwlTime().matchTimeEmbedded(semTime.getOwlTime())) {
+                    //  System.out.println("myOwlTime.getDateString() = " + myOwlTime.getDateString());
+                    //  System.out.println("owlTime.getDateString() = " + owlTime.getDateString());
+
+                    return true;
+                }
+                else if (mySemTime.getOwlTimeBegin().matchTimeEmbedded(semTime.getOwlTimeBegin())) {
+                    //  System.out.println("myOwlTime.getDateString() = " + myOwlTime.getDateString());
+                    //  System.out.println("owlTime.getDateString() = " + owlTime.getDateString());
+
+                    return true;
+                }
+                else if (mySemTime.getOwlTimeEnd().matchTimeEmbedded(semTime.getOwlTimeEnd())) {
                     //  System.out.println("myOwlTime.getDateString() = " + myOwlTime.getDateString());
                     //  System.out.println("owlTime.getDateString() = " + owlTime.getDateString());
 

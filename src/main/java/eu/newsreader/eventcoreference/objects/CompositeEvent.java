@@ -91,9 +91,11 @@ public class CompositeEvent implements Serializable{
             boolean match = false;
             for (int j = 0; j < this.getMySemRelations().size(); j++) {
                 SemRelation relation = this.getMySemRelations().get(j);
-                if (      (relation.containsPredicateIgnoreCase("hassemTime") && semRelation.containsPredicateIgnoreCase("hassemTime"))
-                        ||(relation.containsPredicateIgnoreCase("hassemBeginTime") && semRelation.containsPredicateIgnoreCase("hassemBeginTime"))
-                        ||(relation.containsPredicateIgnoreCase("hassemEndTime") && semRelation.containsPredicateIgnoreCase("hassemEndTime"))
+                if (      (relation.containsPredicateIgnoreCase(Sem.hasTime.getLocalName()) && semRelation.containsPredicateIgnoreCase(Sem.hasTime.getLocalName()))
+                        ||(relation.containsPredicateIgnoreCase(Sem.hasBeginTimeStamp.getLocalName()) && semRelation.containsPredicateIgnoreCase(Sem.hasBeginTimeStamp.getLocalName()))
+                        ||(relation.containsPredicateIgnoreCase(Sem.hasEndTimeStamp.getLocalName()) && semRelation.containsPredicateIgnoreCase(Sem.hasEndTimeStamp.getLocalName()))
+                        ||(relation.containsPredicateIgnoreCase(Sem.hasEarliestBeginTimeStamp.getLocalName()) && semRelation.containsPredicateIgnoreCase(Sem.hasEarliestBeginTimeStamp.getLocalName()))
+                        ||(relation.containsPredicateIgnoreCase(Sem.hasEarliestEndTimeStamp.getLocalName()) && semRelation.containsPredicateIgnoreCase(Sem.hasEarliestEndTimeStamp.getLocalName()))
 
                 )  {
                     //// make sure the doctime is also considered
@@ -122,9 +124,6 @@ public class CompositeEvent implements Serializable{
         }
     }
 
-    /*
-    @TODO need to match OwlBeginTime and OwlEndTIme
-     */
     public void mergeObjects (CompositeEvent event) {
          for (int i = 0; i < event.getMySemActors().size(); i++) {
             SemActor semActor1 = event.getMySemActors().get(i);
@@ -158,6 +157,20 @@ public class CompositeEvent implements Serializable{
                     match = true;
                     break;
                 }
+                else if (semTime1.getOwlTimeBegin().matchTimeExact(semTime2.getOwlTimeBegin())) {
+                 //   System.out.println("semTime1 = " + semTime1.getURI());
+                 //   System.out.println("semTime2 = " + semTime2.getURI());
+                    semTime2.mergeSemObject(semTime1);
+                    match = true;
+                    break;
+                }
+                else if (semTime1.getOwlTimeEnd().matchTimeExact(semTime2.getOwlTimeEnd())) {
+                 //   System.out.println("semTime1 = " + semTime1.getURI());
+                 //   System.out.println("semTime2 = " + semTime2.getURI());
+                    semTime2.mergeSemObject(semTime1);
+                    match = true;
+                    break;
+                }
             }
             if (!match) {
               //   System.out.println("adding semTime1 = " + semTime1.getURI());
@@ -168,6 +181,7 @@ public class CompositeEvent implements Serializable{
 
     public String toString () {
         String str = this.event.getId();
+        str += this.event.getPhrase()+"\n";
         for (int i = 0; i < mySemActors.size(); i++) {
             SemActor semActor = mySemActors.get(i);
             str += "\t"+semActor.getId()+"\n";
