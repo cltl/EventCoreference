@@ -41,7 +41,7 @@ public class Naf2SemTest {
             grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
             contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
             try {
-                ClusterEventObjects.communicationVector = communicationVector;
+                ClusterEventObjects.sourceVector = communicationVector;
                 ClusterEventObjects.grammaticalVector = grammaticalVector;
                 ClusterEventObjects.contextualVector = contextualVector;
                 ClusterEventObjects.ADDITIONALROLES = ADDITIONALROLES;

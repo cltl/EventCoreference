@@ -42,11 +42,11 @@ public class ClusterEventObjects {
             "--contextual-frames    <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
             "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
             "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>\n" +
-            "--frame-level          <integer><Depth of path for the FrameNet relations>\n" +
-            "--frame-relations      <path>   <path to FrameNet file with relations>\n" +
-            "--microstories         <integer><Number of sentences to restrict the analysis>\n" +
-            "--bridging                      <Whether or not microstories are extended through bridging relations>\n";
-    static public Vector<String> communicationVector = null;
+            "--frame-level          <integer><@DEPRECATED Depth of path for the FrameNet relations>\n" +
+            "--frame-relations      <path>   <@DEPRECATED path to FrameNet file with relations>\n" +
+            "--microstories         <integer><@DEPRECATED Number of sentences to restrict the analysis>\n" +
+            "--bridging                      <@DEPRECATED Whether or not microstories are extended through bridging relations>\n";
+    static public Vector<String> sourceVector = null;
     static public Vector<String> grammaticalVector = null;
     static public Vector<String> contextualVector = null;
     static public FrameNetReader frameNetReader = new FrameNetReader();
@@ -72,14 +72,14 @@ public class ClusterEventObjects {
        // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
         String projectName  = "";
         String extension = "";
-        String comFrameFile = "";
+        String sourceFrameFile = "";
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";
         String fnFile = "";
         int fnLevel = 0;
 /*
         extension = ".naf";
-        comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
+        sourceFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
         contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/contextual.txt";
         grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/grammatical.txt";
 */
@@ -118,8 +118,8 @@ public class ClusterEventObjects {
                     e.printStackTrace();
                 }
             }
-            else if (arg.equals("--communication-frames") && args.length>(i+1)) {
-                comFrameFile = args[i+1];
+            else if (arg.equals("--source-frames") && args.length>(i+1)) {
+                sourceFrameFile = args[i+1];
             }
             else if (arg.equals("--grammatical-frames") && args.length>(i+1)) {
                 grammaticalFrameFile = args[i+1];
@@ -139,11 +139,11 @@ public class ClusterEventObjects {
             System.out.println("frameNetReader super= " + frameNetReader.superToSubFrame.size());
         }
         //// read resources
-        communicationVector = Util.ReadFileToStringVector(comFrameFile);
+        sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
         grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
         contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
 /*
-        System.out.println("communicationVector = " + communicationVector.size());
+        System.out.println("sourceVector = " + sourceVector.size());
         System.out.println("contextualVector = " + contextualVector.size());
         System.out.println("grammaticalVector = " + grammaticalVector.size());
 */
@@ -273,7 +273,7 @@ public class ClusterEventObjects {
            // ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
             CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
             File folder = contextualFolder;
-            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, communicationVector, grammaticalVector);
+            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, sourceVector, grammaticalVector);
             if (!eventType.isEmpty()) {
                 if (eventType.equalsIgnoreCase("source")) {
                     folder = speechFolder;
@@ -531,7 +531,7 @@ public class ClusterEventObjects {
                 project,
                 semActors,
                 contextualVector,
-                communicationVector,
+                sourceVector,
                 grammaticalVector);
 
         if (perspectiveObjects.size()>0) {
@@ -735,7 +735,7 @@ public class ClusterEventObjects {
                 project,
                 semActors,
                 contextualVector,
-                communicationVector,
+                sourceVector,
                 grammaticalVector);
 
 
@@ -753,7 +753,7 @@ public class ClusterEventObjects {
             }
             CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
             File folder = otherFolder;
-            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, communicationVector, grammaticalVector);
+            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, sourceVector, grammaticalVector);
             if (!eventType.isEmpty()) {
                 if (eventType.equalsIgnoreCase("source")) {
                     folder = speechFolder;

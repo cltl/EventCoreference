@@ -44,7 +44,8 @@ public class MatchEventObjects {
             "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
             "--event-type    <string>   <(OPTIONAL) Indicate the type of events for establishing event coreference more or less strict. Values are \"contetxual\", \"source\", \"grammatical\">\n" +
             "--source-data   <path>     <(OPTIONAL) Path to LexisNexis meta data on owners and authors to enrich the provenance>\n" +
-            "--roles  <string>   <(OPTIONAL) String with PropbBank roles for which there needs to be a match, e.g. \"a1,a2,a3,a4\""+
+            "--roles  <string>          <(OPTIONAL) String with PropbBank roles for which there needs to be a match, e.g. \"a1,a2,a3,a4\""+
+            "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n"+
             "--debug                    <(OPTIONAL)>\n";
 
 
