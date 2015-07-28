@@ -309,7 +309,8 @@ public class EventCorefWordnetSim {
               }
               process(kafSaxParser, USEWSD);
               try {
-                  OutputStream fos = new FileOutputStream(pathToNafFile+".event-coref.naf");
+                  String filePath = pathToNafFile.substring(0,pathToNafFile.lastIndexOf("."));
+                  FileOutputStream fos = new FileOutputStream(filePath+".naf");
                   kafSaxParser.writeNafToStream(fos);
                   fos.close();
               } catch (IOException e) {
@@ -332,7 +333,8 @@ public class EventCorefWordnetSim {
                   process(kafSaxParser, USEWSD);
 
                   try {
-                      FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".coref");
+                      String filePath = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf("."));
+                      FileOutputStream fos = new FileOutputStream(filePath+".naf");
                       kafSaxParser.writeNafToStream(fos);
                       fos.close();
                   } catch (IOException e) {

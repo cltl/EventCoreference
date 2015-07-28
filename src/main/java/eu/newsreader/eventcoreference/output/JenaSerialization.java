@@ -140,7 +140,7 @@ public class JenaSerialization {
                                             ArrayList<PerspectiveObject> perspectiveObjects) {
         for (int i = 0; i < perspectiveObjects.size(); i++) {
             PerspectiveObject perspectiveObject = perspectiveObjects.get(i);
-            //System.out.println("perspectiveObject.toString() = " + perspectiveObject.toString());
+           // System.out.println("perspectiveObject.toString() = " + perspectiveObject.toString());
             perspectiveObject.addToJenaDataSet(ds);
         }
     }

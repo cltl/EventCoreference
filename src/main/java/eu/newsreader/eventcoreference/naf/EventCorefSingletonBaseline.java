@@ -88,7 +88,8 @@ public class EventCorefSingletonBaseline {
                   }
                   process(kafSaxParser);
                   try {
-                      FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".coref");
+                      String filePath = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf("."));
+                      FileOutputStream fos = new FileOutputStream(filePath+".naf");
                       kafSaxParser.writeNafToStream(fos);
                       fos.close();
                   } catch (IOException e) {
