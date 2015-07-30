@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" line="1099" mnemonic="9" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="445384b5-3667-4928-9720-8c2fa43cd0aa" name="Default" comment="">
+    <list default="true" id="445384b5-3667-4928-9720-8c2fa43cd0aa" name="Default" comment="---kjhkjhkghj">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/COPYING-GPL.TXT" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/LICENSESOFTWARE.TXT" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/README.TXT" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/example/enPM.coref.naf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/example/enPM.naf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/run.sh" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/scripts/event-coref-naf-file.sh" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/COPYING-GPL.TXT" afterPath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/COPYING-GPL.TXT" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iml" afterPath="$PROJECT_DIR$/EventCoreference.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.ipr" afterPath="$PROJECT_DIR$/EventCoreference.ipr" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iws" afterPath="$PROJECT_DIR$/EventCoreference.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEntityCoref.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEntityCoref.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEventCoref.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEventCoref.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/LICENSESOFTWARE.TXT" afterPath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/LICENSESOFTWARE.TXT" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/LargeInterDocumentEventCoref.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/LargeInterDocumentEventCoref.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/README.TXT" afterPath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/README.TXT" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README" afterPath="$PROJECT_DIR$/README" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/example/enPM.coref.naf" afterPath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/example/enPM.coref.naf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/example/enPM.naf.coref" afterPath="$PROJECT_DIR$/example/enPM.naf.coref" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/example/enPM.naf" afterPath="$PROJECT_DIR$/example/enPM.naf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/example/enPM.naf" afterPath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/example/enPM.naf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/NodeData.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/NodeData.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/OwlReader.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/OwlReader.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/RdfSense.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/RdfSense.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/Tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/Tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/TreeNode.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/ontology/TreeNode.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-16.html" afterPath="$PROJECT_DIR$/doc/index-files/index-16.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-17.html" afterPath="$PROJECT_DIR$/doc/index-files/index-17.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/run.sh" afterPath="$PROJECT_DIR$/newsreader-vm/vua-eventcoreference/run.sh" />
     </list>
     <ignored path="EventCoreference.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +39,9 @@
     <option name="PATCH_PATH" value="" />
   </component>
   <component name="DaemonCodeAnalyzer">
-    <disable_hints />
+    <disable_hints>
+      <file url="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
+    </disable_hints>
   </component>
   <component name="DebuggerManager">
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true" converted="true">
@@ -84,77 +89,64 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="GetSemFromNafFile.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
+      <file leaf-file-name="Naf2SemTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/Naf2SemTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="10882" max-vertical-offset="11490">
-              <caret line="746" column="85" selection-start-line="746" selection-start-column="85" selection-end-line="746" selection-end-column="85" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="105" column="29" selection-start-line="105" selection-start-column="29" selection-end-line="105" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MatchEventObjects.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java">
+      <file leaf-file-name="ClusterEventObjects.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1497" max-vertical-offset="3165">
-              <caret line="137" column="42" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="529" column="61" selection-start-line="529" selection-start-column="61" selection-end-line="529" selection-end-column="61" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LargeInterDocumentEventCoref.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/LargeInterDocumentEventCoref.java">
+      <file leaf-file-name="GetPerspectiveRelations.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="4805" max-vertical-offset="5400">
-              <caret line="359" column="26" selection-start-line="359" selection-start-column="26" selection-end-line="359" selection-end-column="26" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="68" column="51" selection-start-line="68" selection-start-column="51" selection-end-line="68" selection-end-column="51" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InterDocumentEventCoref.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEventCoref.java">
+      <file leaf-file-name="JenaSerialization.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="6425" max-vertical-offset="7020">
-              <caret line="465" column="12" selection-start-line="465" selection-start-column="12" selection-end-line="465" selection-end-column="12" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="142" column="13" selection-start-line="142" selection-start-column="13" selection-end-line="142" selection-end-column="13" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InterDocumentEntityCoref.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEntityCoref.java">
+      <file leaf-file-name="PerspectiveObject.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PerspectiveObject.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2280" max-vertical-offset="2865">
-              <caret line="182" column="16" selection-start-line="182" selection-start-column="16" selection-end-line="182" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="EventCorefLemmaBaseline.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="975" max-vertical-offset="2010">
-              <caret line="65" column="25" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GetSemFromNafStream.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.44262296" vertical-offset="0" max-vertical-offset="540">
-              <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="179" column="16" selection-start-line="179" selection-start-column="16" selection-end-line="179" selection-end-column="16" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -170,58 +162,68 @@
       <MyDateState />
     </option>
   </component>
+  <component name="GradleLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="IdeDocumentHistory">
-    <option name="changedFiles">
+    <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/evaluation/EvaluateCorefsBU.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/CrossDocumentEventCoref.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CorefTargetAgata.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/Sem.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/coref/DomainMatch.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/LabelCount.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/SemUtilObject.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/RdfReader.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemPlace.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemActor.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemEvent.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/AgataMention.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SourceMeta.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/Factuality.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessNewsReaderBatch.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/MoveFileToClusters.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/SplitTechCrunch.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Statistics.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessNewsReaderCarBatch.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessNewsReaderTechCrunchBatch.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/OwlTime.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/NafMention.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PhraseCount.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/TimeLanguage.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CompositeEvent.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/coref/ComponentMatch.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemTime.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/OwlTime.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigReader.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/SesameTrigReader.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ResourcesUri.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemRelation.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/EntityTypes.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/RoleLabels.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/GetEsoStats.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/GetEventStats.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/GetEntityStats.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetEntityStats.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetEsoStats.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigUtil.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetEntityCounts.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetEventStats.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/SelectEntityTrig.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigToJsonTimeLineClimax.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameNetWordNetMappings.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/EsoReader.java" />
+        <option value="$MAVEN_REPOSITORY$/WordnetTools/WordnetTools/1.0/WordnetTools-1.0.jar!/vu/wntools/wnsimilarity/WordnetSimilarityApi.class" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/evaluation/CoNLL.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/evaluation/MakeOverviewResult.java" />
+        <option value="$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/CorefTarget.class" />
+        <option value="$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/KafEvent.class" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/evaluation/NafCoref.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CorefResultSet.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/NafMention.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PerspectiveObject.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ParcAttributionTask.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/CreateMicrostory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemTime.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/TimeTypes.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/Sem.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemRelation.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/EventTypes.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemObject.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafObjectToSemTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ResourcesUri.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CompositeEvent.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/coref/ComponentMatch.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/OwlTime.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/LargeInterDocumentEventCoref.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEventCoref.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEntityCoref.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/Naf2SemTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefSingletonBaseline.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.java" />
       </list>
     </option>
   </component>
@@ -240,20 +242,6 @@
   </component>
   <component name="MavenProjectNavigator">
     <treeState>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="EventCoreference" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Dependencies" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependenciesNode" />
-        </PATH_ELEMENT>
-      </PATH>
       <PATH>
         <PATH_ELEMENT>
           <option name="myItemId" value="" />
@@ -283,10 +271,13 @@
   <component name="MavenRunner">
     <option name="runMavenInBackground" value="false" />
   </component>
+  <component name="NamedScopeManager">
+    <order />
+  </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="22" />
+    <option name="y" value="23" />
     <option name="width" value="1920" />
-    <option name="height" value="774" />
+    <option name="height" value="1053" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -314,8 +305,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -323,10 +312,6 @@
               <option name="myItemId" value="EventCoreference" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -335,143 +320,14 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eventcoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eventcoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="naf" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eventcoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="input" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="example" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -482,7 +338,7 @@
     <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="vcs.Git" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../kyotoproject/nerModule/nerModule.ipr" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../multiword-tagger/KafMultiWordTagger.ipr" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -493,55 +349,67 @@
     <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="FullScreen" value="false" />
+    <property name="ToolWindowHierarchy.ShowToolbar" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="eu.newsreader.eventcoreference.naf" />
-      <recent name="eu.newsreader.eventcoreference.util" />
       <recent name="eu.newsreader.eventcoreference.input" />
+      <recent name="eu.newsreader.eventcoreference.util" />
+      <recent name="eu.newsreader.eventcoreference.naf" />
       <recent name="eu.newsreader.eventcoreference.objects" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="eu.newsreader.eventcoreference.objects" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.GetSemFromNafFile">
-    <configuration default="false" name="MatchEventObjects" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" />
-      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.MatchEventObjects" />
-      <option name="VM_PARAMETERS" value="-Xmx812m" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+  <component name="RunManager" selected="Application.Naf2SemTest">
+    <configuration default="false" name="EsoReader" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="eu.newsreader.eventcoreference.input.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.input.EsoReader" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="EventCoreference" />
       <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="ClusterEventObjects" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" />
-      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.ClusterEventObjects" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <configuration default="false" name="CoNLL" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="eu.newsreader.eventcoreference.evaluation.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.evaluation.CoNLL" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="EventCoreference" />
       <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
     <configuration default="false" name="GetSemFromNafFile" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" />
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="eu.newsreader.eventcoreference.naf.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.GetSemFromNafFile" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
@@ -553,30 +421,16 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="EventCoreference" />
       <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="SesameTrigReader" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" />
-      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.input.SesameTrigReader" />
-      <option name="VM_PARAMETERS" value="-Xmx812m" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="EventCoreference" />
-      <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="TrigReader" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" />
-      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.input.TrigReader" />
+    <configuration default="false" name="Naf2SemTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="eu.newsreader.eventcoreference.naf.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.Naf2SemTest" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -587,8 +441,46 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="EventCoreference" />
       <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="NafObjectToSemTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="eu.newsreader.eventcoreference.naf.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.NafObjectToSemTest" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="EventCoreference" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
@@ -610,6 +502,72 @@
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="C:/Program Files/IntelliJ-IDEA-4.5/bin/appletviewer.policy" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="wholeProject" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="JarApplication" factoryName="JAR Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
@@ -643,6 +601,7 @@
       <method />
     </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -669,77 +628,8 @@
       <listeners />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="C:/Program Files/IntelliJ-IDEA-4.5/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
-    <configuration default="true" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="JUnit" factoryName="JUnit">
-      <extension name="coverage" enabled="false" merge="false" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="wholeProject" />
-      </option>
-      <envs />
-      <patterns />
-      <method />
-    </configuration>
-    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
-      <module name="" />
-      <option name="ACTIVITY_CLASS" value="" />
-      <option name="MODE" value="default_activity" />
-      <option name="DEPLOY" value="true" />
-      <option name="ARTIFACT_NAME" value="" />
-      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
-      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
-      <option name="PREFERRED_AVD" value="" />
-      <option name="USE_COMMAND_LINE" value="true" />
-      <option name="COMMAND_LINE" value="" />
-      <option name="WIPE_USER_DATA" value="false" />
-      <option name="DISABLE_BOOT_ANIMATION" value="false" />
-      <option name="NETWORK_SPEED" value="full" />
-      <option name="NETWORK_LATENCY" value="none" />
-      <option name="CLEAR_LOGCAT" value="false" />
-      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
-      <method />
-    </configuration>
     <configuration default="false" name="EventCorefLemmaBaseline" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" />
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.EventCorefLemmaBaseline" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="--naf-file &quot;$PROJECT_DIR$/example/enPM.naf&quot;" />
@@ -756,7 +646,7 @@
       <method />
     </configuration>
     <configuration default="false" name="EventCorefLemmaBaseline (1)" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" />
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.EventCorefLemmaBaseline" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="&quot;$PROJECT_DIR$/example/enPM.naf&quot;" />
@@ -773,7 +663,7 @@
       <method />
     </configuration>
     <configuration default="false" name="InterDocumentEventCoref" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" />
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.InterDocumentEventCoref" />
       <option name="VM_PARAMETERS" value="-Xmx812m" />
       <option name="PROGRAM_PARAMETERS" value="--naf-folder &quot;$PROJECT_DIR$/2003-01-01&quot; --project cars --extension &quot;.coref&quot; --phrase-match 0.6 --concept-match 0 --source-data /cars/LN-coremetadata.txt" />
@@ -790,7 +680,7 @@
       <method />
     </configuration>
     <configuration default="false" name="Stats" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" />
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.util.Statistics" />
       <option name="VM_PARAMETERS" value="-Xmx1812m" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -807,7 +697,7 @@
       <method />
     </configuration>
     <configuration default="false" name="InterDocumentEventCoref TechCrunch" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" />
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.util.ProcessNewsReaderTechCrunchBatch" />
       <option name="VM_PARAMETERS" value="-Xmx812m" />
       <option name="PROGRAM_PARAMETERS" value="--cluster-folders &quot;$USER_HOME$/Desktop/NWR-DATA/techcrunch/1_3000_month_clusters&quot; --extension &quot;.naf&quot; --project techcrunch --extension &quot;.naf&quot; --phrase-match 0.6 --concept-match 0" />
@@ -859,19 +749,19 @@
       <item index="3" class="java.lang.String" itemvalue="Application.Stats" />
       <item index="4" class="java.lang.String" itemvalue="Application.InterDocumentEventCoref TechCrunch" />
       <item index="5" class="java.lang.String" itemvalue="Maven.EventCoreference [clean,validate,compile...]" />
-      <item index="6" class="java.lang.String" itemvalue="Application.MatchEventObjects" />
-      <item index="7" class="java.lang.String" itemvalue="Application.ClusterEventObjects" />
+      <item index="6" class="java.lang.String" itemvalue="Application.EsoReader" />
+      <item index="7" class="java.lang.String" itemvalue="Application.CoNLL" />
       <item index="8" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
-      <item index="9" class="java.lang.String" itemvalue="Application.SesameTrigReader" />
-      <item index="10" class="java.lang.String" itemvalue="Application.TrigReader" />
+      <item index="9" class="java.lang.String" itemvalue="Application.Naf2SemTest" />
+      <item index="10" class="java.lang.String" itemvalue="Application.NafObjectToSemTest" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
-        <item index="1" class="java.lang.String" itemvalue="Application.SesameTrigReader" />
-        <item index="2" class="java.lang.String" itemvalue="Application.TrigReader" />
-        <item index="3" class="java.lang.String" itemvalue="Application.MatchEventObjects" />
-        <item index="4" class="java.lang.String" itemvalue="Application.ClusterEventObjects" />
+        <item index="0" class="java.lang.String" itemvalue="Application.Naf2SemTest" />
+        <item index="1" class="java.lang.String" itemvalue="Application.NafObjectToSemTest" />
+        <item index="2" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
+        <item index="3" class="java.lang.String" itemvalue="Application.CoNLL" />
+        <item index="4" class="java.lang.String" itemvalue="Application.EsoReader" />
       </list>
     </recent_temporary>
   </component>
@@ -883,294 +773,334 @@
     <task active="true" id="Default" summary="Default task">
       <changelist id="445384b5-3667-4928-9720-8c2fa43cd0aa" name="Default" comment="" />
       <created>1382608862052</created>
+      <option name="number" value="Default" />
       <updated>1382608862052</updated>
     </task>
-    <task id="LOCAL-00001" summary="- First commit">
-      <created>1382716830342</created>
-      <updated>1382716830342</updated>
-    </task>
-    <task id="LOCAL-00002" summary="- Uses KafSaxParser with adapted span objects for predicates and roles. CorefTarget objects can have id and head attributes">
-      <created>1382957958667</created>
-      <updated>1382957958667</updated>
-    </task>
-    <task id="LOCAL-00003" summary="- Interdocument processing version1">
-      <created>1385837167460</created>
-      <updated>1385837167460</updated>
-    </task>
-    <task id="LOCAL-00004" summary="- Interdocument processing version1">
-      <created>1386021158335</created>
-      <updated>1386021158335</updated>
-    </task>
-    <task id="LOCAL-00005" summary="- Interdocument processing version1">
-      <created>1386073514149</created>
-      <updated>1386073514149</updated>
-    </task>
-    <task id="LOCAL-00006" summary="- Interdocument processing version1&#10;">
-      <created>1386193956011</created>
-      <updated>1386193956012</updated>
-    </task>
-    <task id="LOCAL-00007" summary="- Interdocument processing version1&#10;">
-      <created>1386271411007</created>
-      <updated>1386271411007</updated>
-    </task>
-    <task id="LOCAL-00008" summary="- Interdocument processing version1&#10;">
-      <created>1386860790309</created>
-      <updated>1386860790309</updated>
-    </task>
-    <task id="LOCAL-00009" summary="- Interdocument processing version1&#10;">
-      <created>1386876050019</created>
-      <updated>1386876050019</updated>
-    </task>
-    <task id="LOCAL-00010" summary="- Interdocument processing version1&#10;">
-      <created>1386958656345</created>
-      <updated>1386958656346</updated>
-    </task>
-    <task id="LOCAL-00011" summary="- Interdocument processing version1&#10;">
-      <created>1387193066573</created>
-      <updated>1387193066573</updated>
-    </task>
-    <task id="LOCAL-00012" summary="- Interdocument processing version1&#10;">
-      <created>1387198497445</created>
-      <updated>1387198497445</updated>
-    </task>
-    <task id="LOCAL-00013" summary="- Interdocument processing version1&#10;">
-      <created>1387296018509</created>
-      <updated>1387296018510</updated>
-    </task>
-    <task id="LOCAL-00014" summary="- Interdocument processing version1&#10;">
-      <created>1387373054689</created>
-      <updated>1387373054689</updated>
-    </task>
-    <task id="LOCAL-00015" summary="- Interdocument processing version1&#10;">
-      <created>1387396511612</created>
-      <updated>1387396511612</updated>
-    </task>
-    <task id="LOCAL-00016" summary="- Interdocument processing version1&#10;">
-      <created>1388111417586</created>
-      <updated>1388111417586</updated>
-    </task>
-    <task id="LOCAL-00017" summary="- Interdocument processing version1&#10;">
-      <created>1388111520420</created>
-      <updated>1388111520420</updated>
-    </task>
-    <task id="LOCAL-00018" summary="- Interdocument processing version1&#10;">
-      <created>1388112713242</created>
-      <updated>1388112713242</updated>
-    </task>
-    <task id="LOCAL-00019" summary="- Interdocument processing version1&#10;">
-      <created>1388166690096</created>
-      <updated>1388166690096</updated>
-    </task>
-    <task id="LOCAL-00020" summary="- Interdocument processing version1&#10;">
-      <created>1388173289875</created>
-      <updated>1388173289875</updated>
-    </task>
-    <task id="LOCAL-00021" summary="- Interdocument processing version1&#10;">
-      <created>1388179115318</created>
-      <updated>1388179115318</updated>
-    </task>
-    <task id="LOCAL-00022" summary="- Interdocument processing version1&#10;">
-      <created>1388663800974</created>
-      <updated>1388663800974</updated>
-    </task>
-    <task id="LOCAL-00023" summary="&#10;- version 1">
-      <created>1388665066553</created>
-      <updated>1388665066553</updated>
-    </task>
-    <task id="LOCAL-00024" summary="- version 1&#10;">
-      <created>1388754965744</created>
-      <updated>1388754965744</updated>
-    </task>
-    <task id="LOCAL-00025" summary="- version 1&#10;">
-      <created>1388756049801</created>
-      <updated>1388756049801</updated>
-    </task>
-    <task id="LOCAL-00026" summary="- statistic class">
-      <created>1388844207879</created>
-      <updated>1388844207879</updated>
-    </task>
-    <task id="LOCAL-00027" summary="- statistic class&#10;">
-      <created>1388998010145</created>
-      <updated>1388998010145</updated>
-    </task>
-    <task id="LOCAL-00028" summary="- statistic class&#10;">
-      <created>1389129234498</created>
-      <updated>1389129234498</updated>
-    </task>
-    <task id="LOCAL-00029" summary="- statistic class&#10;">
-      <created>1390132872385</created>
-      <updated>1390132872385</updated>
-    </task>
-    <task id="LOCAL-00030" summary="- mention references fixed">
-      <created>1390398714296</created>
-      <updated>1390398714297</updated>
-    </task>
-    <task id="LOCAL-00031" summary="- mention references fixed&#10;">
-      <created>1390467638098</created>
-      <updated>1390467638098</updated>
-    </task>
-    <task id="LOCAL-00032" summary="- mention references fixed&#10;">
-      <created>1390469746987</created>
-      <updated>1390469746987</updated>
-    </task>
-    <task id="LOCAL-00033" summary="- mention references fixed&#10;">
-      <created>1392065317332</created>
-      <updated>1392065317332</updated>
-    </task>
-    <task id="LOCAL-00034" summary="- mention references fixed&#10;">
-      <created>1392110528586</created>
-      <updated>1392110528586</updated>
-    </task>
-    <task id="LOCAL-00035" summary="- mention references fixed&#10;">
-      <created>1392121608371</created>
-      <updated>1392121608371</updated>
-    </task>
-    <task id="LOCAL-00036" summary="- mention references fixed&#10;">
-      <created>1392224857420</created>
-      <updated>1392224857420</updated>
-    </task>
-    <task id="LOCAL-00037" summary="- mention references fixed&#10;">
-      <created>1392377289140</created>
-      <updated>1392377289140</updated>
-    </task>
-    <task id="LOCAL-00038" summary="- mention references fixed&#10;">
-      <created>1392923861885</created>
-      <updated>1392923861885</updated>
-    </task>
-    <task id="LOCAL-00039" summary="- mention references fixed&#10;">
-      <created>1393067153405</created>
-      <updated>1393067153405</updated>
-    </task>
-    <task id="LOCAL-00040" summary="- mention references fixed&#10;">
-      <created>1396976762899</created>
-      <updated>1396976762899</updated>
-    </task>
-    <task id="LOCAL-00041" summary="- mention references fixed&#10;">
-      <created>1397935229447</created>
-      <updated>1397935229447</updated>
-    </task>
-    <task id="LOCAL-00042" summary="- mention references fixed&#10;">
-      <created>1398156254504</created>
-      <updated>1398156254504</updated>
-    </task>
-    <task id="LOCAL-00043" summary="-- time representation in TriG">
-      <created>1398168741175</created>
-      <updated>1398168741175</updated>
-    </task>
-    <task id="LOCAL-00044" summary="-- component comparison version 1">
-      <created>1398180110320</created>
-      <updated>1398180110320</updated>
-    </task>
-    <task id="LOCAL-00045" summary="-- component comparison version 1">
-      <created>1398794102520</created>
-      <updated>1398794102520</updated>
-    </task>
-    <task id="LOCAL-00046" summary="-- component comparison version 1">
-      <created>1398971408805</created>
-      <updated>1398971408805</updated>
-    </task>
-    <task id="LOCAL-00047" summary="-- component comparison version 1">
-      <created>1399036835102</created>
-      <updated>1399036835102</updated>
-    </task>
-    <task id="LOCAL-00048" summary="-- component comparison version 1">
-      <created>1399642824821</created>
-      <updated>1399642824821</updated>
-    </task>
-    <task id="LOCAL-00049" summary="-- component comparison version 1">
-      <created>1400232947561</created>
-      <updated>1400232947561</updated>
-    </task>
-    <task id="LOCAL-00050" summary="-- component comparison version 1">
-      <created>1400327238389</created>
-      <updated>1400327238389</updated>
-    </task>
-    <task id="LOCAL-00051" summary="-- component comparison version 1">
-      <created>1400332124283</created>
-      <updated>1400332124283</updated>
-    </task>
-    <task id="LOCAL-00052" summary="-- component comparison version 1">
-      <created>1400351201240</created>
-      <updated>1400351201241</updated>
-    </task>
-    <task id="LOCAL-00053" summary="-- component comparison version 1">
-      <created>1400509156743</created>
-      <updated>1400509156743</updated>
-    </task>
-    <task id="LOCAL-00054" summary="-- component comparison version 1">
-      <created>1400510741500</created>
-      <updated>1400510741500</updated>
-    </task>
-    <task id="LOCAL-00055" summary="-- component comparison version 1">
-      <created>1400528618061</created>
-      <updated>1400528618062</updated>
-    </task>
-    <task id="LOCAL-00056" summary="-- component comparison version 1">
-      <created>1400591215153</created>
-      <updated>1400591215154</updated>
-    </task>
-    <task id="LOCAL-00057" summary="-- component comparison version 1">
-      <created>1400618244438</created>
-      <updated>1400618244439</updated>
-    </task>
-    <task id="LOCAL-00058" summary="-- component comparison version 1">
-      <created>1400619377656</created>
-      <updated>1400619377656</updated>
-    </task>
-    <task id="LOCAL-00059" summary="-- component comparison version 1">
-      <created>1401709512992</created>
-      <updated>1401709512992</updated>
-    </task>
-    <task id="LOCAL-00060" summary="-- added roles and event types with ontology prefixes">
-      <created>1403344653423</created>
-      <updated>1403344653424</updated>
-    </task>
-    <task id="LOCAL-00061" summary="-- added roles and event types with ontology prefixes">
-      <created>1403965481196</created>
-      <updated>1403965481196</updated>
-    </task>
-    <task id="LOCAL-00062" summary="-- added roles and event types with ontology prefixes">
-      <created>1405437884055</created>
-      <updated>1405437884055</updated>
-    </task>
-    <task id="LOCAL-00063" summary="-- added roles and event types with ontology prefixes">
-      <created>1405579339644</created>
-      <updated>1405579339645</updated>
-    </task>
-    <task id="LOCAL-00064" summary="-- added roles and event types with ontology prefixes">
-      <created>1405601288853</created>
-      <updated>1405601288854</updated>
-    </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00140" summary="-- microstories">
+      <created>1424722911600</created>
+      <option name="number" value="00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1424722911600</updated>
+    </task>
+    <task id="LOCAL-00141" summary="-- storylines">
+      <created>1424901310742</created>
+      <option name="number" value="00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1424901310742</updated>
+    </task>
+    <task id="LOCAL-00142" summary="-- stories">
+      <created>1424932144024</created>
+      <option name="number" value="00142" />
+      <option name="project" value="LOCAL" />
+      <updated>1424932144025</updated>
+    </task>
+    <task id="LOCAL-00143" summary="-- implemented recursive chaining for composite event matching">
+      <created>1425549493049</created>
+      <option name="number" value="00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1425549493056</updated>
+    </task>
+    <task id="LOCAL-00144" summary="-- triple stats">
+      <created>1425630133043</created>
+      <option name="number" value="00144" />
+      <option name="project" value="LOCAL" />
+      <updated>1425630133044</updated>
+    </task>
+    <task id="LOCAL-00145" summary="-- stats">
+      <created>1425634442071</created>
+      <option name="number" value="00145" />
+      <option name="project" value="LOCAL" />
+      <updated>1425634442072</updated>
+    </task>
+    <task id="LOCAL-00146" summary="--">
+      <created>1425635650507</created>
+      <option name="number" value="00146" />
+      <option name="project" value="LOCAL" />
+      <updated>1425635650507</updated>
+    </task>
+    <task id="LOCAL-00147" summary="-- json timeline with event groups&#10;-- perspective module">
+      <created>1426844742144</created>
+      <option name="number" value="00147" />
+      <option name="project" value="LOCAL" />
+      <updated>1426844742146</updated>
+    </task>
+    <task id="LOCAL-00148" summary="--">
+      <created>1427104434729</created>
+      <option name="number" value="00148" />
+      <option name="project" value="LOCAL" />
+      <updated>1427104434730</updated>
+    </task>
+    <task id="LOCAL-00149" summary="-- usage documented">
+      <created>1427707414991</created>
+      <option name="number" value="00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1427707414992</updated>
+    </task>
+    <task id="LOCAL-00150" summary="-- pretty json out for timelines">
+      <created>1428136538297</created>
+      <option name="number" value="00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1428136538298</updated>
+    </task>
+    <task id="LOCAL-00151" summary="---kjhkjhkghj">
+      <created>1428590185518</created>
+      <option name="number" value="00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1428590185519</updated>
+    </task>
+    <task id="LOCAL-00152" summary="---kjhkjhkghj">
+      <created>1429525600752</created>
+      <option name="number" value="00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1429525600753</updated>
+    </task>
+    <task id="LOCAL-00153" summary="-- timeline bug fixed: mention token is used to represent the event mention instead of the bestPhrase&#10;-- Now also A2 roles are allowed for timeline">
+      <created>1429962912604</created>
+      <option name="number" value="00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1429962912605</updated>
+    </task>
+    <task id="LOCAL-00154" summary="-- timeline cleanup">
+      <created>1430063660725</created>
+      <option name="number" value="00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1430063660725</updated>
+    </task>
+    <task id="LOCAL-00155" summary="-- storylines">
+      <created>1431291791144</created>
+      <option name="number" value="00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1431291791147</updated>
+    </task>
+    <task id="LOCAL-00156" summary="-- Climax based storylines">
+      <created>1431681510064</created>
+      <option name="number" value="00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1431681510068</updated>
+    </task>
+    <task id="LOCAL-00157" summary="-- storylines">
+      <created>1431776648853</created>
+      <option name="number" value="00157" />
+      <option name="project" value="LOCAL" />
+      <updated>1431776648853</updated>
+    </task>
+    <task id="LOCAL-00158" summary="-- storylines">
+      <created>1431885880479</created>
+      <option name="number" value="00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1431885880479</updated>
+    </task>
+    <task id="LOCAL-00159" summary="---kjhkjhkghj">
+      <created>1431941139526</created>
+      <option name="number" value="00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1431941139526</updated>
+    </task>
+    <task id="LOCAL-00160" summary="--- took out coreference and entity fixes. Former no longer needed and latter give wrong references for non-English processes">
+      <created>1432148284855</created>
+      <option name="number" value="00160" />
+      <option name="project" value="LOCAL" />
+      <updated>1432148284856</updated>
+    </task>
+    <task id="LOCAL-00161" summary="---kjhkjhkghj">
+      <created>1432239526107</created>
+      <option name="number" value="00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1432239526109</updated>
+    </task>
+    <task id="LOCAL-00162" summary="-- fixexternal reference without english">
+      <created>1432649896013</created>
+      <option name="number" value="00162" />
+      <option name="project" value="LOCAL" />
+      <updated>1432649896016</updated>
+    </task>
+    <task id="LOCAL-00163" summary="-- bug fix: entity URI was based on the first result but some versions of dbspotlight list them in reverse order. Now the top scoring URI is taken">
+      <created>1433016149426</created>
+      <option name="number" value="00163" />
+      <option name="project" value="LOCAL" />
+      <updated>1433016149427</updated>
+    </task>
+    <task id="LOCAL-00164" summary="--- timelines">
+      <created>1434270437574</created>
+      <option name="number" value="00164" />
+      <option name="project" value="LOCAL" />
+      <updated>1434270437576</updated>
+    </task>
+    <task id="LOCAL-00165" summary="---trig stats on events">
+      <created>1434447822011</created>
+      <option name="number" value="00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1434447822012</updated>
+    </task>
+    <task id="LOCAL-00166" summary="-- patch for wrong entity types Dutch pipelines">
+      <created>1434483947153</created>
+      <option name="number" value="00166" />
+      <option name="project" value="LOCAL" />
+      <updated>1434483947153</updated>
+    </task>
+    <task id="LOCAL-00167" summary="--- ClusterEventObjects now checks if the URL in the NAF file is empty. If so it prints a warning and does not processing it. This prevents lumping of events due to missing URL.">
+      <created>1434625554292</created>
+      <option name="number" value="00167" />
+      <option name="project" value="LOCAL" />
+      <updated>1434625554293</updated>
+    </task>
+    <task id="LOCAL-00168" summary="-- trig stats">
+      <created>1435127084234</created>
+      <option name="number" value="00168" />
+      <option name="project" value="LOCAL" />
+      <updated>1435127084239</updated>
+    </task>
+    <task id="LOCAL-00169" summary="-- trig stats">
+      <created>1435219242841</created>
+      <option name="number" value="00169" />
+      <option name="project" value="LOCAL" />
+      <updated>1435219242842</updated>
+    </task>
+    <task id="LOCAL-00170" summary="-- trig stats">
+      <created>1435219645607</created>
+      <option name="number" value="00170" />
+      <option name="project" value="LOCAL" />
+      <updated>1435219645607</updated>
+    </task>
+    <task id="LOCAL-00171" summary="---kjhkjhkghj">
+      <created>1436119558527</created>
+      <option name="number" value="00171" />
+      <option name="project" value="LOCAL" />
+      <updated>1436119558527</updated>
+    </task>
+    <task id="LOCAL-00172" summary="-- inter document event coreference">
+      <created>1436631198388</created>
+      <option name="number" value="00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1436631198388</updated>
+    </task>
+    <task id="LOCAL-00173" summary="-- evaluation">
+      <created>1436708497812</created>
+      <option name="number" value="00173" />
+      <option name="project" value="LOCAL" />
+      <updated>1436708497813</updated>
+    </task>
+    <task id="LOCAL-00174" summary="-- removed evaluation code. Now inside coreference evaluation package">
+      <created>1436711771728</created>
+      <option name="number" value="00174" />
+      <option name="project" value="LOCAL" />
+      <updated>1436711771728</updated>
+    </task>
+    <task id="LOCAL-00175" summary="---kjhkjhkghj">
+      <created>1436878884772</created>
+      <option name="number" value="00175" />
+      <option name="project" value="LOCAL" />
+      <updated>1436878884773</updated>
+    </task>
+    <task id="LOCAL-00176" summary="-- naf2sem v3">
+      <created>1437059742252</created>
+      <option name="number" value="00176" />
+      <option name="project" value="LOCAL" />
+      <updated>1437059742252</updated>
+    </task>
+    <task id="LOCAL-00177" summary="-- naf2sem v3">
+      <created>1437163462252</created>
+      <option name="number" value="00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1437163462252</updated>
+    </task>
+    <task id="LOCAL-00178" summary="-- naf2sem v3">
+      <created>1437222019308</created>
+      <option name="number" value="00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1437222019308</updated>
+    </task>
+    <task id="LOCAL-00179" summary="-- naf2sem v3">
+      <created>1437317340845</created>
+      <option name="number" value="00179" />
+      <option name="project" value="LOCAL" />
+      <updated>1437317340845</updated>
+    </task>
+    <task id="LOCAL-00180" summary="-- naf2sem v3">
+      <created>1437405488815</created>
+      <option name="number" value="00180" />
+      <option name="project" value="LOCAL" />
+      <updated>1437405488815</updated>
+    </task>
+    <task id="LOCAL-00181" summary="-- naf2sem v3">
+      <created>1437487950725</created>
+      <option name="number" value="00181" />
+      <option name="project" value="LOCAL" />
+      <updated>1437487950726</updated>
+    </task>
+    <task id="LOCAL-00182" summary="-- naf2sem v3">
+      <created>1437490024155</created>
+      <option name="number" value="00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1437490024155</updated>
+    </task>
+    <task id="LOCAL-00183" summary="-- naf2sem v3">
+      <created>1437490965730</created>
+      <option name="number" value="00183" />
+      <option name="project" value="LOCAL" />
+      <updated>1437490965730</updated>
+    </task>
+    <task id="LOCAL-00184" summary="-- new temporal interpretation using predicateAnchoring, durations resulting in various temporal relations and code clean-up">
+      <created>1437745614833</created>
+      <option name="number" value="00184" />
+      <option name="project" value="LOCAL" />
+      <updated>1437745614833</updated>
+    </task>
+    <task id="LOCAL-00185" summary="-- pipeline v.3">
+      <created>1437838475414</created>
+      <option name="number" value="00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1437838475415</updated>
+    </task>
+    <task id="LOCAL-00186" summary="-- naf3.0">
+      <created>1438000506224</created>
+      <option name="number" value="00186" />
+      <option name="project" value="LOCAL" />
+      <updated>1438000506225</updated>
+    </task>
+    <task id="LOCAL-00187" summary="-- nafv3.0">
+      <created>1438002528310</created>
+      <option name="number" value="00187" />
+      <option name="project" value="LOCAL" />
+      <updated>1438002528310</updated>
+    </task>
+    <task id="LOCAL-00188" summary="-- EventCoreference simplify output file name to &quot;.naf&quot; replacing last file extension to prevent complicating renaming. May override input file: use --replace flag">
+      <created>1438081316245</created>
+      <option name="number" value="00188" />
+      <option name="project" value="LOCAL" />
+      <updated>1438081316246</updated>
+    </task>
+    <option name="localTasksCounter" value="189" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1920" height="774" extended-state="0" />
+    <frame x="0" y="23" width="1920" height="1053" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1049936" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25783476" sideWeight="0.50104165" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34826884" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2640264" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0703125" sideWeight="0.95652175" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.11661342" sideWeight="0.95652175" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27864584" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.49287748" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33013844" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1049936" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19371727" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37321937" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28592375" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39970502" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17184035" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293247" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1214,404 +1144,408 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="myTodoPanelSettings">
-      <TodoPanelSettings />
-    </option>
     <option name="PERFORM_UPDATE_IN_BACKGROUND" value="false" />
     <option name="PERFORM_COMMIT_IN_BACKGROUND" value="false" />
     <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="true" />
-    <MESSAGE value="- First commit" />
-    <MESSAGE value="- Uses KafSaxParser with adapted span objects for predicates and roles. CorefTarget objects can have id and head attributes" />
-    <MESSAGE value="- Interdocument processing version1" />
-    <MESSAGE value="- Interdocument processing version1&#10;" />
-    <MESSAGE value="&#10;" />
-    <MESSAGE value="&#10;- version 1" />
-    <MESSAGE value="- version 1&#10;" />
-    <MESSAGE value="- statistic class" />
-    <MESSAGE value="- statistic class&#10;" />
-    <MESSAGE value="- mention references fixed" />
-    <MESSAGE value="- mention references fixed&#10;" />
-    <MESSAGE value="-- time representation in TriG" />
-    <MESSAGE value="-- component comparison version 1" />
-    <MESSAGE value="-- added roles and event types with ontology prefixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="-- added roles and event types with ontology prefixes" />
+    <MESSAGE value="--" />
+    <MESSAGE value="-- usage documented" />
+    <MESSAGE value="-- pretty json out for timelines" />
+    <MESSAGE value="-- timeline bug fixed: mention token is used to represent the event mention instead of the bestPhrase&#10;-- Now also A2 roles are allowed for timeline" />
+    <MESSAGE value="-- timeline cleanup" />
+    <MESSAGE value="-- Climax based storylines" />
+    <MESSAGE value="-- storylines" />
+    <MESSAGE value="--- took out coreference and entity fixes. Former no longer needed and latter give wrong references for non-English processes" />
+    <MESSAGE value="-- fixexternal reference without english" />
+    <MESSAGE value="-- bug fix: entity URI was based on the first result but some versions of dbspotlight list them in reverse order. Now the top scoring URI is taken" />
+    <MESSAGE value="--- timelines" />
+    <MESSAGE value="---trig stats on events" />
+    <MESSAGE value="-- patch for wrong entity types Dutch pipelines" />
+    <MESSAGE value="--- ClusterEventObjects now checks if the URL in the NAF file is empty. If so it prints a warning and does not processing it. This prevents lumping of events due to missing URL." />
+    <MESSAGE value="-- trig stats" />
+    <MESSAGE value="-- inter document event coreference" />
+    <MESSAGE value="-- evaluation" />
+    <MESSAGE value="-- removed evaluation code. Now inside coreference evaluation package" />
+    <MESSAGE value="---kjhkjhkghj" />
+    <MESSAGE value="-- naf2sem v3" />
+    <MESSAGE value="-- new temporal interpretation using predicateAnchoring, durations resulting in various temporal relations and code clean-up" />
+    <MESSAGE value="-- pipeline v.3" />
+    <MESSAGE value="-- naf3.0" />
+    <MESSAGE value="-- nafv3.0" />
+    <MESSAGE value="-- EventCoreference simplify output file name to &quot;.naf&quot; replacing last file extension to prevent complicating renaming. May override input file: use --replace flag" />
+    <option name="LAST_COMMIT_MESSAGE" value="-- EventCoreference simplify output file name to &quot;.naf&quot; replacing last file extension to prevent complicating renaming. May override input file: use --replace flag" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="5" />
+      <option name="time" value="12" />
     </breakpoint-manager>
+    <watches-manager />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/openrdf/sesame/sesame-rio-api/2.7.9/sesame-rio-api-2.7.9-sources.jar!/org/openrdf/rio/helpers/ContextStatementCollector.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigToJsonTimeLineClimax.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="1635">
-          <caret line="106" column="31" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1406" column="39" selection-start-line="1406" selection-start-column="24" selection-end-line="1406" selection-end-column="39" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/openrdf/sesame/sesame-rio-api/2.7.9/sesame-rio-api-2.7.9-sources.jar!/org/openrdf/rio/helpers/StatementCollector.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/EsoReader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="139" max-vertical-offset="720">
-          <caret line="31" column="13" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="9" selection-start-line="47" selection-start-column="9" selection-end-line="47" selection-end-column="9" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/../../kyotoproject/KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar!/eu/kyotoproject/kaf/KafCoreferenceSet.class">
+    <entry file="jar://$MAVEN_REPOSITORY$/WordnetTools/WordnetTools/1.0/WordnetTools-1.0.jar!/vu/wntools/wnsimilarity/WordnetSimilarityApi.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.16" vertical-offset="151" max-vertical-offset="690">
-          <caret line="28" column="85" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.3479021">
+          <caret line="419" column="31" selection-start-line="417" selection-start-column="33" selection-end-line="417" selection-end-column="64" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemPlace.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/WordnetTools/WordnetTools/1.0/WordnetTools-1.0.jar!/vu/wntools/wnsimilarity/main/SynsetSim.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="596" max-vertical-offset="1425">
-          <caret line="51" column="18" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="-7.8">
+          <caret line="18" column="82" selection-start-line="18" selection-start-column="51" selection-end-line="18" selection-end-column="82" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemActor.java">
+    <entry file="file://$PROJECT_DIR$/../../WordnetTools/src/main/java/vu/wntools/wnsimilarity/main/SynsetSim.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="581" max-vertical-offset="1410">
-          <caret line="51" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.5744681">
+          <caret line="20" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/AgataMention.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="780" max-vertical-offset="3435">
-          <caret line="9" column="13" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="30" column="61" selection-start-line="30" selection-start-column="61" selection-end-line="30" selection-end-column="61" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SourceMeta.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/CorefTarget.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1215" max-vertical-offset="2670">
-          <caret line="101" column="30" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.45454547">
+          <caret line="30" column="5" selection-start-line="30" selection-start-column="5" selection-end-line="30" selection-end-column="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/SplitTechCrunch.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CorefMatch.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="118" max-vertical-offset="3045">
-          <caret line="42" column="33" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.21045919">
+          <caret line="13" column="36" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/KafEvent.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="765">
-          <caret line="34" column="25" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.33596838">
+          <caret line="38" column="16" selection-start-line="38" selection-start-column="16" selection-end-line="38" selection-end-column="16" />
         </state>
       </provider>
     </entry>
-    <entry file="jar:///System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar!/java/sql/Date.class">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/evaluation/EvaluateCorefs.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="840">
-          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessNewsReaderTechCrunchBatch.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/KafSaxParser.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="94" max-vertical-offset="825">
-          <caret line="43" column="45" selection-start-line="43" selection-start-column="45" selection-end-line="43" selection-end-column="45" />
+        <state vertical-scroll-proportion="-12.555555">
+          <caret line="1754" column="78" selection-start-line="1754" selection-start-column="52" selection-end-line="1754" selection-end-column="52" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/../../../jena/apache-jena-2.11.0/lib/jena-core-2.11.0.jar!/com/hp/hpl/jena/rdf/model/Model.class">
+    <entry file="jar://$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/KafEventComponent.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34252873" vertical-offset="32" max-vertical-offset="3015">
-          <caret line="23" column="39" selection-start-line="23" selection-start-column="39" selection-end-line="23" selection-end-column="39" />
+        <state vertical-scroll-proportion="-4.703704">
+          <caret line="106" column="34" selection-start-line="106" selection-start-column="34" selection-end-line="106" selection-end-column="34" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/../../kyotoproject/KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar!/eu/kyotoproject/kaf/KafSense.class">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CorefResultSet.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.55172414" vertical-offset="0" max-vertical-offset="870">
-          <caret line="33" column="28" selection-start-line="33" selection-start-column="28" selection-end-line="33" selection-end-column="28" />
+        <state vertical-scroll-proportion="0.7823129">
+          <caret line="379" column="25" selection-start-line="379" selection-start-column="25" selection-end-line="379" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="jar:///System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar!/java/io/ObjectOutputStream.class">
+    <entry file="jar://$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/KafFactuality.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8489933" vertical-offset="4534" max-vertical-offset="5130">
-          <caret line="337" column="0" selection-start-line="337" selection-start-column="0" selection-end-line="337" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessNewsReaderCarBatch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1142" max-vertical-offset="1785">
-          <caret line="102" column="52" selection-start-line="102" selection-start-column="52" selection-end-line="102" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.87677723" vertical-offset="0" max-vertical-offset="765">
-          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../../kyotoproject/KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar!/eu/kyotoproject/kaf/KafFactuality.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6167763" vertical-offset="0" max-vertical-offset="608">
-          <caret line="26" column="13" selection-start-line="26" selection-start-column="1" selection-end-line="26" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/NafMention.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.30805686" vertical-offset="0" max-vertical-offset="1950">
-          <caret line="16" column="20" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PhraseCount.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
-          <caret line="42" column="71" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../../kyotoproject/KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar!/eu/kyotoproject/kaf/KafEvent.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.0" vertical-offset="0" max-vertical-offset="375">
-          <caret line="11" column="67" selection-start-line="11" selection-start-column="67" selection-end-line="11" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../../kyotoproject/KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar!/eu/kyotoproject/kaf/KafEntity.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3455344" vertical-offset="19" max-vertical-offset="1110">
-          <caret line="18" column="28" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/TimeLanguage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="3045">
-          <caret line="47" column="57" selection-start-line="47" selection-start-column="40" selection-end-line="47" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="178" max-vertical-offset="840">
-          <caret line="47" column="41" selection-start-line="47" selection-start-column="41" selection-end-line="47" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/Sem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2289" max-vertical-offset="3360">
-          <caret line="204" column="109" selection-start-line="204" selection-start-column="24" selection-end-line="204" selection-end-column="109" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Statistics.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334" vertical-offset="4091" max-vertical-offset="16230">
-          <caret line="320" column="55" selection-start-line="320" selection-start-column="55" selection-end-line="320" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CompositeEvent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3065" max-vertical-offset="3720">
-          <caret line="271" column="16" selection-start-line="271" selection-start-column="16" selection-end-line="271" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar!/java/net/URLEncoder.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="375">
-          <caret line="6" column="17" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemTime.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2871" max-vertical-offset="3735">
-          <caret line="243" column="49" selection-start-line="243" selection-start-column="49" selection-end-line="243" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/coref/ComponentMatch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19447397" vertical-offset="297" max-vertical-offset="2565">
-          <caret line="35" column="101" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../../kyotoproject/KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar!/eu/kyotoproject/kaf/KafEventComponent.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-14.0" vertical-offset="640" max-vertical-offset="1155">
-          <caret line="67" column="61" selection-start-line="67" selection-start-column="61" selection-end-line="67" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/OwlTime.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2873" max-vertical-offset="6405">
-          <caret line="262" column="42" selection-start-line="262" selection-start-column="42" selection-end-line="262" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="855" max-vertical-offset="1560">
-          <caret line="61" column="28" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/SesameTrigReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31455898" vertical-offset="1504" max-vertical-offset="2775">
-          <caret line="129" column="0" selection-start-line="121" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/openrdf/sesame/sesame-rio-trig/2.7.9/sesame-rio-trig-2.7.9-sources.jar!/org/openrdf/rio/trig/TriGParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2520">
-          <caret line="62" column="11" selection-start-line="62" selection-start-column="11" selection-end-line="62" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5125786" vertical-offset="171" max-vertical-offset="1305">
-          <caret line="56" column="32" selection-start-line="56" selection-start-column="32" selection-end-line="56" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ResourcesUri.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="81" max-vertical-offset="1050">
-          <caret line="9" column="33" selection-start-line="9" selection-start-column="33" selection-end-line="9" selection-end-column="33" />
+        <state vertical-scroll-proportion="0.35051546">
+          <caret line="41" column="18" selection-start-line="41" selection-start-column="18" selection-end-line="41" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemEvent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1410">
-          <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+        <state vertical-scroll-proportion="-1.410208">
+          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemRelation.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/NafMention.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3092243" vertical-offset="1880" max-vertical-offset="3870">
-          <caret line="181" column="43" selection-start-line="181" selection-start-column="43" selection-end-line="181" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/EntityTypes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="396" max-vertical-offset="1560">
-          <caret line="35" column="30" selection-start-line="35" selection-start-column="30" selection-end-line="35" selection-end-column="30" />
+        <state vertical-scroll-proportion="2.9152825">
+          <caret line="131" column="43" selection-start-line="131" selection-start-column="43" selection-end-line="131" selection-end-column="43" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/RoleLabels.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1058" max-vertical-offset="1965">
-          <caret line="88" column="26" selection-start-line="88" selection-start-column="26" selection-end-line="88" selection-end-column="26" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="234" column="26" selection-start-line="234" selection-start-column="26" selection-end-line="234" selection-end-column="26" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="450" max-vertical-offset="3615">
-          <caret line="64" column="3" selection-start-line="64" selection-start-column="3" selection-end-line="64" selection-end-column="3" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="327" column="68" selection-start-line="327" selection-start-column="68" selection-end-line="327" selection-end-column="68" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ParcAttributionTask.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3856041" vertical-offset="90" max-vertical-offset="2325">
-          <caret line="23" column="26" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="13475" max-vertical-offset="17505">
-          <caret line="914" column="22" selection-start-line="914" selection-start-column="0" selection-end-line="914" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.9862638" vertical-offset="5497" max-vertical-offset="6225">
-          <caret line="208" column="51" selection-start-line="208" selection-start-column="41" selection-end-line="208" selection-end-column="41" />
-          <folding>
-            <element signature="e#4302#4303#0" expanded="false" />
-            <element signature="e#4327#4328#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="1905">
-          <caret line="65" column="25" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="10882" max-vertical-offset="11490">
-          <caret line="746" column="85" selection-start-line="746" selection-start-column="85" selection-end-line="746" selection-end-column="85" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1497" max-vertical-offset="3165">
-          <caret line="137" column="42" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/LargeInterDocumentEventCoref.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4805" max-vertical-offset="5400">
-          <caret line="359" column="26" selection-start-line="359" selection-start-column="26" selection-end-line="359" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEventCoref.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6425" max-vertical-offset="7020">
-          <caret line="465" column="12" selection-start-line="465" selection-start-column="12" selection-end-line="465" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/InterDocumentEntityCoref.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2280" max-vertical-offset="2865">
-          <caret line="182" column="16" selection-start-line="182" selection-start-column="16" selection-end-line="182" selection-end-column="16" />
-          <folding />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="64" column="59" selection-start-line="64" selection-start-column="59" selection-end-line="64" selection-end-column="59" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44262296" vertical-offset="0" max-vertical-offset="540">
-          <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="41" column="64" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="363" column="54" selection-start-line="363" selection-start-column="54" selection-end-line="363" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="67" selection-start-line="47" selection-start-column="67" selection-end-line="47" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="678" column="61" selection-start-line="678" selection-start-column="61" selection-end-line="678" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/CreateMicrostory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="65" column="64" selection-start-line="65" selection-start-column="48" selection-end-line="65" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemTime.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="181" column="0" selection-start-line="166" selection-start-column="0" selection-end-line="182" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/TimeTypes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13846155">
+          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemRelation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="204" column="16" selection-start-line="204" selection-start-column="16" selection-end-line="204" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar!/java/lang/String.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.20737328">
+          <caret line="18" column="19" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar!/java/util/Collections.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.777778">
+          <caret line="732" column="26" selection-start-line="732" selection-start-column="26" selection-end-line="732" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/EventTypes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.299435">
+          <caret line="46" column="43" selection-start-line="46" selection-start-column="43" selection-end-line="46" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar!/java/util/ArrayList.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.703704">
+          <caret line="229" column="19" selection-start-line="229" selection-start-column="19" selection-end-line="229" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/KafCoreferenceSet.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.35321102">
+          <caret line="84" column="31" selection-start-line="84" selection-start-column="31" selection-end-line="84" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ResourcesUri.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8507463">
+          <caret line="38" column="8" selection-start-line="38" selection-start-column="8" selection-end-line="38" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/Sem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="135" column="41" selection-start-line="135" selection-start-column="41" selection-end-line="135" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.7172619">
+          <caret line="2046" column="90" selection-start-line="2046" selection-start-column="13" selection-end-line="2046" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CompositeEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="101" column="37" selection-start-line="101" selection-start-column="37" selection-end-line="101" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="398" column="0" selection-start-line="398" selection-start-column="0" selection-end-line="398" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/OwlTime.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.69345236">
+          <caret line="241" column="8" selection-start-line="241" selection-start-column="8" selection-end-line="241" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/coref/ComponentMatch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.375">
+          <caret line="180" column="74" selection-start-line="180" selection-start-column="74" selection-end-line="180" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafObjectToSemTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="94" column="38" selection-start-line="94" selection-start-column="38" selection-end-line="94" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="139" selection-start-line="47" selection-start-column="12" selection-end-line="47" selection-end-column="139" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/Naf2SemTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="105" column="29" selection-start-line="105" selection-start-column="29" selection-end-line="105" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="529" column="61" selection-start-line="529" selection-start-column="61" selection-end-line="529" selection-end-column="61" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="68" column="51" selection-start-line="68" selection-start-column="51" selection-end-line="68" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PerspectiveObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="179" column="16" selection-start-line="179" selection-start-column="16" selection-end-line="179" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7227891">
+          <caret line="337" column="0" selection-start-line="337" selection-start-column="0" selection-end-line="337" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefSingletonBaseline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5102041">
+          <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.86734694">
+          <caret line="121" column="85" selection-start-line="120" selection-start-column="21" selection-end-line="121" selection-end-column="83" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="72" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="142" column="13" selection-start-line="142" selection-start-column="13" selection-end-line="142" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -1705,4 +1639,3 @@
     </states>
   </component>
 </project>
-
