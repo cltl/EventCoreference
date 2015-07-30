@@ -23,17 +23,17 @@ import java.util.ArrayList;
  */
 public class SemObject implements Serializable {
 
-    private String id;
+    private String id;                              //
     private String type;
-    private String uri;
+    private String uri;                             //
     private ArrayList<String> nafIds;
     private double score;
-    private ArrayList<KafSense> concepts;
+    private ArrayList<KafSense> concepts;          //
     private ArrayList<KafTopic> topics;
-    private ArrayList<PhraseCount> phraseCounts;
+    private ArrayList<PhraseCount> phraseCounts;   //
     private ArrayList<KafSense> lcs;
     private String label;
-    private ArrayList<NafMention> nafMentions;
+    private ArrayList<NafMention> nafMentions;    //
 
     public SemObject() {
         this.nafMentions = new ArrayList<NafMention>();

@@ -21,7 +21,7 @@ public class SemTime extends SemObject implements Serializable {
    private OwlTime owlTime;
    private OwlTime owlTimeBegin;
    private OwlTime owlTimeEnd;
-    private String functionInDocument;
+   private String functionInDocument;
 
    public SemTime() {
        functionInDocument = "";
