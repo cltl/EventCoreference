@@ -324,7 +324,7 @@ public class OwlTime implements Serializable {
             try {
                 this.year = (new Integer(fields[0])).toString();
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             foundTime = 1;
         }

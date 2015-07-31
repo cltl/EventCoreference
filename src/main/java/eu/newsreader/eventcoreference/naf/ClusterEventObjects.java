@@ -224,6 +224,20 @@ public class ClusterEventObjects {
             kafSaxParser.parseFile(file.getAbsolutePath());
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
                 System.out.println("file.getName() = " + file.getName());
+                kafSaxParser.getKafMetaData().setUrl(file.getName());
+                System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
+            }
+
+          //  System.out.println("kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
+            processKafSaxParserOutputFolder(file.getAbsolutePath(), project,
+                    kafSaxParser, contextualFolder, speechFolder, grammaticalFolder, futureFolder);
+            if (!done.isEmpty()) {
+                File doneFile = new File(file.getAbsolutePath() + done);
+                file.renameTo(doneFile);
+            }
+
+            /*if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
+                System.out.println("file.getName() = " + file.getName());
                 System.out.println("SKIPPING NAF due to empty url in header kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
             }
             else {
@@ -235,7 +249,7 @@ public class ClusterEventObjects {
                     file.renameTo(doneFile);
                 }
             }
-
+*/
 
         }
 
