@@ -693,7 +693,12 @@ public class GetSemFromNafFile {
                 }
             }
         }
-
+        if (docSemTime==null) {
+            docSemTime = new SemTime();
+            OwlTime owlTime = new OwlTime();
+            owlTime.birthOfJC();
+            docSemTime.setOwlTime(owlTime);
+        }
         int timexRelationCount = 0;
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);

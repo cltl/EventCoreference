@@ -36,6 +36,12 @@ public class OwlTime implements Serializable {
         this.year = "";
    }
 
+    public void birthOfJC () {
+        this.instance = "0000-12-25";
+        this.day = "25";
+        this.month = "12";
+        this.year = "0000";
+    }
 
     public String getDay() {
         return day;
