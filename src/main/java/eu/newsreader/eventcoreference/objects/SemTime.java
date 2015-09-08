@@ -83,7 +83,9 @@ public class SemTime extends SemObject implements Serializable {
         Resource resource = model.createResource(this.getURI());
         for (int i = 0; i < this.getPhraseCounts().size(); i++) {
             PhraseCount phraseCount = this.getPhraseCounts().get(i);
-            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+            if (!phraseCount.getPhrase().isEmpty()) {
+                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+            }
         }
 
         resource.addProperty(RDF.type, Sem.Time);
@@ -91,7 +93,7 @@ public class SemTime extends SemObject implements Serializable {
         Resource aResource = model.createResource(ResourcesUri.owltime + "Instant");
         resource.addProperty(RDF.type, aResource);
 
-        Resource value = model.createResource(owlTime.getDateString());
+        Resource value = model.createResource(owlTime.getDateStringURI());
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 
@@ -108,7 +110,9 @@ public class SemTime extends SemObject implements Serializable {
         this.getOwlTime().addToJenaModelOwlTimeInstant(model);
 
         Resource resource = model.createResource(this.getURI());
-        resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+        if (!this.getTopPhraseAsLabel().isEmpty()) {
+            resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+        }
 
         /*for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
@@ -120,7 +124,7 @@ public class SemTime extends SemObject implements Serializable {
         Resource interval = model.createResource(ResourcesUri.owltime + "Instant");
         resource.addProperty(RDF.type, interval);
 
-        Resource value = model.createResource(this.getOwlTime().getDateString());
+        Resource value = model.createResource(this.getOwlTime().getDateStringURI());
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 
@@ -131,8 +135,6 @@ public class SemTime extends SemObject implements Serializable {
             resource.addProperty(gaf, targetResource);
 
         }
-
-
     }
 
     public void addToJenaModelTimeInterval(Model model) {
@@ -141,7 +143,9 @@ public class SemTime extends SemObject implements Serializable {
         Resource resource = model.createResource(this.getURI());
         for (int i = 0; i < this.getPhraseCounts().size(); i++) {
             PhraseCount phraseCount = this.getPhraseCounts().get(i);
-            resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+            if (!phraseCount.getPhrase().isEmpty()) {
+                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+            }
         }
 
         resource.addProperty(RDF.type, Sem.Time);
@@ -149,7 +153,7 @@ public class SemTime extends SemObject implements Serializable {
         Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
         resource.addProperty(RDF.type, interval);
 
-        Resource value = model.createResource(this.getOwlTime().getDateString());
+        Resource value = model.createResource(this.getOwlTime().getDateStringURI());
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
 
@@ -174,7 +178,7 @@ public class SemTime extends SemObject implements Serializable {
         Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
         resource.addProperty(RDF.type, interval);
 
-        Resource value = model.createResource(this.getOwlTimeBegin().getDateString());
+        Resource value = model.createResource(this.getOwlTimeBegin().getDateStringURI());
         Property property = model.createProperty(ResourcesUri.owltime + "hasBeginning");
         resource.addProperty(property, value);
 
@@ -182,11 +186,17 @@ public class SemTime extends SemObject implements Serializable {
 */
 
     public void addToJenaModelTimeIntervalCondensed(Model model) {
-        this.getOwlTimeBegin().addToJenaModelOwlTimeInstant(model);
-        this.getOwlTimeEnd().addToJenaModelOwlTimeInstant(model);
+        if (this.getOwlTimeBegin().getDateLabel().isEmpty() && this.getOwlTimeEnd().getDateLabel().isEmpty()) {
+            System.out.println("ERROR FOR INTERVAL: NO BEGIN AND NO END");
+            System.out.println("getOwlTime() = " + getOwlTime().toString());
+            System.out.println("getOwlTimeBegin().toString() = " + getOwlTimeBegin().toString());
+            System.out.println("getOwlTimeEnd().toString() = " + getOwlTimeEnd().toString());
+        }
 
         Resource resource = model.createResource(this.getURI());
-        resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+        if (!this.getTopPhraseAsLabel().isEmpty()) {
+            resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+        }
 
         /*for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
@@ -196,20 +206,25 @@ public class SemTime extends SemObject implements Serializable {
         Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
         resource.addProperty(RDF.type, interval);
 
-        Resource value = model.createResource(this.getOwlTimeBegin().getDateString());
-        Property property = model.createProperty(ResourcesUri.owltime + "hasBeginning");
-        resource.addProperty(property, value);
+        if (!this.getOwlTimeBegin().getDateLabel().isEmpty()) {
+            this.getOwlTimeBegin().addToJenaModelOwlTimeInstant(model);
+            Resource value = model.createResource(this.getOwlTimeBegin().getDateStringURI());
+            Property property = model.createProperty(ResourcesUri.owltime + "hasBeginning");
+            resource.addProperty(property, value);
+        }
 
-        value = model.createResource(this.getOwlTimeEnd().getDateString());
-        property = model.createProperty(ResourcesUri.owltime + "hasEnd");
-        resource.addProperty(property, value);
+        if (!this.getOwlTimeEnd().getDateLabel().isEmpty()) {
+            this.getOwlTimeEnd().addToJenaModelOwlTimeInstant(model);
+            Resource value = model.createResource(this.getOwlTimeEnd().getDateStringURI());
+            Property property = model.createProperty(ResourcesUri.owltime + "hasEnd");
+            resource.addProperty(property, value);
+        }
 
         for (int i = 0; i < this.getNafMentions().size(); i++) {
             NafMention nafMention = this.getNafMentions().get(i);
             Property gaf = model.createProperty(ResourcesUri.gaf + "denotedBy");
             Resource targetResource = model.createResource(nafMention.toString());
             resource.addProperty(gaf, targetResource);
-
         }
     }
 
@@ -222,14 +237,16 @@ public class SemTime extends SemObject implements Serializable {
             Resource resource = model.createResource(this.getURI());
             for (int i = 0; i < this.getPhraseCounts().size(); i++) {
                 PhraseCount phraseCount = this.getPhraseCounts().get(i);
-                resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+                if (!phraseCount.getPhrase().isEmpty()) {
+                    resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+                }
             }
 
             resource.addProperty(RDF.type, Sem.Time);
             Resource interval = model.createResource(ResourcesUri.owltime + "Interval");
             resource.addProperty(RDF.type, interval);
 
-            Resource value = model.createResource(owlTime.getDateString());
+            Resource value = model.createResource(owlTime.getDateStringURI());
             Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
             resource.addProperty(property, value);
         }

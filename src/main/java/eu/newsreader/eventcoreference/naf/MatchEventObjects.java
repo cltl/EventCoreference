@@ -178,19 +178,35 @@ public class MatchEventObjects {
                         //// to be sure we do not duplicate events already stored
                         //// the ids are unique across documents and within documents
                     }
-                    else if (ComponentMatch.compareCompositeEvent(  myCompositeEvent, finalCompositeEvent, eventType, roleArrayList)) {
-                        match = true;
+                    else {
+                        boolean EVENTMATCH = false;
+                        if (ComponentMatch.compareEventLabelReference(myCompositeEvent, finalCompositeEvent)) {
+                            EVENTMATCH=true;
+                        }
+/*
+                        if (ComponentMatch.compareEventWordNetReference(myCompositeEvent, finalCompositeEvent)) {
+                            EVENTMATCH=true;
+                        }
+                        if (ComponentMatch.compareEventLCSReference(myCompositeEvent, finalCompositeEvent)) {
+                            EVENTMATCH=true;
+                        }
+*/
+                        if (EVENTMATCH) {
+                            if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType, roleArrayList)) {
+                                match = true;
 
-                        if (DEBUG) {
-                            if (!myCompositeEvent.getEvent().getId().substring(0, myCompositeEvent.getEvent().getId().lastIndexOf("#")).equals(finalCompositeEvent.getEvent().getId().substring(0, finalCompositeEvent.getEvent().getId().lastIndexOf("#")))) {
-                                System.out.println("myCompositeEvent = " + myCompositeEvent.toString());
-                                System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                                if (DEBUG) {
+                                    if (!myCompositeEvent.getEvent().getId().substring(0, myCompositeEvent.getEvent().getId().lastIndexOf("#")).equals(finalCompositeEvent.getEvent().getId().substring(0, finalCompositeEvent.getEvent().getId().lastIndexOf("#")))) {
+                                        System.out.println("myCompositeEvent = " + myCompositeEvent.toString());
+                                        System.out.println("finalCompositeEvent.toString() = " + finalCompositeEvent.toString());
+                                    }
+                                }
+                                finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
+                                finalCompositeEvent.mergeObjects(myCompositeEvent);
+                                finalCompositeEvent.mergeRelations(myCompositeEvent);
+                                break;
                             }
                         }
-                        finalCompositeEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
-                        finalCompositeEvent.mergeObjects(myCompositeEvent);
-                        finalCompositeEvent.mergeRelations(myCompositeEvent);
-                        break;
                     }
                 }
                 if (!match && !same) {

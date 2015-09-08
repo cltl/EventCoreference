@@ -1,7 +1,6 @@
 package eu.newsreader.eventcoreference.naf;
 
 import eu.newsreader.eventcoreference.objects.SourceMeta;
-import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
 import eu.newsreader.eventcoreference.util.Util;
 import vu.wntools.wordnet.WordnetData;
 
@@ -27,10 +26,10 @@ public class Naf2SemTest {
 
     static public void main (String[] args) {
 
-            String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test";
-            String pathToEventFolder ="/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test";
+            String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/test";
+            String pathToEventFolder ="/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/test";
             String projectName  = "cars";
-            String extension = ".xml";
+            String extension = ".naf";
             String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/communication.txt";
             String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/contextual.txt";
             String grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/grammatical.txt";
@@ -50,6 +49,12 @@ public class Naf2SemTest {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+        String eventType = "";
+        HashMap<String, SourceMeta> sourceMetaHashMap = null;
+        WordnetData wordnetData = null;
+        double conceptMatchThreshold = 0;
+        double phraseMatchThreshold = 1;
 
         ArrayList<String> roleArrayList0 = new ArrayList<String>();
         roleArrayList0.add("a0");
@@ -74,23 +79,11 @@ public class Naf2SemTest {
         roleArrayList123.add("a1");
         roleArrayList123.add("a2");
         roleArrayList123.add("a3");
-        String eventType = "";
-        HashMap<String, SourceMeta> sourceMetaHashMap = null;
-        WordnetData wordnetData = null;
-        double conceptMatchThreshold = 0;
-        double phraseMatchThreshold = 1;
-        String pathToSourceDataFile = "";
-        pathToSourceDataFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/LN-coremetadata.txt";
-
-        if (!pathToSourceDataFile.isEmpty()) {
-            sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
-          //  System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
-        }
 
         MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;
         MatchEventObjects.MATCHTYPE = "ILILEMMA";
-        MatchEventObjects.LCS = true;
-      //  MatchEventObjects.DEBUG = true;
+        MatchEventObjects.LCS = false;
+        MatchEventObjects.DEBUG = true;
 
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
         eventType = "contextual";
@@ -98,7 +91,7 @@ public class Naf2SemTest {
                 conceptMatchThreshold, phraseMatchThreshold,
                 sourceMetaHashMap, wordnetData, eventType, roleArrayList1);
 
-
+ /*
         MatchEventObjects.MATCHTYPE = "ILILEMMA";
         MatchEventObjects.LCS = false;
 
@@ -123,6 +116,6 @@ public class Naf2SemTest {
         eventType = "future";
         MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
                 conceptMatchThreshold, phraseMatchThreshold,
-                sourceMetaHashMap, wordnetData, eventType, null);
+                sourceMetaHashMap, wordnetData, eventType, null);*/
     }
 }

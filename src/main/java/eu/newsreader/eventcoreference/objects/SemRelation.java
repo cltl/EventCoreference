@@ -118,8 +118,19 @@ public class SemRelation implements Serializable {
         if (type.equals(Sem.hasTime.getLocalName())) {
             return Sem.hasTime;
         }
+        else if (type.equals(Sem.hasBeginTime.getLocalName())) {
+            return Sem.hasBeginTime;
+        }
+        else if (type.equals(Sem.hasEndTime.getLocalName())) {
+            return Sem.hasEndTime;
+        }
+        else if (type.equals(Sem.hasEarliestBeginTime.getLocalName())) {
+            return Sem.hasEarliestBeginTime;
+        }
+        else if (type.equals(Sem.hasEarliestEndTime.getLocalName())) {
+            return Sem.hasEarliestEndTime;
+        }
         else if (type.equals(Sem.hasBeginTimeStamp.getLocalName())) {
-
             //BiographyNet uses sem:hasBeginTimeStamp
             return Sem.hasBeginTimeStamp;
         }
@@ -129,6 +140,10 @@ public class SemRelation implements Serializable {
         else if (type.equals(Sem.hasEarliestBeginTimeStamp.getLocalName())) {
           //  return Sem.hasFutureTimeStamp;
             return Sem.hasEarliestBeginTimeStamp;
+        }
+        else if (type.equals(Sem.hasEarliestEndTimeStamp.getLocalName())) {
+          //  return Sem.hasFutureTimeStamp;
+            return Sem.hasEarliestEndTimeStamp;
         }
         else if (type.equals(Sem.hasPlace.getLocalName())) {
             return Sem.hasPlace;

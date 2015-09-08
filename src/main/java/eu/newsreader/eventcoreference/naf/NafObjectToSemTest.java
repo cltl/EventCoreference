@@ -1,7 +1,6 @@
 package eu.newsreader.eventcoreference.naf;
 
 import eu.newsreader.eventcoreference.objects.SourceMeta;
-import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
 import eu.newsreader.eventcoreference.util.Util;
 import vu.wntools.wordnet.WordnetData;
 
@@ -25,9 +24,8 @@ public class NafObjectToSemTest {
 
     static public void main (String[] args) {
 
-        String pathToEventFolder ="/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test";
-        String projectName  = "cars";
-        String extension = ".xml";
+       // String pathToEventFolder ="/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test";
+        String pathToEventFolder ="/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/test";
 
 
 
@@ -47,13 +45,7 @@ public class NafObjectToSemTest {
         WordnetData wordnetData = null;
         double conceptMatchThreshold = 0;
         double phraseMatchThreshold = 1;
-        String pathToSourceDataFile = "";
-        pathToSourceDataFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/resources/LN-coremetadata.txt";
 
-        if (!pathToSourceDataFile.isEmpty()) {
-            sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
-           // System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
-        }
         ArrayList<String> roleArrayList0 = new ArrayList<String>();
         roleArrayList0.add("a0");
         ArrayList<String> roleArrayList01 = new ArrayList<String>();
@@ -82,7 +74,7 @@ public class NafObjectToSemTest {
         MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;
         MatchEventObjects.MATCHTYPE = "ILILEMMA";
         MatchEventObjects.LCS = false;
-        //  MatchEventObjects.DEBUG = true;
+        MatchEventObjects.DEBUG = true;
 
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
         eventType = "contextual";

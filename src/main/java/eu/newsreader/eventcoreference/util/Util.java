@@ -2036,13 +2036,13 @@ public class Util {
             }
         }
         if (semTime1!=null && semTime2!=null) {
-            if (semTime1.getOwlTime().getDateString().equals(semTime2.getOwlTime().getDateString())){
+            if (semTime1.getOwlTime().getDateStringURI().equals(semTime2.getOwlTime().getDateStringURI())){
                 return true;
             }
-            else if (semTime1.getOwlTimeBegin().getDateString().equals(semTime2.getOwlTimeBegin().getDateString())){
+            else if (semTime1.getOwlTimeBegin().getDateStringURI().equals(semTime2.getOwlTimeBegin().getDateStringURI())){
                 return true;
             }
-            else if (semTime1.getOwlTimeEnd().getDateString().equals(semTime2.getOwlTimeEnd().getDateString())){
+            else if (semTime1.getOwlTimeEnd().getDateStringURI().equals(semTime2.getOwlTimeEnd().getDateStringURI())){
                 return true;
             }
         }

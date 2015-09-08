@@ -124,7 +124,7 @@ public class JenaSerialization {
         }
        // System.out.println("IliUri = " + IliUri);
         if (!IliUri.isEmpty()) {
-            IliUri = ResourcesUri.nwrontology+IliUri;
+            IliUri = ResourcesUri.ili+IliUri;
             compositeEvent.getEvent().setId(IliUri);
             compositeEvent.getEvent().setUri(IliUri);
             for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {

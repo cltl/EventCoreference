@@ -1,5 +1,6 @@
 package eu.newsreader.eventcoreference.coref;
 
+import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.util.EventTypes;
 import eu.newsreader.eventcoreference.util.RoleLabels;
@@ -13,10 +14,61 @@ import java.util.Collections;
  */
 public class ComponentMatch {
 
+    public static boolean compareEventLabelReference(CompositeEvent compositeEvent1,
+                                                CompositeEvent compositeEvent2) {
+        for (int i = 0; i < compositeEvent1.getEvent().getPhraseCounts().size(); i++) {
+            PhraseCount phraseCount1 = compositeEvent1.getEvent().getPhraseCounts().get(i);
+            for (int j = 0; j < compositeEvent2.getEvent().getPhraseCounts().size(); j++) {
+                PhraseCount phraseCount2 =  compositeEvent2.getEvent().getPhraseCounts().get(j);
+                if (phraseCount1.getPhrase().equalsIgnoreCase(phraseCount2.getPhrase())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean compareEventWordNetReference(CompositeEvent compositeEvent1,
+                                                CompositeEvent compositeEvent2) {
+
+        for (int i = 0; i < compositeEvent1.getEvent().getConcepts().size(); i++) {
+            KafSense kafSense1 = compositeEvent1.getEvent().getConcepts().get(i);
+            if (kafSense1.getResource().equalsIgnoreCase("wordnet")) {
+                for (int j = 0; j < compositeEvent2.getEvent().getConcepts().size(); j++) {
+                    KafSense kafSense2 = compositeEvent2.getEvent().getConcepts().get(j);
+                    if (kafSense2.getResource().equalsIgnoreCase("wordnet")) {
+                        if (kafSense1.getSensecode().equals(kafSense2.getSensecode())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean compareEventLCSReference(CompositeEvent compositeEvent1,
+                                                CompositeEvent compositeEvent2) {
+
+        for (int i = 0; i < compositeEvent1.getEvent().getLcs().size(); i++) {
+            KafSense kafSense1 = compositeEvent1.getEvent().getLcs().get(i);
+            for (int j = 0; j < compositeEvent2.getEvent().getLcs().size(); j++) {
+                KafSense kafSense2 = compositeEvent2.getEvent().getLcs().get(j);
+                if (kafSense2.getResource().equalsIgnoreCase("wordnet")) {
+                    if (kafSense1.getSensecode().equals(kafSense2.getSensecode())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean compareCompositeEvent(CompositeEvent compositeEvent1,
                                                 CompositeEvent compositeEvent2,
                                                 String eventType,
                                                 ArrayList<String> roleArrayList) {
+
         ArrayList<String> neededRoles = new ArrayList<String>();
         if (EventTypes.isCONTEXTUAL(eventType)) {
             return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList, neededRoles);
@@ -173,20 +225,20 @@ public class ComponentMatch {
                 SemTime semTime = semTimes.get(j);
                 /// replace this by exact time matches....
                 if (mySemTime.getOwlTime().matchTimeEmbedded(semTime.getOwlTime())) {
-                    //  System.out.println("myOwlTime.getDateString() = " + myOwlTime.getDateString());
-                    //  System.out.println("owlTime.getDateString() = " + owlTime.getDateString());
+                    //  System.out.println("myOwlTime.getDateStringURI() = " + myOwlTime.getDateStringURI());
+                    //  System.out.println("owlTime.getDateStringURI() = " + owlTime.getDateStringURI());
 
                     return true;
                 }
                 else if (mySemTime.getOwlTimeBegin().matchTimeEmbedded(semTime.getOwlTimeBegin())) {
-                    //  System.out.println("myOwlTime.getDateString() = " + myOwlTime.getDateString());
-                    //  System.out.println("owlTime.getDateString() = " + owlTime.getDateString());
+                    //  System.out.println("myOwlTime.getDateStringURI() = " + myOwlTime.getDateStringURI());
+                    //  System.out.println("owlTime.getDateStringURI() = " + owlTime.getDateStringURI());
 
                     return true;
                 }
                 else if (mySemTime.getOwlTimeEnd().matchTimeEmbedded(semTime.getOwlTimeEnd())) {
-                    //  System.out.println("myOwlTime.getDateString() = " + myOwlTime.getDateString());
-                    //  System.out.println("owlTime.getDateString() = " + owlTime.getDateString());
+                    //  System.out.println("myOwlTime.getDateStringURI() = " + myOwlTime.getDateStringURI());
+                    //  System.out.println("owlTime.getDateStringURI() = " + owlTime.getDateStringURI());
 
                     return true;
                 }

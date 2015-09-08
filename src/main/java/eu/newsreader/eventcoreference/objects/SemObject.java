@@ -182,6 +182,10 @@ public class SemObject implements Serializable {
         }
     }
 
+    public void addNafMention(NafMention nafMention) {
+            this.nafMentions.add(nafMention);
+    }
+
     public void addMentionUri(NafMention mentionUri) {
         this.nafMentions.add(mentionUri);
     }
@@ -519,7 +523,15 @@ public class SemObject implements Serializable {
             ref = ResourcesUri.cornetto + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("framenet")) {
             ref = ResourcesUri.fn + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("framenet+")) {
+            ref = ResourcesUri.fn + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("framenet-")) {
+            ref = ResourcesUri.fn + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("eso")) {
+            ref = ResourcesUri.eso + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("eso+")) {
+            ref = ResourcesUri.eso + kafSense.getSensecode();
+        } else if (kafSense.getResource().equalsIgnoreCase("eso-")) {
             ref = ResourcesUri.eso + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
             ref = ResourcesUri.pb + kafSense.getSensecode();

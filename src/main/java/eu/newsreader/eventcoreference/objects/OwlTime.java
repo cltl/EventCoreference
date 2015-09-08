@@ -173,10 +173,10 @@ public class OwlTime implements Serializable {
     }
 
     public boolean matchTimeExact (OwlTime time) {
-        if (time.getDateString().isEmpty() || this.getDateString().isEmpty()) {
+        if (time.getDateStringURI().isEmpty() || this.getDateStringURI().isEmpty()) {
             return false;
         }
-        if (time.getDateString().equals(this.getDateString())) {
+        if (time.getDateStringURI().equals(this.getDateStringURI())) {
             return true;
         }
         else {
@@ -185,10 +185,10 @@ public class OwlTime implements Serializable {
     }
 
     public boolean matchTimeEmbeddedOrg (OwlTime time) {
-        if (time.getDateString().isEmpty() || this.getDateString().isEmpty()) {
+        if (time.getDateStringURI().isEmpty() || this.getDateStringURI().isEmpty()) {
             return false;
         }
-        if (time.getDateString().equals(this.getDateString())) {
+        if (time.getDateStringURI().equals(this.getDateStringURI())) {
             return true;
         }
         else {
@@ -244,7 +244,7 @@ public class OwlTime implements Serializable {
             // empty day is acceptable given matching year and month
             return true;
         }
-      //  System.out.println("this.getDateString() = " + this.getDateString());
+      //  System.out.println("this.getDateStringURI() = " + this.getDateStringURI());
       //  System.out.println();
         return true;  //// all fields match and are non-empty
 
@@ -334,6 +334,9 @@ public class OwlTime implements Serializable {
             }
             foundTime = 1;
         }
+        if (this.getDateLabel().isEmpty()) {
+            foundTime = -1;
+        }
         return foundTime;
     }
 
@@ -412,8 +415,25 @@ public class OwlTime implements Serializable {
     }
 
 
-    public String getDateString () {
+    public String getDateStringURI() {
         String str = ResourcesUri.nwrtime+this.year;
+        if (!this.month.isEmpty()) {
+            if (this.month.length()==1) {
+                str +="0";
+            }
+            str += month;
+            if (!this.day.isEmpty()) {
+                if (day.length()==1) {
+                    str += "0";
+                }
+                str += day;
+            }
+        }
+        return str;
+    }
+
+    public String getDateLabel () {
+        String str = this.year;
         if (!this.month.isEmpty()) {
             if (this.month.length()==1) {
                 str +="0";
@@ -437,7 +457,7 @@ public class OwlTime implements Serializable {
         owltime:year "2001"^^xsd:int .
           */
 
-        Resource resource = model.createResource(this.getDateString());
+        Resource resource = model.createResource(this.getDateStringURI());
         Property property = model.createProperty(ResourcesUri.owltime+"DateTimeDescription");
 
         resource.addProperty(RDF.type, property);
@@ -469,7 +489,7 @@ public class OwlTime implements Serializable {
         owltime:year "2001"^^xsd:int .
           */
 
-        Resource resource = model.createResource(this.getDateString());
+        Resource resource = model.createResource(this.getDateStringURI());
         Property property = model.createProperty(ResourcesUri.owltime+"DurationDescription");
 
         resource.addProperty(RDF.type, property);
