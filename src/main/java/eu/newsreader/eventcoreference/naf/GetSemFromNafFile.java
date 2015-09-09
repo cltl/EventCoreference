@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.naf;
 
 import eu.kyotoproject.kaf.*;
+import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.RoleLabels;
@@ -471,7 +472,7 @@ public class GetSemFromNafFile {
     }
 
 
-    /**
+    /** @Deprecated
      * This function interprets all timex elements and returns the document creation time as a SemTime object (which is also inserted as a the
      * first SemTime object in the array
      * @param baseUrl
@@ -637,7 +638,7 @@ public class GetSemFromNafFile {
                 }
             }
             /// PRINT CHECK
-/*            for (int i = 0; i < semTimes.size(); i++) {
+            /*for (int i = 0; i < semTimes.size(); i++) {
                 SemTime semObject = semTimes.get(i);
                 System.out.println("semObject.getId() = " + semObject.getId());
                 System.out.println("semObject.getTermIds().toString() = " + semObject.getTermIds().toString());
@@ -704,11 +705,16 @@ public class GetSemFromNafFile {
             }
         }
         if (docSemTime==null) {
-            docSemTime = new SemTime();
-            OwlTime owlTime = new OwlTime();
-            owlTime.birthOfJC();
-            docSemTime.setOwlTime(owlTime);
+            docSemTime = Util.getDocumentCreationTimeFromNafHeader(baseUrl,kafSaxParser);
+           // System.out.println("header docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateStringURI());
+            semTimes.add(docSemTime);
         }
+        if (docSemTime==null) {
+            docSemTime = Util.getBirthOfJC(baseUrl);
+          //  System.out.println("BJC docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateLabel());
+            semTimes.add(docSemTime);
+        }
+
         int timexRelationCount = 0;
         for (int i = 0; i < semEvents.size(); i++) {
             SemObject semEvent = semEvents.get(i);
@@ -822,17 +828,16 @@ public class GetSemFromNafFile {
             if (!timeAnchor) {
                 /// timeless event
                 /// in all cases there is no time relations we link it to the docTime
-                // System.out.println("docSemTime.toString() = " + docSemTime.toString());
-
-               // System.out.println("docSemTime.getOwlTime().toString() = " + docSemTime.getOwlTime().toString());
-                /// in all cases there is no time relations we link it to the docTime, which is timex0
-              //  System.out.println("semEvent = " + semEvent.getId());
-              //  System.out.println("docSemTime.getId() = " + docSemTime.getId());
-
-                timexRelationCount++;
-                SemRelation semRelation = docSemTime.createSemTimeRelation(baseUrl,
-                        timexRelationCount,Sem.hasTime.getLocalName(), semEvent.getId());
-                semRelations.add(semRelation);
+               // System.out.println("docSemTime.toString() = " + docSemTime.toString());
+               // System.out.println("docSemTime.getDateLabel() = " + docSemTime.getOwlTime().getDateLabel());
+               // System.out.println("semEvent = " + semEvent.getId());
+               // System.out.println("docSemTime.getId() = " + docSemTime.getId());
+                if (docSemTime!=null) {
+                    timexRelationCount++;
+                    SemRelation semRelation = docSemTime.createSemTimeRelation(baseUrl,
+                            timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId());
+                    semRelations.add(semRelation);
+                }
             }
         }
 
@@ -930,6 +935,7 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline3.0/v3_test_dataset/test_out/597K-JHX1-JCK4-01WV.xml";
         pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline3.0/v3_test_dataset/test_out/58PV-TK71-DXDT-62KX.xml";
         pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_airbus/87805_Indonesia_transport_minister.naf";
+        pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_gm/120578_Automobile_sales_in_the_United_States_down_sharply.naf";
         String project = "cars";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -957,11 +963,30 @@ public class GetSemFromNafFile {
         // processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
         // System.out.println("semActors.size() = " + semActors.size());
         try {
+            //@TODO
+            /*
+                    Creat composite events and check if event have participants and time
+                     */
+            ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
             // System.out.println("semEvents = " + semEvents.size());
+            for (int j = 0; j < semEvents.size(); j++) {
+                SemEvent mySemEvent = (SemEvent) semEvents.get(j);
+                ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
+                ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
+                ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
+                CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
+                if (compositeEvent.isValid()) {
+                   compositeEventArraylist.add(compositeEvent);
+                }
+            }
             String pathToTrigFile = pathToNafFile + ".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
-            JenaSerialization.serializeJena(fos,
-                    semEvents, semActors, semTimes, semRelations, null, false);
+
+            JenaSerialization.serializeJenaCompositeEvents(fos,compositeEventArraylist, null, false);
+           // JenaSerialization.serializeJena(fos,semEvents, semActors, semTimes, semRelations, null, false);
+
+
+
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

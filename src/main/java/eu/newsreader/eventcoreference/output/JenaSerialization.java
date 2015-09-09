@@ -21,6 +21,27 @@ import java.util.Set;
 public class JenaSerialization {
 
     static public boolean USEILIURI = false; //// used for testing cross-lingual extraction
+
+    static Dataset ds = TDBFactory.createDataset();
+
+    static Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
+
+    static Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
+
+    static void prefixModels () {
+        Model defaultModel = ds.getDefaultModel();
+        ResourcesUri.prefixModel(defaultModel);
+        ResourcesUri.prefixModelNwr(defaultModel);
+        ResourcesUri.prefixModelGaf(defaultModel);
+
+        ResourcesUri.prefixModelGaf(provenanceModel);
+
+        ResourcesUri.prefixModel(instanceModel);
+        ResourcesUri.prefixModelNwr(instanceModel);
+        ResourcesUri.prefixModelGaf(instanceModel);
+
+    }
+
     static public void serializeJena (OutputStream stream,
                                       ArrayList<SemObject> semEvents,
                                       ArrayList<SemObject> semActors,
@@ -32,19 +53,8 @@ public class JenaSerialization {
 
 
         // create an empty Model
-
+        prefixModels();
         Dataset ds = TDBFactory.createDataset();
-        Model defaultModel = ds.getDefaultModel();
-        ResourcesUri.prefixModel(defaultModel);
-        ResourcesUri.prefixModelNwr(defaultModel);
-        ResourcesUri.prefixModelGaf(defaultModel);
-
-        Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
-        ResourcesUri.prefixModelGaf(provenanceModel);
-        ResourcesUri.prefixModelNwr(defaultModel);
-
-        Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
-        ResourcesUri.prefixModel(instanceModel);
 
         // System.out.println("EVENTS");
         for (int i = 0; i < semEvents.size(); i++) {
@@ -146,74 +156,66 @@ public class JenaSerialization {
     }
 
 
+
+
     static public void addJenaCompositeEvents (
-            Dataset ds ,
-            Model instanceModel,
-            Model provenanceModel ,
-            HashMap<String, ArrayList<CompositeEvent>> semEvents,
+            ArrayList<CompositeEvent> compositeEvents,
             HashMap <String, SourceMeta> sourceMetaHashMap,
             boolean VERBOSE_MENTIONS) {
+        for (int c = 0; c < compositeEvents.size(); c++) {
+            CompositeEvent compositeEvent = compositeEvents.get(c);
+
+            // System.out.println("compositeEvent.toString() = " + compositeEvent.toString());
+            if (USEILIURI) {
+                replaceEventIdsWithILIids(compositeEvent);
+            }
+
+            //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
+            compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event, VERBOSE_MENTIONS);
+
+            //  System.out.println("ACTORS");
+            for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
+                SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
+                // semActor.addToJenaModel(instanceModel, Sem.Actor);
+                semActor.addToJenaModel(instanceModel, Sem.Actor, VERBOSE_MENTIONS);
+            }
 
 
-        Set keySet = semEvents.keySet();
-        Iterator keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String lemma = (String) keys.next();
-            ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
-            for (int c = 0; c < compositeEvents.size(); c++) {
-                CompositeEvent compositeEvent = compositeEvents.get(c);
-
-               // System.out.println("compositeEvent.toString() = " + compositeEvent.toString());
-                if (USEILIURI) {
-                    replaceEventIdsWithILIids(compositeEvent);
+            // System.out.println("TIMES");
+            // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
+            for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
+                SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
+                //semTime.addToJenaModelTimeInterval(instanceModel);
+                if (semTime.getType().equalsIgnoreCase(TimeTypes.YEAR)) {
+                    semTime.addToJenaModelDocTimeInstant(instanceModel);
+                    //OR
+                    // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                 }
-
-                //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
-                compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event, VERBOSE_MENTIONS);
-
-                //  System.out.println("ACTORS");
-                for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
-                    SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
-                   // semActor.addToJenaModel(instanceModel, Sem.Actor);
-                    semActor.addToJenaModel(instanceModel, Sem.Actor, VERBOSE_MENTIONS);
+                else if (semTime.getType().equalsIgnoreCase(TimeTypes.QUARTER)) {
+                    semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                 }
-
-
-                // System.out.println("TIMES");
-                // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
-                for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
-                    SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
-                    //semTime.addToJenaModelTimeInterval(instanceModel);
-                    if (semTime.getType().equalsIgnoreCase(TimeTypes.YEAR)) {
-                        semTime.addToJenaModelDocTimeInstant(instanceModel);
-                        //OR
-                       // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
-                    }
-                    else if (semTime.getType().equalsIgnoreCase(TimeTypes.QUARTER)) {
-                        semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
-                    }
-                    else if (semTime.getType().equalsIgnoreCase(TimeTypes.MONTH)) {
-                        semTime.addToJenaModelDocTimeInstant(instanceModel);
-                        //OR
-                        // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
-                    }
-                    else if (semTime.getType().equalsIgnoreCase(TimeTypes.DURATION)) {
-                        semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
-                    }
-                    else  { /// DATE
-                        semTime.addToJenaModelDocTimeInstant(instanceModel);
-                    }
+                else if (semTime.getType().equalsIgnoreCase(TimeTypes.MONTH)) {
+                    semTime.addToJenaModelDocTimeInstant(instanceModel);
+                    //OR
+                    // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                 }
-
-                for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
-                    SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
-                    if (sourceMetaHashMap!=null) {
-                            semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
-                    }
-                    else {
-                        semRelation.addToJenaDataSet(ds, provenanceModel);
-                    }
+                else if (semTime.getType().equalsIgnoreCase(TimeTypes.DURATION)) {
+                    semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
                 }
+                else  { /// DATE
+                    semTime.addToJenaModelDocTimeInstant(instanceModel);
+                }
+            }
+
+            for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
+                SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
+                if (sourceMetaHashMap!=null) {
+                    semRelation.addToJenaDataSet(ds, provenanceModel, sourceMetaHashMap);
+                }
+                else {
+                    semRelation.addToJenaDataSet(ds, provenanceModel);
+                }
+            }
                /* for (int j = 0; j < compositeEvent.getMySemFactRelations().size(); j++) {
                     SemRelation semRelation = compositeEvent.getMySemFactRelations().get(j);
                     if (sourceMetaHashMap!=null) {
@@ -224,31 +226,51 @@ public class JenaSerialization {
                         semRelation.addToJenaDataSet(ds, provenanceModel);
                     }
                 }*/
-            }
+        }
+    }
+
+    static public void addJenaCompositeEvents (
+            HashMap<String, ArrayList<CompositeEvent>> semEvents,
+            HashMap <String, SourceMeta> sourceMetaHashMap,
+            boolean VERBOSE_MENTIONS) {
+
+
+        Set keySet = semEvents.keySet();
+        Iterator keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String lemma = (String) keys.next();
+            ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
+            addJenaCompositeEvents(compositeEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
         }
 
 
     }
 
-    static public void serializeJenaCompositeEvents (OutputStream stream,HashMap<String, ArrayList<CompositeEvent>> semEvents,
+    static public void serializeJenaCompositeEvents (OutputStream stream,
+                                                     HashMap<String, ArrayList<CompositeEvent>> semEvents,
                                                      HashMap <String, SourceMeta> sourceMetaHashMap, boolean VERBOSE_MENTIONS) {
 
 
 
-        // create an empty Model
+        prefixModels();
 
-        Dataset ds = TDBFactory.createDataset();
-        Model defaultModel = ds.getDefaultModel();
-        ResourcesUri.prefixModel(defaultModel);
+        addJenaCompositeEvents(semEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
 
-        Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
-        ResourcesUri.prefixModelGaf(provenanceModel);
+        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
 
-        Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
-        ResourcesUri.prefixModel(instanceModel);
-        //ResourcesUri.prefixModelNwr(instanceModel);
 
-        addJenaCompositeEvents(ds, instanceModel, provenanceModel, semEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
+    }
+
+    static public void serializeJenaCompositeEvents (OutputStream stream,
+                                                     ArrayList<CompositeEvent> semEvents,
+                                                     HashMap <String, SourceMeta> sourceMetaHashMap, boolean VERBOSE_MENTIONS) {
+
+
+
+
+        prefixModels();
+
+        addJenaCompositeEvents(semEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
 

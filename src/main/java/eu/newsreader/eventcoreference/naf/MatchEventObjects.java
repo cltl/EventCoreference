@@ -1,16 +1,11 @@
 package eu.newsreader.eventcoreference.naf;
 
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.ReadSourceMetaFile;
 import eu.newsreader.eventcoreference.util.Util;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFFormat;
 import vu.wntools.wordnet.WordnetData;
 import vu.wntools.wordnet.WordnetLmfSaxParser;
 
@@ -568,16 +563,6 @@ public class MatchEventObjects {
             try {
                 OutputStream fos = new FileOutputStream(nextEventFolder.getAbsolutePath()+"/sem.trig");
 
-                Dataset ds = TDBFactory.createDataset();
-                Model defaultModel = ds.getDefaultModel();
-                ResourcesUri.prefixModel(defaultModel);
-
-                Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
-                ResourcesUri.prefixModelGaf(provenanceModel);
-
-                Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
-                ResourcesUri.prefixModel(instanceModel);
-
                 /// finalLemmeEventMap is defined outside the loop so that events are compared against the total list
                 HashMap<String, ArrayList<CompositeEvent>> finalLemmaEventMap = new HashMap<String, ArrayList<CompositeEvent>>();
 
@@ -589,13 +574,10 @@ public class MatchEventObjects {
                 }
                 if (DEBUG) System.out.println("finalLemmaEventMap = " + finalLemmaEventMap.size());
                 chaining(finalLemmaEventMap, eventType, roleArrayList);
-                JenaSerialization.addJenaCompositeEvents(ds,
-                        instanceModel,
-                        provenanceModel,
+                JenaSerialization.serializeJenaCompositeEvents(fos,
                         finalLemmaEventMap,
                         sourceMetaHashMap,
                         VERBOSEMENTIONS);
-                RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
                 fos.close();
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

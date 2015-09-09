@@ -135,6 +135,7 @@ public class OwlTime implements Serializable {
 
     public void parsePublicationDate (String date) {
         ///2013-01-01
+       // System.out.println("date = " + date);
         try {
             if (date.length()==8) {
                 this.year = date.substring(0,4);
@@ -142,11 +143,14 @@ public class OwlTime implements Serializable {
                 this.day = date.substring(6,8);
             }
             else {
+                //03-02-2009T00:00:00
+                //2009-03-02T00:00:00
                 String[] fields = date.split("-");
                 if (fields.length == 3) {
                     //System.out.println("date = " + date);
                     this.instance = date;
                     if (fields[0].length() == 4) {
+                        /// this must be the year
                         String dayString = fields[2];
                         if (dayString.indexOf("T")>-1)  {
                             //2007-10-16T00:00:00Z
@@ -155,10 +159,24 @@ public class OwlTime implements Serializable {
                         this.day = (new Integer(dayString).toString());
                         this.month = (new Integer(fields[1])).toString();
                         this.year = (new Integer(fields[0])).toString();
-                    } else if (fields[2].length() == 4) {
+                    }
+                    else if (fields[2].length() == 4) {
+                        // this must be the year
                         this.day = (new Integer(fields[0])).toString();
                         this.month = (new Integer(fields[1])).toString();
                         this.year = (new Integer(fields[2])).toString();
+                    }
+                    else if (fields[2].length() > 4) {
+                        // this must be the year
+                        this.day = (new Integer(fields[0])).toString();
+                        this.month = (new Integer(fields[1])).toString();
+                        String yearString = fields[2];
+                        if (yearString.indexOf("T")>-1)  {
+                            //03-02-2009T00:00:00
+                            yearString = yearString.substring(0, 4);
+                        }
+                        this.year = (new Integer(yearString)).toString();
+                     //   System.out.println("yearString = " + yearString);
                     }
                 } else {
                     /// publication dates can have all kinds of formats.

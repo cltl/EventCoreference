@@ -36,6 +36,29 @@ public class CompositeEvent implements Serializable{
         this.mySemRelations = mySemRelations;
     }
 
+    public boolean isValid (){
+        boolean hasParticipant = false;
+        boolean hasTime = false;
+        for (int i = 0; i < mySemRelations.size(); i++) {
+            SemRelation semRelation = mySemRelations.get(i);
+            for (int j = 0; j < semRelation.getPredicates().size(); j++) {
+                String predicate = semRelation.getPredicates().get(j);
+                if (predicate.toLowerCase().endsWith("actor") || predicate.toLowerCase().endsWith("place")) {
+                   hasParticipant = true;
+                }
+                if (predicate.toLowerCase().endsWith("time") || predicate.toLowerCase().endsWith("timestamp")) {
+                   hasTime = true;
+                }
+            }
+        }
+        if (hasParticipant && hasTime) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 
     public SemObject getEvent() {
         return event;

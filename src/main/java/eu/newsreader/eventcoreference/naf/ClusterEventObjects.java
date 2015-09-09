@@ -281,11 +281,11 @@ public class ClusterEventObjects {
             //   System.out.println("myTimes.size() = " + myTimes.size());
             ArrayList<SemActor> myActors =ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
             ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
-            if (myRelations.size() == 0) {
-                continue;
-            }
            // ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
             CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
+            if (!compositeEvent.isValid()) {
+                continue;
+            }
             File folder = contextualFolder;
             String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, sourceVector, grammaticalVector);
             if (!eventType.isEmpty()) {
@@ -315,10 +315,13 @@ public class ClusterEventObjects {
 
             if (outputTimes.size() == 0) {
                 /// this should never happen
-                String timePhrase = "timeless";
-                treeSet.add(timePhrase);
+                //String timePhrase = "timeless";
+                //treeSet.add(timePhrase);
+                continue;
             }
-            else if (outputTimes.size() > TIMEEXPRESSIONMAX) {
+            else
+
+            if (outputTimes.size() > TIMEEXPRESSIONMAX) {
                 String timePhrase = "timeless";
                 treeSet.add(timePhrase);
             }

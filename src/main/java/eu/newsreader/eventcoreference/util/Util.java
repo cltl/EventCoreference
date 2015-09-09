@@ -91,6 +91,38 @@ public class Util {
         return null;
     }
 
+    static public SemTime getDocumentCreationTimeFromNafHeader(String baseUrl, KafSaxParser kafSaxParser
+    ) {
+        SemTime docSemTime = null;
+        if (!kafSaxParser.getKafMetaData().getCreationtime().isEmpty() &&
+                !kafSaxParser.getKafMetaData().getCreationtime().equals("T000-00-0ZT00:00:00")) {
+            //// we first store the publication date as a time
+            docSemTime = new SemTime();
+            //docSemTime.setId(baseUrl + "nafHeader" + "_" + "fileDesc" + "_" + "creationtime");
+            docSemTime.setId(baseUrl + "mdct"); // shorter form for triple store
+            docSemTime.getOwlTime().parsePublicationDate(kafSaxParser.getKafMetaData().getCreationtime());
+            docSemTime.addPhraseCounts(kafSaxParser.getKafMetaData().getCreationtime());
+            if (!docSemTime.getOwlTime().getDateStringURI().isEmpty()) {
+                NafMention mention = new NafMention(baseUrl + "mdct"); // shorter form for triple store
+                docSemTime.addMentionUri(mention);
+            }
+        }
+        return docSemTime;
+    }
+
+    static public SemTime getBirthOfJC(String baseUrl
+    ) {
+        SemTime docSemTime = new SemTime();
+        docSemTime.setId(baseUrl + "bjc"); // shorter form for triple store
+        OwlTime owlTime = new OwlTime();
+        owlTime.birthOfJC();
+        NafMention mention = new NafMention(baseUrl + "bjcm"); // shorter form for triple store
+        docSemTime.addMentionUri(mention);
+        docSemTime.setOwlTime(owlTime);
+        return docSemTime;
+    }
+
+
     static public SemTime getSemTime(ArrayList<SemTime> semTimeArrayList, String timexId) {
         if (!timexId.isEmpty()){
             for (int i = 0; i < semTimeArrayList.size(); i++) {

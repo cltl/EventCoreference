@@ -14,9 +14,9 @@ public class ResourcesUri {
     final static public String nwrsourceowner = "http://www.newsreader-project.eu/provenance/sourceowner/";
     final static public String nwrvalue = "http://www.newsreader-project.eu/ontologies/value#";
     final static public String nwrontology = "http://www.newsreader-project.eu/ontologies/";
-    final static public String eso = "http://www.newsreader-project.eu/ontologies/eso#";
-    //final static public String eso = "http://www.newsreader-project.eu/ontologies/domain-ontology#";
-    final static public String wn = "http://www.newsreader-project.eu/ontologies/wordnet3.0/";
+    //final static public String eso = "http://www.newsreader-project.eu/ontologies/eso#";
+    final static public String eso = "http://www.newsreader-project.eu/ontologies/domain-ontology#";
+    final static public String wn = "http://www.newsreader-project.eu/ontologies/pwn3.0/";
     final static public String ili = "http://www.newsreader-project.eu/ontologies/ili3.0/";
     final static public String cornetto = "http://www.newsreader-project.eu/ontologies/cornetto2.1/";
     final static public String fn = "http://www.newsreader-project.eu/ontologies/framenet/";
@@ -42,13 +42,13 @@ public class ResourcesUri {
         model.setNsPrefix("nwrdata", ResourcesUri.nwrdata);
         model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
         model.setNsPrefix("eso", ResourcesUri.eso);
+        model.setNsPrefix("dbp", ResourcesUri.dbp);
+        model.setNsPrefix("pb", ResourcesUri.pb);
+
 /*      //REMOVED DUE TO ILLEGAL CHARACTERS
-        model.setNsPrefix("wn", ResourcesUri.wn);
         model.setNsPrefix("vn", ResourcesUri.vn);
         model.setNsPrefix("pb", ResourcesUri.pb);
         model.setNsPrefix("nb", ResourcesUri.nb);
-        model.setNsPrefix("dbp", ResourcesUri.dbp);
-
 */
         model.setNsPrefix("sem", ResourcesUri.sem);
         model.setNsPrefix("owl", ResourcesUri.owl);
