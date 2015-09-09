@@ -731,7 +731,7 @@ public class GetSemFromNafFile {
                             timexRelationCount++;
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semBeginTime.getTermIds());
                             SemRelation semRelation = semBeginTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount,Sem.hasBeginTime.getLocalName(), semEvent.getId(), mention);
+                                    timexRelationCount,Sem.hasEarliestBeginTime.getLocalName(), semEvent.getId(), mention);
                             semRelations.add(semRelation);
                            // System.out.println("semRelation.getPredicates().toString() = " + semRelation.getPredicates().toString());
                             timeAnchor = true;
@@ -740,7 +740,7 @@ public class GetSemFromNafFile {
                             timexRelationCount++;
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semEndTime.getTermIds());
                             SemRelation semRelation = semEndTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount,Sem.hasEndTime.getLocalName(), semEvent.getId(), mention);
+                                    timexRelationCount,Sem.hasEarliestEndTime.getLocalName(), semEvent.getId(), mention);
                             semRelations.add(semRelation);
                            // System.out.println("semRelation.getPredicates().toString() = " + semRelation.getPredicates().toString());
                             timeAnchor = true;
@@ -779,7 +779,7 @@ public class GetSemFromNafFile {
                         timexRelationCount++;
                         NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
                         SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                timexRelationCount,"hasSemTime", semEvent.getId(), mention);
+                                timexRelationCount,Sem.hasTime.getLocalName(), semEvent.getId(), mention);
                         semRelations.add(semRelation);
                         timeAnchor = true;
                         //  break;*/
@@ -933,9 +933,9 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test/58T2-K531-JCDY-Y0X2.xml";
         pathToNafFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v3_2015/test/4M1J-3MC0-TWKJ-V1W8.xml";
         pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline3.0/v3_test_dataset/test_out/597K-JHX1-JCK4-01WV.xml";
-        pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline3.0/v3_test_dataset/test_out/58PV-TK71-DXDT-62KX.xml";
-        pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_airbus/87805_Indonesia_transport_minister.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_gm/120578_Automobile_sales_in_the_United_States_down_sharply.naf";
+//        pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline3.0/v3_test_dataset/test_out/58PV-TK71-DXDT-62KX.xml";
+//        pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_airbus/87805_Indonesia_transport_minister.naf";
+//        pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_gm/120578_Automobile_sales_in_the_United_States_down_sharply.naf";
         String project = "cars";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -982,7 +982,7 @@ public class GetSemFromNafFile {
             String pathToTrigFile = pathToNafFile + ".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
 
-            JenaSerialization.serializeJenaCompositeEvents(fos,compositeEventArraylist, null, false);
+            JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, false);
            // JenaSerialization.serializeJena(fos,semEvents, semActors, semTimes, semRelations, null, false);
 
 

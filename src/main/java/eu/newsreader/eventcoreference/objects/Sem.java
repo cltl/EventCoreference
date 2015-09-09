@@ -84,14 +84,14 @@ public class Sem {
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
      */
 
-    public static final ObjectProperty hasEarliestBeginTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasBeginTime" );
+    public static final ObjectProperty hasEarliestBeginTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTime" );
 
 
     /** <p>HasEarliestEndTime is used to indicate at which time an Event ended. Has time points to a symbolic representation
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
      */
 
-    public static final ObjectProperty hasEarliestEndTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasEndTime" );
+    public static final ObjectProperty hasEarliestEndTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTime" );
 
     /** <p>Has place type is used to assign a type to a place.</p> */
     public static final ObjectProperty placeType = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/placeType" );

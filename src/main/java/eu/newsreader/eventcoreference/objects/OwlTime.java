@@ -545,7 +545,7 @@ public class OwlTime implements Serializable {
                 str += this.day;
             }
         }
-        return str;
+        return str.trim();
     }
 
 }

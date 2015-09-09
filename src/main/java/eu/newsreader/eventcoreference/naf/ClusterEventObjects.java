@@ -50,7 +50,7 @@ public class ClusterEventObjects {
     static public Vector<String> grammaticalVector = null;
     static public Vector<String> contextualVector = null;
     static public FrameNetReader frameNetReader = new FrameNetReader();
-    static public final int TIMEEXPRESSIONMAX = 5;
+    static public final int TIMEEXPRESSIONMAX = 10;
     static public boolean MICROSTORIES = false;
     static public Integer SENTENCERANGE = 0;
     static public boolean BRIDGING = false;
@@ -322,8 +322,11 @@ public class ClusterEventObjects {
             else
 
             if (outputTimes.size() > TIMEEXPRESSIONMAX) {
+/*
                 String timePhrase = "timeless";
                 treeSet.add(timePhrase);
+*/
+                continue;
             }
             else if (outputTimes.size() == 1) {
                 /// time: same year or exact?
@@ -334,7 +337,15 @@ public class ClusterEventObjects {
                 timePhrase = semTime.getOwlTime().toString();
                 if (timePhrase.isEmpty())  {
                     /// try to create a period, because DURATION timex can have begin and endpoints and not date
-                    timePhrase = semTime.getOwlTimeBegin().toString()+"-"+semTime.getOwlTimeEnd().toString();
+                    if (!semTime.getOwlTimeBegin().toString().isEmpty() && !semTime.getOwlTimeEnd().toString().isEmpty() ) {
+                        timePhrase = semTime.getOwlTimeBegin().toString() + "-" + semTime.getOwlTimeEnd().toString();
+                    }
+                    else if (!semTime.getOwlTimeBegin().toString().isEmpty()) {
+                        timePhrase = semTime.getOwlTimeBegin().toString();
+                    }
+                    else if (!semTime.getOwlTimeEnd().toString().isEmpty()) {
+                        timePhrase = semTime.getOwlTimeEnd().toString();
+                    }
                 }
                 if (!timePhrase.isEmpty()) {
                     if (Util.futureTimeRelation(semTime, myRelations)) {
@@ -396,7 +407,15 @@ public class ClusterEventObjects {
                         timePhrase = semTime.getOwlTime().toString();
                         if (timePhrase.isEmpty())  {
                             //// this should not happen since it should be captured by the previous conditions
-                            timePhrase = semTime.getOwlTimeBegin().toString()+"-"+semTime.getOwlTimeEnd().toString();
+                            if (!semTime.getOwlTimeBegin().toString().isEmpty() && !semTime.getOwlTimeEnd().toString().isEmpty() ) {
+                                timePhrase = semTime.getOwlTimeBegin().toString() + "-" + semTime.getOwlTimeEnd().toString();
+                            }
+                            else if (!semTime.getOwlTimeBegin().toString().isEmpty()) {
+                                timePhrase = semTime.getOwlTimeBegin().toString();
+                            }
+                            else if (!semTime.getOwlTimeEnd().toString().isEmpty()) {
+                                timePhrase = semTime.getOwlTimeEnd().toString();
+                            }
                         }
 
                         if (timePhrase.isEmpty()) {
