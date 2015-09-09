@@ -537,6 +537,17 @@ public class SemObject implements Serializable {
            // System.out.println(senseCode);
             ref = ResourcesUri.wn + senseCode;
         }
+        else if (kafSense.getSensecode().toLowerCase().startsWith("eng-30-")) {
+            /// this is needed since we get very different resource values from WSD:
+            /**
+             <externalRef resource="wn30g.bin64" reference="ili-30-14564306-n" confidence="0.5717984"/>
+             <externalRef resource="WordNet-3.0" reference="ili-30-13260936-n" confidence="8.0"/>
+             */
+            String senseCode = kafSense.getSensecode();
+            senseCode = "eng"+senseCode.substring(6);
+           // System.out.println(senseCode);
+            ref = ResourcesUri.wn + senseCode;
+        }
         else if (kafSense.getResource().equalsIgnoreCase("cornetto")) {
             ref = ResourcesUri.cornetto + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("framenet")) {
