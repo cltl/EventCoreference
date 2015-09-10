@@ -50,7 +50,7 @@ public class ClusterEventObjects {
     static public Vector<String> grammaticalVector = null;
     static public Vector<String> contextualVector = null;
     static public FrameNetReader frameNetReader = new FrameNetReader();
-    static public final int TIMEEXPRESSIONMAX = 10;
+    static public final int TIMEEXPRESSIONMAX = 5;
     static public boolean MICROSTORIES = false;
     static public Integer SENTENCERANGE = 0;
     static public boolean BRIDGING = false;
@@ -303,7 +303,7 @@ public class ClusterEventObjects {
 
             ArrayList<SemTime> outputTimes = myTimes;
 
-
+            //System.out.println("outputTimes.size() = " + outputTimes.size());
             //// we create two different tree sets with time phrases to store event in temporal buckets
             //// Future events are stored in separate buckets since the date is relative to a point in the current (usually the document creation time)
             //// Other events are stored within the basic event type folders: contextual, source and grammatical, where we created

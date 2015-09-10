@@ -23,6 +23,22 @@ public class Util {
     static public final int SPANMINPARTICIPANT = 2;
     static public final int SPANMAXCOREFERENTSET = 5;
 
+    static public void addRelation(ArrayList<SemRelation> relations, SemRelation semRelation) {
+        boolean HAS = false;
+        for (int i = 0; i < relations.size(); i++) {
+            SemRelation relation = relations.get(i);
+            if (relation.getSubject().equals(semRelation.getSubject())) {
+                if (relation.getObject().equals(semRelation.getObject())) {
+                   if (!Collections.disjoint(relation.getPredicates(), semRelation.getPredicates())) {
+                      HAS = true;
+                   }
+                }
+            }
+        }
+        if (!HAS) {
+            relations.add(semRelation);
+        }
+    }
 
     static public boolean hasCrossDocumentReferences (CompositeEvent compositeEvent) {
         for (int i = 0; i < compositeEvent.getEvent().getNafMentions().size(); i++) {

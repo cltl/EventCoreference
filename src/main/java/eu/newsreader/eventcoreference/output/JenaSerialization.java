@@ -158,12 +158,10 @@ public class JenaSerialization {
 
 
 
-    static public void addJenaCompositeEvents (
-            ArrayList<CompositeEvent> compositeEvents,
+    static public void addJenaCompositeEvent (
+            CompositeEvent compositeEvent,
             HashMap <String, SourceMeta> sourceMetaHashMap,
             boolean VERBOSE_MENTIONS) {
-        for (int c = 0; c < compositeEvents.size(); c++) {
-            CompositeEvent compositeEvent = compositeEvents.get(c);
 
             // System.out.println("compositeEvent.toString() = " + compositeEvent.toString());
             if (USEILIURI) {
@@ -226,6 +224,15 @@ public class JenaSerialization {
                         semRelation.addToJenaDataSet(ds, provenanceModel);
                     }
                 }*/
+    }
+
+    static public void addJenaCompositeEvents (
+            ArrayList<CompositeEvent> compositeEvents,
+            HashMap <String, SourceMeta> sourceMetaHashMap,
+            boolean VERBOSE_MENTIONS) {
+        for (int c = 0; c < compositeEvents.size(); c++) {
+            CompositeEvent compositeEvent = compositeEvents.get(c);
+            addJenaCompositeEvent(compositeEvent, sourceMetaHashMap, VERBOSE_MENTIONS);
         }
     }
 
@@ -253,12 +260,27 @@ public class JenaSerialization {
 
 
         prefixModels();
-
         addJenaCompositeEvents(semEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
-
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+    }
+
+    static public void serializeJenaSingleCompositeEvents (OutputStream stream,
+                                                     HashMap<String, CompositeEvent> semEvents,
+                                                     HashMap <String, SourceMeta> sourceMetaHashMap, boolean VERBOSE_MENTIONS) {
 
 
+
+        prefixModels();
+        Set keySet = semEvents.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            CompositeEvent semEvent = semEvents.get(key);
+            if (semEvent!=null) {
+                addJenaCompositeEvent(semEvent, sourceMetaHashMap, VERBOSE_MENTIONS);
+            }
+        }
+        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
     }
 
     static public void serializeJenaCompositeEvents (OutputStream stream,

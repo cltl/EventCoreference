@@ -706,13 +706,17 @@ public class GetSemFromNafFile {
         }
         if (docSemTime==null) {
             docSemTime = Util.getDocumentCreationTimeFromNafHeader(baseUrl,kafSaxParser);
-           // System.out.println("header docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateStringURI());
+            System.out.println("header docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateStringURI());
+        }
+        if (docSemTime!=null) {
             semTimes.add(docSemTime);
         }
-        if (docSemTime==null) {
+        else {
             docSemTime = Util.getBirthOfJC(baseUrl);
           //  System.out.println("BJC docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateLabel());
-            semTimes.add(docSemTime);
+            if (docSemTime!=null) {
+                semTimes.add(docSemTime);
+            }
         }
 
         int timexRelationCount = 0;
@@ -773,16 +777,18 @@ public class GetSemFromNafFile {
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
                     SemTime semTime = (SemTime) semTimes.get(l);
-                    ArrayList<String> termIds = Util.sameSentenceRange(semEvent, semTime);
-                    if (termIds.size() > 0) {
-                        /// create sem relations
-                        timexRelationCount++;
-                        NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                        SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                timexRelationCount,Sem.hasTime.getLocalName(), semEvent.getId(), mention);
-                        semRelations.add(semRelation);
-                        timeAnchor = true;
-                        //  break;*/
+                    if (semTime !=null && semTime.getNafMentions()!=null) {
+                        ArrayList<String> termIds = Util.sameSentenceRange(semEvent, semTime);
+                        if (termIds.size() > 0) {
+                            /// create sem relations
+                            timexRelationCount++;
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
+                            SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
+                                    timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId(), mention);
+                            semRelations.add(semRelation);
+                            timeAnchor = true;
+                            //  break;*/
+                        }
                     }
                 }
             }
@@ -790,32 +796,36 @@ public class GetSemFromNafFile {
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
                     SemTime semTime = (SemTime) semTimes.get(l);
-                    ArrayList<String> termIds = Util.range1SentenceRange(semEvent, semTime);
-                    if (termIds.size() > 0) {
-                        /// create sem relations
-                        timexRelationCount++;
-                        NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                        SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                timexRelationCount,Sem.hasTime.getLocalName(), semEvent.getId(), mention);
-                        semRelations.add(semRelation);
-                        timeAnchor = true;
-                        //  break;*/
+                    if (semTime !=null && semTime.getNafMentions()!=null) {
+                        ArrayList<String> termIds = Util.range1SentenceRange(semEvent, semTime);
+                        if (termIds.size() > 0) {
+                            /// create sem relations
+                            timexRelationCount++;
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
+                            SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
+                                    timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId(), mention);
+                            semRelations.add(semRelation);
+                            timeAnchor = true;
+                            //  break;*/
+                        }
                     }
                 }
             }
             if (!timeAnchor) {
                 for (int l = 0; l < semTimes.size(); l++) {
                     SemTime semTime = (SemTime) semTimes.get(l);
-                    ArrayList<String> termIds = Util.rangemin2plus1SentenceRange(semEvent, semTime);
-                    if (termIds.size() > 0) {
-                        /// create sem relations
-                        timexRelationCount++;
-                        NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                        SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                timexRelationCount,Sem.hasTime.getLocalName(), semEvent.getId(), mention);
-                        semRelations.add(semRelation);
-                        timeAnchor = true;
-                        // break;
+                    if (semTime !=null && semTime.getNafMentions()!=null) {
+                        ArrayList<String> termIds = Util.rangemin2plus1SentenceRange(semEvent, semTime);
+                        if (termIds.size() > 0) {
+                            /// create sem relations
+                            timexRelationCount++;
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
+                            SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
+                                    timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId(), mention);
+                            semRelations.add(semRelation);
+                            timeAnchor = true;
+                            // break;
+                        }
                     }
                 }
             }
@@ -834,10 +844,15 @@ public class GetSemFromNafFile {
                // System.out.println("docSemTime.getId() = " + docSemTime.getId());
                 if (docSemTime!=null) {
                     timexRelationCount++;
+                   // System.out.println("docSemTime = " + docSemTime.getOwlTime().toString());
+                   // System.out.println("semEvent = " + semEvent.getTopPhraseAsLabel());
                     SemRelation semRelation = docSemTime.createSemTimeRelation(baseUrl,
                             timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId());
                     semRelations.add(semRelation);
                 }
+            }
+            else {
+              //  System.out.println("anchored semEvent = " + semEvent.getTopPhraseAsLabel());
             }
         }
 
@@ -935,6 +950,7 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline3.0/v3_test_dataset/test_out/597K-JHX1-JCK4-01WV.xml";
         pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline3.0/v3_test_dataset/test_out/58PV-TK71-DXDT-62KX.xml";
         pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_airbus/71426_Aer_Lingus_buys_twelve_new_long-haul_Airbus_jets.naf";
+        pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline3.0/v3_test_dataset/out/5302-J0G1-JBRC-V1BP.xml";
 //        pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_airbus/87805_Indonesia_transport_minister.naf";
 //        pathToNafFile = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_v3_out/corpus_gm/120578_Automobile_sales_in_the_United_States_down_sharply.naf";
         String project = "cars";
