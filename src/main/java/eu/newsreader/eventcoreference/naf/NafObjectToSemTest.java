@@ -78,7 +78,7 @@ public class NafObjectToSemTest {
 
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
         eventType = "contextual";
-        MatchEventObjects.processEventFoldersSingleOutputFile(new File(pathToObjEventFolder),
+        MatchEventObjects.processEventFoldersHashMap(new File(pathToObjEventFolder),
                 conceptMatchThreshold, phraseMatchThreshold,
                 sourceMetaHashMap, wordnetData, eventType, roleArrayList1);
 
