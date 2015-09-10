@@ -45,8 +45,10 @@ public class GetSemFromNafStream {
                 ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
                 CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
-                if (compositeEvent.isValid()) {
-                    compositeEventArraylist.add(compositeEvent);
+                if (myTimes.size()<=ClusterEventObjects.TIMEEXPRESSIONMAX) {
+                    if (compositeEvent.isValid()) {
+                        compositeEventArraylist.add(compositeEvent);
+                    }
                 }
             }
             JenaSerialization.serializeJenaCompositeEvents(System.out, compositeEventArraylist, null, false);

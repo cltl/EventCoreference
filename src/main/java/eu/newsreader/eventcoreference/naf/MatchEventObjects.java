@@ -240,7 +240,7 @@ public class MatchEventObjects {
                     String id = keys.next();
                     eventIds.add(id);
                 }
-                System.out.println("eventIds = " + eventIds.size());
+               // System.out.println("eventIds = " + eventIds.size());
                 chaining3(events, eventIds, eventType, roleArrayList);
                 JenaSerialization.serializeJenaSingleCompositeEvents(fos,
                         events,
@@ -469,7 +469,7 @@ public class MatchEventObjects {
         if (modifiedEvents.size()>0) {
             /// something was merged so we need to compare again
             ///iterate
-            System.out.println("ITERATING:"+modifiedEvents.size());
+           // System.out.println("ITERATING:"+modifiedEvents.size());
             chaining3(myCompositeEvents, modifiedEvents, eventType, roleArrayList);
         }
         else {
