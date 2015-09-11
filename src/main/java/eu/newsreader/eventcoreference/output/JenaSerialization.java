@@ -20,8 +20,6 @@ import java.util.Set;
  */
 public class JenaSerialization {
 
-    static public boolean USEILIURI = false; //// used for testing cross-lingual extraction
-
     static Dataset ds = TDBFactory.createDataset();
 
     static Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
@@ -48,6 +46,7 @@ public class JenaSerialization {
                                       ArrayList<SemTime> semTimes,
                                       ArrayList<SemRelation> semRelations,
                                       HashMap<String, SourceMeta> sourceMetaHashMap,
+                                      boolean ILIURI,
                                       boolean VERBOSE_MENTIONS) {
 
 
@@ -161,20 +160,19 @@ public class JenaSerialization {
     static public void addJenaCompositeEvent (
             CompositeEvent compositeEvent,
             HashMap <String, SourceMeta> sourceMetaHashMap,
+            boolean ILIURI,
             boolean VERBOSE_MENTIONS) {
 
             // System.out.println("compositeEvent.toString() = " + compositeEvent.toString());
-            if (USEILIURI) {
+            if (ILIURI) {
                 replaceEventIdsWithILIids(compositeEvent);
             }
 
-            //compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event);
             compositeEvent.getEvent().addToJenaModel(instanceModel, Sem.Event, VERBOSE_MENTIONS);
 
             //  System.out.println("ACTORS");
             for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
                 SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
-                // semActor.addToJenaModel(instanceModel, Sem.Actor);
                 semActor.addToJenaModel(instanceModel, Sem.Actor, VERBOSE_MENTIONS);
             }
 
@@ -229,16 +227,18 @@ public class JenaSerialization {
     static public void addJenaCompositeEvents (
             ArrayList<CompositeEvent> compositeEvents,
             HashMap <String, SourceMeta> sourceMetaHashMap,
+            boolean ILIURI,
             boolean VERBOSE_MENTIONS) {
         for (int c = 0; c < compositeEvents.size(); c++) {
             CompositeEvent compositeEvent = compositeEvents.get(c);
-            addJenaCompositeEvent(compositeEvent, sourceMetaHashMap, VERBOSE_MENTIONS);
+            addJenaCompositeEvent(compositeEvent, sourceMetaHashMap, ILIURI, VERBOSE_MENTIONS);
         }
     }
 
     static public void addJenaCompositeEvents (
             HashMap<String, ArrayList<CompositeEvent>> semEvents,
             HashMap <String, SourceMeta> sourceMetaHashMap,
+            boolean ILIURI,
             boolean VERBOSE_MENTIONS) {
 
 
@@ -247,7 +247,7 @@ public class JenaSerialization {
         while (keys.hasNext()) {
             String lemma = (String) keys.next();
             ArrayList<CompositeEvent> compositeEvents = semEvents.get(lemma);
-            addJenaCompositeEvents(compositeEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
+            addJenaCompositeEvents(compositeEvents, sourceMetaHashMap, ILIURI, VERBOSE_MENTIONS);
         }
 
 
@@ -255,18 +255,22 @@ public class JenaSerialization {
 
     static public void serializeJenaCompositeEvents (OutputStream stream,
                                                      HashMap<String, ArrayList<CompositeEvent>> semEvents,
-                                                     HashMap <String, SourceMeta> sourceMetaHashMap, boolean VERBOSE_MENTIONS) {
+                                                     HashMap <String, SourceMeta> sourceMetaHashMap,
+                                                     boolean ILIURI,
+                                                     boolean VERBOSE_MENTIONS) {
 
 
 
         prefixModels();
-        addJenaCompositeEvents(semEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
+        addJenaCompositeEvents(semEvents, sourceMetaHashMap, ILIURI,VERBOSE_MENTIONS);
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
     }
 
     static public void serializeJenaSingleCompositeEvents (OutputStream stream,
                                                      HashMap<String, CompositeEvent> semEvents,
-                                                     HashMap <String, SourceMeta> sourceMetaHashMap, boolean VERBOSE_MENTIONS) {
+                                                     HashMap <String, SourceMeta> sourceMetaHashMap,
+                                                           boolean ILIURI,
+                                                           boolean VERBOSE_MENTIONS) {
 
 
 
@@ -277,7 +281,7 @@ public class JenaSerialization {
             String key = keys.next();
             CompositeEvent semEvent = semEvents.get(key);
             if (semEvent!=null) {
-                addJenaCompositeEvent(semEvent, sourceMetaHashMap, VERBOSE_MENTIONS);
+                addJenaCompositeEvent(semEvent, sourceMetaHashMap, ILIURI, VERBOSE_MENTIONS);
             }
         }
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
@@ -285,14 +289,16 @@ public class JenaSerialization {
 
     static public void serializeJenaCompositeEvents (OutputStream stream,
                                                      ArrayList<CompositeEvent> semEvents,
-                                                     HashMap <String, SourceMeta> sourceMetaHashMap, boolean VERBOSE_MENTIONS) {
+                                                     HashMap <String, SourceMeta> sourceMetaHashMap,
+                                                     boolean ILIURI,
+                                                     boolean VERBOSE_MENTIONS) {
 
 
 
 
         prefixModels();
 
-        addJenaCompositeEvents(semEvents, sourceMetaHashMap, VERBOSE_MENTIONS);
+        addJenaCompositeEvents(semEvents, sourceMetaHashMap, ILIURI, VERBOSE_MENTIONS);
 
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
 

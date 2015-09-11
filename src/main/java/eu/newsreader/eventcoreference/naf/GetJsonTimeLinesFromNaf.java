@@ -197,7 +197,7 @@ public class GetJsonTimeLinesFromNaf {
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, false);
+            JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, false,false);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -465,7 +465,7 @@ public class GetJsonTimeLinesFromNaf {
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, true);
+            JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, false,true);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -64,7 +64,7 @@ public class CreateMicrostory {
             String pathToTrigFile = pathToNafFile+".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
             JenaSerialization.serializeJena(fos,
-                    semEvents, semActors, semTimes, semRelations, null, true);
+                    semEvents, semActors, semTimes, semRelations, null, false, true);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

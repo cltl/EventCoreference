@@ -30,6 +30,9 @@ public class GetSemFromNafFile {
     static public Vector<String> contextualVector = null;
     static public int TIMEEXPRESSIONMAX = 5;
     static public boolean NONENTITIES = false;
+    static public boolean ILIURI = false;
+    static public boolean VERBOSE = false;
+
 
 
     /**
@@ -710,7 +713,7 @@ public class GetSemFromNafFile {
         }
         if (docSemTime==null) {
             docSemTime = Util.getDocumentCreationTimeFromNafHeader(baseUrl,kafSaxParser);
-            System.out.println("header docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateStringURI());
+           // System.out.println("header docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateStringURI());
         }
         if (docSemTime!=null) {
             semTimes.add(docSemTime);
@@ -952,8 +955,10 @@ public class GetSemFromNafFile {
             "--contextual-frames    <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
             "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
             "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>" +
-            "--time-max   <string int>   <Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5"
-            ;
+            "--time-max   <string int>   <Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5" +
+            "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
+            "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n"
+    ;
 
     static public void main(String[] args) {
         String pathToNafFile = "";
@@ -970,6 +975,12 @@ public class GetSemFromNafFile {
             }
             else if (arg.equals("--non-entities")) {
                 NONENTITIES = true;
+            }
+            else if (arg.equals("--verbose")) {
+                VERBOSE = true;
+            }
+            else if (arg.equals("--ili-uri")) {
+                ILIURI = true;
             }
             else if (arg.equals("--time-max")  && args.length > (i + 1)) {
                 try {
@@ -1007,6 +1018,7 @@ public class GetSemFromNafFile {
         try {
 
             ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
+           // System.out.println("semEvents = " + semEvents.size());
             for (int j = 0; j < semEvents.size(); j++) {
                 SemEvent mySemEvent = (SemEvent) semEvents.get(j);
                 ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
@@ -1034,7 +1046,7 @@ public class GetSemFromNafFile {
             }
             String pathToTrigFile = pathToNafFile + ".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
-            JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, false);
+            JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, ILIURI, VERBOSE);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

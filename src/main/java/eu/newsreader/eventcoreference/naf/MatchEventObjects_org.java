@@ -28,6 +28,7 @@ public class MatchEventObjects_org {
     public static String MATCHTYPE= "ILILEMMA";  // ILI OR ILILEMMA
     public static boolean LCS = false;
     public static boolean VERBOSEMENTIONS = false;
+    public static boolean ILIURI = false;
     static final String usage = "MatchEventObjects reads obj files stored in time-folders with CompositeEventObjects and outputs a single RDF-TRiG file\n" +
             "The parameters are:\n" +
             "--event-folder  <path>     <Path to the event folder that has subfolders for each time-description, e.g. \"e-2012-03-29\". Object file (*.obj) should be stored in these subfolders\n" +
@@ -41,6 +42,7 @@ public class MatchEventObjects_org {
             "--source-data   <path>     <(OPTIONAL) Path to LexisNexis meta data on owners and authors to enrich the provenance>\n" +
             "--roles  <string>          <(OPTIONAL) String with PropbBank roles for which there needs to be a match, e.g. \"a1,a2,a3,a4\""+
             "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n"+
+            "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
             "--debug                    <(OPTIONAL)>\n";
 
 
@@ -109,7 +111,7 @@ public class MatchEventObjects_org {
                 }
             }
             else if (arg.equals("--ili-uri")) {
-                JenaSerialization.USEILIURI = true;
+                ILIURI = true;
             }
             else if (arg.equals("--event-type") && args.length>(i+1)) {
                 eventType = args[i+1];
@@ -582,6 +584,7 @@ public class MatchEventObjects_org {
                 JenaSerialization.serializeJenaCompositeEvents(fos,
                         finalLemmaEventMap,
                         sourceMetaHashMap,
+                        ILIURI,
                         VERBOSEMENTIONS);
                 fos.close();
             } catch (IOException e) {

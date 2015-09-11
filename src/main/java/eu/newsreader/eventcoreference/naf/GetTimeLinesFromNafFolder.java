@@ -200,7 +200,7 @@ public class GetTimeLinesFromNafFolder {
 
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
-            JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, true);
+            JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, false, true);
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();

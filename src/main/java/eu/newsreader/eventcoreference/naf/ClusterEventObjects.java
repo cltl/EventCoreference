@@ -168,7 +168,7 @@ public class ClusterEventObjects {
             System.out.println("Cannot create the eventFolder = " + eventFolder);
             return;
         }
-        File speechFolder = new File(eventFolder + "/" + "source");
+        File speechFolder = new File(eventFolder + "/" + FrameTypes.SOURCE);
         if (!speechFolder.exists()) {
             speechFolder.mkdir();
         }
@@ -176,7 +176,7 @@ public class ClusterEventObjects {
             System.out.println("Cannot create the speechFolder = " + speechFolder);
             return;
         }
-        File contextualFolder = new File(eventFolder + "/" + "contextual");
+        File contextualFolder = new File(eventFolder + "/" + FrameTypes.CONTEXTUAL);
         if (!contextualFolder.exists()) {
             contextualFolder.mkdir();
         }
@@ -184,7 +184,7 @@ public class ClusterEventObjects {
             System.out.println("Cannot create the contextualFolder = " + contextualFolder);
             return;
         }
-        File grammaticalFolder = new File(eventFolder + "/" + "grammatical");
+        File grammaticalFolder = new File(eventFolder + "/" + FrameTypes.GRAMMATICAL);
         if (!grammaticalFolder.exists()) {
             grammaticalFolder.mkdir();
         }
@@ -192,7 +192,7 @@ public class ClusterEventObjects {
             System.out.println("Cannot create the grammaticalFolder = " + grammaticalFolder);
             return;
         }
-        File futureFolder = new File(eventFolder + "/" + "future");
+        File futureFolder = new File(eventFolder + "/" + "futureEvent");
         if (!futureFolder.exists()) {
             futureFolder.mkdir();
         }
@@ -286,8 +286,8 @@ public class ClusterEventObjects {
             if (!compositeEvent.isValid()) {
                 continue;
             }
+            String eventType = FrameTypes.setEventTypeString(compositeEvent.getEvent(),contextualVector, sourceVector, grammaticalVector);
             File folder = contextualFolder;
-            String eventType = FrameTypes.getEventTypeString(mySemEvent.getConcepts(), contextualVector, sourceVector, grammaticalVector);
             if (!eventType.isEmpty()) {
                 if (eventType.equalsIgnoreCase("source")) {
                     folder = speechFolder;

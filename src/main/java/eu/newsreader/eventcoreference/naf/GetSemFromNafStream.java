@@ -22,7 +22,9 @@ public class GetSemFromNafStream {
             "--contextual-frames    <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
             "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
             "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>" +
-            "--time-max   <string int>   <Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5"
+            "--time-max   <string int>   <Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5" +
+            "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
+            "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n"
             ;
 
     static public Vector<String> sourceVector = null;
@@ -31,6 +33,8 @@ public class GetSemFromNafStream {
     static public int TIMEEXPRESSIONMAX = 5;
     static public boolean NONENTITIES = false;
 
+    static public boolean ILIURI = false;
+    static public boolean VERBOSE = false;
     static public void main(String[] args) {
         String sourceFrameFile = "";
         String contextualFrameFile = "";
@@ -42,7 +46,14 @@ public class GetSemFromNafStream {
                 project = args[i + 1];
             } else if (arg.equals("--non-entities")) {
                 NONENTITIES = true;
-            } else if (arg.equals("--time-max") && args.length > (i + 1)) {
+            }
+            else if (arg.equals("--verbose")) {
+                VERBOSE = true;
+            }
+            else if (arg.equals("--ili-uri")) {
+                ILIURI = true;
+            }
+            else if (arg.equals("--time-max") && args.length > (i + 1)) {
                 try {
                     TIMEEXPRESSIONMAX = Integer.parseInt(args[i + 1]);
                 } catch (NumberFormatException e) {
@@ -67,7 +78,7 @@ public class GetSemFromNafStream {
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(System.in);
         if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
-            System.out.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
+           // System.out.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
             return;
         }
         GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
@@ -84,18 +95,22 @@ public class GetSemFromNafStream {
                     compositeEventArraylist.add(compositeEvent);
                 }
                 else {
+/*
                     System.out.println("Skipping EVENT due to no time anchor and/or no participant");
                     System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
                     System.out.println("myTimes = " + myTimes.size());
                     System.out.println("myActors = " + myActors.size());
                     System.out.println("myRelations = " + myRelations.size());
+*/
                 }
             } else {
+/*
                 System.out.println("Skipping event due to excessive time expressions linked to it");
                 System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
                 System.out.println("myTimes.size() = " + myTimes.size());
+*/
             }
         }
-        JenaSerialization.serializeJenaCompositeEvents(System.out, compositeEventArraylist, null, false);
+        JenaSerialization.serializeJenaCompositeEvents(System.out, compositeEventArraylist, null, ILIURI, VERBOSE);
     }
 }

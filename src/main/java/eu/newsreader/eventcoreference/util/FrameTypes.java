@@ -11,9 +11,9 @@ import java.util.Vector;
  */
 public class FrameTypes {
 
-    static public final String SOURCE = "source";
-    static public final String GRAMMATICAL = "grammatical";
-    static public final String CONTEXTUAL = "contextual";
+    static public final String SOURCE = "sourceEvent";
+    static public final String GRAMMATICAL = "grammaticalEvent";
+    static public final String CONTEXTUAL = "contextualEvent";
 
     static public String getEventTypeString(ArrayList<KafSense> eventConcepts,
                                             Vector<String> contextualVector,
@@ -75,12 +75,12 @@ public class FrameTypes {
         return eventType;
     }
 
-    static public void setEventTypeString(SemObject semEvent,
+    static public String setEventTypeString(SemObject semEvent,
                                           Vector<String> contextualVector,
                                           Vector<String> sourceVector,
                                           Vector<String> grammaticalVector) {
         boolean DEBUG = false;
-        String eventType = "CONTEXTUAL";
+        String eventType = CONTEXTUAL;
         //// we prefer the frames listed in the external resources
         for (int k = 0; k < semEvent.getConcepts().size(); k++) {
             KafSense kafSense = semEvent.getConcepts().get(k);
@@ -130,18 +130,21 @@ public class FrameTypes {
                     }
                 }
             }
-            ArrayList<KafSense> typedConcepts = new ArrayList<KafSense>();
-            KafSense typeSense = new KafSense();
-            typeSense.setResource("EventType");
-            typeSense.setSensecode(eventType);
-            for (int i = 0; i < semEvent.getConcepts().size(); i++) {
-                KafSense kafSense = semEvent.getConcepts().get(i);
-                if (!kafSense.getResource().equalsIgnoreCase("eventtype")) {
-                    typedConcepts.add(kafSense);
-                }
-            }
         }
         if (DEBUG) System.out.println("final eventType = " + eventType);
+        ArrayList<KafSense> typedConcepts = new ArrayList<KafSense>();
+        KafSense typeSense = new KafSense();
+        typeSense.setResource("nwr");
+        typeSense.setSensecode(eventType);
+        typedConcepts.add(typeSense);
+        for (int i = 0; i < semEvent.getConcepts().size(); i++) {
+            KafSense kafSense = semEvent.getConcepts().get(i);
+            if (!kafSense.getResource().equalsIgnoreCase("eventtype")) {
+                typedConcepts.add(kafSense);
+            }
+        }
+        semEvent.setConcept(typedConcepts);
+        return eventType;
     }
 
 }

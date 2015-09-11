@@ -7,6 +7,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
+import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -580,26 +581,19 @@ public class SemObject implements Serializable {
           //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
         }
         else if (kafSense.getSensecode().equalsIgnoreCase("source")) {
-            ref = ResourcesUri.nwrontology + "SPEECH_COGNITIVE";
-           // ref = "";
+            ref = ResourcesUri.nwrontology + FrameTypes.SOURCE;
         } else if (kafSense.getSensecode().equalsIgnoreCase("cognition")) {
-            ref = ResourcesUri.nwrontology + "SPEECH_COGNITIVE";
-           // ref = "";
+            ref = ResourcesUri.nwrontology + FrameTypes.SOURCE;
         } else if (kafSense.getSensecode().toLowerCase().startsWith("speech")) {
-            ref = ResourcesUri.nwrontology + "SPEECH_COGNITIVE";
-          //  ref = "";
+            ref = ResourcesUri.nwrontology + FrameTypes.SOURCE;
         } else if (kafSense.getSensecode().equalsIgnoreCase("communication")) {
-            ref = ResourcesUri.nwrontology + "SPEECH_COGNITIVE";
-          //  ref = "";
+            ref = ResourcesUri.nwrontology + FrameTypes.SOURCE;
         } else if (kafSense.getSensecode().equalsIgnoreCase("grammatical")) {
-            ref = ResourcesUri.nwrontology + "GRAMMATICAL";
-          //  ref = "";
+            ref = ResourcesUri.nwrontology + FrameTypes.GRAMMATICAL;
         } else if (kafSense.getSensecode().equalsIgnoreCase("contextual")) {
-            ref = ResourcesUri.nwrontology + "OTHER";
-            ref = "";
+            ref = ResourcesUri.nwrontology + FrameTypes.CONTEXTUAL;
         } else if (kafSense.getSensecode().equalsIgnoreCase("other")) {
-            ref = ResourcesUri.nwrontology + "OTHER";
-          //  ref = "";
+            ref = ResourcesUri.nwrontology + FrameTypes.CONTEXTUAL;
         }
 
         else if (kafSense.getSensecode().isEmpty()) {
@@ -626,8 +620,7 @@ public class SemObject implements Serializable {
             else if (ref.contains("DBpedia:")) {
                 ref = ResourcesUri.nwrontology + "MISC";
             }
-       // System.out.println("kafSense.getSensecode() = " + kafSense.getSensecode());
-       // System.out.println("ref = " + ref);
+        //System.out.println("ref = " + ref);
         return ref;
     }
 
