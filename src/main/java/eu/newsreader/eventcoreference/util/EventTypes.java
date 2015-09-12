@@ -5,10 +5,10 @@ package eu.newsreader.eventcoreference.util;
  */
 public class EventTypes {
 
-    static public final String [] CONTEXTUAL = {"other", "contextual"};
-    static public final String [] COMMUNICATION = {"speech", "communication", "cognition", "source"};
-    static public final String [] GRAMMATICAL = {"grammatical"};
-    static public final String [] FUTURE = {"future"};
+    static public final String [] CONTEXTUAL = {"other", "contextual", "contextualEvent"};
+    static public final String [] COMMUNICATION = {"sourceEvent","speech", "communication", "cognition", "source"};
+    static public final String [] GRAMMATICAL = {"grammaticalEvent","grammatical"};
+    static public final String [] FUTURE = {"futureEvent", "future"};
 
 
     static public boolean isCONTEXTUAL(String type) {

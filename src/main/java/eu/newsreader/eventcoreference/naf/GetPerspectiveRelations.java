@@ -150,7 +150,7 @@ public class GetPerspectiveRelations {
                 kafEvent.setTokenStrings(kafSaxParser);
                 String eventType = FrameTypes.getEventTypeString(kafEvent.getExternalReferences(), contextualVector, communicationVector, grammaticalVector);
                 if (!eventType.isEmpty()) {
-                    if (eventType.equalsIgnoreCase("source")) {
+                    if (eventType.equalsIgnoreCase(FrameTypes.SOURCE)) {
                         KafParticipant sourceParticipant = new KafParticipant();
                         KafParticipant targetParticipant = new KafParticipant();
                         /// next we get the A0 and message roles
