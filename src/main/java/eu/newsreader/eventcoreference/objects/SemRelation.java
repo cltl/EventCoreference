@@ -5,6 +5,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
+import eu.newsreader.eventcoreference.util.RoleLabels;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -114,7 +115,7 @@ public class SemRelation implements Serializable {
 
 
 
-    public Property getSemRelationType (String type) {
+    public Property getSemRelationProperty (String type) {
         if (type.equals(Sem.hasTime.getLocalName())) {
             return Sem.hasTime;
         }
@@ -124,11 +125,17 @@ public class SemRelation implements Serializable {
         else if (type.equals(Sem.hasEndTime.getLocalName())) {
             return Sem.hasEndTime;
         }
+        else if (type.equals(Sem.hasFutureTime.getLocalName())) {
+            return Sem.hasFutureTime;
+        }
         else if (type.equals(Sem.hasEarliestBeginTime.getLocalName())) {
             return Sem.hasEarliestBeginTime;
         }
         else if (type.equals(Sem.hasEarliestEndTime.getLocalName())) {
             return Sem.hasEarliestEndTime;
+        }
+        else if (type.equals(Sem.hasFutureTimeStamp.getLocalName())) {
+            return Sem.hasFutureTimeStamp;
         }
         else if (type.equals(Sem.hasBeginTimeStamp.getLocalName())) {
             //BiographyNet uses sem:hasBeginTimeStamp
@@ -210,43 +217,52 @@ public class SemRelation implements Serializable {
         /// since we no longer distinguish places from actors, we now check the predicates for propbank AM-LOC
         /// if so we use sem:hasPlace otherwise we take the semType value from the hassem predicate
         Property semProperty = null;
-        boolean place = false;
+        boolean PLACE = false;
+        boolean ACTOR = false;
         for (int i = 0; i < predicates.size(); i++) {
             String predicate = predicates.get(i);
             if (predicate.equalsIgnoreCase("hasFactBankValue")) {
                 Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue + predicate);
                 subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
-            } else {
-              //  System.out.println("predicate.toLowerCase() = " + predicate.toLowerCase());
-                if (predicate.toLowerCase().startsWith("has")) {
-                    semProperty = getSemRelationType(predicate);
-                } else {
-                    predicate = getRoleRelation(predicate);
-                    if (!predicate.isEmpty()) {
-                        Property fnProperty = relationModel.createProperty(predicate);
-                        subject.addProperty(fnProperty, object);
-                        if (predicate.toLowerCase().endsWith("am-loc")) {
-                            place = true;
-                        }
-                        else if (predicate.toLowerCase().endsWith("am-dir")) {
-                            place = true;
+            }
+            else {
+                semProperty = getSemRelationProperty(predicate);
+                if (semProperty!=null
+                        && semProperty != Sem.hasSubType
+                        /// unknown
+                        && semProperty!=Sem.hasPlace && semProperty!=Sem.hasActor)
+                        //// we decide next if the role is that of an actor or a place
+                {
+                        subject.addProperty(semProperty, object);
+                }
+                else {
+                    if (semProperty.equals(Sem.hasSubType)) {
+                        predicate = getRoleRelation(predicate);
+                        if (!predicate.isEmpty()) {
+                            Property srlProperty = relationModel.createProperty(predicate);
+                            subject.addProperty(srlProperty, object);
+
+                            String predicateValue = predicate;
+                            int idx = predicateValue.lastIndexOf("/");
+                            if (idx > -1) predicateValue = predicateValue.substring(idx + 1);
+                            if (RoleLabels.isLOCATION(predicateValue)) {
+                                PLACE = true;
+                            } else {
+                                ACTOR = true;
+                            }
                         }
                     }
                 }
+
             }
         }
-        if (place) {
-            semProperty = relationModel.createProperty(ResourcesUri.sem + "hasPlace");
-            if (semProperty != Sem.hasSubType) {
-                subject.addProperty(semProperty, object);
-            }
+        //// if at the end of the loop we detected a location role
+        if (PLACE) {
+                subject.addProperty(Sem.hasPlace, object);
         }
-        else {
-            if (semProperty!=null) {
-                if (semProperty != Sem.hasSubType) {
-                    subject.addProperty(semProperty, object);
-                }
-            }
+        //// if at the end of the loop we detect an actor role
+        if (ACTOR) {
+            subject.addProperty(Sem.hasActor, object);
         }
 
         Resource provenanceResource = provenanceModel.createResource(this.id);
