@@ -20,11 +20,16 @@ import java.util.Set;
  */
 public class JenaSerialization {
 
-    static Dataset ds = TDBFactory.createDataset();
+    static Dataset ds = null;
+    static Model provenanceModel = null;
+    static Model instanceModel = null;
 
-    static Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/provenance");
-
-    static Model instanceModel = ds.getNamedModel("http://www.newsreader-project.eu/instances");
+    static public void createModels () {
+        ds = TDBFactory.createDataset();
+        provenanceModel = ds.getNamedModel(ResourcesUri.nwr+"provenance");
+        instanceModel = ds.getNamedModel(ResourcesUri.nwr+"instances");
+        prefixModels ();
+    }
 
     static void prefixModels () {
         Model defaultModel = ds.getDefaultModel();
@@ -52,8 +57,7 @@ public class JenaSerialization {
 
 
         // create an empty Model
-        prefixModels();
-        Dataset ds = TDBFactory.createDataset();
+        createModels();
 
         // System.out.println("EVENTS");
         for (int i = 0; i < semEvents.size(); i++) {
@@ -261,7 +265,7 @@ public class JenaSerialization {
 
 
 
-        prefixModels();
+        createModels();
         addJenaCompositeEvents(semEvents, sourceMetaHashMap, ILIURI,VERBOSE_MENTIONS);
         RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
     }
@@ -274,7 +278,7 @@ public class JenaSerialization {
 
 
 
-        prefixModels();
+        createModels();
         Set keySet = semEvents.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -296,7 +300,7 @@ public class JenaSerialization {
 
 
 
-        prefixModels();
+        createModels();
 
         addJenaCompositeEvents(semEvents, sourceMetaHashMap, ILIURI, VERBOSE_MENTIONS);
 

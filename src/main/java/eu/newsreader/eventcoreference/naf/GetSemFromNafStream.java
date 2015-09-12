@@ -81,7 +81,7 @@ public class GetSemFromNafStream {
            // System.out.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
             return;
         }
-        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
+        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
         ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
         for (int j = 0; j < semEvents.size(); j++) {
             SemEvent mySemEvent = (SemEvent) semEvents.get(j);

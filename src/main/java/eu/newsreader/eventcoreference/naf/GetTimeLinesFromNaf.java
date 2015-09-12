@@ -251,18 +251,18 @@ public class GetTimeLinesFromNaf {
             baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName() + ID_SEPARATOR;
         }
         if (NOENTITYCOREF) {
-            GetSemFromNafFile.processNafFileForEntityWithoutCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
+            GetSemFromNaf.processNafFileForEntityWithoutCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         }
         else {
-            GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
+            GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         }
         //GetSemFromNafFile.processNafFileForRemainingSrlActors(entityUri, baseUrl, kafSaxParser, semActors);
-        GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
+        GetSemFromNaf.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         if (NOEVENTCOREF) {
-            GetSemFromNafFile.processNafFileForEventWithoutCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+            GetSemFromNaf.processNafFileForEventWithoutCoreferenceSets(baseUrl, kafSaxParser, semEvents);
         }
         else {
-            GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+            GetSemFromNaf.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
         }
         //GetSemFromNafFile.filterOverlapEventsEntities(semEvents, semActors);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);

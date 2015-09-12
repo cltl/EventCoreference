@@ -86,7 +86,7 @@ public class Util {
             SemRelation semRelation = semRelations.get(i);
             for (int k = 0; k < semRelation.getPredicates().size(); k++) {
                 String predicate = semRelation.getPredicates().get(k);
-                if (predicate.endsWith(Sem.hasEarliestBeginTimeStamp.getLocalName())) {
+                if (predicate.endsWith(Sem.hasFutureTime.getLocalName())) {
                     if (semRelation.getObject().equals(semTime.getId())) {
                         return true;
                     }

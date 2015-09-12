@@ -1,7 +1,7 @@
 package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.KafSaxParser;
-import eu.newsreader.eventcoreference.naf.GetSemFromNafFile;
+import eu.newsreader.eventcoreference.naf.GetSemFromNaf;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
 import eu.newsreader.eventcoreference.objects.SemTime;
@@ -42,12 +42,11 @@ public class ProcessSeparateNafFilesBatch {
                 File file = nafFiles.get(i);
                 //System.out.println("file.getName() = " + file.getName());
                 kafSaxParser.parseFile(file);
-                SemTime docSemTime = new SemTime();
                 ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
                 ArrayList<SemObject> semActors = new ArrayList<SemObject>();
                 ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
                 ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-                GetSemFromNafFile.processNafFile(projectName, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
+                GetSemFromNaf.processNafFile(projectName, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");
                 JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, false, false);
                 fos.close();

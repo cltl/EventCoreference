@@ -86,10 +86,11 @@ public class Naf2SemTest {
         MatchEventObjects.DEBUG = true;
 
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
-        eventType = "contextual";
+/*      @Deprecated
         MatchEventObjects.processEventFoldersHashMap(new File(pathToObjEventFolder),
                 conceptMatchThreshold, phraseMatchThreshold,
-                sourceMetaHashMap, wordnetData, eventType, roleArrayList1);
+                sourceMetaHashMap, wordnetData, roleArrayList1);
+*/
 
  /*
         MatchEventObjects.MATCHTYPE = "ILILEMMA";

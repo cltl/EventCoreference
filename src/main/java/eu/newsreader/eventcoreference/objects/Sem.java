@@ -70,21 +70,23 @@ public class Sem {
     /** <p>Has BeginTime is used to indicate at which time an Event started. Has time points to a symbolic representation
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
      */
-
     public static final ObjectProperty hasBeginTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasBeginTime" );
 
 
     /** <p>Has EndTime is used to indicate at which time an Event ended. Has time points to a symbolic representation
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
      */
-
     public static final ObjectProperty hasEndTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasEndTime" );
 
     /** <p>HasEarliestBeginTime is used to indicate at which time an Event started. Has time points to a symbolic representation
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
      */
-
     public static final ObjectProperty hasEarliestBeginTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTime" );
+
+    /** <p>HasFutureTime is used to indicate that the event is anchored to a future time point. Has time points to a symbolic representation
+     *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
+     */
+    public static final ObjectProperty hasFutureTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasFutureTime" );
 
 
     /** <p>HasEarliestEndTime is used to indicate at which time an Event ended. Has time points to a symbolic representation

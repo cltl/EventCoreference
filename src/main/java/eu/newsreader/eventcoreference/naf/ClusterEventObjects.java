@@ -270,7 +270,7 @@ public class ClusterEventObjects {
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
-        GetSemFromNafFile.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
+        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
 
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
@@ -289,18 +289,13 @@ public class ClusterEventObjects {
             String eventType = FrameTypes.setEventTypeString(compositeEvent.getEvent(),contextualVector, sourceVector, grammaticalVector);
             File folder = contextualFolder;
             if (!eventType.isEmpty()) {
-                if (eventType.equalsIgnoreCase("source")) {
+                if (eventType.equalsIgnoreCase(FrameTypes.SOURCE)) {
                     folder = speechFolder;
-                } else if (eventType.equalsIgnoreCase("grammatical")) {
+                } else if (eventType.equalsIgnoreCase(FrameTypes.GRAMMATICAL)) {
                     folder = grammaticalFolder;
                 }
             }
             File timeFile = null;
-
-
-
-
-
             ArrayList<SemTime> outputTimes = myTimes;
 
             //System.out.println("outputTimes.size() = " + outputTimes.size());

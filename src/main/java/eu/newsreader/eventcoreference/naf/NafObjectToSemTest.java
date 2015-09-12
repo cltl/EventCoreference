@@ -4,7 +4,6 @@ import eu.newsreader.eventcoreference.objects.SourceMeta;
 import eu.newsreader.eventcoreference.util.Util;
 import vu.wntools.wordnet.WordnetData;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -77,10 +76,11 @@ public class NafObjectToSemTest {
         MatchEventObjects.DEBUG = true;
 
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
-        eventType = "contextual";
+/*      @Deprecated
         MatchEventObjects.processEventFoldersHashMap(new File(pathToObjEventFolder),
                 conceptMatchThreshold, phraseMatchThreshold,
-                sourceMetaHashMap, wordnetData, eventType, roleArrayList1);
+                sourceMetaHashMap, wordnetData, roleArrayList1);
+*/
 
 
       /*  MatchEventObjects.MATCHTYPE = "LEMMA";

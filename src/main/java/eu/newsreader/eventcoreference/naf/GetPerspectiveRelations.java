@@ -48,14 +48,14 @@ public class GetPerspectiveRelations {
             for (int i = 0; i < files.size(); i++) {
                 File file = files.get(i);
                 kafSaxParser.parseFile(file);
-                String baseUri = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNafFile.ID_SEPARATOR;
+                String baseUri = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
                 ArrayList<SemObject> semActors = new ArrayList<SemObject>();
                 String entityUri = ResourcesUri.nwrdata+project+"/entities/";
                 if (!baseUri.toLowerCase().startsWith("http")) {
-                    baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNafFile.ID_SEPARATOR;
+                    baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
                 }
-                GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUri, kafSaxParser, semActors);
-                GetSemFromNafFile.processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
+                GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUri, kafSaxParser, semActors);
+                GetSemFromNaf.processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
 
                 ArrayList<PerspectiveObject> perspectives = getPerspective(baseUri, kafSaxParser, semActors, contextualVector, communicationVector, grammaticalVector);
                 perspectives = selectSourceEntityToPerspectives(kafSaxParser, perspectives, semActors);
@@ -116,9 +116,9 @@ public class GetPerspectiveRelations {
                                     Vector<String> contextualVector, 
                                     Vector<String> communicationVector,
                                     Vector<String> grammaticalVector) {
-            String baseUri = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNafFile.ID_SEPARATOR;
+            String baseUri = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             if (!baseUri.toLowerCase().startsWith("http")) {
-                baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNafFile.ID_SEPARATOR;
+                baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             }
             ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri,kafSaxParser, semActors, contextualVector, communicationVector, grammaticalVector);
             perspectiveObjects = selectSourceEntityToPerspectives(kafSaxParser, perspectiveObjects, semActors);
@@ -130,9 +130,9 @@ public class GetPerspectiveRelations {
                                     Vector<String> contextualVector,
                                     Vector<String> communicationVector,
                                     Vector<String> grammaticalVector) {
-            String baseUri = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNafFile.ID_SEPARATOR;
+            String baseUri = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             if (!baseUri.toLowerCase().startsWith("http")) {
-                baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNafFile.ID_SEPARATOR;
+                baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             }
             ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri,kafSaxParser, semActors, contextualVector, communicationVector, grammaticalVector);
             perspectives.addAll(perspectiveObjects);

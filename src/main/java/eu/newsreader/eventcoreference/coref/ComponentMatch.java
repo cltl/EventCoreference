@@ -13,24 +13,31 @@ import java.util.Collections;
  * Created by piek on 5/2/14.
  */
 public class ComponentMatch {
-    public static int SYNSETMATCH = 50;
 
     public static boolean compareEventLabelReference(CompositeEvent compositeEvent1,
-                                                     CompositeEvent compositeEvent2) {
+                                                     CompositeEvent compositeEvent2,
+                                                     int threshold) {
+        int nMatches = 0;
         for (int i = 0; i < compositeEvent1.getEvent().getPhraseCounts().size(); i++) {
             PhraseCount phraseCount1 = compositeEvent1.getEvent().getPhraseCounts().get(i);
             for (int j = 0; j < compositeEvent2.getEvent().getPhraseCounts().size(); j++) {
                 PhraseCount phraseCount2 = compositeEvent2.getEvent().getPhraseCounts().get(j);
                 if (phraseCount1.getPhrase().equalsIgnoreCase(phraseCount2.getPhrase())) {
-                    return true;
+                    nMatches++;
                 }
             }
         }
-        return false;
+        if ((nMatches * 100 / compositeEvent1.getEvent().getConcepts().size() >= threshold) &&
+                (nMatches * 100 / compositeEvent2.getEvent().getConcepts().size() >= threshold)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static boolean compareEventWordNetReference(CompositeEvent compositeEvent1,
-                                                       CompositeEvent compositeEvent2) {
+                                                       CompositeEvent compositeEvent2,
+                                                       int threshold) {
 
         int nMatches = 0;
         for (int i = 0; i < compositeEvent1.getEvent().getConcepts().size(); i++) {
@@ -46,8 +53,8 @@ public class ComponentMatch {
                 }
             }
         }
-        if ((nMatches * 100 / compositeEvent1.getEvent().getConcepts().size() >= SYNSETMATCH) &&
-                (nMatches * 100 / compositeEvent2.getEvent().getConcepts().size() >= SYNSETMATCH)) {
+        if ((nMatches * 100 / compositeEvent1.getEvent().getConcepts().size() >= threshold) &&
+                (nMatches * 100 / compositeEvent2.getEvent().getConcepts().size() >= threshold)) {
             return true;
         } else {
             return false;
@@ -55,36 +62,43 @@ public class ComponentMatch {
     }
 
     public static boolean compareEventLCSReference(CompositeEvent compositeEvent1,
-                                                   CompositeEvent compositeEvent2) {
-
+                                                   CompositeEvent compositeEvent2,
+                                                   int threshold) {
+        int nMatches = 0;
         for (int i = 0; i < compositeEvent1.getEvent().getLcs().size(); i++) {
             KafSense kafSense1 = compositeEvent1.getEvent().getLcs().get(i);
             for (int j = 0; j < compositeEvent2.getEvent().getLcs().size(); j++) {
                 KafSense kafSense2 = compositeEvent2.getEvent().getLcs().get(j);
                 if (kafSense2.getResource().equalsIgnoreCase("wordnet")) {
                     if (kafSense1.getSensecode().equals(kafSense2.getSensecode())) {
-                        return true;
+                        nMatches++;
                     }
                 }
             }
         }
-        return false;
+        if ((nMatches * 100 / compositeEvent1.getEvent().getConcepts().size() >= threshold) &&
+                (nMatches * 100 / compositeEvent2.getEvent().getConcepts().size() >= threshold)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public static boolean compareCompositeEvent(CompositeEvent compositeEvent1,
+    @Deprecated
+    public static boolean compareCompositeEventDeprecated(CompositeEvent compositeEvent1,
                                                 CompositeEvent compositeEvent2,
                                                 String eventType,
                                                 ArrayList<String> roleArrayList) {
 
         ArrayList<String> neededRoles = new ArrayList<String>();
         if (EventTypes.isCONTEXTUAL(eventType)) {
-            return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList, neededRoles);
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles);
         } else if (EventTypes.isCOMMUNICATION(eventType)) {
             neededRoles.add("a0");
-            return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList, neededRoles);
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles);
         } else if (EventTypes.isGRAMMATICAL(eventType)) {
             neededRoles.add("a1");
-            return compareCompositeEvent(compositeEvent1, compositeEvent2, roleArrayList, neededRoles);
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles);
         } else if (EventTypes.isFUTURE(eventType)) {
             ///// For FUTURE events we demand that all participants match except the temporal relations
             return compareCompositeEventToMatchAllProbBankRoles(compositeEvent1, compositeEvent2);
@@ -102,7 +116,43 @@ public class ComponentMatch {
      */
     public static boolean compareCompositeEvent(CompositeEvent compositeEvent1,
                                                 CompositeEvent compositeEvent2,
-                                                ArrayList<String> roleArrayList, ArrayList<String> minimallyRequiredRoles) {
+                                                ArrayList<String> minimallyRequiredRoles
+                                                ) {
+        if (compositeEvent1.getMySemActors().size() == 0 && compositeEvent2.getMySemActors().size() == 0) {
+            return false;
+        }
+        if (minimallyRequiredRoles.contains("all")) {
+            return compareCompositeEventToMatchAllProbBankRoles(compositeEvent1, compositeEvent2);
+        }
+        for (int i = 0; i < minimallyRequiredRoles.size(); i++) {
+            String requiredRole = minimallyRequiredRoles.get(i);
+            ArrayList roleObjects1 = Util.getObjectsForPredicate(compositeEvent1.getMySemRelations(), requiredRole);
+            ArrayList roleObjects2 = Util.getObjectsForPredicate(compositeEvent2.getMySemRelations(), requiredRole);
+            if (roleObjects1.size() == 0 || roleObjects2.size() == 0) {
+                return false;
+            } else if (Collections.disjoint(roleObjects1, roleObjects2)) {
+                return false;
+            } else {
+                /// we found a match for this required role
+            }
+        }
+        /////  FOR ALL REQUIRED ROLES WE FOUND A MATCH
+        return true;
+    }
+
+     @Deprecated
+    /**
+     * For each of the roles in the role ArrayList there needs to be match
+     *
+     * @param compositeEvent1
+     * @param compositeEvent2
+     * @return
+     */
+    public static boolean compareCompositeEventDeprecated(CompositeEvent compositeEvent1,
+                                                CompositeEvent compositeEvent2,
+                                                ArrayList<String> minimallyRequiredRoles,
+                                                ArrayList<String> roleArrayList
+                                                ) {
         int roleMatchCount = 0;
         // System.out.println("roleArrayList = " + roleArrayList.toString());
         if (compositeEvent1.getMySemActors().size() == 0 && compositeEvent2.getMySemActors().size() == 0) {

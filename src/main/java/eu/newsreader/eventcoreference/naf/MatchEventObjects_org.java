@@ -177,7 +177,7 @@ public class MatchEventObjects_org {
                     }
                     else {
                         boolean EVENTMATCH = false;
-                        if (ComponentMatch.compareEventLabelReference(myCompositeEvent, finalCompositeEvent)) {
+                        if (ComponentMatch.compareEventLabelReference(myCompositeEvent, finalCompositeEvent, 50)) {
                             EVENTMATCH=true;
                         }
 /*
@@ -189,7 +189,7 @@ public class MatchEventObjects_org {
                         }
 */
                         if (EVENTMATCH) {
-                            if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, eventType, roleArrayList)) {
+                            if (ComponentMatch.compareCompositeEvent(myCompositeEvent, finalCompositeEvent, roleArrayList)) {
                                 match = true;
 
                                 if (DEBUG) {

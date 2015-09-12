@@ -190,9 +190,9 @@ public class GetJsonTimeLinesFromNaf {
         else {
             baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName() + ID_SEPARATOR;
         }
-        GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
-        GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-        GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
+        GetSemFromNaf.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
+        GetSemFromNaf.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
         Util.filterOverlapEventsEntities(semEvents, semActors);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {
@@ -458,9 +458,9 @@ public class GetJsonTimeLinesFromNaf {
             baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName() + ID_SEPARATOR;
         }
 
-        GetSemFromNafFile.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
-        GetSemFromNafFile.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-        GetSemFromNafFile.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
+        GetSemFromNaf.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
+        GetSemFromNaf.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
         Util.filterOverlapEventsEntities(semEvents, semActors);
         processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semPlaces, semTimes, semRelations);
         try {

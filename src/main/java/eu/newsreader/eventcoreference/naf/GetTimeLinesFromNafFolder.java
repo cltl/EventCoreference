@@ -190,7 +190,7 @@ public class GetTimeLinesFromNafFolder {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        GetSemFromNafFile.processNafFile(project,
+        GetSemFromNaf.processNafFile(project,
                 kafSaxParser,
                 semEvents,
                 semActors,
