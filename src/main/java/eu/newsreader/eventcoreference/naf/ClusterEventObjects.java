@@ -268,8 +268,7 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
-
+        System.out.println("nafFileName = " + nafFileName);
         GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
 
 
@@ -557,6 +556,7 @@ public class ClusterEventObjects {
                 //   System.out.println("timeFile = " + timeFile);
             }
         }
+        ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
         perspectiveObjects = GetPerspectiveRelations.getPerspective(kafSaxParser,
                 project,

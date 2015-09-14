@@ -485,13 +485,14 @@ public class SemObject implements Serializable {
             if (kafSense.getResource().equalsIgnoreCase("nombank")) {
                 continue;
             }
-            if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
-                continue;
-            }
-            if (kafSense.getResource().isEmpty() && this.getURI().startsWith("http://dbpedia.org")) {
-                continue;
-            }
-            if (kafSense.getResource().toLowerCase().startsWith("spotlight")) {
+            if (this.getURI().indexOf("entities/")==-1) {
+                if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
+                    continue;
+                }
+                if (kafSense.getResource().isEmpty() && this.getURI().startsWith("http://dbpedia.org")) {
+                    continue;
+                }
+                if (kafSense.getResource().toLowerCase().startsWith("spotlight")) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
@@ -501,8 +502,9 @@ public class SemObject implements Serializable {
 /*                String nameSpaceType = getNameSpaceTypeReference(kafSense);
                 Resource conceptResource = model.createResource(nameSpaceType);
                 resource.addProperty(OWL.sameAs, conceptResource);*/
-                /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
-                continue;
+                    /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
+                    continue;
+                }
             }
             String nameSpaceType = getNameSpaceTypeReference(kafSense);
             if (!nameSpaceType.isEmpty()) {

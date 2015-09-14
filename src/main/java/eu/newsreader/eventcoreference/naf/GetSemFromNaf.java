@@ -191,12 +191,19 @@ public class GetSemFromNaf {
             KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
             String uri = Util.getBestEntityUri(kafEntity);
             if (uri.isEmpty()) {
-                kafEntity.setTokenStrings(kafSaxParser);
-                if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
-                    try {
-                        uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        //  e.printStackTrace();
+                KafMarkable kafMarkable = Util.getBestMatchingMarkable(kafSaxParser, kafEntity.getTermIds());
+                if (kafMarkable != null) {
+                    //  System.out.println("kafMarkable.getId() = " + kafMarkable.getId());
+                    uri = Util.getBestMarkableUri(kafMarkable);
+                }
+                if (uri.isEmpty()) {
+                    kafEntity.setTokenStrings(kafSaxParser);
+                    if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
+                        try {
+                            uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            //  e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -321,12 +328,19 @@ public class GetSemFromNaf {
             KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
             String uri = Util.getBestEntityUri(kafEntity);
             if (uri.isEmpty()) {
-                kafEntity.setTokenStrings(kafSaxParser);
-                if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
-                    try {
-                        uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        //  e.printStackTrace();
+                KafMarkable kafMarkable = Util.getBestMatchingMarkable(kafSaxParser, kafEntity.getTermIds());
+                if (kafMarkable != null) {
+                    //  System.out.println("kafMarkable.getId() = " + kafMarkable.getId());
+                    uri = Util.getBestMarkableUri(kafMarkable);
+                }
+                if (uri.isEmpty()) {
+                    kafEntity.setTokenStrings(kafSaxParser);
+                    if (Util.hasAlphaNumeric(kafEntity.getTokenString())) {
+                        try {
+                            uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            //  e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -415,8 +429,87 @@ public class GetSemFromNaf {
                     ///we have a missing additional actor
                     kafParticipant.setTokenStrings(kafSaxParser);
                     if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
+                        try {
+                            String uri = entityUri + URLEncoder.encode(kafParticipant.getTokenString(), "UTF-8").toLowerCase();
+                            SemActor semActor = new SemActor();
+                            semActor.setId(uri);
+                            ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();
+                            srlTargets.add(kafParticipant.getSpans());
+                            ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, srlTargets);
+                            semActor.setNafMentions(mentions);
+                            semActor.addPhraseCountsForMentions(kafSaxParser);
+                            KafMarkable kafMarkable = Util.getBestMatchingMarkable(kafSaxParser, kafParticipant.getSpanIds());
+                            if (kafMarkable != null) {
+                                //  System.out.println("kafMarkable.getId() = " + kafMarkable.getId());
+                                KafSense sense = Util.getBestScoringExternalReference(kafMarkable.getExternalReferences());
+                                semActor.addConcept(sense);
+                            }
+                            Util.addObject(semActors, semActor); /// always add since there may be phrases that embed entity references
+
+                        } catch (UnsupportedEncodingException e) {
+                            //  e.printStackTrace();
+                        }
+                    }
+                    else {
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * We should only run this function if we know which roles are not already covered by the entities and coreference sets.
+     * The Util.addObject is supposed to check that!
+     *
+     * @param project
+     * @param kafSaxParser
+     * @param semActors
+     */
+    static void processSrlForRemainingFramenetRolesOrg(String project,
+                                                    KafSaxParser kafSaxParser,
+                                                    ArrayList<SemObject> semActors) {
+        /*
+            - We are missing good actors in predicates and coreference sets that are not entities
+            - iterate over the SRL for roles with particular labels: A0, A1, A2, LOC, etc..
+            - get the span:
+            - check all actors for span match or span head match
+            - if none create a new actor or place
+        */
+        HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentionMap = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
+        String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
+        if (!baseUrl.toLowerCase().startsWith("http")) {
+            baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
+        }
+        String entityUri = ResourcesUri.nwrdata + project + "/non-entities/";
+        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+            KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
+            for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
+                KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
+
+                //// SKIP LARGE PHRASES
+                if (kafParticipant.getSpans().size() > Util.SPANMAXPARTICIPANT) {
+                    continue;
+                }
+                if (kafParticipant.getSpans().size() < Util.SPANMINPARTICIPANT) {
+                    continue;
+                }
+
+                // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
+                if (!RoleLabels.validRole(kafParticipant.getRole())) {
+                    continue;
+                }
+                if (!RoleLabels.hasFrameNetRole(kafParticipant)) {
+                    ///// SKIP ROLE WITHOUT FRAMENET
+                    continue;
+                }
+                //// we take all objects above threshold
+                ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+                if (semObjects.size() == 0) {
+                    ///we have a missing additional actor
+                    kafParticipant.setTokenStrings(kafSaxParser);
+                    if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
                         String uri = "";
-                        KafMarkable kafMarkable = Util.getBestMatchingMarkable(kafSaxParser, kafParticipant);
+                        KafMarkable kafMarkable = Util.getBestMatchingMarkable(kafSaxParser, kafParticipant.getSpanIds());
                         if (kafMarkable != null) {
                             //  System.out.println("kafMarkable.getId() = " + kafMarkable.getId());
                             uri = Util.getBestMarkableUri(kafMarkable);

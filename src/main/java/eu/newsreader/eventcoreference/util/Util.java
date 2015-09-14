@@ -1240,8 +1240,8 @@ public class Util {
     }
 
     /**
-     * Compares all Markables with a KafParticipant from the SRL layer to return the object that has a mention with the largest span overlap.
-     * If none of the objects exceeds or equal to the SPANMATCHTHRESHOLD, null is returned
+     * Compares all Markables with a KafParticipant from the SRL layer
+     * to return the object that has a mention with the largest span overlap.
      *
      * KafParticipants (roles in the SRL) have span with a head attribute.
      * However, very often the preposition or relative clause complement is marked as the head
@@ -1254,11 +1254,11 @@ public class Util {
      * @return
      */
     static public KafMarkable getBestMatchingMarkable(KafSaxParser kafSaxParser,
-                                                  KafParticipant kafParticipant) {
+                                                      ArrayList<String> spans) {
 
         KafMarkable topObject = null;
         int topScore = 0;
-        int nContentWordsKafParticipant = kafSaxParser.getNumberContentWords(kafParticipant.getSpanIds());
+        int nContentWordsKafParticipant = kafSaxParser.getNumberContentWords(spans);
         for (int i = 0; i < kafSaxParser.kafMarkablesArrayList.size(); i++) {
             KafMarkable kafMarkable = kafSaxParser.kafMarkablesArrayList.get(i);
             int matchCount = 0;
@@ -1269,14 +1269,9 @@ public class Util {
                 if (kafTerm!=null) {
                     if (kafSaxParser.contentWord(kafTerm.getTid())) {
                         nContentWordsNafMention++;
-                        for (int l = 0; l < kafParticipant.getSpans().size(); l++) {
-                            CorefTarget corefTarget = kafParticipant.getSpans().get(l);
-                           // System.out.println("corefTarget.getId() = " + corefTarget.getId());
-                           // System.out.println("kafTerm.getId() = " + kafTerm.getTid());
-                            if (corefTarget.getId().equals(kafTerm.getTid())) {
+                        if (spans.contains(kafTerm.getTid())) {
                                 matchCount++;
                                 break;
-                            }
                         }
                     }
                     else {
@@ -1296,11 +1291,9 @@ public class Util {
                 System.out.println("kafParticipant = " + kafParticipant.getTokenString());
 */
                 if (matchScoreAverage>0) {
-                    if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
-                        if (matchScoreAverage > topScore) {
-                            topScore = matchScoreAverage;
-                            topObject = kafMarkable;
-                        }
+                    if (matchScoreAverage > topScore) {
+                        topScore = matchScoreAverage;
+                        topObject = kafMarkable;
                     }
                 }
             }
