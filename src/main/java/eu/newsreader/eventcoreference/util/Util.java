@@ -1132,25 +1132,35 @@ public class Util {
         return uri;
     }
 
-    static public String getEntityLabelUriFromEntities (ArrayList<KafEntity> entities) {
+    static public String getEntityLabelUriFromEntities (KafSaxParser kafSaxParser, ArrayList<KafEntity> entities) {
         String uri = "";
         SemObject semObject = new SemObject();
         for (int i = 0; i < entities.size(); i++) {
             KafEntity kafEntity = entities.get(i);
+            kafEntity.setTokenStrings(kafSaxParser);
             String aUri = null;
             try {
-                String cleanLabel = kafEntity.getTokenString().replaceAll(" ", "_");
+                //String cleanLabel = kafEntity.getTokenString().replaceAll(" ", "_");
+                String cleanLabel = keepAlphaNumeric(kafEntity.getTokenString().trim());
                 //cleanLabel = cleanLabel.replaceAll("\'", "");
                 aUri = URLEncoder.encode(cleanLabel, "UTF-8");
+                if (!aUri.isEmpty()) {
+                    semObject.addPhraseCounts(aUri);
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            if (aUri!=null) {
-                semObject.addPhraseCounts(aUri);
-            }
         }
     //    System.out.println("semObject.getPhrase() = " + semObject.getPhraseCounts().toString());
-        uri = semObject.getTopPhraseAsLabel();
+        uri = semObject.getTopPhraseAsLabel().trim();
+        if (uri.isEmpty()) {
+            System.out.println("semObject.getPhraseCounts().size() = " + semObject.getPhraseCounts().size());
+            for (int i = 0; i < semObject.getPhraseCounts().size(); i++) {
+                PhraseCount phraseCount = semObject.getPhraseCounts().get(i);
+                System.out.println("phraseCount = " + phraseCount);
+            }
+            uri = semObject.getPhrase();
+        }
    //     System.out.println("semObject topPhrase = " + uri);
 
         return uri;
@@ -1250,7 +1260,7 @@ public class Util {
      * WE COUNT OVERLAP FOR POS=N,V,A,G ONLY
      *
      * @param kafSaxParser
-     * @param kafParticipant
+     * @param spans
      * @return
      */
     static public KafMarkable getBestMatchingMarkable(KafSaxParser kafSaxParser,
@@ -2233,7 +2243,6 @@ public class Util {
     }
 
     static public boolean hasAlphaNumeric(String uri) {
-/*
         final String alfanum="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (int i = 0; i < uri.toCharArray().length; i++) {
             char c = uri.toCharArray()[i];
@@ -2242,8 +2251,18 @@ public class Util {
             }
         }
         return false;
-*/      /// had to take out this function because of Bulgarian
-        return true;
+    }
+
+    static public String keepAlphaNumeric(String uri) {
+        String newString = "";
+        final String alfanum="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (int i = 0; i < uri.toCharArray().length; i++) {
+            char c = uri.toCharArray()[i];
+            if (alfanum.indexOf(c)>-1) {
+                newString+=c;
+            }
+        }
+        return newString;
     }
 
 

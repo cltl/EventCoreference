@@ -202,12 +202,15 @@ public class GetSemFromNaf {
                         try {
                             uri = URLEncoder.encode(kafEntity.getTokenString(), "UTF-8");
                         } catch (UnsupportedEncodingException e) {
-                            //  e.printStackTrace();
+                            /*System.out.println("kafEntity.getTokenString() = " + kafEntity.getTokenString());
+                            System.out.println("uri = " + uri);
+                              e.printStackTrace();*/
                         }
                     }
                 }
             }
             if (!uri.isEmpty()) {
+               // System.out.println("uri = " + uri);
                 if (kafEntityActorUriMap.containsKey(uri)) {
                     ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
                     entities.add(kafEntity);
@@ -249,20 +252,25 @@ public class GetSemFromNaf {
                     }
                 }
                 if (!topEntity.isEmpty()) {
-                    if (coveredEntities.contains(topEntity)) {
-                        //  System.out.println("duplicating = " + topEntity);
-                    }
                     coveredEntities.add(topEntity);
                     ArrayList<KafEntity> entities = kafEntityActorUriMap.get(topEntity);
                     ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferences(baseUrl, kafSaxParser, entities);
                     String entityId = "";
-                    entityId = Util.getEntityLabelUriFromEntities(entities);
-                        /*for (int e = 0; e < entities.size(); e++) {
-                            KafEntity kafEntity = entities.get(e);
-                            entityId += kafEntity.getId();
-                        }*/
+                    entityId = Util.getEntityLabelUriFromEntities(kafSaxParser, entities);
+                    if (entityId.isEmpty()) {
+                        entityId = baseUrl+"e"+semActors.size();
+                    }
+                    else {
+                        entityId = entityUri+entityId;
+                    }
+/*
+                    if (topEntity.toLowerCase().indexOf("espelund")>-1) {
+                        System.out.println("actor uri = " + topEntity);
+                        System.out.println("entityId = " + entityId);
+                    }
+*/
                     SemActor semActor = new SemActor();
-                    semActor.setId(entityUri + entityId);
+                    semActor.setId(entityId);
                     semActor.setNafMentions(mentionArrayList);
                     semActor.addPhraseCountsForMentions(kafSaxParser);
                     semActor.addConcepts(Util.getExternalReferences(entities));
@@ -280,18 +288,31 @@ public class GetSemFromNaf {
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String uri = keys.next();
+          //  System.out.println("uri = " + uri);
             if (!coveredEntities.contains(uri)) {
-                //   System.out.println("actor uri = " + uri);
                 ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
                 ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntities(baseUrl, kafSaxParser, entities);
                 String entityId = "";
-                entityId = Util.getEntityLabelUriFromEntities(entities);
+                entityId = Util.getEntityLabelUriFromEntities(kafSaxParser, entities);
+                if (entityId.isEmpty()) {
+                    entityId = baseUrl+"e"+semActors.size();
+                }
+                else {
+                    entityId = entityUri+entityId;
+                }
+
+/*
+                if (uri.toLowerCase().indexOf("espelund")>-1) {
+                    System.out.println("actor uri = " + uri);
+                    System.out.println("entityId = " + entityId);
+                }
+*/
                /* for (int i = 0; i < entities.size(); i++) {
                     KafEntity kafEntity = entities.get(i);
                     entityId += kafEntity.getId();
                 }*/
                 SemActor semActor = new SemActor();
-                semActor.setId(entityUri + entityId);
+                semActor.setId(entityId);
                 semActor.setNafMentions(mentionArrayList);
                 semActor.addPhraseCountsForMentions(kafSaxParser);
                 semActor.addConcepts(Util.getExternalReferences(entities));
@@ -366,7 +387,7 @@ public class GetSemFromNaf {
             ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
             ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntities(baseUrl, kafSaxParser, entities);
             String entityId = "";
-            entityId = Util.getEntityLabelUriFromEntities(entities);
+            entityId = Util.getEntityLabelUriFromEntities(kafSaxParser, entities);
             SemActor semActor = new SemActor();
             semActor.setId(entityUri + entityId);
             semActor.setNafMentions(mentionArrayList);
