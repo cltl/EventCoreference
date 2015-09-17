@@ -24,6 +24,7 @@ public class SemTime extends SemObject implements Serializable {
    private String functionInDocument;
 
    public SemTime() {
+       super(SemObject.TIME);
        functionInDocument = "";
        owlTime = new OwlTime();
        owlTimeBegin = new OwlTime();
@@ -251,47 +252,6 @@ public class SemTime extends SemObject implements Serializable {
             resource.addProperty(property, value);
         }
     }
-
-    /*
-    :DurationDescription
-      a       owl:Class ;
-      rdfs:subClassOf
-              [ a       owl:Restriction ;
-                owl:maxCardinality 1 ;
-                owl:onProperty :seconds
-              ] ;
-      rdfs:subClassOf
-              [ a       owl:Restriction ;
-                owl:maxCardinality 1 ;
-                owl:onProperty :minutes
-              ] ;
-      rdfs:subClassOf
-              [ a       owl:Restriction ;
-                owl:maxCardinality 1 ;
-                owl:onProperty :hours
-              ] ;
-      rdfs:subClassOf
-              [ a       owl:Restriction ;
-                owl:maxCardinality 1 ;
-                owl:onProperty :days
-              ] ;
-      rdfs:subClassOf
-              [ a       owl:Restriction ;
-                owl:maxCardinality 1 ;
-                owl:onProperty :weeks
-              ] ;
-      rdfs:subClassOf
-              [ a       owl:Restriction ;
-                owl:maxCardinality 1 ;
-                owl:onProperty :months
-              ] ;
-      rdfs:subClassOf
-              [ a       owl:Restriction ;
-                owl:maxCardinality 1 ;
-                owl:onProperty :years
-              ] .
-     */
-
 
 
     public SemRelation createSemTimeRelation (String baseUrl,

@@ -119,6 +119,9 @@ public class SemRelation implements Serializable {
         if (type.equals(Sem.hasTime.getLocalName())) {
             return Sem.hasTime;
         }
+        if (type.equals(Sem.hasAtTime.getLocalName())) {
+            return Sem.hasAtTime;
+        }
         else if (type.equals(Sem.hasBeginTime.getLocalName())) {
             return Sem.hasBeginTime;
         }
@@ -162,6 +165,50 @@ public class SemRelation implements Serializable {
             return Sem.hasSubType;
         }
     }
+
+    static public boolean isTemporalSemRelationProperty (String type) {
+        if (type.endsWith(Sem.hasTime.getLocalName())) {
+            return true;
+        }
+        if (type.endsWith(Sem.hasAtTime.getLocalName())) {
+            return true;
+        }
+        else if (type.endsWith(Sem.hasBeginTime.getLocalName())) {
+            return true;
+        }
+        else if (type.endsWith(Sem.hasEndTime.getLocalName())) {
+            return true;
+        }
+        else if (type.endsWith(Sem.hasFutureTime.getLocalName())) {
+            return true;
+        }
+        else if (type.endsWith(Sem.hasEarliestBeginTime.getLocalName())) {
+            return true;
+        }
+        else if (type.equals(Sem.hasEarliestEndTime.getLocalName())) {
+            return true;
+        }
+        else if (type.endsWith(Sem.hasFutureTimeStamp.getLocalName())) {
+            return true;
+        }
+        else if (type.endsWith(Sem.hasBeginTimeStamp.getLocalName())) {
+            //BiographyNet uses sem:hasBeginTimeStamp
+            return true;
+        }
+        else if (type.endsWith(Sem.hasEndTimeStamp.getLocalName())) {
+            return true;
+        }
+        else if (type.endsWith(Sem.hasEarliestBeginTimeStamp.getLocalName())) {
+          //  return Sem.hasFutureTimeStamp;
+            return true;
+        }
+        else if (type.endsWith(Sem.hasEarliestEndTimeStamp.getLocalName())) {
+          //  return Sem.hasFutureTimeStamp;
+            return true;
+        }
+        return false;
+    }
+
 
     public String getRoleRelation (String role) {
         String  rel = "";
@@ -224,19 +271,15 @@ public class SemRelation implements Serializable {
             if (predicate.equalsIgnoreCase("hasFactBankValue")) {
                 Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue + predicate);
                 subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
-            }
-            else {
+            }else {
                 semProperty = getSemRelationProperty(predicate);
-                if (semProperty!=null
-                        && semProperty != Sem.hasSubType
-                        /// unknown
-                        && semProperty!=Sem.hasPlace && semProperty!=Sem.hasActor)
-                        //// we decide next if the role is that of an actor or a place
-                {
+                if (isTemporalSemRelationProperty(predicate)) {
                         subject.addProperty(semProperty, object);
+                        subject.addProperty(Sem.hasTime, object); /// additional hasTime relation to generalize
                 }
                 else {
-                    if (semProperty.equals(Sem.hasSubType)) {
+                    if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
+                        !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
                         predicate = getRoleRelation(predicate);
                         if (!predicate.isEmpty()) {
                             Property srlProperty = relationModel.createProperty(predicate);

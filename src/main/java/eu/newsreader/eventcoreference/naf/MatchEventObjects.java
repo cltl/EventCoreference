@@ -37,7 +37,7 @@ public class MatchEventObjects {
             "--phrase-match  <int>      <threshold for phrase matches of events, default is 50>\n" +
             "--lcs                      <(OPTIONAL, not used yet) use lowest-common-subsumers\n"+
             "--match-type    <string>   <(OPTIONAL) Indicates what is used to match events across resources. Default value is \"LEMMA\". Values:\"LEMMA\", \"ILI\", \"ILILEMMA\">\n" +
-            "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
+            "--ili                  <(OPTIONAL) Path to ILI.ttl file to convert wordnet-synsets identifiers to ILI identifiers>\n" +
             "--source-data   <path>     <(OPTIONAL, Deprecated) Path to LexisNexis meta data on owners and authors to enrich the provenance>\n" +
             "--roles  <string>          <String with PropbBank roles, separated by \",\" for which there minimally needs to be a match, e.g. \"a0,a1\". This is especially relevant for sourceEvent, grammaticalEvent. If value is \"all\", then all participants need to match. This can be used for futureEvent"+
             "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n"+
@@ -95,6 +95,10 @@ public class MatchEventObjects {
                     String field = fields[j].trim().toLowerCase();
                     roleNeededArrayList.add(field);
                 }
+            }
+            else if (arg.equals("--ili") && args.length > (i + 1)) {
+                String pathToILIFile = args[i+1];
+                JenaSerialization.iliReader.readILIFile(pathToILIFile);
             }
             else if (arg.equals("--ili-uri")) {
                 ILIURI = true;

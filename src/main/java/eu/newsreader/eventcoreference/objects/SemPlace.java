@@ -40,6 +40,7 @@ public class SemPlace extends SemObject{
 
 
    public SemPlace() {
+       super(SemObject.ENTITY);
 
    }
 

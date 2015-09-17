@@ -1134,7 +1134,7 @@ public class Util {
 
     static public String getEntityLabelUriFromEntities (KafSaxParser kafSaxParser, ArrayList<KafEntity> entities) {
         String uri = "";
-        SemObject semObject = new SemObject();
+        SemObject semObject = new SemObject(SemObject.ENTITY);
         for (int i = 0; i < entities.size(); i++) {
             KafEntity kafEntity = entities.get(i);
             kafEntity.setTokenStrings(kafSaxParser);

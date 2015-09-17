@@ -27,7 +27,7 @@ public class Sem {
     /** <p>According to is used to state which Authority sais that a property constrained
      *  by the View Constraint is true.</p>
      */
-    public static final ObjectProperty accordingTo = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/accordingTo" );
+    public static final ObjectProperty accordingTo = m_model.createObjectProperty("http://semanticweb.cs.vu.nl/2009/11/sem/accordingTo");
 
     /** <p>Has actor type is used to assign a type to an actor.</p> */
     public static final ObjectProperty actorType = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/actorType" );
@@ -66,6 +66,12 @@ public class Sem {
      */
     public static final ObjectProperty hasTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasTime" );
 
+
+    /** <p>Has time is used to indicate at which time an Event took place or when a property
+     *  under the Temporary Constraint is valid. Has time points to a symbolic representation
+     *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>
+     */
+    public static final ObjectProperty hasAtTime = m_model.createObjectProperty( "http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime" );
 
     /** <p>Has BeginTime is used to indicate at which time an Event started. Has time points to a symbolic representation
      *  of time, which allows semantic relations between time resources. (see http://www.w3.org/TR/owl-time/)</p>

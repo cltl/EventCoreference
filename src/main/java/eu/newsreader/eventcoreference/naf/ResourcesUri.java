@@ -7,6 +7,7 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public class ResourcesUri {
 
+    final static public String skos = "http://www.w3.org/2004/02/skos/core#";
     final static public String nwr = "http://www.newsreader-project.eu/";
     final static public String nwrtime = "http://www.newsreader-project.eu/time/";
     final static public String nwrdata = "http://www.newsreader-project.eu/data/";
@@ -17,7 +18,7 @@ public class ResourcesUri {
     //final static public String eso = "http://www.newsreader-project.eu/ontologies/eso#";
     final static public String eso = "http://www.newsreader-project.eu/ontologies/domain-ontology#";
     final static public String wn = "http://www.newsreader-project.eu/ontologies/pwn3.0/";
-    final static public String ili = "http://www.newsreader-project.eu/ontologies/ili3.0/";
+    final static public String ili = "http://globalwordnet.org/ili/";
     final static public String cornetto = "http://www.newsreader-project.eu/ontologies/cornetto2.1/";
     final static public String fn = "http://www.newsreader-project.eu/ontologies/framenet/";
     final static public String vn = "http://www.newsreader-project.eu/ontologies/verbnet/";
@@ -37,6 +38,7 @@ public class ResourcesUri {
 
     static public void prefixModel (Model model) {
         model.setNsPrefix("wn", ResourcesUri.wn);
+        model.setNsPrefix("ili", ResourcesUri.ili);
       //  model.setNsPrefix("cornetto", ResourcesUri.cornetto);
         model.setNsPrefix("fn", ResourcesUri.fn);
         model.setNsPrefix("nwrdata", ResourcesUri.nwrdata);
@@ -53,6 +55,7 @@ public class ResourcesUri {
         model.setNsPrefix("sem", ResourcesUri.sem);
         model.setNsPrefix("owl", ResourcesUri.owl);
         model.setNsPrefix("time", ResourcesUri.owltime);
+        model.setNsPrefix("skos", ResourcesUri.skos);
         model.setNsPrefix("rdf", ResourcesUri.rdf);
         model.setNsPrefix("rdfs", ResourcesUri.rdfs);
     }

@@ -269,7 +269,7 @@ public class GetSemFromNaf {
                         System.out.println("entityId = " + entityId);
                     }
 */
-                    SemActor semActor = new SemActor();
+                    SemActor semActor = new SemActor(SemObject.ENTITY);
                     semActor.setId(entityId);
                     semActor.setNafMentions(mentionArrayList);
                     semActor.addPhraseCountsForMentions(kafSaxParser);
@@ -311,7 +311,7 @@ public class GetSemFromNaf {
                     KafEntity kafEntity = entities.get(i);
                     entityId += kafEntity.getId();
                 }*/
-                SemActor semActor = new SemActor();
+                SemActor semActor = new SemActor(SemObject.ENTITY);
                 semActor.setId(entityId);
                 semActor.setNafMentions(mentionArrayList);
                 semActor.addPhraseCountsForMentions(kafSaxParser);
@@ -388,7 +388,7 @@ public class GetSemFromNaf {
             ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntities(baseUrl, kafSaxParser, entities);
             String entityId = "";
             entityId = Util.getEntityLabelUriFromEntities(kafSaxParser, entities);
-            SemActor semActor = new SemActor();
+            SemActor semActor = new SemActor(SemObject.ENTITY);
             semActor.setId(entityUri + entityId);
             semActor.setNafMentions(mentionArrayList);
             semActor.addPhraseCountsForMentions(kafSaxParser);
@@ -452,7 +452,7 @@ public class GetSemFromNaf {
                     if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
                         try {
                             String uri = entityUri + URLEncoder.encode(kafParticipant.getTokenString(), "UTF-8").toLowerCase();
-                            SemActor semActor = new SemActor();
+                            SemActor semActor = new SemActor(SemObject.NONENTITY);
                             semActor.setId(uri);
                             ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();
                             srlTargets.add(kafParticipant.getSpans());
@@ -566,7 +566,7 @@ public class GetSemFromNaf {
             String key = (String) keys.next();  /// participant uri
             //  System.out.println("key = " + key);
             ArrayList<ArrayList<CorefTarget>> corefTargetArrayList = mentionMap.get(key);
-            SemActor semActor = new SemActor();
+            SemActor semActor = new SemActor(SemObject.NONENTITY);
             semActor.setId(key);
             ArrayList<NafMention> mentions = Util.getNafMentionArrayList(baseUrl, kafSaxParser, corefTargetArrayList);
             semActor.setNafMentions(mentions);
@@ -574,14 +574,6 @@ public class GetSemFromNaf {
             semActor.addConcepts(Util.getExternalReferencesSrlParticipants(kafSaxParser, key));
             semActor.setIdByDBpediaReference();
             Util.addObject(semActors, semActor); /// always add since there may be phrases that embed entity references
-/*
-            if (!Util.hasMentionAndSpanIntersect(semActors, semActor)) {
-                Util.addObject(semActors, semActor);
-            }
-            else {
-                System.out.println("IGNORING DUE TO MENTION OVERLAP");
-            }
-*/
         }
     }
 
@@ -867,7 +859,7 @@ public class GetSemFromNaf {
                             timexRelationCount++;
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, semAnchorTime.getTermIds());
                             SemRelation semRelation = semAnchorTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount,Sem.hasTime.getLocalName(), semEvent.getId(), mention);
+                                    timexRelationCount,Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
                             semRelations.add(semRelation);
                             timeAnchor = true;
                         }
@@ -898,7 +890,7 @@ public class GetSemFromNaf {
                             timexRelationCount++;
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
                             SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId(), mention);
+                                    timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
                             semRelations.add(semRelation);
                             timeAnchor = true;
                             //  break;*/
@@ -917,7 +909,7 @@ public class GetSemFromNaf {
                             timexRelationCount++;
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
                             SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId(), mention);
+                                    timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
                             semRelations.add(semRelation);
                             timeAnchor = true;
                             //  break;*/
@@ -935,7 +927,7 @@ public class GetSemFromNaf {
                             timexRelationCount++;
                             NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
                             SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId(), mention);
+                                    timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
                             semRelations.add(semRelation);
                             timeAnchor = true;
                             // break;
@@ -961,7 +953,7 @@ public class GetSemFromNaf {
                    // System.out.println("docSemTime = " + docSemTime.getOwlTime().toString());
                    // System.out.println("semEvent = " + semEvent.getTopPhraseAsLabel());
                     SemRelation semRelation = docSemTime.createSemTimeRelation(baseUrl,
-                            timexRelationCount, Sem.hasTime.getLocalName(), semEvent.getId());
+                            timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId());
                     semRelations.add(semRelation);
                 }
             }

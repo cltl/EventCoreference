@@ -40,7 +40,7 @@ public class PerspectiveObject {
         this.predicateConcepts = new ArrayList<KafSense>();
         this.predicateId = "";
         this.source = new KafParticipant();
-        this.sourceEntity = new SemActor();
+        this.sourceEntity = new SemActor(SemObject.ENTITY);
         this.target = new KafParticipant();
         this.targetEventMentions = new ArrayList<NafMention>();
     }

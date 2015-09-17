@@ -39,9 +39,11 @@ public class SemActor extends SemObject{
    */
 
 
-   public SemActor() {
-    }
 
+
+    public SemActor(String type) {
+        super(type);
+    }
 
 
     public String toString () {

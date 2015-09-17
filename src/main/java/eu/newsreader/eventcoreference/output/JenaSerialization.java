@@ -6,6 +6,7 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.pwn.ILIReader;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
@@ -23,6 +24,7 @@ public class JenaSerialization {
     static Dataset ds = null;
     static Model provenanceModel = null;
     static Model instanceModel = null;
+    static public ILIReader iliReader = null;
 
     static public void createModels () {
         ds = TDBFactory.createDataset();
@@ -30,6 +32,7 @@ public class JenaSerialization {
         instanceModel = ds.getNamedModel(ResourcesUri.nwr+"instances");
         prefixModels ();
     }
+
 
     static void prefixModels () {
         Model defaultModel = ds.getDefaultModel();

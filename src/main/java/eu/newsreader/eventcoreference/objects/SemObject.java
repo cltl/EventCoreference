@@ -7,8 +7,10 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
+import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
+import org.openrdf.model.vocabulary.SKOS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,6 +26,11 @@ import java.util.ArrayList;
  */
 public class SemObject implements Serializable {
 
+    static public final String EVENT = "EVENT";
+    static public final String ENTITY = "ENTITY";
+    static public final String TIME = "TIME";
+    static public final String NONENTITY = "NONENTITY";
+
     private String id;                              //
     private String type;
     private String uri;                             //
@@ -36,10 +43,10 @@ public class SemObject implements Serializable {
     private String label;
     private ArrayList<NafMention> nafMentions;    //
 
-    public SemObject() {
+    public SemObject(String type) {
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
-        this.type = "";
+        this.type = type;
         this.nafIds = new ArrayList<String>();
         this.label = "";
         this.uri = "";
@@ -509,11 +516,23 @@ public class SemObject implements Serializable {
             }
             String nameSpaceType = getNameSpaceTypeReference(kafSense);
             if (!nameSpaceType.isEmpty()) {
-              //  System.out.println("nameSpaceType = " + nameSpaceType);
-                Resource conceptResource = model.createResource(nameSpaceType);
-                resource.addProperty(RDF.type, conceptResource);
-            }
+                if (!type.equals(NONENTITY)) {
+                    //  System.out.println("nameSpaceType = " + nameSpaceType);
+                    Resource conceptResource = model.createResource(nameSpaceType);
+                    resource.addProperty(RDF.type, conceptResource);
+                }
+                else {
+                    //  System.out.println("nameSpaceType = " + nameSpaceType);
+                  //  Property property = model.createProperty(SKOS.RELATED_MATCH.getLocalName());
+                    Property property = model.createProperty(SKOS.RELATED_MATCH.toString());
+                    Resource conceptResource = model.createResource(nameSpaceType);
+                    resource.addProperty(property, conceptResource);
 
+                    conceptResource = model.createResource(ResourcesUri.nwrontology+SemObject.NONENTITY);
+                    resource.addProperty(RDF.type, conceptResource);
+
+                }
+            }
         }
     }
 
@@ -528,7 +547,15 @@ public class SemObject implements Serializable {
                 senseCode = "eng"+senseCode.substring(6);
             }
           //  System.out.println(senseCode);
-            ref = ResourcesUri.wn + senseCode;
+            if (JenaSerialization.iliReader!=null) {
+                if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
+                    senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
+                    ref = ResourcesUri.ili + senseCode;
+                }
+                else {
+                    ref = ResourcesUri.wn + senseCode;
+                }
+            }
         }
         else if (kafSense.getSensecode().toLowerCase().startsWith("ili-30-")) {
             /// this is needed since we get very different resource values from WSD:
@@ -538,8 +565,13 @@ public class SemObject implements Serializable {
              */
             String senseCode = kafSense.getSensecode();
             senseCode = "eng"+senseCode.substring(6);
-           // System.out.println(senseCode);
-            ref = ResourcesUri.wn + senseCode;
+            if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
+                senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
+                ref = ResourcesUri.ili + senseCode;
+            }
+            else {
+                ref = ResourcesUri.wn + senseCode;
+            }
         }
         else if (kafSense.getSensecode().toLowerCase().startsWith("eng-30-")) {
             /// this is needed since we get very different resource values from WSD:
@@ -549,8 +581,13 @@ public class SemObject implements Serializable {
              */
             String senseCode = kafSense.getSensecode();
             senseCode = "eng"+senseCode.substring(6);
-           // System.out.println(senseCode);
-            ref = ResourcesUri.wn + senseCode;
+            if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
+                senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
+                ref = ResourcesUri.ili + senseCode;
+            }
+            else {
+                ref = ResourcesUri.wn + senseCode;
+            }
         }
         else if (kafSense.getResource().equalsIgnoreCase("cornetto")) {
             ref = ResourcesUri.cornetto + kafSense.getSensecode();

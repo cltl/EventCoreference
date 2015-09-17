@@ -17,7 +17,7 @@ public class CompositeEvent implements Serializable{
     private ArrayList<SemRelation> mySemRelations;
 
     public CompositeEvent() {
-        this.event = new SemObject();
+        this.event = new SemObject(SemObject.EVENT);
         this.mySemTimes = new ArrayList<SemTime>();
         this.mySemActors = new ArrayList<SemActor>();
         this.mySemRelations = new ArrayList<SemRelation>();
@@ -43,10 +43,12 @@ public class CompositeEvent implements Serializable{
             SemRelation semRelation = mySemRelations.get(i);
             for (int j = 0; j < semRelation.getPredicates().size(); j++) {
                 String predicate = semRelation.getPredicates().get(j);
-                if (predicate.toLowerCase().endsWith("actor") || predicate.toLowerCase().endsWith("place")) {
+                if (predicate.endsWith(Sem.hasPlace.getLocalName()) || predicate.endsWith(Sem.hasActor.getLocalName())) {
+                //if (predicate.toLowerCase().endsWith("actor") || predicate.toLowerCase().endsWith("place")) {
                    hasParticipant = true;
                 }
-                if (predicate.toLowerCase().endsWith("time") || predicate.toLowerCase().endsWith("timestamp")) {
+                if (SemRelation.isTemporalSemRelationProperty(predicate)) {
+                //if (predicate.toLowerCase().endsWith("time") || predicate.toLowerCase().endsWith("timestamp")) {
                    hasTime = true;
                 }
             }

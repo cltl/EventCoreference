@@ -40,6 +40,7 @@ public class SemEvent extends SemObject{
 
 
    public SemEvent() {
+       super(SemObject.EVENT);
     }
 
 

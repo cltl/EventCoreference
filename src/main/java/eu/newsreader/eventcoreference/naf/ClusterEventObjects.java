@@ -285,6 +285,7 @@ public class ClusterEventObjects {
             if (!compositeEvent.isValid()) {
                 continue;
             }
+            ///////// DIVISION IN BASIC EVENT TYPES
             String eventType = FrameTypes.setEventTypeString(compositeEvent.getEvent(),contextualVector, sourceVector, grammaticalVector);
             File folder = contextualFolder;
             if (!eventType.isEmpty()) {
@@ -294,6 +295,9 @@ public class ClusterEventObjects {
                     folder = grammaticalFolder;
                 }
             }
+
+
+            ///////// DIVISION IN TEMPORAL CONTAINERS
             File timeFile = null;
             ArrayList<SemTime> outputTimes = myTimes;
 
@@ -304,8 +308,6 @@ public class ClusterEventObjects {
             //// temporal buckets for each time anchoring
             TreeSet<String> treeSet = new TreeSet<String>();
             TreeSet<String> treeSetFuture = new TreeSet<String>();
-
-
 
             if (outputTimes.size() == 0) {
                 /// this should never happen
@@ -361,10 +363,10 @@ public class ClusterEventObjects {
                     SemRelation semRelation = myRelations.get(i);
                     for (int k = 0; k < semRelation.getPredicates().size(); k++) {
                         String predicate = semRelation.getPredicates().get(k);
-                        if (predicate.endsWith(Sem.hasBeginTimeStamp.getLocalName())) {
+                        if (predicate.endsWith(Sem.hasBeginTime.getLocalName())) {
                             beginPoints.add(semRelation.getObject());
                         }
-                        else if (predicate.toLowerCase().endsWith(Sem.hasEndTimeStamp.getLocalName())) {
+                        else if (predicate.toLowerCase().endsWith(Sem.hasEndTime.getLocalName())) {
                             endPoints.add(semRelation.getObject());
                         }
                     }
