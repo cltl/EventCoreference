@@ -268,7 +268,7 @@ public class ClusterEventObjects {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        System.out.println("nafFileName = " + nafFileName);
+      //  System.out.println("nafFileName = " + nafFileName);
         GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
 
 
