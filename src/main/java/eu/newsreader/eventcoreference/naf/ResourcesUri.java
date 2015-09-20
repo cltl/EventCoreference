@@ -16,7 +16,7 @@ public class ResourcesUri {
     final static public String nwrvalue = "http://www.newsreader-project.eu/ontologies/value#";
     final static public String nwrontology = "http://www.newsreader-project.eu/ontologies/";
     //final static public String eso = "http://www.newsreader-project.eu/ontologies/eso#";
-    final static public String eso = "http://www.newsreader-project.eu/ontologies/domain-ontology#";
+    final static public String eso = "http://www.newsreader-project.eu/domain-ontology#";
     final static public String wn = "http://www.newsreader-project.eu/ontologies/pwn3.0/";
     final static public String ili = "http://globalwordnet.org/ili/";
     final static public String cornetto = "http://www.newsreader-project.eu/ontologies/cornetto2.1/";
@@ -44,7 +44,8 @@ public class ResourcesUri {
         model.setNsPrefix("nwrdata", ResourcesUri.nwrdata);
         model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
         model.setNsPrefix("eso", ResourcesUri.eso);
-        model.setNsPrefix("dbp", ResourcesUri.dbp);
+        /// we need to take out the dbp ns because the URIs from dbp are not valid. They contain e.g. dots "Apple_Inc."
+      //  model.setNsPrefix("dbp", ResourcesUri.dbp);
         model.setNsPrefix("pb", ResourcesUri.pb);
 
 /*      //REMOVED DUE TO ILLEGAL CHARACTERS
