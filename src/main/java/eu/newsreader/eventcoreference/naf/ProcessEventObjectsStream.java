@@ -23,8 +23,9 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.Map;
 /**
  * Created with IntelliJ IDEA.
  * User: Filip
@@ -111,7 +112,7 @@ public class ProcessEventObjectsStream {
     public static final Node identityNode = NodeFactory.createURI("http://www.w3.org/2002/07/owl#sameAs");
     public static final Node identityGraphNode = NodeFactory.createURI("http://www.newsreader-project.eu/identity");
     public static final Node lemmaNode = NodeFactory.createURI("http://www.w3.org/2000/01/rdf-schema#label");
-    public static final Node timeNode = NodeFactory.createURI("http://semanticweb.cs.vu.nl/2009/11/sem/hasTime");
+    public static final Node timeNode = NodeFactory.createURI("http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime");
     public static final Node typeNode = NodeFactory.createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
     public static final Node instantNode = NodeFactory.createURI("http://www.w3.org/TR/owl-time#Instant");
     public static final Node intervalNode = NodeFactory.createURI("http://www.w3.org/TR/owl-time#Interval");
@@ -125,7 +126,7 @@ public class ProcessEventObjectsStream {
     static public String matchSingleTmx(Node tmx, DatasetGraph g, Model m){
         String sq="";
         if (g.contains(null, tmx, typeNode, instantNode)) { // One Instant
-            sq += "?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Instant> . ";
+            sq += "?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Instant> . ";
             for (Iterator<Quad> iter = g.find(null, tmx, specificTimeNode, null); iter.hasNext(); ) {
                 Quad q = iter.next();
                 sq += "?t <http://www.w3.org/TR/owl-time#inDateTime> <" + q.asTriple().getObject() + "> . ";
@@ -150,7 +151,7 @@ public class ProcessEventObjectsStream {
                     String begin = evrb.get("begin").toString();
                     String end = evrb.get("end").toString();
 
-                    String unionQuery = "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Interval> . ?t <http://www.w3.org/TR/owl-time#hasBeginning> <" + begin + "> ; <http://www.w3.org/TR/owl-time#hasEnd> <" + end + "> . } ";
+                    String unionQuery = "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Interval> . ?t <http://www.w3.org/TR/owl-time#hasBeginning> <" + begin + "> ; <http://www.w3.org/TR/owl-time#hasEnd> <" + end + "> . } ";
                     unionQuery += "UNION ";
                     unionQuery += "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp> ?t1 . ?t1 a <http://www.w3.org/TR/owl-time#Instant> . ?t1 <http://www.w3.org/TR/owl-time#inDateTime> <" + begin + "> . ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp> ?t2 . ?t2 a <http://www.w3.org/TR/owl-time#Instant> . ?t2 <http://www.w3.org/TR/owl-time#inDateTime> <" + end + "> . } ";
                     sq += unionQuery;
@@ -241,6 +242,12 @@ public class ProcessEventObjectsStream {
 
         Model m = ds.getNamedModel("http://www.newsreader-project.eu/instances");
 
+        Model m2 = ds.getDefaultModel();
+        m2.setNsPrefix("sem", "http://semanticweb.cs.vu.nl/2009/11/sem/");
+        m2.setNsPrefix("pb", "http://www.newsreader-project.eu/ontologies/propbank/");
+        m2.setNsPrefix("eso", "http://www.newsreader-project.eu/ontologies/domain-ontology#");
+        m2.setNsPrefix("fn", "http://www.newsreader-project.eu/ontologies/framenet/");
+
         DatasetGraph g = ds.asDatasetGraph();
 
         DatasetGraph gnew = dsnew.asDatasetGraph();
@@ -250,6 +257,7 @@ public class ProcessEventObjectsStream {
         final String prolog1 = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/>";
         final String prolog2 = "PREFIX rdf: <" + RDF.getURI() + ">";
         final String prolog3 = "PREFIX nwr: <http://www.newsreader-project.eu/> ";
+        final String rolePrefixes = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/>" + NL + "PREFIX eso: <http://www.newsreader-project.eu/ontologies/domain-ontology#>" + NL + "PREFIX pb: <http://www.newsreader-project.eu/ontologies/propbank/>" + NL + "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/>" + NL;
 
         final String allEventsQuery = "SELECT distinct ?ev WHERE { ?ev a <http://semanticweb.cs.vu.nl/2009/11/sem/Event> }";
 
@@ -282,8 +290,8 @@ public class ProcessEventObjectsStream {
 
                 String MATCHTYPE = "";
                 // Process the event now ;)
-                String sparqlSelectQuery = "SELECT distinct ?ev ";
-                String sparqlQuery = "WHERE { ?ev a <http://semanticweb.cs.vu.nl/2009/11/sem/Event> , ";
+                String sparqlSelectQuery = rolePrefixes + "SELECT distinct ?ev ";
+                String sparqlQuery = "WHERE { ?ev a sem:Event , ";
                 ArrayList<String> neededRoles = new ArrayList<String>();
                 String nwrtype = "";
                 ArrayList<String> myILIs = new ArrayList<String>();
@@ -317,7 +325,7 @@ public class ProcessEventObjectsStream {
                         } else if (rdfType.contains("http://www.newsreader-project.eu/ontologies/framenet/")) {
                             myFrames.add(rdfType);
                         } else if (!rdfType.equals("http://semanticweb.cs.vu.nl/2009/11/sem/Event")) { // wordnet ILIs
-                            myILIs.add(rdfType.replace("http://www.newsreader-project.eu/ontologies/pwn3.0/eng-", "http://www.newsreader-project.eu/ontologies/ili-30-"));
+                            myILIs.add(rdfType);
                         }
 
                     }
@@ -343,31 +351,50 @@ public class ProcessEventObjectsStream {
 
                 if (!neededRoles.isEmpty()) {
                     boolean skip = false;
-                    for (int i = 0; i < neededRoles.size(); i++) {
-                        String role = neededRoles.get(i);
-                        Node roleNode = NodeFactory.createURI("http://www.newsreader-project.eu/ontologies/propbank/" + role.toUpperCase());
 
-                        ArrayList<Node> allActors = new ArrayList<Node>();
-                        for (Iterator<Quad> iter = g.find(null, eventNode, roleNode, null); iter.hasNext(); ) {
+                    if (neededRoles.size()==1 && neededRoles.get(0).equals("all")){//match all roles there are for this event
+                        Map<String, String> rolesToActors = new HashMap<String, String>();
+                        for (Iterator<Quad> iter = g.find(null, eventNode, null, null); iter.hasNext(); ) {
                             Quad q = iter.next();
-                            allActors.add(q.asTriple().getObject());
+                            String predicate = q.asTriple().getPredicate().toString();
+                            if (predicate.startsWith(m2.getNsPrefixURI("sem") + "hasActor") || predicate.startsWith(m2.getNsPrefixURI("eso")) || predicate.startsWith(m2.getNsPrefixURI("fn")) || predicate.startsWith(m2.getNsPrefixURI("pb")))
+                                rolesToActors.put(q.asTriple().getPredicate().toString(), q.asTriple().getObject().toString());
                         }
-                        if (allActors.isEmpty()) {
-                            break;
-                        } else if (allActors.size() == 1) {
-                            sparqlQuery += "?ev <http://www.newsreader-project.eu/ontologies/propbank/" + role.toUpperCase() + "> <" + allActors.get(0) + "> . ";
-                        } else {
-                            String rolevar = "?" + role;
+                        for (Map.Entry<String, String> entry : rolesToActors.entrySet())
+                        {
+                            sparqlQuery += "?ev <" + entry.getKey() + "> <" + entry.getValue() + "> . ";
+                        }
 
-                            String filter = " { ?ev <http://www.newsreader-project.eu/ontologies/propbank/" + role.toUpperCase() + "> " + rolevar + " . FILTER ( " + rolevar + " IN (";
-                            for (int j = 0; j < allActors.size(); j++) {
-                                filter += allActors.get(j) + ", ";
+                    } else {
+
+                        for (int i = 0; i < neededRoles.size(); i++) {
+                            String role = neededRoles.get(i);
+                            System.out.println(role);
+                            Node roleNode = NodeFactory.createURI(role);
+                            System.out.println(m2.expandPrefix(roleNode.getURI()));
+                            ArrayList<Node> allActors = new ArrayList<Node>();
+                            for (Iterator<Quad> iter = g.find(null, eventNode, NodeFactory.createURI(m2.expandPrefix(roleNode.getURI())), null); iter.hasNext(); ) {
+                                Quad q = iter.next();
+                                allActors.add(q.asTriple().getObject());
                             }
-                            sparqlQuery += filter.substring(0, filter.length() - 2) + ") ) . ";
+                            System.out.println(allActors);
+                            if (allActors.isEmpty()) {
+                                break;
+                            } else if (allActors.size() == 1) {
+                                sparqlQuery += "?ev " + role + " <" + allActors.get(0) + "> . ";
+                            } else {
+                                String rolevar = "?" + role;
+
+                                String filter = " { ?ev " + role + " " + rolevar + " . FILTER ( " + rolevar + " IN (";
+                                for (int j = 0; j < allActors.size(); j++) {
+                                    filter += allActors.get(j) + ", ";
+                                }
+                                sparqlQuery += filter.substring(0, filter.length() - 2) + ") ) . ";
+                            }
                         }
+                        if (skip)
+                            continue;
                     }
-                    if (skip)
-                        continue;
                 }
                 // Roles done!
 
@@ -443,7 +470,6 @@ public class ProcessEventObjectsStream {
                 if (allTmx.size() == 0 && allAssociatedBeginTimes.size()==0) {
                     sparqlQuery += "} ";
                     sparqlQuery = sparqlSelectQuery + sparqlQuery;
-
                     inferIdentityRelations(sparqlQuery, matchILI, matchLemma, matchMultiple, myILIs.size(), eventNode, gnew);
 
                     // System.out.println(sparqlQuery);
@@ -455,7 +481,6 @@ public class ProcessEventObjectsStream {
                     sparqlQuery += matchSingleTmx(tmx, g, m);
                     sparqlQuery += "} ";
                     sparqlQuery = sparqlSelectQuery + sparqlQuery;
-
                     inferIdentityRelations(sparqlQuery, matchILI, matchLemma, matchMultiple, myILIs.size(), eventNode, gnew);
 
                     //System.out.println(sparqlQuery);
@@ -467,10 +492,8 @@ public class ProcessEventObjectsStream {
                     sparqlQuery += matchAssociatedPair(begin, end);
                     sparqlQuery += "}";
                     sparqlQuery = sparqlSelectQuery + sparqlQuery;
-
                     inferIdentityRelations(sparqlQuery, matchILI, matchLemma, matchMultiple, myILIs.size(), eventNode, gnew);
 
-                    //System.out.println(sparqlQuery);
                 } else { //2+ times associated
                     sparqlQuery = sparqlSelectQuery + sparqlQuery;
                     boolean baseEventEmpty=true;
@@ -586,7 +609,7 @@ public class ProcessEventObjectsStream {
         ArrayList<Quad> quadsToAdd = new ArrayList<Quad>();
         for (Iterator<Quad> iter = g.find(null, eventId, null, null); iter.hasNext(); ) {
             Quad q = iter.next();
-            if (!q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasTime") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp")) {
+            if (!q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp")) {
                 quadsToAdd.add(new Quad(q.getGraph(), tmxEventId, q.getPredicate(), q.getObject()));
             }
         }
@@ -630,7 +653,7 @@ public class ProcessEventObjectsStream {
         ArrayList<Quad> quadsToAdd = new ArrayList<Quad>();
         for (Iterator<Quad> iter = g.find(null, eventId, null, null); iter.hasNext(); ) {
             Quad q = iter.next();
-            if (!q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasTime") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp")) {
+            if (!q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp")) {
                 quadsToAdd.add(new Quad(q.getGraph(), tmxEventId, q.getPredicate(), q.getObject()));
             }
         }
@@ -643,7 +666,7 @@ public class ProcessEventObjectsStream {
 
     private static String matchAssociatedPair(String begin, String end) {
         if (!begin.isEmpty() && !end.isEmpty()) {
-            String unionQuery = "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Interval> . ?t <http://www.w3.org/TR/owl-time#hasBeginning> <" + begin + "> ; <http://www.w3.org/TR/owl-time#hasEnd> <" + end + "> . } ";
+            String unionQuery = "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Interval> . ?t <http://www.w3.org/TR/owl-time#hasBeginning> <" + begin + "> ; <http://www.w3.org/TR/owl-time#hasEnd> <" + end + "> . } ";
             unionQuery += "UNION ";
             unionQuery += "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp> ?t1 . ?t1 a <http://www.w3.org/TR/owl-time#Instant> . ?t1 <http://www.w3.org/TR/owl-time#inDateTime> <" + begin + "> . ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp> ?t2 . ?t2 a <http://www.w3.org/TR/owl-time#Instant> . ?t2 <http://www.w3.org/TR/owl-time#inDateTime> <" + end + "> . } ";
             return unionQuery;
@@ -680,6 +703,7 @@ public class ProcessEventObjectsStream {
         if (matchILI || matchLemma) {
             sparqlQuery += "GROUP BY ?ev";
         }
+        System.out.println(sparqlQuery);
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
