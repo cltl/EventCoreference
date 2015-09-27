@@ -254,6 +254,41 @@ public class Util {
         kafSaxParser.kafCorefenceArrayList = fixedSets;
     }
 
+
+    static public void fixSourceEventCoreferenceSets(KafSaxParser kafSaxParser,
+                                                     Vector<String> contextualVector,
+                                                     Vector<String> sourceVector,
+                                                     Vector<String> grammaticalVector) {
+        ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (kafCoreferenceSet.getType().toLowerCase().startsWith("event") && kafCoreferenceSet.getSetsOfSpans().size()>1) {
+                ArrayList<String> eventTypes = FrameTypes.getEventTypeArrayList(kafSaxParser, kafCoreferenceSet, contextualVector, sourceVector, grammaticalVector);
+                if (eventTypes.contains(FrameTypes.SOURCE)) {
+                    //we need a fix since sources are usually never coreferential within one source
+                    /// mention based events
+                    for (int j = 0; j < kafCoreferenceSet.getSetsOfSpans().size(); j++) {
+                        ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(j);
+                        KafCoreferenceSet kafCoreferenceSetNew = new KafCoreferenceSet();
+                        String corefId = kafCoreferenceSet.getCoid() + "_" + j;
+                        kafCoreferenceSetNew.setCoid(corefId);
+                        kafCoreferenceSetNew.setType(kafCoreferenceSet.getType());
+                        kafCoreferenceSetNew.setExternalReferences(kafCoreferenceSet.getExternalReferences());
+                        kafCoreferenceSetNew.addSetsOfSpans(corefTargets);
+                        fixedSets.add(kafCoreferenceSetNew);
+                    }
+                }
+                else {
+                    fixedSets.add(kafCoreferenceSet);
+                }
+            }
+            else {
+                fixedSets.add(kafCoreferenceSet);
+            }
+        }
+        kafSaxParser.kafCorefenceArrayList = fixedSets;
+    }
+
     static public void fixExternalReferencesSrl(KafSaxParser kafSaxParser) {
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
             KafEvent event = kafSaxParser.getKafEventArrayList().get(i);

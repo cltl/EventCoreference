@@ -54,6 +54,7 @@ public class ClusterEventObjects {
     static public boolean MICROSTORIES = false;
     static public Integer SENTENCERANGE = 0;
     static public boolean BRIDGING = false;
+    static public boolean FIXCOREF = false;
     static public String done = "";
     static public boolean ADDITIONALROLES = false;
 
@@ -103,6 +104,9 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--bridging")) {
                 BRIDGING = true;
+            }
+            else if (arg.equals("--fix-coref")) {
+                FIXCOREF = true;
             }
             else if (arg.equals("--microstories")&& args.length>(i+1)) {
                 MICROSTORIES = true;
@@ -226,6 +230,10 @@ public class ClusterEventObjects {
                 System.out.println("file.getName() = " + file.getName());
                 kafSaxParser.getKafMetaData().setUrl(file.getName());
                 System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
+            }
+            if (FIXCOREF) {
+                //// NEED A FIX
+                Util.fixSourceEventCoreferenceSets(kafSaxParser, contextualVector, sourceVector, grammaticalVector);
             }
 
           //  System.out.println("kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
