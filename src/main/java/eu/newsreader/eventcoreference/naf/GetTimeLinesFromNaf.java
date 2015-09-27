@@ -250,12 +250,9 @@ public class GetTimeLinesFromNaf {
         else {
             baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName() + ID_SEPARATOR;
         }
-        if (NOENTITYCOREF) {
-            GetSemFromNaf.processNafFileForEntityWithoutCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
-        }
-        else {
-            GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
-        }
+
+        GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
+
         //GetSemFromNafFile.processNafFileForRemainingSrlActors(entityUri, baseUrl, kafSaxParser, semActors);
         GetSemFromNaf.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         if (NOEVENTCOREF) {

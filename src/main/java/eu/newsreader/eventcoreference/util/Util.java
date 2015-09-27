@@ -1092,6 +1092,74 @@ public class Util {
         }
         return topSense;
     }
+
+
+
+    static public boolean hasPocusUri (KafEntity kafEntity) {
+        for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEntity.getExternalReferences().get(i);
+            if (kafSense.getSource().equalsIgnoreCase("pocus")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static public boolean hasPocusOnlyUri (KafEntity kafEntity) {
+        for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEntity.getExternalReferences().get(i);
+            if (!kafSense.getSource().equalsIgnoreCase("pocus")) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     *  Select the URI with the highest score
+     * @param kafEntity
+     * @return
+     */
+    static public boolean supersededByPocus (KafSaxParser kafSaxParser, KafEntity kafEntity) {
+        for (int i = 0; i < kafSaxParser.kafEntityArrayList.size(); i++) {
+            KafEntity entity = kafSaxParser.kafEntityArrayList.get(i);
+            if (!entity.getId().equals(kafEntity.getId())) {
+                if (hasPocusOnlyUri(entity)) {
+                    //// this is a new POCUS entity
+                    if (entity.getTermIds().containsAll(kafEntity.getTermIds())) {
+                       /// kafEntity has smaller span than entity and is superseded
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     *  Select the URI with the highest score
+     * @param kafEntity
+     * @return
+     */
+    static public String getBestEntityUriPreferPocus (KafEntity kafEntity) {
+        String uri="";
+        KafSense topSense = null;
+        for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEntity.getExternalReferences().get(i);
+            if (kafSense.getSource().equalsIgnoreCase("pocus")) {
+                if( topSense==null || kafSense.getConfidence()>topSense.getConfidence()) {
+                    topSense = kafSense;
+                }
+            }
+        }
+        if (topSense==null) {
+            topSense = getBestScoringExternalReference(kafEntity.getExternalReferences());
+        }
+        if (topSense!=null) {
+            uri = topSense.getSensecode();
+        }
+        return uri;
+    }
+
     /**
      *  Select the URI with the highest score
      * @param kafEntity

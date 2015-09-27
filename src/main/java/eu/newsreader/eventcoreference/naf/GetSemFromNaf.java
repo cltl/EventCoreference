@@ -22,6 +22,7 @@ import java.util.Set;
  */
 public class GetSemFromNaf {
 
+    static public boolean POCUS = true;
     static final int MINEVENTLABELSIZE = 3;
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
@@ -189,7 +190,18 @@ public class GetSemFromNaf {
 
         for (int j = 0; j < kafSaxParser.kafEntityArrayList.size(); j++) {
             KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
-            String uri = Util.getBestEntityUri(kafEntity);
+            String uri = "";
+            if (POCUS) {
+                if (!Util.hasPocusUri(kafEntity) && Util.supersededByPocus(kafSaxParser, kafEntity)) {
+                    continue;
+                }
+                else {
+                    uri = Util.getBestEntityUriPreferPocus(kafEntity);
+                }
+            }
+            else {
+                uri = Util.getBestEntityUri(kafEntity);
+            }
             if (uri.isEmpty()) {
                 KafMarkable kafMarkable = Util.getBestMatchingMarkable(kafSaxParser, kafEntity.getTermIds());
                 if (kafMarkable != null) {
@@ -263,12 +275,6 @@ public class GetSemFromNaf {
                     else {
                         entityId = entityUri+entityId;
                     }
-/*
-                    if (topEntity.toLowerCase().indexOf("espelund")>-1) {
-                        System.out.println("actor uri = " + topEntity);
-                        System.out.println("entityId = " + entityId);
-                    }
-*/
                     SemActor semActor = new SemActor(SemObject.ENTITY);
                     semActor.setId(entityId);
                     semActor.setNafMentions(mentionArrayList);
@@ -300,17 +306,6 @@ public class GetSemFromNaf {
                 else {
                     entityId = entityUri+entityId;
                 }
-
-/*
-                if (uri.toLowerCase().indexOf("espelund")>-1) {
-                    System.out.println("actor uri = " + uri);
-                    System.out.println("entityId = " + entityId);
-                }
-*/
-               /* for (int i = 0; i < entities.size(); i++) {
-                    KafEntity kafEntity = entities.get(i);
-                    entityId += kafEntity.getId();
-                }*/
                 SemActor semActor = new SemActor(SemObject.ENTITY);
                 semActor.setId(entityId);
                 semActor.setNafMentions(mentionArrayList);
@@ -325,23 +320,23 @@ public class GetSemFromNaf {
 
 
 
-    /**
+ /*   *//**
      * @param baseUrl
      * @param kafSaxParser
      * @param semActors
-     */
+     *//*
     static void processNafFileForEntityWithoutCoreferenceSets(String entityUri, String baseUrl, KafSaxParser kafSaxParser,
                                                               ArrayList<SemObject> semActors
     ) {
 
-        /**
+        *//**
          * Entity instances
-         */
+         *//*
 
 
-        /**
+        *//**
          * We first groups entities with the same URI
-         */
+         *//*
 
         HashMap<String, ArrayList<KafEntity>> kafEntityActorUriMap = new HashMap<String, ArrayList<KafEntity>>();
 
@@ -396,7 +391,7 @@ public class GetSemFromNaf {
             semActor.setIdByDBpediaReference();
             Util.addObject(semActors, semActor);
         }
-    }
+    }*/
 
 
     /**
