@@ -26,9 +26,14 @@ public class JenaSerialization {
     static Model instanceModel = null;
     static public ILIReader iliReader = null;
 
+    static public void initILI (String pathToILI) {
+        iliReader = new ILIReader();
+        iliReader.readILIFile(pathToILI);
+    }
+
     static public void createModels () {
         ds = TDBFactory.createDataset();
-        provenanceModel = ds.getNamedModel(ResourcesUri.nwr+"provenance");
+        provenanceModel = ds.getNamedModel(ResourcesUri.nwr + "provenance");
         instanceModel = ds.getNamedModel(ResourcesUri.nwr+"instances");
         prefixModels ();
     }

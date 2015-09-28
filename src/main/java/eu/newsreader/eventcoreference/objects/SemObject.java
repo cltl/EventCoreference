@@ -548,14 +548,12 @@ public class SemObject implements Serializable {
             }
           //  System.out.println(senseCode);
             if (JenaSerialization.iliReader!=null) {
-                if (JenaSerialization.iliReader != null) {
                     if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
                         senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
                         ref = ResourcesUri.ili + senseCode;
                     } else {
                         ref = ResourcesUri.wn + senseCode;
                     }
-                }
             }
         }
         else if (kafSense.getSensecode().toLowerCase().startsWith("ili-30-")) {

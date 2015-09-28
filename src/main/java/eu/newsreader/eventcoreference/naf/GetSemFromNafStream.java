@@ -53,7 +53,7 @@ public class GetSemFromNafStream {
             }
             else if (arg.equals("--ili") && args.length > (i + 1)) {
                 String pathToILIFile = args[i+1];
-                JenaSerialization.iliReader.readILIFile(pathToILIFile);
+                JenaSerialization.initILI(pathToILIFile);
             }
             else if (arg.equals("--ili-uri")) {
                 ILIURI = true;

@@ -10,10 +10,13 @@ import java.util.HashMap;
  * Created by piek on 16/09/15.
  */
 public class ILIReader {
-    static public HashMap<String, String> synsetToILIMap;
+    public HashMap<String, String> synsetToILIMap;
 
+    public ILIReader() {
+        synsetToILIMap = new HashMap<String, String>();
+    }
 
-    public static void readILIFile (String pathToILIfile) {
+    public void readILIFile (String pathToILIfile) {
         try {
             synsetToILIMap = new HashMap<String, String>();
             FileInputStream fis = new FileInputStream(pathToILIfile);
