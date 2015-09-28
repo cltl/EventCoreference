@@ -548,12 +548,13 @@ public class SemObject implements Serializable {
             }
           //  System.out.println(senseCode);
             if (JenaSerialization.iliReader!=null) {
-                if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
-                    senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
-                    ref = ResourcesUri.ili + senseCode;
-                }
-                else {
-                    ref = ResourcesUri.wn + senseCode;
+                if (JenaSerialization.iliReader != null) {
+                    if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
+                        senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
+                        ref = ResourcesUri.ili + senseCode;
+                    } else {
+                        ref = ResourcesUri.wn + senseCode;
+                    }
                 }
             }
         }
@@ -565,12 +566,13 @@ public class SemObject implements Serializable {
              */
             String senseCode = kafSense.getSensecode();
             senseCode = "eng"+senseCode.substring(6);
-            if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
-                senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
-                ref = ResourcesUri.ili + senseCode;
-            }
-            else {
-                ref = ResourcesUri.wn + senseCode;
+            if (JenaSerialization.iliReader!=null) {
+                if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
+                    senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
+                    ref = ResourcesUri.ili + senseCode;
+                } else {
+                    ref = ResourcesUri.wn + senseCode;
+                }
             }
         }
         else if (kafSense.getSensecode().toLowerCase().startsWith("eng-30-")) {
@@ -581,12 +583,13 @@ public class SemObject implements Serializable {
              */
             String senseCode = kafSense.getSensecode();
             senseCode = "eng"+senseCode.substring(6);
-            if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
-                senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
-                ref = ResourcesUri.ili + senseCode;
-            }
-            else {
-                ref = ResourcesUri.wn + senseCode;
+            if (JenaSerialization.iliReader!=null) {
+                if (JenaSerialization.iliReader.synsetToILIMap.containsKey(senseCode)) {
+                    senseCode = JenaSerialization.iliReader.synsetToILIMap.get(senseCode);
+                    ref = ResourcesUri.ili + senseCode;
+                } else {
+                    ref = ResourcesUri.wn + senseCode;
+                }
             }
         }
         else if (kafSense.getResource().equalsIgnoreCase("cornetto")) {
