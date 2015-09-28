@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.io.*;
 /**
  * Created with IntelliJ IDEA.
  * User: Filip
@@ -237,9 +238,13 @@ public class ProcessEventObjectsStream {
         Dataset ds = TDBFactory.createDataset();
         Dataset dsnew = TDBFactory.createDataset();
 
-        RDFDataMgr.read(ds, filename);
-        RDFDataMgr.read(dsnew, filename);
-
+        if (filename.isEmpty()){ // If empty filename, read from stream!
+            readTrigFromStream(ds, dsnew);
+            System.exit(0);
+        } else {
+            RDFDataMgr.read(ds, filename);
+            RDFDataMgr.read(dsnew, filename);
+        }
         Model m = ds.getNamedModel("http://www.newsreader-project.eu/instances");
 
         Model m2 = ds.getDefaultModel();
@@ -584,6 +589,38 @@ public class ProcessEventObjectsStream {
             RDFDataMgr.write(System.out, gnew, RDFLanguages.TRIG); // or NQUADS
         }
 
+
+    }
+
+    private static void readTrigFromStream(Dataset ds, Dataset dsnew) {
+        InputStream is = null;
+        BufferedReader br = null;
+        try {
+            is = System.in;
+            br = new BufferedReader(new InputStreamReader(is));
+            String line = null;
+
+            while ((line = br.readLine()) != null) {
+                if (line.equalsIgnoreCase("quit")) {
+                    break;
+                }
+                System.out.println("Line entered : " + line);
+            }
+        }
+        catch (IOException ioe) {
+            System.out.println("Exception while reading input " + ioe);
+        }
+        finally {
+            // close the streams using close method
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            }
+            catch (IOException ioe) {
+                System.out.println("Error while closing stream: " + ioe);
+            }
+        }
 
     }
 
