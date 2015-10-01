@@ -57,6 +57,7 @@ public class ClusterEventObjects {
     static public boolean FIXCOREF = false;
     static public String done = "";
     static public boolean ADDITIONALROLES = false;
+    static public boolean PERSPECTIVE = false;
 
     static public void main (String [] args) {
         if (args.length==0) {
@@ -107,6 +108,9 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--fix-coref")) {
                 FIXCOREF = true;
+            }
+            else if (arg.equals("--perspective")) {
+                PERSPECTIVE = true;
             }
             else if (arg.equals("--microstories")&& args.length>(i+1)) {
                 MICROSTORIES = true;
@@ -566,18 +570,20 @@ public class ClusterEventObjects {
                 //   System.out.println("timeFile = " + timeFile);
             }
         }
-        ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
+        if (PERSPECTIVE) {
+            ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
-        perspectiveObjects = GetPerspectiveRelations.getPerspective(kafSaxParser,
-                project,
-                semActors,
-                contextualVector,
-                sourceVector,
-                grammaticalVector);
+            perspectiveObjects = GetPerspectiveRelations.getPerspective(kafSaxParser,
+                    project,
+                    semActors,
+                    contextualVector,
+                    sourceVector,
+                    grammaticalVector);
 
-        if (perspectiveObjects.size()>0) {
-            String perspectiveFilePath = nafFilePath+".perspective.trig";
-            GetPerspectiveRelations.perspectiveRelationsToTrig(perspectiveFilePath, perspectiveObjects);
+            if (perspectiveObjects.size() > 0) {
+                String perspectiveFilePath = nafFilePath + ".perspective.trig";
+                GetPerspectiveRelations.perspectiveRelationsToTrig(perspectiveFilePath, perspectiveObjects);
+            }
         }
     }
 
