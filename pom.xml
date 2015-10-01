@@ -41,7 +41,8 @@
             <groupId>KyotoKafSaxParser</groupId>
             <artifactId>KyotoKafSaxParser</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
+            <scope>system</scope>
+            <systemPath>/Users/filipilievski/phd/KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
