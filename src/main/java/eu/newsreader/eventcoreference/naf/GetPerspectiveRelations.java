@@ -101,16 +101,21 @@ public class GetPerspectiveRelations {
      * @param perspectiveObjects
      * @return
      */
-        static public ArrayList<PerspectiveObject> getAuthorPerspectives (String baseUri, String documentUri, KafSaxParser kafSaxParser,
-                                                                   ArrayList<PerspectiveObject> perspectiveObjects)
+        static public ArrayList<PerspectiveObject> getAuthorPerspectives (KafSaxParser kafSaxParser,String project,
+                                                                          ArrayList<PerspectiveObject> perspectiveObjects)
         {
+            String baseUrl = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
+            if (!baseUrl.toLowerCase().startsWith("http")) {
+                baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
+            }
+
             SemActor semActor = new SemActor(SemObject.ENTITY);
-            semActor.setId(documentUri);
+            semActor.setId(kafSaxParser.getKafMetaData().getUrl());
             ArrayList<PerspectiveObject> sourcePerspectiveObjects = new ArrayList<PerspectiveObject>();
             for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
                 KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
                 kafEvent.setTokenStrings(kafSaxParser);
-                NafMention eventMention = Util.getNafMentionForTermIdArrayList(baseUri, kafSaxParser, kafEvent.getSpanIds());
+                NafMention eventMention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, kafEvent.getSpanIds());
                 boolean hasPerspective = false;
                 for (int j = 0; j < perspectiveObjects.size(); j++) {
                     PerspectiveObject perspectiveObject = perspectiveObjects.get(j);
@@ -124,13 +129,13 @@ public class GetPerspectiveRelations {
                 }
                 if (!hasPerspective) {
                     PerspectiveObject perspectiveObject = new PerspectiveObject();
-                    perspectiveObject.setDocumentUri(baseUri);
+                    perspectiveObject.setDocumentUri(baseUrl);
                     perspectiveObject.setSourceEntity(semActor);
                     perspectiveObject.setPredicateId(kafEvent.getId());
                     perspectiveObject.setEventString(kafEvent.getTokenString());
                     perspectiveObject.setPredicateConcepts(kafEvent.getExternalReferences());
                     perspectiveObject.setPredicateSpanIds(kafEvent.getSpanIds());
-                    perspectiveObject.setNafMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
+                    perspectiveObject.setNafMention(baseUrl, kafSaxParser, kafEvent.getSpanIds());
                     eventMention.addFactuality(kafSaxParser);
                     eventMention.addOpinion(kafSaxParser);
                     perspectiveObject.addTargetEventMention(eventMention);

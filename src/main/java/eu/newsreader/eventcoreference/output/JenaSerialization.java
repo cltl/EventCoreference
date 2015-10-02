@@ -356,6 +356,25 @@ public class JenaSerialization {
 
     }
 
+    static public void serializeJenaCompositeEventsAndPerspective (OutputStream stream,
+                                                                    ArrayList<CompositeEvent> semEvents,
+                                                                   KafSaxParser kafSaxParser,
+                                                                   ArrayList<PerspectiveObject> sourcePerspectiveObjects,
+                                                                   ArrayList<PerspectiveObject> authorPerspectiveObjects) {
+
+
+
+
+            createModels();
+            addJenaCompositeEvents(semEvents, null, false, false);
+            addDocMetaData(ds, kafSaxParser);
+            addJenaPerspectiveObjects(ds, sourcePerspectiveObjects);
+            addJenaPerspectiveObjects(ds, authorPerspectiveObjects);
+            RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+
+
+    }
+
 
 
 

@@ -110,9 +110,8 @@ public class GetPerspectiveFromNafFile {
                 contextualVector,
                 sourceVector,
                 grammaticalVector);
-        ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(baseUrl,
-                kafSaxParser.getKafMetaData().getUrl(),
-                kafSaxParser, sourcePerspectives);
+        ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(kafSaxParser,
+                project, sourcePerspectives);
         String perspectiveFilePath = pathToNafFile + ".perspective.trig";
         GetPerspectiveRelations.perspectiveRelationsToTrig(perspectiveFilePath, kafSaxParser, sourcePerspectives, documentPerspectives);
     }
