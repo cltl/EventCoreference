@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="eventcoreference" default="all">
+  
+  
+  <property file="eventcoreference.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.bundle/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/.tox/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.zip"/>
+    <include name="*.apk"/>
+    <include name="*.war"/>
+    <include name="*.egg"/>
+    <include name="*.ear"/>
+    <include name="*.ane"/>
+    <include name="*.swc"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="lib/ant-javafx.jar"/>
+      <include name="lib/dt.jar"/>
+      <include name="lib/javafx-mx.jar"/>
+      <include name="lib/jconsole.jar"/>
+      <include name="lib/packager.jar"/>
+      <include name="lib/sa-jdi.jar"/>
+      <include name="lib/tools.jar"/>
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.maven:_com.cedarsoftware:json-io:3.0.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/com/cedarsoftware/json-io/3.0.1/json-io-3.0.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-codec:commons-codec:1.6.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-codec/commons-codec/1.6/commons-codec-1.6.jar"/>
+  </path>
+  
+  <path id="library.maven:_commons-io:commons-io:2.4.classpath">
+    <pathelement location="${path.variable.maven_repository}/commons-io/commons-io/2.4/commons-io-2.4.jar"/>
+  </path>
+  
+  <path id="library.maven:_log4j:log4j:1.2.16.classpath">
+    <pathelement location="${path.variable.maven_repository}/log4j/log4j/1.2.16/log4j-1.2.16.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.sourceforge.owlapi:owlapi-api:3.4.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/sourceforge/owlapi/owlapi-api/3.4.10/owlapi-api-3.4.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.sourceforge.owlapi:owlapi-apibinding:3.4.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/sourceforge/owlapi/owlapi-apibinding/3.4.10/owlapi-apibinding-3.4.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.sourceforge.owlapi:owlapi-contract:3.4.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/sourceforge/owlapi/owlapi-contract/3.4.10/owlapi-contract-3.4.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.sourceforge.owlapi:owlapi-distribution:3.4.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/sourceforge/owlapi/owlapi-distribution/3.4.10/owlapi-distribution-3.4.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.sourceforge.owlapi:owlapi-impl:3.4.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/sourceforge/owlapi/owlapi-impl/3.4.10/owlapi-impl-3.4.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.sourceforge.owlapi:owlapi-oboformat:3.4.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/sourceforge/owlapi/owlapi-oboformat/3.4.10/owlapi-oboformat-3.4.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.sourceforge.owlapi:owlapi-parsers:3.4.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/sourceforge/owlapi/owlapi-parsers/3.4.10/owlapi-parsers-3.4.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.sourceforge.owlapi:owlapi-tools:3.4.10.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/sourceforge/owlapi/owlapi-tools/3.4.10/owlapi-tools-3.4.10.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.felix:org.osgi.core:1.4.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/felix/org.osgi.core/1.4.0/org.osgi.core-1.4.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.httpcomponents:httpclient:4.2.3.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/httpcomponents/httpclient/4.2.3/httpclient-4.2.3.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.httpcomponents:httpcore:4.2.2.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/httpcomponents/httpcore/4.2.2/httpcore-4.2.2.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.jena:jena-arq:2.11.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/jena/jena-arq/2.11.0/jena-arq-2.11.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.jena:jena-core:2.11.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/jena/jena-core/2.11.0/jena-core-2.11.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.jena:jena-iri:1.0.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/jena/jena-iri/1.0.0/jena-iri-1.0.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.jena:jena-tdb:1.0.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/jena/jena-tdb/1.0.0/jena-tdb-1.0.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.jdom:jdom:1.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/jdom/jdom/1.1/jdom-1.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.json:json:20090211.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/json/json/20090211/json-20090211.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.openrdf.sesame:sesame-model:2.7.9.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/openrdf/sesame/sesame-model/2.7.9/sesame-model-2.7.9.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.openrdf.sesame:sesame-rio-api:2.7.9.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/openrdf/sesame/sesame-rio-api/2.7.9/sesame-rio-api-2.7.9.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.openrdf.sesame:sesame-rio-datatypes:2.7.9.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/openrdf/sesame/sesame-rio-datatypes/2.7.9/sesame-rio-datatypes-2.7.9.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.openrdf.sesame:sesame-rio-languages:2.7.9.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/openrdf/sesame/sesame-rio-languages/2.7.9/sesame-rio-languages-2.7.9.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.openrdf.sesame:sesame-rio-rdfxml:2.7.9.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/openrdf/sesame/sesame-rio-rdfxml/2.7.9/sesame-rio-rdfxml-2.7.9.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.openrdf.sesame:sesame-rio-trig:2.7.9.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/openrdf/sesame/sesame-rio-trig/2.7.9/sesame-rio-trig-2.7.9.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.openrdf.sesame:sesame-rio-turtle:2.7.9.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/openrdf/sesame/sesame-rio-turtle/2.7.9/sesame-rio-turtle-2.7.9.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.openrdf.sesame:sesame-util:2.7.9.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/openrdf/sesame/sesame-util/2.7.9/sesame-util-2.7.9.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.slf4j:jcl-over-slf4j:1.6.4.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/slf4j/jcl-over-slf4j/1.6.4/jcl-over-slf4j-1.6.4.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.slf4j:slf4j-api:1.6.4.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.slf4j:slf4j-log4j12:1.6.4.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/slf4j/slf4j-log4j12/1.6.4/slf4j-log4j12-1.6.4.jar"/>
+  </path>
+  
+  <path id="library.maven:_wordnettools:wordnettools:1.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/WordnetTools/WordnetTools/1.0/WordnetTools-1.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_xerces:xercesimpl:2.11.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/xerces/xercesImpl/2.11.0/xercesImpl-2.11.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_xml-apis:xml-apis:1.4.01.classpath">
+    <pathelement location="${path.variable.maven_repository}/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar"/>
+  </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  <import file="${basedir}/module_eventcoreference.xml"/>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.eventcoreference" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.eventcoreference" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>
