@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.objects;
 
 import eu.kyotoproject.kaf.KafFactuality;
+import eu.kyotoproject.kaf.KafOpinion;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafWordForm;
 
@@ -21,6 +22,7 @@ public class NafMention implements Serializable {
     private ArrayList<String> tokensIds;
     private ArrayList<String> termsIds;
     private ArrayList<KafFactuality> factualities;
+    private ArrayList<KafOpinion> opinions;
 
 
     public NafMention(String baseUri) {
@@ -33,6 +35,7 @@ public class NafMention implements Serializable {
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
         this.factualities = new ArrayList<KafFactuality>();
+        this.opinions = new ArrayList<KafOpinion>();
     }
 
     public NafMention() {
@@ -45,6 +48,7 @@ public class NafMention implements Serializable {
         this.tokensIds = new ArrayList<String>();
         this.termsIds = new ArrayList<String>();
         this.factualities = new ArrayList<KafFactuality>();
+        this.opinions = new ArrayList<KafOpinion>();
     }
 
     public String getPhraseFromMention (KafSaxParser kafSaxParser) {
@@ -123,6 +127,18 @@ public class NafMention implements Serializable {
         }
     }
 
+    public ArrayList<KafOpinion> getOpinions() {
+        return opinions;
+    }
+
+    public void addOpinion(KafSaxParser kafSaxParser) {
+        for (int i = 0; i < kafSaxParser.kafOpinionArrayList.size(); i++) {
+            KafOpinion kafOpinion = kafSaxParser.kafOpinionArrayList.get(i);
+            if (!Collections.disjoint(termsIds, kafOpinion.getSpansOpinionTarget())) {
+                this.opinions.add(kafOpinion);
+            }
+        }
+    }
 
     public String getBaseUri() {
         return baseUri;

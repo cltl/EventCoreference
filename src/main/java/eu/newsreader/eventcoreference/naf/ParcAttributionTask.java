@@ -70,7 +70,6 @@ public class ParcAttributionTask {
         GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
         GetPerspectiveRelations.getPerspective(kafSaxParser,
                 project, perspectiveObjects,
-                semActors,
                 contextualVector,
                 communicationVector,
                 grammaticalVector);

@@ -25,6 +25,8 @@ public class ResourcesUri {
     final static public String pb = "http://www.newsreader-project.eu/ontologies/propbank/";
     final static public String nb = "http://www.newsreader-project.eu/ontologies/nombank/";
     final static public String gaf = "http://groundedannotationframework.org/gaf#";
+    final static public String gafAttribution = "http://groundedannotationframework.org/gaf/attribution#";
+    final static public String gafSentiment = "http://groundedannotationframework.org/gaf/sentiment#";
     final static public String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
     final static public String dbp = "http://dbpedia.org/resource/";
     final static public String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -69,6 +71,8 @@ public class ResourcesUri {
 
     static public void prefixModelGaf (Model model) {
         model.setNsPrefix("gaf", ResourcesUri.gaf);
+        model.setNsPrefix("gafAttribution", ResourcesUri.gafAttribution);
+        model.setNsPrefix("gafSentiment", ResourcesUri.gafSentiment);
         model.setNsPrefix("prov", ResourcesUri.prov);
     }
 

@@ -573,7 +573,7 @@ public class ClusterEventObjects {
         if (PERSPECTIVE) {
             ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
-            perspectiveObjects = GetPerspectiveRelations.getPerspective(kafSaxParser,
+            perspectiveObjects = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
                     project,
                     semActors,
                     contextualVector,

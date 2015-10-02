@@ -4,10 +4,7 @@ import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
-import eu.kyotoproject.kaf.KafFactuality;
-import eu.kyotoproject.kaf.KafParticipant;
-import eu.kyotoproject.kaf.KafSaxParser;
-import eu.kyotoproject.kaf.KafSense;
+import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.util.Util;
 
@@ -21,6 +18,7 @@ import java.util.ArrayList;
 public class PerspectiveObject {
 
     private NafMention nafMention;
+    private NafMention cueMention;
     private String documentUri;
     private String eventString;
     private String predicateId;
@@ -32,11 +30,24 @@ public class PerspectiveObject {
     private ArrayList<NafMention> targetEventMentions;
 
 
+    public NafMention getCueMention() {
+        return cueMention;
+    }
+
+    public void setCueMention(String baseUri, KafSaxParser kafSaxParser, ArrayList<String> eventTermIds) {
+        this.cueMention = Util.getNafMentionForTermIdArrayList(baseUri, kafSaxParser, eventTermIds);
+    }
+
+    public void setNafMention(NafMention nafMention) {
+        this.nafMention = nafMention;
+    }
+
     public PerspectiveObject() {
         this.predicateSpanIds = new ArrayList<String>();
         this.documentUri = "";
         this.eventString = "";
         this.nafMention = new NafMention();
+        this.cueMention = new NafMention();
         this.predicateConcepts = new ArrayList<KafSense>();
         this.predicateId = "";
         this.source = new KafParticipant();
@@ -177,7 +188,7 @@ public class PerspectiveObject {
         return str;
     }
 
-    public void addToJenaDataSet (Dataset ds) {
+    public void addToJenaDataSet1 (Dataset ds) {
 
         /*
         :NGZetscheAtt {
@@ -235,6 +246,78 @@ nwr:hasAttribution nwrontology:attrPOSCERTNF .
             else {
                 Resource targetResource = ds.getDefaultModel().createResource(sourceEntity.getURI());
                 subject.addProperty(property, targetResource);
+            }
+        }
+
+    }
+
+
+    public void addToJenaDataSet (Dataset ds) {
+
+        /*
+http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=254,261
+	gafAttribution:CERTAIN,NON_FUTURE
+		http://dbpedia.org/resource/Caesars_Entertainment_Corporation ;
+		gaf:generatedBy http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=201,209.
+
+
+http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=201,209
+			gafAttribution:CERTAIN,NON_FUTURE
+				doc-uri;
+
+doc-uri
+	prov:wasAttributedTo author;
+	prov:wasAttributedTo journal.
+         */
+
+        if ((targetEventMentions.size()>0)) {
+
+            Model model = ds.getDefaultModel();
+            for (int i = 0; i < targetEventMentions.size(); i++) {
+                NafMention mention = targetEventMentions.get(i);
+                /// the mention of the target event is the subject
+                Resource subject = model.createResource(mention.toString());
+                Resource targetResource = null;
+                if (sourceEntity.getURI().isEmpty()) {
+                    String uri = "";
+                    try {
+                        uri = URLEncoder.encode(source.getTokenString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        //  e.printStackTrace();
+                    }
+                    if (!uri.isEmpty()) {
+                        targetResource = ds.getDefaultModel().createResource(uri);
+                    }
+                }
+                else {
+                    targetResource = ds.getDefaultModel().createResource(sourceEntity.getURI());
+                }
+                if (targetResource!=null) {
+                    if (mention.getFactuality().size() == 0) {
+                        //// default perspective
+                        Property property = model.createProperty(ResourcesUri.gafAttribution, KafFactuality.defaultAttribution);
+                        subject.addProperty(property, targetResource); /// creates the literal as value
+                    }
+                    else {
+                        for (int j = 0; j < mention.getFactuality().size(); j++) {
+                            KafFactuality kafFactuality = mention.getFactuality().get(j);
+                            Property property = model.createProperty(ResourcesUri.gafAttribution, kafFactuality.getPrediction());
+                            subject.addProperty(property, targetResource); /// creates the literal as value
+                        }
+                    }
+                    if (mention.getOpinions().size()>0) {
+                        for (int j = 0; j < mention.getOpinions().size(); j++) {
+                            KafOpinion kafOpinion = mention.getOpinions().get(j);
+                            Property property = model.createProperty(ResourcesUri.gafSentiment, kafOpinion.getOpinionSentiment().getPolarity());
+                            subject.addProperty(property, targetResource); /// creat
+                        }
+                    }
+                }
+                if (!cueMention.toString().isEmpty()) {
+                    Property property = model.createProperty(ResourcesUri.gaf, "generatedBy");
+                    Resource object = ds.getDefaultModel().createResource(this.cueMention.toString());
+                    subject.addProperty(property, object);
+                }
             }
         }
 

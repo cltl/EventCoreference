@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -57,7 +58,7 @@ public class GetPerspectiveRelations {
                 GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUri, kafSaxParser, semActors);
                 GetSemFromNaf.processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
 
-                ArrayList<PerspectiveObject> perspectives = getPerspective(baseUri, kafSaxParser, semActors, contextualVector, communicationVector, grammaticalVector);
+                ArrayList<PerspectiveObject> perspectives = getPerspective(baseUri, kafSaxParser, contextualVector, communicationVector, grammaticalVector);
                 perspectives = selectSourceEntityToPerspectives(kafSaxParser, perspectives, semActors);
                 for (int j = 0; j < perspectives.size(); j++) {
                     PerspectiveObject perspectiveObject = perspectives.get(j);
@@ -66,43 +67,9 @@ public class GetPerspectiveRelations {
             }
         }
 
-    /**
-     *     public void addToJenaDataSet (Dataset ds, Model provenanceModel,
-     HashMap<String, SourceMeta> sourceMetaHashMap) {
-
-     addToJenaDataSet(ds, provenanceModel);
-     Resource provenanceResource = provenanceModel.createResource(this.id);
-
-     for (int i = 0; i < nafMentions.size(); i++) {
-     NafMention nafMention = nafMentions.get(i);
-
-     //http://www.newsreader-project.eu/data/cars/2003/10/10/49RC-C8V0-01D6-W1FX.xml
-     //http://www.newsreader-project.eu/data/cars/2003/01/01/47KF-XY70-010F-G3GG.xml
-     //System.out.println("nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
-     if (sourceMetaHashMap.containsKey(nafMention.getBaseUriWithoutId())) {
-     //System.out.println("nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
-
-     SourceMeta sourceMeta = sourceMetaHashMap.get(nafMention.getBaseUriWithoutId());
-     Property property = provenanceModel.createProperty(ResourcesUri.prov+"wasAttributedTo");
-     if (!sourceMeta.getAuthor().isEmpty()) {
-     Resource targetResource = provenanceModel.createResource(ResourcesUri.nwrauthor+sourceMeta.getAuthor());
-     provenanceResource.addProperty(property, targetResource);
-     }
-     if (!sourceMeta.getOwner().isEmpty()) {
-     Resource targetResource = provenanceModel.createResource(ResourcesUri.nwrsourceowner+sourceMeta.getOwner());
-     provenanceResource.addProperty(property, targetResource);
-     }
-     }
-     else {
-     //System.out.println("No meta nafMention.getBaseUriWithoutId() = " + nafMention.getBaseUriWithoutId());
-     //System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
-     }
-     }
-     }
-     */
 
     /**
-     * @TODO get perspective objects needs to be adapted to get attributedTo relations to authors, owner, magazine
+     * @Get perspective objects from sources in the text
      * @param kafSaxParser
      * @param project
      * @param semActors
@@ -111,7 +78,7 @@ public class GetPerspectiveRelations {
      * @param grammaticalVector
      * @return
      */
-        static public ArrayList<PerspectiveObject> getPerspective (KafSaxParser kafSaxParser, String project,
+        static public ArrayList<PerspectiveObject> getSourcePerspectives (KafSaxParser kafSaxParser, String project,
                                                                    ArrayList<SemObject> semActors,
                                     Vector<String> contextualVector, 
                                     Vector<String> communicationVector,
@@ -120,13 +87,60 @@ public class GetPerspectiveRelations {
             if (!baseUri.toLowerCase().startsWith("http")) {
                 baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             }
-            ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri,kafSaxParser, semActors, contextualVector, communicationVector, grammaticalVector);
+            ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri, kafSaxParser,
+                    contextualVector,
+                    communicationVector,
+                    grammaticalVector);
             perspectiveObjects = selectSourceEntityToPerspectives(kafSaxParser, perspectiveObjects, semActors);
             return perspectiveObjects;
         }
 
+    /**
+     * @Get perspective objects assigned to authors, publisher, magazine, which is represented through the document itself
+     * @param kafSaxParser
+     * @param perspectiveObjects
+     * @return
+     */
+        static public ArrayList<PerspectiveObject> getAuthorPerspectives (String baseUri, String documentUri, KafSaxParser kafSaxParser,
+                                                                   ArrayList<PerspectiveObject> perspectiveObjects)
+        {
+            SemActor semActor = new SemActor(SemObject.ENTITY);
+            semActor.setId(documentUri);
+            ArrayList<PerspectiveObject> sourcePerspectiveObjects = new ArrayList<PerspectiveObject>();
+            for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+                KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
+                kafEvent.setTokenStrings(kafSaxParser);
+                NafMention eventMention = Util.getNafMentionForTermIdArrayList(baseUri, kafSaxParser, kafEvent.getSpanIds());
+                boolean hasPerspective = false;
+                for (int j = 0; j < perspectiveObjects.size(); j++) {
+                    PerspectiveObject perspectiveObject = perspectiveObjects.get(j);
+                    for (int k = 0; k < perspectiveObject.getTargetEventMentions().size(); k++) {
+                        NafMention nafMention = perspectiveObject.getTargetEventMentions().get(k);
+                        if (nafMention.sameMention(eventMention)) {
+                           hasPerspective = true;
+                            break;
+                        }
+                    }
+                }
+                if (!hasPerspective) {
+                    PerspectiveObject perspectiveObject = new PerspectiveObject();
+                    perspectiveObject.setDocumentUri(baseUri);
+                    perspectiveObject.setSourceEntity(semActor);
+                    perspectiveObject.setPredicateId(kafEvent.getId());
+                    perspectiveObject.setEventString(kafEvent.getTokenString());
+                    perspectiveObject.setPredicateConcepts(kafEvent.getExternalReferences());
+                    perspectiveObject.setPredicateSpanIds(kafEvent.getSpanIds());
+                    perspectiveObject.setNafMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
+                    eventMention.addFactuality(kafSaxParser);
+                    eventMention.addOpinion(kafSaxParser);
+                    perspectiveObject.addTargetEventMention(eventMention);
+                    perspectiveObjects.add(perspectiveObject);
+                }
+            }
+            return sourcePerspectiveObjects;
+        }
+
        static public void getPerspective(KafSaxParser kafSaxParser, String project, ArrayList<PerspectiveObject> perspectives,
-                                                                   ArrayList<SemObject> semActors,
                                     Vector<String> contextualVector,
                                     Vector<String> communicationVector,
                                     Vector<String> grammaticalVector) {
@@ -134,13 +148,12 @@ public class GetPerspectiveRelations {
             if (!baseUri.toLowerCase().startsWith("http")) {
                 baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             }
-            ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri,kafSaxParser, semActors, contextualVector, communicationVector, grammaticalVector);
+            ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri,kafSaxParser, contextualVector, communicationVector, grammaticalVector);
             perspectives.addAll(perspectiveObjects);
         }
 
         static public ArrayList<PerspectiveObject> getPerspective (String baseUri,
                                                                    KafSaxParser kafSaxParser,
-                                                                   ArrayList<SemObject> semActors,
                                     Vector<String> contextualVector,
                                     Vector<String> communicationVector,
                                     Vector<String> grammaticalVector) {
@@ -177,6 +190,7 @@ public class GetPerspectiveRelations {
                             perspectiveObject.setPredicateSpanIds(kafEvent.getSpanIds());
                             perspectiveObject.setSource(sourceParticipant);
                             perspectiveObject.setTarget(targetParticipant);
+                            perspectiveObject.setCueMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
                             perspectiveObject.setNafMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
                             for (int j = 0; j < kafSaxParser.getKafEventArrayList().size(); j++) {
                                 if (j!=i) {
@@ -185,6 +199,7 @@ public class GetPerspectiveRelations {
                                         /// this event is embedded inside the target
                                         NafMention nafMention = Util.getNafMentionForTermIdArrayList(baseUri, kafSaxParser, event.getSpanIds());
                                         nafMention.addFactuality(kafSaxParser);
+                                        nafMention.addOpinion(kafSaxParser);
                                         perspectiveObject.addTargetEventMention(nafMention);
                                     }
                                 }
@@ -199,6 +214,77 @@ public class GetPerspectiveRelations {
                 }
             }
             return perspectiveObjectArrayList;
+        }
+
+    static public HashMap<String, ArrayList<PerspectiveObject>> getPerspectiveMap (String baseUri,
+                                                                   KafSaxParser kafSaxParser,
+                                    Vector<String> contextualVector,
+                                    Vector<String> communicationVector,
+                                    Vector<String> grammaticalVector) {
+            HashMap<String, ArrayList<PerspectiveObject>> perspectiveObjectHashMap = new HashMap<String, ArrayList<PerspectiveObject>>();
+            for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+                KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
+                kafEvent.setTokenStrings(kafSaxParser);
+                String eventType = FrameTypes.getEventTypeString(kafEvent.getExternalReferences(), contextualVector, communicationVector, grammaticalVector);
+                if (!eventType.isEmpty()) {
+                    if (eventType.equalsIgnoreCase(FrameTypes.SOURCE)) {
+                        KafParticipant sourceParticipant = new KafParticipant();
+                        KafParticipant targetParticipant = new KafParticipant();
+                        /// next we get the A0 and message roles
+
+                        for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
+                            KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
+                            if (RoleLabels.hasSourceTarget(kafParticipant, communicationVector)) {
+                                targetParticipant = kafParticipant;
+                            }
+                            else if (RoleLabels.isPRIMEPARTICIPANT(kafParticipant.getRole())) {
+                                sourceParticipant = kafParticipant;
+                            }
+                        }
+                      //  if (sourceParticipant!=null && targetParticipant !=null) {
+                          //  System.out.println("targetParticipant.toString() = " + targetParticipant.toString());
+
+                            sourceParticipant.setTokenStrings(kafSaxParser);
+                            targetParticipant.setTokenStrings(kafSaxParser);
+                            PerspectiveObject perspectiveObject = new PerspectiveObject();
+                            perspectiveObject.setDocumentUri(baseUri);
+                            perspectiveObject.setPredicateId(kafEvent.getId());
+                            perspectiveObject.setEventString(kafEvent.getTokenString());
+                            perspectiveObject.setPredicateConcepts(kafEvent.getExternalReferences());
+                            perspectiveObject.setPredicateSpanIds(kafEvent.getSpanIds());
+                            perspectiveObject.setSource(sourceParticipant);
+                            perspectiveObject.setTarget(targetParticipant);
+                            perspectiveObject.setCueMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
+                            perspectiveObject.setNafMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
+                            for (int j = 0; j < kafSaxParser.getKafEventArrayList().size(); j++) {
+                                if (j!=i) {
+                                    KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
+                                    if (!Collections.disjoint(targetParticipant.getSpanIds(), event.getSpanIds())) {
+                                        /// this event is embedded inside the target
+                                        NafMention nafMention = Util.getNafMentionForTermIdArrayList(baseUri, kafSaxParser, event.getSpanIds());
+                                        nafMention.addFactuality(kafSaxParser);
+                                        perspectiveObject.addTargetEventMention(nafMention);
+                                    }
+                                }
+                            }
+                        for (int j = 0; j < perspectiveObject.getTargetEventMentions().size(); j++) {
+                            NafMention nafMention = perspectiveObject.getTargetEventMentions().get(j);
+                            if (perspectiveObjectHashMap.containsKey(nafMention.toString())) {
+                                ArrayList<PerspectiveObject> perspectiveObjectArrayList = perspectiveObjectHashMap.get(nafMention.toString());
+                                perspectiveObjectArrayList.add(perspectiveObject);
+                                perspectiveObjectHashMap.put(nafMention.toString(), perspectiveObjectArrayList);
+                            }
+                            else {
+                                ArrayList<PerspectiveObject> perspectiveObjectArrayList = new ArrayList<PerspectiveObject>();
+                                perspectiveObjectArrayList.add(perspectiveObject);
+                                perspectiveObjectHashMap.put(nafMention.toString(), perspectiveObjectArrayList);
+                            }
+                        }
+                      //}
+                    }
+                }
+            }
+            return perspectiveObjectHashMap;
         }
 
     /**
@@ -294,7 +380,7 @@ public class GetPerspectiveRelations {
             OutputStream fos = new FileOutputStream(pathToTrigFile);
             Dataset ds = TDBFactory.createDataset();
             Model defaultModel = ds.getDefaultModel();
-            ResourcesUri.prefixModel(defaultModel);
+            //ResourcesUri.prefixModel(defaultModel);
           //  Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/perspective");
             ResourcesUri.prefixModelGaf(defaultModel);
             JenaSerialization.addJenaPerspectiveObjects(ds, perspectiveObjects);
@@ -303,6 +389,27 @@ public class GetPerspectiveRelations {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+    }
+
+    public static void perspectiveRelationsToTrig (String pathToTrigFile,
+                                                   KafSaxParser kafSaxParser,
+                                                   ArrayList<PerspectiveObject> sourcePerspectiveObjects,
+                                                   ArrayList<PerspectiveObject> authorPerspectiveObjects) {
+            try {
+                OutputStream fos = new FileOutputStream(pathToTrigFile);
+                Dataset ds = TDBFactory.createDataset();
+                Model defaultModel = ds.getDefaultModel();
+                ResourcesUri.prefixModelGaf(defaultModel);
+                defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+
+                JenaSerialization.addDocMetaData(ds, kafSaxParser);
+                JenaSerialization.addJenaPerspectiveObjects(ds, sourcePerspectiveObjects);
+                JenaSerialization.addJenaPerspectiveObjects(ds, authorPerspectiveObjects);
+                RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
     }
 
     public static void perspectiveRelationsToTrigStream (OutputStream fos, ArrayList<PerspectiveObject> perspectiveObjects) {

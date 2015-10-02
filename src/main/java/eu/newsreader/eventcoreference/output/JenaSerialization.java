@@ -2,7 +2,10 @@ package eu.newsreader.eventcoreference.output;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
+import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafSense;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.objects.*;
@@ -35,7 +38,7 @@ public class JenaSerialization {
         ds = TDBFactory.createDataset();
         provenanceModel = ds.getNamedModel(ResourcesUri.nwr + "provenance");
         instanceModel = ds.getNamedModel(ResourcesUri.nwr+"instances");
-        prefixModels ();
+        prefixModels();
     }
 
 
@@ -166,7 +169,26 @@ public class JenaSerialization {
         }
     }
 
-
+    static public void addDocMetaData(Dataset ds, KafSaxParser kafSaxParser) {
+        String docId = kafSaxParser.getKafMetaData().getUrl();
+        Resource subject = ds.getDefaultModel().createResource(docId);
+        Property property = ds.getDefaultModel().createProperty(ResourcesUri.prov, "wasAttributedTo");
+        String author = kafSaxParser.getKafMetaData().getAuthor();
+        String magazine = kafSaxParser.getKafMetaData().getMagazine();
+        String publisher = kafSaxParser.getKafMetaData().getPublisher();
+        if (!author.isEmpty()) {
+            Resource object = ds.getDefaultModel().createResource(author);
+            subject.addProperty(property, object);
+        }
+        if (!magazine.isEmpty()) {
+            Resource object = ds.getDefaultModel().createResource(magazine);
+            subject.addProperty(property, object);
+        }
+        if (!publisher.isEmpty()) {
+            Resource object = ds.getDefaultModel().createResource(publisher);
+            subject.addProperty(property, object);
+        }
+    }
 
 
     static public void addJenaCompositeEvent (
