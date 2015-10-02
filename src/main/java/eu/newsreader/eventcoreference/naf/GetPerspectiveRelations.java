@@ -400,7 +400,9 @@ public class GetPerspectiveRelations {
                 Dataset ds = TDBFactory.createDataset();
                 Model defaultModel = ds.getDefaultModel();
                 ResourcesUri.prefixModelGaf(defaultModel);
-                defaultModel.setNsPrefix("nwr", ResourcesUri.nwr);
+                ResourcesUri.prefixModelNwr(defaultModel);
+                defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
+                defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
 
                 JenaSerialization.addDocMetaData(ds, kafSaxParser);
                 JenaSerialization.addJenaPerspectiveObjects(ds, sourcePerspectiveObjects);

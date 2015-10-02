@@ -57,11 +57,14 @@ public class GetPerspectiveFromNafFile {
             }
         }
 
-        pathToNafFile = "/Code/vu/newsreader/EventCoreference/carheaderexample/output/2003_1_10_47N1-FH40-015H-N0DG.xml";
+
+        pathToNafFile = "/Code/vu/newsreader/EventCoreference/carheaderexample";
         project = "cars";
+        extension = ".xml";
         sourceFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/source.txt";
         grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/grammatical.txt";
         contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/contextual.txt";
+
 
 
         sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
@@ -72,6 +75,7 @@ public class GetPerspectiveFromNafFile {
             ArrayList<File> files = Util.makeRecursiveFileList(nafFile, extension);
             for (int i = 0; i < files.size(); i++) {
                 File file = files.get(i);
+               // System.out.println("file.getName() = " + file.getName());
                 getPerspectiveFromFile(file.getAbsolutePath(), project);
             }
         }

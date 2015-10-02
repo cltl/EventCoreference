@@ -137,6 +137,9 @@ public class NafMention implements Serializable {
             if (!Collections.disjoint(termsIds, kafOpinion.getSpansOpinionTarget())) {
                 this.opinions.add(kafOpinion);
             }
+            if (!Collections.disjoint(termsIds, kafOpinion.getSpansOpinionExpression())) {
+                this.opinions.add(kafOpinion);
+            }
         }
     }
 

@@ -12,6 +12,8 @@ public class ResourcesUri {
     final static public String nwrtime = "http://www.newsreader-project.eu/time/";
     final static public String nwrdata = "http://www.newsreader-project.eu/data/";
     final static public String nwrauthor = "http://www.newsreader-project.eu/provenance/author/";
+    final static public String nwrpublisher = "http://www.newsreader-project.eu/provenance/publisher/";
+    final static public String nwrmagazine = "http://www.newsreader-project.eu/provenance/magazine/";
     final static public String nwrsourceowner = "http://www.newsreader-project.eu/provenance/sourceowner/";
     final static public String nwrvalue = "http://www.newsreader-project.eu/ontologies/value#";
     final static public String nwrontology = "http://www.newsreader-project.eu/ontologies/";
@@ -66,7 +68,9 @@ public class ResourcesUri {
     static public void prefixModelNwr (Model model) {
         model.setNsPrefix("nwr", ResourcesUri.nwr);
         model.setNsPrefix("nwrauthor", ResourcesUri.nwrauthor);
-        model.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
+        model.setNsPrefix("nwrpublisher", ResourcesUri.nwrpublisher);
+        model.setNsPrefix("nwrmagazine", ResourcesUri.nwrmagazine);
+       // model.setNsPrefix("nwrsourceowner", ResourcesUri.nwrsourceowner);
     }
 
     static public void prefixModelGaf (Model model) {

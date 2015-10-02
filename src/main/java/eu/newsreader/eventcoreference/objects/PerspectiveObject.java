@@ -4,6 +4,7 @@ import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.RDFS;
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.util.Util;
@@ -277,6 +278,8 @@ doc-uri
                 NafMention mention = targetEventMentions.get(i);
                 /// the mention of the target event is the subject
                 Resource subject = model.createResource(mention.toString());
+                subject.addProperty(RDFS.label, model.createLiteral(mention.getSentenceText()));
+
                 Resource targetResource = null;
                 if (sourceEntity.getURI().isEmpty()) {
                     String uri = "";
@@ -317,6 +320,9 @@ doc-uri
                     Property property = model.createProperty(ResourcesUri.gaf, "generatedBy");
                     Resource object = ds.getDefaultModel().createResource(this.cueMention.toString());
                     subject.addProperty(property, object);
+                    subject.addProperty(RDFS.comment, model.createLiteral(cueMention.getSentenceText()));
+
+
                 }
             }
         }

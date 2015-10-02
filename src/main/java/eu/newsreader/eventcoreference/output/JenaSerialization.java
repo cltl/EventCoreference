@@ -14,6 +14,8 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -177,16 +179,31 @@ public class JenaSerialization {
         String magazine = kafSaxParser.getKafMetaData().getMagazine();
         String publisher = kafSaxParser.getKafMetaData().getPublisher();
         if (!author.isEmpty()) {
-            Resource object = ds.getDefaultModel().createResource(author);
-            subject.addProperty(property, object);
+            try {
+                author = URLEncoder.encode(author, "UTF-8");
+                Resource object = ds.getDefaultModel().createResource(ResourcesUri.nwrauthor+author);
+                subject.addProperty(property, object);
+            } catch (UnsupportedEncodingException e) {
+                //  e.printStackTrace();
+            }
         }
         if (!magazine.isEmpty()) {
-            Resource object = ds.getDefaultModel().createResource(magazine);
-            subject.addProperty(property, object);
+            try {
+                magazine = URLEncoder.encode(magazine, "UTF-8");
+                Resource object = ds.getDefaultModel().createResource(ResourcesUri.nwrmagazine+magazine);
+                subject.addProperty(property, object);
+            } catch (UnsupportedEncodingException e) {
+                //  e.printStackTrace();
+            }
         }
         if (!publisher.isEmpty()) {
-            Resource object = ds.getDefaultModel().createResource(publisher);
-            subject.addProperty(property, object);
+            try {
+                publisher = URLEncoder.encode(publisher, "UTF-8");
+                Resource object = ds.getDefaultModel().createResource(ResourcesUri.nwrpublisher+publisher);
+                subject.addProperty(property, object);
+            } catch (UnsupportedEncodingException e) {
+                //  e.printStackTrace();
+            }
         }
     }
 
