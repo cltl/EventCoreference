@@ -99,14 +99,14 @@ public class GetSemFromNafFolder {
         grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
         contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
 
-        ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
-        ArrayList<SemObject> semActors = new ArrayList<SemObject>();
-        ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
-        ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        KafSaxParser kafSaxParser = new KafSaxParser();
         ArrayList<File> files = Util.makeRecursiveFileList(new File(pathToNafFolder), extension);
         for (int i = 0; i < files.size(); i++) {
             String pathToNafFile = files.get(i).getAbsolutePath();
+            ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
+            ArrayList<SemObject> semActors = new ArrayList<SemObject>();
+            ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
+            ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
+            KafSaxParser kafSaxParser = new KafSaxParser();
             kafSaxParser.parseFile(pathToNafFile);
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
                 System.out.println("file.getName() = " + new File(pathToNafFile).getName());
@@ -124,23 +124,16 @@ public class GetSemFromNafFolder {
                     ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
                     ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
                     CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
-                    if (myTimes.size()<=ClusterEventObjects.TIMEEXPRESSIONMAX) {
-                        if (compositeEvent.isValid()) {
-                            FrameTypes.setEventTypeString(compositeEvent.getEvent(), contextualVector, sourceVector, grammaticalVector);
-                            compositeEventArraylist.add(compositeEvent);
-                        }
-                        else {
-                            System.out.println("Skipping EVENT due to no time anchor and/or no participant");
-                            System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
-                            System.out.println("myTimes = " + myTimes.size());
-                            System.out.println("myActors = " + myActors.size());
-                            System.out.println("myRelations = " + myRelations.size());
-                        }
+                    if (compositeEvent.isValid()) {
+                        FrameTypes.setEventTypeString(compositeEvent.getEvent(), contextualVector, sourceVector, grammaticalVector);
+                        compositeEventArraylist.add(compositeEvent);
                     }
                     else {
-                        System.out.println("Skipping EVENT due to excessive time expressions linked to it");
+                        System.out.println("Skipping EVENT due to no time anchor and/or no participant");
                         System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
-                        System.out.println("myTimes.size() = " + myTimes.size());
+                        System.out.println("myTimes = " + myTimes.size());
+                        System.out.println("myActors = " + myActors.size());
+                        System.out.println("myRelations = " + myRelations.size());
                     }
                 }
                 String pathToTrigFile = pathToNafFile + ".trig";
