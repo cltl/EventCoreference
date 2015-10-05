@@ -378,7 +378,13 @@ public class ClusterEventObjects {
                         if (predicate.endsWith(Sem.hasBeginTime.getLocalName())) {
                             beginPoints.add(semRelation.getObject());
                         }
+                        else if (predicate.toLowerCase().endsWith(Sem.hasEarliestBeginTime.getLocalName())) {
+                            beginPoints.add(semRelation.getObject());
+                        }
                         else if (predicate.toLowerCase().endsWith(Sem.hasEndTime.getLocalName())) {
+                            endPoints.add(semRelation.getObject());
+                        }
+                        else if (predicate.toLowerCase().endsWith(Sem.hasEarliestEndTime.getLocalName())) {
                             endPoints.add(semRelation.getObject());
                         }
                     }
