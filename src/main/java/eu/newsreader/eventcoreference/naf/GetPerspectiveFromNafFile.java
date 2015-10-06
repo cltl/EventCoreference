@@ -58,12 +58,14 @@ public class GetPerspectiveFromNafFile {
         }
 
 
+/*
         pathToNafFile = "/Code/vu/newsreader/EventCoreference/carheaderexample";
         project = "cars";
         extension = ".xml";
         sourceFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/source.txt";
         grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/grammatical.txt";
         contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/contextual.txt";
+*/
 
 
 

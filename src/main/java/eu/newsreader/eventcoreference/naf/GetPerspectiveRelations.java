@@ -111,7 +111,7 @@ public class GetPerspectiveRelations {
 
             SemActor semActor = new SemActor(SemObject.ENTITY);
             semActor.setId(kafSaxParser.getKafMetaData().getUrl());
-            ArrayList<PerspectiveObject> sourcePerspectiveObjects = new ArrayList<PerspectiveObject>();
+            ArrayList<PerspectiveObject> authorPerspectiveObjects = new ArrayList<PerspectiveObject>();
             for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
                 KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
                 kafEvent.setTokenStrings(kafSaxParser);
@@ -139,10 +139,10 @@ public class GetPerspectiveRelations {
                     eventMention.addFactuality(kafSaxParser);
                     eventMention.addOpinion(kafSaxParser);
                     perspectiveObject.addTargetEventMention(eventMention);
-                    perspectiveObjects.add(perspectiveObject);
+                    authorPerspectiveObjects.add(perspectiveObject);
                 }
             }
-            return sourcePerspectiveObjects;
+            return authorPerspectiveObjects;
         }
 
        static public void getPerspective(KafSaxParser kafSaxParser, String project, ArrayList<PerspectiveObject> perspectives,
@@ -306,79 +306,14 @@ public class GetPerspectiveRelations {
                 for (int j = 0; j < actors.size(); j++) {
                     SemObject semActor = actors.get(j);
                     if (Util.matchAllSpansOfAnObjectMentionOrTheRoleHead(kafSaxParser, perspectiveObject.getSource(), semActor)) {
-                      //  System.out.println("semObject.getURI() = " + semActor.getURI());
+                        //System.out.println("semObject.getURI() = " + semActor.getURI());
                         perspectiveObject.setSourceEntity((SemActor)semActor);
                         sourcePerspectives.add(perspectiveObject);
                     }
                 }
-/*
-                SemObject semObject = Util.getBestMatchingObject(kafSaxParser, perspectiveObject.getSource(), actors);
-                if (semObject!=null) {
-                    System.out.println("semObject.getURI() = " + semObject.getURI());
-                    perspectiveObject.setSourceEntity((SemActor)semObject);
-                    sourcePerspectives.add(perspectiveObject);
-                }
-*/
             }
             return sourcePerspectives;
         }
-
-
-
-   /* static public ArrayList<PerspectiveObject> getDefaultPerspective (String baseUri,
-                                                               KafSaxParser kafSaxParser,
-                                                               Vector<String> contextualVector,
-                                                               Vector<String> communicationVector,
-                                                               Vector<String> grammaticalVector) {
-        ArrayList<PerspectiveObject> perspectiveObjectArrayList = new ArrayList<PerspectiveObject>();
-        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
-            KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
-            kafEvent.setTokenStrings(kafSaxParser);
-            String eventType = FrameTypes.getEventTypeString(kafEvent.getExternalReferences(), contextualVector, communicationVector, grammaticalVector);
-            if (!eventType.isEmpty()) {
-                if (!eventType.equalsIgnoreCase("source")) {
-                    KafParticipant sourceParticipant = new KafParticipant();
-*//*
-                    KafParticipant targetParticipant = new KafParticipant();
-                    /// next we get the A0 and message roles
-
-                    for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
-                        KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
-                        if (RoleLabels.hasSourceTarget(kafParticipant, communicationVector)) {
-                            targetParticipant = kafParticipant;
-                        }
-                        else if (RoleLabels.isPRIMEPARTICIPANT(kafParticipant.getRole())) {
-                            sourceParticipant = kafParticipant;
-                        }
-                    }
-                    //  if (sourceParticipant!=null && targetParticipant !=null) {
-                    //  System.out.println("targetParticipant.toString() = " + targetParticipant.toString());
-
-                    sourceParticipant.setTokenStrings(kafSaxParser);
-                    targetParticipant.setTokenStrings(kafSaxParser);
-*//*
-                    PerspectiveObject perspectiveObject = new PerspectiveObject();
-                    perspectiveObject.setDocumentUri(baseUri);
-                    perspectiveObject.setPredicateId(kafEvent.getId());
-                    perspectiveObject.setEventString(kafEvent.getTokenString());
-                    perspectiveObject.setPredicateConcepts(kafEvent.getExternalReferences());
-                    perspectiveObject.setPredicateSpanIds(kafEvent.getSpanIds());
-                    perspectiveObject.setSource(sourceParticipant);
-                    perspectiveObject.setTarget(targetParticipant);
-                    perspectiveObject.setNafMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
-
-                    NafMention nafMention = Util.getNafMentionForTermIdArrayList(baseUri, kafSaxParser, kafEvent.getSpanIds());
-                    nafMention.addFactuality(kafSaxParser);
-                    perspectiveObject.addTargetEventMention(nafMention);
-
-                    perspectiveObjectArrayList.add(perspectiveObject);
-                    //}
-                }
-            }
-        }
-        return perspectiveObjectArrayList;
-    }
-*/
 
     public static void perspectiveRelationsToTrig (String pathToTrigFile, ArrayList<PerspectiveObject> perspectiveObjects) {
         try {
