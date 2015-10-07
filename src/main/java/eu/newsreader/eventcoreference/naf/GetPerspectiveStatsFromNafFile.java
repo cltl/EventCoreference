@@ -158,6 +158,9 @@ public class GetPerspectiveStatsFromNafFile {
             OutputStream valueAuthorStats = new FileOutputStream(pathToNafFile+".author-values"+".xls");
             OutputStream fosAuthor = new FileOutputStream(pathToNafFile+".author"+".xls");
             OutputStream fosSource = new FileOutputStream(pathToNafFile+".source"+".xls");
+            String str = "Event\tSource\tCue\tAttribution\n";
+            fosAuthor.write(str.getBytes());
+            fosSource.write(str.getBytes());
             if (nafFile.isDirectory()) {
                 ArrayList<File> files = Util.makeRecursiveFileList(nafFile, extension);
                 for (int i = 0; i < files.size(); i++) {
@@ -173,7 +176,7 @@ public class GetPerspectiveStatsFromNafFile {
             fosSource.close();
 
             HashMap<String, ArrayList<Integer>> crossCounts = new HashMap<String, ArrayList<Integer>>();
-            String str = "";
+            str = "Attribution";
             for (int i = 0; i < sourceValues.names.size(); i++) {
                 String name = sourceValues.names.get(i);
                 str += "\t"+name;
@@ -214,7 +217,7 @@ public class GetPerspectiveStatsFromNafFile {
             str += "\n";
             valueSourceStats.write(str.getBytes());
 
-            str = "";
+            str = "Attribution";
             for (int i = 0; i < documentValues.names.size(); i++) {
                 String name = documentValues.names.get(i);
                 str += "\t"+name;
@@ -267,7 +270,7 @@ public class GetPerspectiveStatsFromNafFile {
             for (int i = 0; i < 2; i++) {
                 totals.add(0);
             }
-            str = "\tSource\tAuthor\n";
+            str = "Attribution\tSource\tAuthor\n";
             valueStats.write(str.getBytes());
             keySet = crossCounts.keySet();
             keys = keySet.iterator();
