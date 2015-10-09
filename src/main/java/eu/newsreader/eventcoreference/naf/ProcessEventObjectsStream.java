@@ -22,11 +22,14 @@ import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.io.*;
 /**
  * Created with IntelliJ IDEA.
  * User: Filip
@@ -48,33 +51,19 @@ public class ProcessEventObjectsStream {
 
     static final String USAGE = "This program processes NAF files and stores binary objects for events with all related data in different object files based on the event type and the date\n" +
             "The program has the following arguments:\n" +
-            "--naf-folder               <path>   <Folder with the NAF files to be processed. Reads NAF files recursively>\n" +
-            "--extension                <string> <File extension to select the NAF files .>\n" +
-            "--project                  <string> <The name of the project for creating URIs>\n" +
-            "--non-entities                      <If used, additional FrameNet roles and non-entity phrases are included>\n" +
-            "--contextual-frames        <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
-            "--source-frames            <path>   <Path to a file with the FrameNet frames considered source>\n" +
-            "--grammatical-frames       <path>   <Path to a file with the FrameNet frames considered grammatical>\n" +
-            "--source-data              <path>   <Path to LexisNexis meta data on owners and authors to enrich the provenance>\n" +
-            "--verbose                           <Representation of mentions is extended with token ids, terms ids and sentence number\n" +
-            "--ili-uri                           <If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
             "--concept-match <int>      <threshold for conceptual matches of events, default is 50>\n" +
             "--phrase-match  <int>      <threshold for phrase matches of events, default is 50>\n" +
             "--contextual-match-type    <path>   <Indicates what is used to match events across resources. Default value is \"ILILEMMA\". Values:\"LEMMA\", \"ILI\", \"ILILEMMA\">\n" +
             "--contextual-lcs                    <Use lowest-common-subsumers. Default value is ON.>\n" +
-            "--contextual-needed-roles  <path>   <String with PropBank roles for which there must be a match, e.g. \"a1,a2,a3,a4\">\n" +
-            "--contextual-other-roles   <path>   <String with PropBank roles for which there should be a match (match only if role exists), e.g. \"a1,a2,a3,a4\">\n" +
+            "--contextual-roles  <path>   <String with roles for which there must be a match, e.g. \"pb:A1, sem:hasActor\">\n" +
             "--source-match-type        <path>   <Indicates what is used to match events across resources. Default value is \"ILILEMMA\". Values:\"LEMMA\", \"ILI\", \"ILILEMMA\">\n" +
             "--source-lcs                        <Use lowest-common-subsumers. Default value is OFF.>\n" +
-            "--source-needed-roles      <path>   <String with PropBank roles for which there must be a match, e.g. \"a1,a2,a3,a4\">\n" +
-            "--source-other-roles       <path>   <String with PropBank roles for which there should be a match (match only if role exists), e.g. \"a1,a2,a3,a4\">\n" +
+            "--source-roles      <path>   <String with roles for which there must be a match, e.g. \"pb:A1, sem:hasActor\">\n" +
             "--grammatical-match-type   <path>   <Indicates what is used to match events across resources. Default value is \"LEMMA\". Values:\"LEMMA\", \"ILI\", \"ILILEMMA\">\n" +
             "--grammatical-lcs                    <Use lowest-common-subsumers. Default value is OFF.>\n" +
-            "--grammatical-needed-roles <path>   <String with PropBank roles for which there must be a match, e.g. \"a1,a2,a3,a4\">\n" +
-            "--grammatical-other-roles  <path>   <String with PropBank roles for which there should be a match (match only if role exists), e.g. \"a1,a2,a3,a4\">\n" +
+            "--grammatical-roles <path>   <String with roles for which there must be a match, e.g. \"pb:A1, sem:hasActor\">\n" +
             "--future-match-type        <path>   <Indicates what is used to match events across resources. Default value is \"LEMMA\". Values:\"LEMMA\", \"ILI\", \"ILILEMMA\">\n" +
             "--future-lcs                        <Use lowest-common-subsumers. Default value is OFF.>\n" +
-            "--stream-chunk-size        <int>    <The number of NAF files which will be processed in a single stream bulk>\n" +
             "--recent-span              <int>    <Amount of past days which are still considered recent and are treated differently>\n";
 
     static public String filename = "";
@@ -102,7 +91,7 @@ public class ProcessEventObjectsStream {
 
     static public String done = "";
 
-    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/sparql";
+    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars2/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
     public static String authStr = user + ":" + pass;
@@ -113,7 +102,7 @@ public class ProcessEventObjectsStream {
     public static final Node identityNode = NodeFactory.createURI("http://www.w3.org/2002/07/owl#sameAs");
     public static final Node identityGraphNode = NodeFactory.createURI("http://www.newsreader-project.eu/identity");
     public static final Node lemmaNode = NodeFactory.createURI("http://www.w3.org/2000/01/rdf-schema#label");
-    public static final Node timeNode = NodeFactory.createURI("http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime");
+    public static final Node timeNode = NodeFactory.createURI("http://semanticweb.cs.vu.nl/2009/11/sem/hasTime");
     public static final Node typeNode = NodeFactory.createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
     public static final Node instantNode = NodeFactory.createURI("http://www.w3.org/TR/owl-time#Instant");
     public static final Node intervalNode = NodeFactory.createURI("http://www.w3.org/TR/owl-time#Interval");
@@ -127,7 +116,7 @@ public class ProcessEventObjectsStream {
     static public String matchSingleTmx(Node tmx, DatasetGraph g, Model m){
         String sq="";
         if (g.contains(null, tmx, typeNode, instantNode)) { // One Instant
-            sq += "?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Instant> . ";
+            sq += "?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Instant> . ";
             for (Iterator<Quad> iter = g.find(null, tmx, specificTimeNode, null); iter.hasNext(); ) {
                 Quad q = iter.next();
                 sq += "?t <http://www.w3.org/TR/owl-time#inDateTime> <" + q.asTriple().getObject() + "> . ";
@@ -152,7 +141,7 @@ public class ProcessEventObjectsStream {
                     String begin = evrb.get("begin").toString();
                     String end = evrb.get("end").toString();
 
-                    String unionQuery = "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Interval> . ?t <http://www.w3.org/TR/owl-time#hasBeginning> <" + begin + "> ; <http://www.w3.org/TR/owl-time#hasEnd> <" + end + "> . } ";
+                    String unionQuery = "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Interval> . ?t <http://www.w3.org/TR/owl-time#hasBeginning> <" + begin + "> ; <http://www.w3.org/TR/owl-time#hasEnd> <" + end + "> . } ";
                     unionQuery += "UNION ";
                     unionQuery += "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp> ?t1 . ?t1 a <http://www.w3.org/TR/owl-time#Instant> . ?t1 <http://www.w3.org/TR/owl-time#inDateTime> <" + begin + "> . ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp> ?t2 . ?t2 a <http://www.w3.org/TR/owl-time#Instant> . ?t2 <http://www.w3.org/TR/owl-time#inDateTime> <" + end + "> . } ";
                     sq += unionQuery;
@@ -240,7 +229,6 @@ public class ProcessEventObjectsStream {
 
         if (filename.isEmpty()){ // If empty filename, read from stream!
             readTrigFromStream(ds, dsnew);
-            System.exit(0);
         } else {
             RDFDataMgr.read(ds, filename);
             RDFDataMgr.read(dsnew, filename);
@@ -374,15 +362,12 @@ public class ProcessEventObjectsStream {
 
                         for (int i = 0; i < neededRoles.size(); i++) {
                             String role = neededRoles.get(i);
-                            System.out.println(role);
                             Node roleNode = NodeFactory.createURI(role);
-                            System.out.println(m2.expandPrefix(roleNode.getURI()));
                             ArrayList<Node> allActors = new ArrayList<Node>();
                             for (Iterator<Quad> iter = g.find(null, eventNode, NodeFactory.createURI(m2.expandPrefix(roleNode.getURI())), null); iter.hasNext(); ) {
                                 Quad q = iter.next();
                                 allActors.add(q.asTriple().getObject());
                             }
-                            System.out.println(allActors);
                             if (allActors.isEmpty()) {
                                 break;
                             } else if (allActors.size() == 1) {
@@ -592,34 +577,52 @@ public class ProcessEventObjectsStream {
 
     }
 
+    private static ByteArrayOutputStream cloneInputStream(InputStream input){
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        // Fake code simulating the copy
+        // You can generally do better with nio if you need...
+        //    And please, unlike me, do something about the Exceptions :D
+        byte[] buffer = new byte[1024];
+        int len;
+        try {
+            while ((len = input.read(buffer)) > -1 ) {
+                baos.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            baos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return baos;
+    }
+
     private static void readTrigFromStream(Dataset ds, Dataset dsnew) {
         InputStream is = null;
-        BufferedReader br = null;
         try {
             is = System.in;
-            br = new BufferedReader(new InputStreamReader(is));
-            String line = null;
 
-            while ((line = br.readLine()) != null) {
-                if (line.equalsIgnoreCase("quit")) {
-                    break;
-                }
-                System.out.println("Line entered : " + line);
+            if (is==null){
+                throw new IllegalArgumentException(
+                        "No stream input!");
             }
-        }
-        catch (IOException ioe) {
-            System.out.println("Exception while reading input " + ioe);
+
+            ByteArrayOutputStream b = cloneInputStream(is);
+            InputStream is1 = new ByteArrayInputStream(b.toByteArray());
+            InputStream is2 = new ByteArrayInputStream(b.toByteArray());
+
+            RDFDataMgr.read(ds, is1, RDFLanguages.TRIG);
+            RDFDataMgr.read(dsnew, is2, RDFLanguages.TRIG);
+
         }
         finally {
             // close the streams using close method
-            try {
-                if (br != null) {
-                    br.close();
-                }
-            }
-            catch (IOException ioe) {
-                System.out.println("Error while closing stream: " + ioe);
-            }
+
         }
 
     }
@@ -646,7 +649,7 @@ public class ProcessEventObjectsStream {
         ArrayList<Quad> quadsToAdd = new ArrayList<Quad>();
         for (Iterator<Quad> iter = g.find(null, eventId, null, null); iter.hasNext(); ) {
             Quad q = iter.next();
-            if (!q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp")) {
+            if (!q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasTime") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp")) {
                 quadsToAdd.add(new Quad(q.getGraph(), tmxEventId, q.getPredicate(), q.getObject()));
             }
         }
@@ -690,7 +693,7 @@ public class ProcessEventObjectsStream {
         ArrayList<Quad> quadsToAdd = new ArrayList<Quad>();
         for (Iterator<Quad> iter = g.find(null, eventId, null, null); iter.hasNext(); ) {
             Quad q = iter.next();
-            if (!q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp")) {
+            if (!q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasTime") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp") && !q.getPredicate().toString().equalsIgnoreCase("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp")) {
                 quadsToAdd.add(new Quad(q.getGraph(), tmxEventId, q.getPredicate(), q.getObject()));
             }
         }
@@ -703,7 +706,7 @@ public class ProcessEventObjectsStream {
 
     private static String matchAssociatedPair(String begin, String end) {
         if (!begin.isEmpty() && !end.isEmpty()) {
-            String unionQuery = "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasAtTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Interval> . ?t <http://www.w3.org/TR/owl-time#hasBeginning> <" + begin + "> ; <http://www.w3.org/TR/owl-time#hasEnd> <" + end + "> . } ";
+            String unionQuery = "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasTime> ?t . ?t a <http://www.w3.org/TR/owl-time#Interval> . ?t <http://www.w3.org/TR/owl-time#hasBeginning> <" + begin + "> ; <http://www.w3.org/TR/owl-time#hasEnd> <" + end + "> . } ";
             unionQuery += "UNION ";
             unionQuery += "{ ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp> ?t1 . ?t1 a <http://www.w3.org/TR/owl-time#Instant> . ?t1 <http://www.w3.org/TR/owl-time#inDateTime> <" + begin + "> . ?ev <http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp> ?t2 . ?t2 a <http://www.w3.org/TR/owl-time#Instant> . ?t2 <http://www.w3.org/TR/owl-time#inDateTime> <" + end + "> . } ";
             return unionQuery;
@@ -740,7 +743,6 @@ public class ProcessEventObjectsStream {
         if (matchILI || matchLemma) {
             sparqlQuery += "GROUP BY ?ev";
         }
-        System.out.println(sparqlQuery);
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
