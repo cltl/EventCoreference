@@ -119,6 +119,7 @@ public class GetPerspectiveStatsFromNafFile {
         String grammaticalFrameFile = "";
         String project = "";
         String extension = "";
+        String query = "";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf") && args.length > (i + 1)) {
@@ -127,6 +128,8 @@ public class GetPerspectiveStatsFromNafFile {
                 extension = args[i + 1];
             } else if (arg.equals("--project") && args.length > (i + 1)) {
                 project = args[i + 1];
+            } else if (arg.equals("--query") && args.length > (i + 1)) {
+                query = args[i + 1];
             } else if (arg.equals("--source-frames") && args.length > (i + 1)) {
                 sourceFrameFile = args[i + 1];
             } else if (arg.equals("--grammatical-frames") && args.length > (i + 1)) {
@@ -156,8 +159,8 @@ public class GetPerspectiveStatsFromNafFile {
             OutputStream valueStats = new FileOutputStream(pathToNafFile+".values"+".xls");
             OutputStream valueSourceStats = new FileOutputStream(pathToNafFile+".source-values"+".xls");
             OutputStream valueAuthorStats = new FileOutputStream(pathToNafFile+".author-values"+".xls");
-            OutputStream fosAuthor = new FileOutputStream(pathToNafFile+".author"+".xls");
-            OutputStream fosSource = new FileOutputStream(pathToNafFile+".source"+".xls");
+            OutputStream fosAuthor = new FileOutputStream(pathToNafFile+".author."+query+".xls");
+            OutputStream fosSource = new FileOutputStream(pathToNafFile+".source."+query+".xls");
             String str = "Event\tSource\tCue\tAttribution\n";
             fosAuthor.write(str.getBytes());
             fosSource.write(str.getBytes());
@@ -166,11 +169,11 @@ public class GetPerspectiveStatsFromNafFile {
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
                    // System.out.println("file.getName() = " + file.getName());
-                    getPerspectiveStatsFromFile(fosAuthor, fosSource, file.getAbsolutePath(),project);
+                    getPerspectiveStatsFromFile(fosAuthor, fosSource, file.getAbsolutePath(),project, query);
                 }
             }
             else {
-                getPerspectiveStatsFromFile(fosAuthor, fosSource, pathToNafFile,project);
+                getPerspectiveStatsFromFile(fosAuthor, fosSource, pathToNafFile,project, query);
             }
             fosAuthor.close();
             fosSource.close();
@@ -308,7 +311,7 @@ public class GetPerspectiveStatsFromNafFile {
     static public void getPerspectiveStatsFromFile (OutputStream fosAuthor,
                                                     OutputStream fosSource,
                                                     String pathToNafFile,
-                                                    String project) throws IOException {
+                                                    String project, String query) throws IOException {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
@@ -354,7 +357,7 @@ public class GetPerspectiveStatsFromNafFile {
         for (int i = 0; i < sourcePerspectives.size(); i++) {
             PerspectiveObject perspectiveObject = sourcePerspectives.get(i);
             updateStats(sourceValues, perspectiveObject);
-            outputPerspectiveToXls(fosSource, semEvents, semRelations, perspectiveObject);
+            outputPerspectiveToXls(fosSource, query, semEvents, semRelations, perspectiveObject);
 
         }
         for (int i = 0; i < documentPerspectives.size(); i++) {
@@ -369,7 +372,7 @@ public class GetPerspectiveStatsFromNafFile {
                 }
             }
             updateStats(documentValues, perspectiveObject);
-            outputPerspectiveToXls(fosAuthor, semEvents, semRelations, perspectiveObject);
+            outputPerspectiveToXls(fosAuthor, query, semEvents, semRelations, perspectiveObject);
         }
     }
 
@@ -417,7 +420,7 @@ public class GetPerspectiveStatsFromNafFile {
 
     }
 
-    static void outputPerspectiveToXls (OutputStream fos, ArrayList<SemObject> semEvents, ArrayList<SemRelation> semRelations, PerspectiveObject perspectiveObject) throws IOException {
+    static void outputPerspectiveToXls (OutputStream fos, String query, ArrayList<SemObject> semEvents, ArrayList<SemRelation> semRelations, PerspectiveObject perspectiveObject) throws IOException {
         HashMap<String, ArrayList<String>> eventPerspectives = new HashMap<String, ArrayList<String>>();
         if ((perspectiveObject.getTargetEventMentions().size()>0)) {
             for (int i = 0; i < perspectiveObject.getTargetEventMentions().size(); i++) {
@@ -441,8 +444,16 @@ public class GetPerspectiveStatsFromNafFile {
                                         }
                                     }
                                     if (!propbank.isEmpty()) {
-                                        roles += "[" + propbank+":" + getSimpleNameSpaceName(semRelation.getObject()) + "]";
+                                        String participant = "["+getSimpleNameSpaceName(semRelation.getObject())+"]";
+                                        if (roles.indexOf(participant)==-1) {
+                                            roles += participant;
+                                        }
                                     }
+/*
+                                    System.out.println("semEvent.getPhrase() = " + semEvent.getPhrase());
+                                    System.out.println("propbank = " + propbank);
+                                    System.out.println("roles = " + roles);
+*/
                                 }
                             }
                         }
@@ -452,7 +463,20 @@ public class GetPerspectiveStatsFromNafFile {
                     continue;
                 }
 
-                String target = mention.getPhrase()+roles;
+                if (!query.isEmpty()) {
+                    String [] fields = query.split(";");
+                    boolean match = false;
+                    for (int j = 0; j < fields.length; j++) {
+                        String field = fields[j];
+                        if (roles.toLowerCase().indexOf(field.toLowerCase())>-1) {
+                            match = true;
+                        }
+                    }
+                    if (!match) {
+                        continue;
+                    }
+                }
+                String target = mention.getPhrase()+"\t"+roles;
                 String cue = "";
                 String sourceUri = "";
 

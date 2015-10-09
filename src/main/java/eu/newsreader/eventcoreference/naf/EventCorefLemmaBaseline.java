@@ -20,10 +20,11 @@ import java.util.*;
  * Time: 11:52 PM
  * To change this template use File | Settings | File Templates.
  */
-public class EventCorefLemmaBaseline {
+    public class EventCorefLemmaBaseline {
     static final String layer = "coreferences";
     static final String name = "vua-event-coref-intradoc-lemma-baseline";
     static final String version = "2.0";
+    static String outputTag = ".coref";
     static Vector<String> sourceFrames = new Vector<String>();
     static Vector<String> grammaticalFrames = new Vector<String>();
     static Vector<String> contextualFrames = new Vector<String>();
@@ -49,6 +50,9 @@ public class EventCorefLemmaBaseline {
                       }
                       if (arg.equals("--extension") && args.length>(i+1)) {
                           extension = args[i+1];
+                      }
+                      else if (arg.equals("--output-tag") && args.length>(i+1)) {
+                          outputTag = args[i+1];
                       }
                       if (arg.equals("--distance") && args.length>(i+1)) {
                           try {
@@ -119,7 +123,7 @@ public class EventCorefLemmaBaseline {
                   }
                   try {
                       String filePath = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf("."));
-                      FileOutputStream fos = new FileOutputStream(filePath+".naf");
+                      FileOutputStream fos = new FileOutputStream(filePath+outputTag);
                       kafSaxParser.writeNafToStream(fos);
                       fos.close();
                   } catch (IOException e) {

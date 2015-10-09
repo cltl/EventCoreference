@@ -136,7 +136,7 @@ public class GetSemFromNafFolder {
                         System.out.println("myRelations = " + myRelations.size());
                     }
                 }
-                String pathToTrigFile = pathToNafFile + ".trig";
+                String pathToTrigFile = pathToNafFile + ".sem.trig";
                 OutputStream fos = new FileOutputStream(pathToTrigFile);
                 JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, ILIURI, VERBOSE);
                 fos.close();

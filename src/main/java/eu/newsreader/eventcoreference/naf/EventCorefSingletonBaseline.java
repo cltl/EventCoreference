@@ -23,6 +23,7 @@ public class EventCorefSingletonBaseline {
     static final String name = "vua-event-coref-intradoc-singleton-baseline";
     static final String version = "1.0";
     static boolean REMOVEEVENTCOREFS = false;
+    static String outputTag = ".coref";
 
 
     static public void main (String [] args) {
@@ -43,6 +44,9 @@ public class EventCorefSingletonBaseline {
                       }
                       else if (arg.equals("--extension") && args.length>(i+1)) {
                           extension = args[i+1];
+                      }
+                      else if (arg.equals("--output-tag") && args.length>(i+1)) {
+                          outputTag = args[i+1];
                       }
                       else if (arg.equalsIgnoreCase("--replace")) {
                           REMOVEEVENTCOREFS = true;
@@ -89,7 +93,7 @@ public class EventCorefSingletonBaseline {
                   process(kafSaxParser);
                   try {
                       String filePath = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf("."));
-                      FileOutputStream fos = new FileOutputStream(filePath+".naf");
+                      FileOutputStream fos = new FileOutputStream(filePath+outputTag);
                       kafSaxParser.writeNafToStream(fos);
                       fos.close();
                   } catch (IOException e) {

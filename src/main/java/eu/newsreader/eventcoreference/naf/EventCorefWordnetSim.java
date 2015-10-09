@@ -55,9 +55,12 @@ public class EventCorefWordnetSim {
     static boolean USEWSD = false;
     static double BESTSENSETHRESHOLD = 0.8;
     static String WNPREFIX = "";
-    static String WNSOURCE = "";
+    static String WNSOURCETAG = "";
     static boolean REMOVEEVENTCOREFS = false;
     static int DISTANCE = -1;
+    static String extension = "";
+    static String outputTag = "";
+
 
     static public void main (String [] args) {
               if (args.length == 0) {
@@ -123,7 +126,7 @@ public class EventCorefWordnetSim {
                           } else if (arg.equals("--wn-prefix")&& args.length > (i + 1)) {
                               WNPREFIX = args[i+1].trim();
                           } else if (arg.equals("--wn-source")&& args.length > (i + 1)) {
-                              WNSOURCE = args[i+1].trim().toLowerCase();
+                              WNSOURCETAG = args[i+1].trim().toLowerCase();
                           } else if (arg.equals("--proportion") && args.length > (i + 1)) {
                               try {
                                   proportionalthreshold = Integer.parseInt(args[i + 1]);
@@ -163,7 +166,6 @@ public class EventCorefWordnetSim {
                   } else {
                       String pathToNafFile = "";
                       String pathToWNLMF = "";
-                      String extension = "";
                       String folder = "";
                       //String pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline2.0/v21_out-no-event-coref.naf";
                       // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04/57WD-M601-F06S-P370.xml_9af408976df898b707d008cbe1f81372.naf.coref";
@@ -179,6 +181,9 @@ public class EventCorefWordnetSim {
                           }
                           else if (arg.equals("--extension") && args.length > (i + 1)) {
                               extension = args[i + 1];
+                          }
+                          else if (arg.equals("--output-tag") && args.length>(i+1)) {
+                              outputTag = args[i+1];
                           }
                           else if (arg.equals("--relations") && args.length > (i + 1)) {
                               String[] relationString = args[i + 1].split("#");
@@ -202,7 +207,7 @@ public class EventCorefWordnetSim {
                           } else if (arg.equals("--wn-prefix")&& args.length > (i + 1)) {
                               WNPREFIX = args[i+1].trim();
                           } else if (arg.equals("--wn-source")&& args.length > (i + 1)) {
-                              WNSOURCE = args[i+1].trim().toLowerCase();
+                              WNSOURCETAG = args[i+1].trim().toLowerCase();
                           }
                           else if (arg.equals("--drift-max") && args.length > (i + 1)) {
                               try {
@@ -268,7 +273,7 @@ public class EventCorefWordnetSim {
                           System.out.println("REMOVEEVENTCOREFS = " + REMOVEEVENTCOREFS);
                           System.out.println("method = " + method);
                           System.out.println("wn-prefix = " + WNPREFIX);
-                          System.out.println("wn-resource = " + WNSOURCE);
+                          System.out.println("wn-resource = " + WNSOURCETAG);
                           System.out.println("DRIFTMAX = " + DRIFTMAX);
                           System.out.println("DISTANCE = " + DISTANCE);
                           System.out.println("relations = " + relations.toString());
@@ -310,7 +315,7 @@ public class EventCorefWordnetSim {
               process(kafSaxParser, USEWSD);
               try {
                   String filePath = pathToNafFile.substring(0,pathToNafFile.lastIndexOf("."));
-                  FileOutputStream fos = new FileOutputStream(filePath+".naf");
+                  FileOutputStream fos = new FileOutputStream(filePath+outputTag);
                   kafSaxParser.writeNafToStream(fos);
                   fos.close();
               } catch (IOException e) {
@@ -335,7 +340,7 @@ public class EventCorefWordnetSim {
 
                   try {
                       String filePath = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf("."));
-                      FileOutputStream fos = new FileOutputStream(filePath+".naf");
+                      FileOutputStream fos = new FileOutputStream(filePath+outputTag);
                       kafSaxParser.writeNafToStream(fos);
                       fos.close();
                   } catch (IOException e) {
@@ -439,11 +444,11 @@ public class EventCorefWordnetSim {
 
                       if (!USEWSD) {
                           //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
-                          corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                          corefResultSet.getAllSenses(kafSaxParser, WNSOURCETAG);
                       }
                       else {
                           //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                          corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                          corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                       }
                       /// we determine the best senses for the lemma sets according to WSD
 
@@ -653,33 +658,33 @@ public class EventCorefWordnetSim {
                 CorefResultSet corefResultSet = grammaticalCorefMatchList.get(i);
                 if (!USEWSD) {
                     //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
-                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCETAG);
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
             }
             for (int i = 0; i < sourceCorefMatchList.size(); i++) {
                 CorefResultSet corefResultSet = sourceCorefMatchList.get(i);
                 if (!USEWSD) {
                     //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
-                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCETAG);
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
             }
             for (int i = 0; i < corefMatchList.size(); i++) {
                 CorefResultSet corefResultSet = corefMatchList.get(i);
                 if (!USEWSD) {
                     //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
-                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCETAG);
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
             }
               //// now we need to compare these lemma lists but not the source and grammatical sets
@@ -848,33 +853,33 @@ public class EventCorefWordnetSim {
                 CorefResultSet corefResultSet = grammaticalCorefMatchList.get(i);
                 if (!USEWSD) {
                     //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
-                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCETAG);
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
             }
             for (int i = 0; i < sourceCorefMatchList.size(); i++) {
                 CorefResultSet corefResultSet = sourceCorefMatchList.get(i);
                 if (!USEWSD) {
                     //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
-                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCETAG);
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
             }
             for (int i = 0; i < corefMatchList.size(); i++) {
                 CorefResultSet corefResultSet = corefMatchList.get(i);
                 if (!USEWSD) {
                     //// ALL SENSE ARE USED TO CREATE SIMILARITY MAPPINGS
-                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCE);
+                    corefResultSet.getAllSenses(kafSaxParser, WNSOURCETAG);
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCE);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
             }
               //// now we need to compare these lemma lists but not the source and grammatical sets
