@@ -15,7 +15,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -39,6 +42,7 @@ public class TrigToJsonTimeLineClimax {
     static int esoLevel = 0;
     static int climaxThreshold = 0;
     static String entityFilter = "";
+    static HashMap <String, Integer> actorCount = new HashMap<String, Integer>();
 
 
 
@@ -54,7 +58,7 @@ public class TrigToJsonTimeLineClimax {
         fnFile = "/Users/piek/Desktop/NWR/timeline/vua-naf2jsontimeline_2015/resources/frRelation.xml";
         fnLevel = 3;
        // esoLevel = 2;
-        trigfolder = "/Users/piek/Desktop/NWR/timeline/vua-naf2jsontimeline_2015/test/corpus_airbus/events/contextual";
+        trigfolder = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_NAF_input_noTok_uriOK_0915_v3processed/corpus_stock/events/contextualEvent";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
@@ -115,9 +119,6 @@ public class TrigToJsonTimeLineClimax {
         }
         iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
         ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
-        ArrayList<String> provenanceTriples = new ArrayList<String>();
-        ArrayList<String> instanceTriples = new ArrayList<String>();
-        ArrayList<String> otherTriples = new ArrayList<String>();
         for (int i = 0; i < trigFiles.size(); i++) {
             File file = trigFiles.get(i);
             //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
@@ -188,11 +189,13 @@ public class TrigToJsonTimeLineClimax {
         }
         try {
             ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
+            //System.out.println("jsonObjects.size() = " + jsonObjects.size());
             writeJsonObjectArray(trigfolder, project, jsonObjects);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
     static void getEntityEvents (Dataset dataset, String name) {
         ArrayList<String> events = new ArrayList<String>();
         Model namedModel = dataset.getNamedModel(name);
@@ -297,7 +300,7 @@ public class TrigToJsonTimeLineClimax {
         for (int i = 0; i < triples.size(); i++) {
             Statement statement = triples.get(i);
             String predicate = statement.getPredicate().getURI();
-            if (predicate.toLowerCase().endsWith("hastime")) {
+            if (predicate.toLowerCase().endsWith("time")) {
                 String object = "";
                 if (statement.getObject().isLiteral()) {
                     object = statement.getObject().asLiteral().toString();
@@ -308,7 +311,14 @@ public class TrigToJsonTimeLineClimax {
                     ArrayList<Statement> instanceTriples = tripleMapInstances.get(object);
                     for (int j = 0; j < instanceTriples.size(); j++) {
                         Statement timeStatement = instanceTriples.get(j);
-                        if (timeStatement.getPredicate().getURI().toLowerCase().endsWith("indatetime")) {
+                        /**    WHAT TO DO WITH PERIODS????
+                         *             time:hasBeginning  <http://www.newsreader-project.eu/time/20100125> ;
+                                       time:hasEnd        <http://www.newsreader-project.eu/time/20100125> .
+
+                         */
+                        if (timeStatement.getPredicate().getURI().toLowerCase().endsWith("indatetime")
+                            ||timeStatement.getPredicate().getURI().toLowerCase().endsWith("hasbeginning")
+                            || timeStatement.getPredicate().getURI().toLowerCase().endsWith("hasend")) {
                             if (timeStatement.getObject().isLiteral()) {
                                 return timeStatement.getObject().asLiteral().toString();
                             } else if (statement.getObject().isURIResource()) {
@@ -386,34 +396,41 @@ public class TrigToJsonTimeLineClimax {
                             //// this is a year so we pick the first day of the year
                             timeAnchor+= "0101";
                         }
-                        jsonObject.put("time", timeAnchor);
+                        if (timeAnchor.length()==3 || timeAnchor.length()==5 || timeAnchor.length()==7) {
+                            ///date error, e.g. 12-07-198"
+                            continue;
+                        }
+                        ///skipping histiric events
+                        if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
+                            jsonObject.put("time", timeAnchor);
 
-                        JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonClasses.keys().hasNext()) {
-                            /// TOOK THIS OUT TO SAVE SPACE
-                          //  jsonObject.put("classes", jsonClasses);
+                            JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
+                            if (jsonClasses.keys().hasNext()) {
+                                /// TOOK THIS OUT TO SAVE SPACE
+                                //  jsonObject.put("classes", jsonClasses);
+                            }
+
+                            if (fnLevel > 0) {
+                                getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+                            } else if (esoLevel > 0) {
+                                //   getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+                            }
+
+                            JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                            if (jsonLabels.keys().hasNext()) {
+                                jsonObject.put("labels", jsonLabels.get("labels"));
+                            }
+                            JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
+                            if (jsonMentions.keys().hasNext()) {
+                                jsonObject.put("mentions", jsonMentions.get("mentions"));
+                            }
+                            JSONObject actors = getActorsJSONObjectFromInstanceStatement(otherTriples);
+                            if (actors.keys().hasNext()) {
+                                jsonObject.put("actors", actors);
+                            }
+                            jsonObjectArrayList.add(jsonObject);
                         }
 
-                        if (fnLevel>0) {
-                            getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
-                        }
-                        else if (esoLevel>0) {
-                         //   getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
-                        }
-
-                        JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonLabels.keys().hasNext()) {
-                            jsonObject.put("labels", jsonLabels.get("labels"));
-                        }
-                        JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonMentions.keys().hasNext()) {
-                            jsonObject.put("mentions", jsonMentions.get("mentions"));
-                        }
-                        JSONObject actors = getActorsJSONObjectFromInstanceStatement(otherTriples);
-                        if (actors.keys().hasNext()) {
-                            jsonObject.put("actors",actors);
-                        }
-                        jsonObjectArrayList.add(jsonObject);
                     }
                 }
             }
@@ -1162,9 +1179,19 @@ public class TrigToJsonTimeLineClimax {
         try {
             try {
                 File folder = new File(pathToFolder);
-                OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + folder.getName()+".timeline.json");
+                OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + "contextual.timeline.json");
+               // OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + folder.getName()+".timeline.json");
                 JSONObject timeLineObject = JsonEvent.createTimeLineProperty(new File(pathToFolder).getName(), project);
-
+                Set keySet = actorCount.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    Integer cnt = actorCount.get(key);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("name", key);
+                    jsonObject.put("event_count", cnt);
+                    timeLineObject.append("actors", jsonObject);
+                }
                 for (int j = 0; j < objects.size(); j++) {
                     JSONObject jsonObject = objects.get(j);
                     timeLineObject.append("events", jsonObject);
@@ -1383,13 +1410,11 @@ public class TrigToJsonTimeLineClimax {
 
     static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
         JSONObject jsonActorsObject = new JSONObject();
-
-        HashMap<String, ArrayList<Statement>> actorMap = new HashMap<String, ArrayList<Statement>>();
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
 
             String predicate = statement.getPredicate().getURI();
-            if (predicate.toLowerCase().endsWith("hastime")) {
+            if (predicate.toLowerCase().endsWith("time")) {
                 ///
             }
             else if (predicate.toLowerCase().endsWith("hasactor")) {
@@ -1415,9 +1440,18 @@ public class TrigToJsonTimeLineClimax {
                         ArrayList<String> coveredValues = new ArrayList<String>();
                         for (int j = 0; j < values.length; j++) {
                             String value = values[j];
+                            value = value.replace("+", "_");
                             if (!coveredValues.contains(value)) {
                                 coveredValues.add(value);
-                                jsonActorsObject.append(predicate, value.replace("+", "_"));
+                                jsonActorsObject.append(predicate, value);
+                                if (actorCount.containsKey(value)) {
+                                    Integer cnt = actorCount.get(value);
+                                    cnt++;
+                                    actorCount.put(value, cnt);
+                                }
+                                else {
+                                    actorCount.put(value,1);
+                                }
                             }
                         }
                     }

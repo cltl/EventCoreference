@@ -254,7 +254,15 @@ nwr:hasAttribution nwrontology:attrPOSCERTNF .
 
 
     public void addToJenaDataSet (Dataset ds) {
+        /*
+        mentionId2      hasAttribution         attributionId1
+                        gaf:generatedBy        mentionId3
+        attributionId1  rdf:value              CERTAIN_POS_FUTURE
+                        rdf:value              POSITIVE
+                        prov:wasAttributedTo   doc-uri
+                        gaf:wasAttributedTo    dbp:Zetsche
 
+         */
         /*
 http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=254,261
 	gafAttribution:CERTAIN,NON_FUTURE
