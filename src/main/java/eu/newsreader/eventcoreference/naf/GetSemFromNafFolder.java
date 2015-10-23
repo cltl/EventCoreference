@@ -95,6 +95,9 @@ public class GetSemFromNafFolder {
                 contextualFrameFile = args[i+1];
             }
         }
+
+
+
         sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
         grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
         contextualVector = Util.ReadFileToStringVector(contextualFrameFile);

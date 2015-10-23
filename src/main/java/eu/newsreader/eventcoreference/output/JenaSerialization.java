@@ -162,12 +162,12 @@ public class JenaSerialization {
       //  System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
     }
 
-    static public void addJenaPerspectiveObjects(Dataset ds,
+    static public void addJenaPerspectiveObjects(Dataset ds, String attrBase, String namespace,
                                             ArrayList<PerspectiveObject> perspectiveObjects) {
         for (int i = 0; i < perspectiveObjects.size(); i++) {
             PerspectiveObject perspectiveObject = perspectiveObjects.get(i);
-           // System.out.println("perspectiveObject.toString() = " + perspectiveObject.toString());
-            perspectiveObject.addToJenaDataSet(ds);
+            String attrId = attrBase+"Attr"+i;
+            perspectiveObject.addToJenaDataSet(ds, namespace, attrId);
         }
     }
 
@@ -368,8 +368,10 @@ public class JenaSerialization {
             createModels();
             addJenaCompositeEvents(semEvents, null, false, false);
             addDocMetaData(ds, kafSaxParser);
-            addJenaPerspectiveObjects(ds, sourcePerspectiveObjects);
-            addJenaPerspectiveObjects(ds, authorPerspectiveObjects);
+            String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
+            addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
+            attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
+            addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.prov, authorPerspectiveObjects);
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
 
 

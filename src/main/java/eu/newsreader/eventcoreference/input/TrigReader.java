@@ -58,6 +58,7 @@ public class TrigReader {
     }
 
 
+
     static void updateOtherStats (Statement s) {
         String predicate = s.getPredicate().getURI();
         String subject = s.getSubject().getURI();
@@ -116,6 +117,9 @@ public class TrigReader {
             type = "ENT";
         }
         else if (subject.indexOf("ili-30")>-1) {
+            type = "IEV";
+        }
+        else if (subject.indexOf("ili")>-1) {
             type = "IEV";
         }
         else if (subject.indexOf("#ev")>-1) {

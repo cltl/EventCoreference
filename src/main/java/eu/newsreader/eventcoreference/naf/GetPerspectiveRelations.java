@@ -323,7 +323,8 @@ public class GetPerspectiveRelations {
             //ResourcesUri.prefixModel(defaultModel);
           //  Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/perspective");
             ResourcesUri.prefixModelGaf(defaultModel);
-            JenaSerialization.addJenaPerspectiveObjects(ds, perspectiveObjects);
+            String attrBase = pathToTrigFile+"_";
+            JenaSerialization.addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, perspectiveObjects);
             RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
             fos.close();
         } catch (IOException e) {
@@ -345,8 +346,10 @@ public class GetPerspectiveRelations {
                 defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
 
                 JenaSerialization.addDocMetaData(ds, kafSaxParser);
-                JenaSerialization.addJenaPerspectiveObjects(ds, sourcePerspectiveObjects);
-                JenaSerialization.addJenaPerspectiveObjects(ds, authorPerspectiveObjects);
+                String attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"s";
+                JenaSerialization.addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
+                attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"d";
+                JenaSerialization.addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.prov, authorPerspectiveObjects);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
                 fos.close();
             } catch (IOException e) {
@@ -354,14 +357,15 @@ public class GetPerspectiveRelations {
             }
     }
 
-    public static void perspectiveRelationsToTrigStream (OutputStream fos, ArrayList<PerspectiveObject> perspectiveObjects) {
+    public static void perspectiveRelationsToTrigStream (OutputStream fos, String uri, ArrayList<PerspectiveObject> perspectiveObjects) {
 
                 Dataset ds = TDBFactory.createDataset();
                 Model defaultModel = ds.getDefaultModel();
                 ResourcesUri.prefixModel(defaultModel);
               //  Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/perspective");
                 ResourcesUri.prefixModelGaf(defaultModel);
-                JenaSerialization.addJenaPerspectiveObjects(ds, perspectiveObjects);
+                String attrBase = uri+"_";
+                JenaSerialization.addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, perspectiveObjects);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
     }
 
