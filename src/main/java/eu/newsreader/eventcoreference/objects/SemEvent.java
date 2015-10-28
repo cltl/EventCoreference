@@ -43,6 +43,10 @@ public class SemEvent extends SemObject{
        super(SemObject.EVENT);
     }
 
+    /*public SemEvent() {
+       super(SemObject.EVENT);
+    }
+*/
 
 
     public String toString () {

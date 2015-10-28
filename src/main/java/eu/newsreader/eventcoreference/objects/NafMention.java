@@ -13,6 +13,8 @@ import java.util.Collections;
  * Created by piek on 1/22/14.
  */
 public class NafMention implements Serializable {
+    private static final long serialVersionUID = 4092249317963110327L;
+
     private String baseUri;
     private String phrase;
     private String sentence;

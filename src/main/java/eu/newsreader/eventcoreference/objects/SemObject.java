@@ -25,6 +25,7 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public class SemObject implements Serializable {
+    private static final long serialVersionUID = 5418194900752121897L;
 
     static public final String EVENT = "EVENT";
     static public final String ENTITY = "ENTITY";
@@ -46,7 +47,7 @@ public class SemObject implements Serializable {
     public SemObject(String type) {
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
-        this.type = type;
+        this.type = ENTITY;
         this.nafIds = new ArrayList<String>();
         this.label = "";
         this.uri = "";
@@ -139,6 +140,19 @@ public class SemObject implements Serializable {
 
     public ArrayList<PhraseCount> getPhraseCounts() {
         return phraseCounts;
+    }
+
+    public ArrayList<String> getUniquePhrases() {
+        ArrayList<String> phrases =  new ArrayList<String>();
+        for (int i = 0; i < phraseCounts.size(); i++) {
+            PhraseCount phraseCount = phraseCounts.get(i);
+            if (!phraseCount.getPhrase().isEmpty()) {
+                if (phrases.contains(phraseCount.getPhrase())) {
+                    phrases.add(phraseCount.getPhrase());
+                }
+            }
+        }
+        return phrases;
     }
 
     public void setPhraseCounts(ArrayList<PhraseCount> phraseCounts) {
