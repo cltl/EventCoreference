@@ -466,7 +466,6 @@ public class MatchEventObjects {
                         KafSense kafSense = iliReferences.get(j);
                         if (conceptEventMap.containsKey(kafSense.getSensecode())) {
                             ArrayList<String> eventMapIds = Util.getDifference(conceptEventMap.get(kafSense.getSensecode()), processedEvents);
-                        //    System.out.println("eventMapIds.size() = " + eventMapIds.size());
                             mergedEventId = matchEvents(myCompositeEvent, myCompositeEvents, eventMapIds, 0, phraseMatchThreshold, conceptMatchThreshold, roleNeededArrayList);
                             if (!mergedEventId.isEmpty()) {
                                 break;
@@ -485,7 +484,6 @@ public class MatchEventObjects {
                     String phrase = phrases.get(j);
                     if (conceptEventMap.containsKey(phrase)) {
                         ArrayList<String> eventMapIds = Util.getDifference(conceptEventMap.get(phrase), processedEvents);
-                      //  System.out.println("eventMapIds.size() = " + eventMapIds.size());
                         mergedEventId = matchEvents(myCompositeEvent, myCompositeEvents, eventMapIds, 0, phraseMatchThreshold, conceptMatchThreshold, roleNeededArrayList);
                         if (!mergedEventId.isEmpty()) {
                             break;
@@ -498,12 +496,11 @@ public class MatchEventObjects {
             }
             if (mergedEventId.isEmpty()) {
                 if (DEBUG) System.out.println("NO MATCH");
-               // remainingEvents.add(eventId);
             }
             else {
                 if (!modifiedEvents.contains(mergedEventId)) modifiedEvents.add(mergedEventId);
-                if (DEBUG)
-                    System.out.println("MATCH");
+                if (DEBUG) System.out.println("MATCH");
+              //  System.out.println("mergedEventId = " + mergedEventId);
             }
         }
 
@@ -557,62 +554,6 @@ public class MatchEventObjects {
         }
     }
 
-    //// OLD MATCHCING CODE
-    /*            for (int j = i+1; j < eventMapIds.size(); j++) {
-                String targetEventId = eventMapIds.get(j);
-                CompositeEvent targetEvent = myCompositeEvents.get(targetEventId);
-                if (targetEvent==null) {
-                    continue;
-                }
-                if (targetEvent==null) {
-                    continue;
-                }
-                boolean EVENTMATCH = false;
-
-                if (MATCHTYPE.equalsIgnoreCase("lemma")) {
-                    if (ComponentMatch.compareEventLabelReference(myCompositeEvent, targetEvent, phraseMatchThreshold)) {
-                        EVENTMATCH = true;
-                    }
-                }
-                else {
-                    //// it should be ILI or ILILEMMA
-                    //// We then first check the ILI matches
-                    if (getILIreferences(myCompositeEvent.getEvent()).size() > 0 &&
-                            getILIreferences(targetEvent.getEvent()).size() > 0) {
-                        //// we first check the synsets if there are any
-                        //// different senses of the same word are not considered a match
-                        if (ComponentMatch.compareEventWordNetReference(myCompositeEvent, targetEvent, conceptMatchThreshold)) {
-                            EVENTMATCH = true;
-                        }
-                    } else {
-                        if (MATCHTYPE.equalsIgnoreCase("ililemma")) {
-                            /// if one of the two or both have no synsets then we compare the lemmas
-                            if (ComponentMatch.compareEventLabelReference(myCompositeEvent, targetEvent, phraseMatchThreshold)) {
-                                EVENTMATCH = true;
-                            }
-                        }
-                    }
-                }
-
-*//* THIS IS TOO RISKY
-                    if (ComponentMatch.compareEventLCSReference(myCompositeEvent, targetEvent)) {
-                        EVENTMATCH=true;
-                    }
-*//*
-
-                if (EVENTMATCH) {
-                    if (ComponentMatch.compareCompositeEvent(myCompositeEvent, targetEvent, roleNeededArrayList)) {
-                        match = true;
-                        targetEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
-                        targetEvent.mergeObjects(myCompositeEvent);
-                        targetEvent.mergeRelations(myCompositeEvent);
-                       // myCompositeEvents.put(eventId, null);
-                        myCompositeEvents.remove(eventId);
-                        modifiedEvents.add(targetEvent.getEvent().getId());
-                        break;
-                    }
-                }
-            }*/
 
     static void chaining1 (HashMap<String, CompositeEvent> myCompositeEvents,
                            ArrayList<String> eventIds,
@@ -706,76 +647,6 @@ public class MatchEventObjects {
         }
     }
 
-    static void splitting (HashMap<String, String> eventFolderMap,
-                           HashMap<String, CompositeEvent> myCompositeEvents,
-                           File parentEventFolder, String objectFileName) {
-        Set keySet = myCompositeEvents.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            CompositeEvent myCompositeEvent = myCompositeEvents.get(key);
-            if (myCompositeEvent == null) {
-                continue;
-            }
-            ArrayList<KafSense> iliConcepts = getILIreferences(myCompositeEvent.getEvent());
-            String targetFolderName = "";
-            if (iliConcepts.size()>0) {
-                ArrayList<String> targetFolderArrayList = new ArrayList<String>();
-                for (int i = 0; i < iliConcepts.size(); i++) {
-                    KafSense kafSense = iliConcepts.get(i);
-                    if (eventFolderMap.containsKey(kafSense.getSensecode())) {
-                        String folder = eventFolderMap.get(kafSense.getSensecode());
-                        if (targetFolderArrayList.contains(folder)) {
-                            targetFolderArrayList.add(folder);
-                        }
-                    }
-                    else {
-                        /// we pick one of the concepts to store it. It does not matter which one
-                        targetFolderName = kafSense.getSensecode();
-                    }
-                }
-                if (targetFolderArrayList.isEmpty()) {
-                   //// there was nothing there so we create a target folder
-                    if (targetFolderName.isEmpty()) {
-                        System.out.println("WE HAVE NOT TARGET FOLDER TO STORE THIS. WE ARE LOSING INFORMATION....");
-                    }
-                    else {
-                        String targetFolderPath = parentEventFolder+"/"+targetFolderName;
-                        File targetFolder = new File(targetFolderPath);
-                        if (!targetFolder.exists()) {
-                            targetFolder.mkdir();
-                        }
-                        if (targetFolder.exists()) {
-                            String targetFilePath = targetFolderPath + "/" + objectFileName;
-                            File targetFile = new File(targetFilePath);
-                            try {
-                                saveCompositeEvent(myCompositeEvent, targetFile);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-
-/*            for (int i = 0; i < compositeEvent1.getEvent().getPhraseCounts().size(); i++) {
-                PhraseCount phraseCount1 = compositeEvent1.getEvent().getPhraseCounts().get(i);
-                for (int j = 0; j < compositeEvent2.getEvent().getPhraseCounts().size(); j++) {
-                    PhraseCount phraseCount2 = compositeEvent2.getEvent().getPhraseCounts().get(j);
-                    if (phraseCount1.getPhrase().equalsIgnoreCase(phraseCount2.getPhrase())) {
-                        nMatches++;
-                    }
-                }
-            }*/
-
-
-            if (MATCHTYPE.equalsIgnoreCase("lemma")) {
-            } else {
-                    if (MATCHTYPE.equalsIgnoreCase("ililemma")) {
-                    }
-            }
-        }
-    }
 
     static void saveCompositeEvent (CompositeEvent compositeEvent, File targetFile) throws IOException {
         if (targetFile!=null && targetFile.exists()) {
