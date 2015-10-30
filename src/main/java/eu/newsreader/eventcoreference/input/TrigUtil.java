@@ -15,10 +15,10 @@ import java.util.Iterator;
  */
 public class TrigUtil {
 
-    static final String provenanceGraph = "http://www.newsreader-project.eu/provenance";
-    static final String instanceGraph = "http://www.newsreader-project.eu/instances";
+    static final public String provenanceGraph = "http://www.newsreader-project.eu/provenance";
+    static final public String instanceGraph = "http://www.newsreader-project.eu/instances";
 
-    static ArrayList<String> getAllEntityEvents (Dataset dataset, String entity) {
+    static public ArrayList<String> getAllEntityEvents (Dataset dataset, String entity) {
         ArrayList<String> events = new ArrayList<String>();
         Iterator<String> it = dataset.listNames();
         while (it.hasNext()) {
@@ -41,7 +41,7 @@ public class TrigUtil {
         return events;
     }
 
-    static void getAllEntityEventTriples (Dataset dataset,
+    static public void getAllEntityEventTriples (Dataset dataset,
                                           ArrayList<String> events,
                                           HashMap<String, ArrayList<Statement>> eventMap) {
         HashMap<String, ArrayList<Statement>> triples = new HashMap<String, ArrayList<Statement>>();
@@ -75,7 +75,7 @@ public class TrigUtil {
     }
 
 
-    static boolean isEventInstance (Statement statement) {
+    static public boolean isEventInstance (Statement statement) {
         String predicate = statement.getPredicate().getURI();
         if (predicate.endsWith("#type")) {
             String object = "";
@@ -98,7 +98,7 @@ public class TrigUtil {
         return false;
     }
 
-    static boolean isEventTripe (Statement statement) {
+    static public boolean isEventTripe (Statement statement) {
         String subject = statement.getSubject().toString();
         int idx = subject.lastIndexOf("/");
         if (idx>-1) {
@@ -110,7 +110,7 @@ public class TrigUtil {
         return false;
     }
 
-    static int mentionCounts (Statement statement) {
+    static public int mentionCounts (Statement statement) {
         int cnt = 0;
         String predicate = statement.getPredicate().getURI();
         if (predicate.endsWith("#denotedBy")) {
@@ -129,7 +129,7 @@ public class TrigUtil {
 
 
 
-    static String getValue (String predicate) {
+    static public String getValue (String predicate) {
         int idx = predicate.lastIndexOf("#");
         if (idx>-1) {
             return predicate.substring(idx + 1);
@@ -146,7 +146,7 @@ public class TrigUtil {
     }
 
 
-    static boolean hasStatement (ArrayList<Statement> statements, Statement s) {
+    static public boolean hasStatement (ArrayList<Statement> statements, Statement s) {
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
             if (statement.getSubject().equals(s.getSubject()) &&
@@ -159,7 +159,7 @@ public class TrigUtil {
         return false;
     }
 
-    static boolean validTriple (Statement s) {
+    static public boolean validTriple (Statement s) {
         if (s.getPredicate().toString().toLowerCase().contains("propbank")) {
             return true;
         }/*
@@ -187,7 +187,7 @@ public class TrigUtil {
         }
     }
 
-    static boolean validLabelTriple (Statement s) {
+    static public boolean validLabelTriple (Statement s) {
        if (s.getPredicate().toString().toLowerCase().contains("#label")) {
             return true;
         }
@@ -201,7 +201,7 @@ public class TrigUtil {
         }
     }
 
-    static boolean validRoleTriple (Statement s) {
+    static public boolean validRoleTriple (Statement s) {
         if (s.getPredicate().toString().toLowerCase().contains("propbank")) {
             return true;
         }
@@ -214,7 +214,7 @@ public class TrigUtil {
 
 
 
-    static boolean isGafTriple(Statement s) {
+    static public boolean isGafTriple(Statement s) {
         if (s.getPredicate().toString().toLowerCase().contains("#denotedby")) {
             return true;
         }
@@ -223,7 +223,7 @@ public class TrigUtil {
         }
     }
 
-    static String getObjectValue (Statement statement) {
+    static public String getObjectValue (Statement statement) {
         String object = "";
         String value = "";
         if (statement.getObject().isLiteral()) {
@@ -247,21 +247,11 @@ public class TrigUtil {
         return object;
     }
 
-/*
-    static String getObjectValue (Statement statement) {
-        String object = "";
-        if (statement.getObject().isLiteral()) {
-            object = statement.getObject().asLiteral().toString();
-        } else if (statement.getObject().isURIResource()) {
-            object = statement.getObject().asResource().getURI();
-        }
-        return object;
-    }
-*/
 
 
 
-    static String triplesToString (ArrayList<Statement> statements) {
+
+    static public String triplesToString (ArrayList<Statement> statements) {
         String str = "";
         String eventLabels = "";
         String roles = "";
@@ -292,7 +282,7 @@ public class TrigUtil {
         return str;
     }
 
-    static String triplesToString (ArrayList<Statement> statements, String entity) {
+    static public String triplesToString (ArrayList<Statement> statements, String entity) {
         String str = "";
         String eventLabels = "";
         String roles = "";
@@ -342,7 +332,7 @@ public class TrigUtil {
 
 
 
-    static String getNameSpaceString (String value) {
+    static public String getNameSpaceString (String value) {
         String property = "";
         if (value.indexOf("/framenet/") > -1) {
             property = "fn";
@@ -383,7 +373,7 @@ public class TrigUtil {
         return property;
     }
 
-    static String getMention(String mention) {
+    static public String getMention(String mention) {
         String mentionValue = getNameSpaceString(mention);
         String value = mention;
         int idx = mention.lastIndexOf("/");

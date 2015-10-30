@@ -938,7 +938,7 @@ public class GetSemFromNaf {
              */
             if (!timeAnchor) {
                 /// timeless event
-                /// in all cases there is no time relations we link it to the docTime
+                /// in all cases that there is no time relations we link it to the docTime
                // System.out.println("docSemTime.toString() = " + docSemTime.toString());
                // System.out.println("docSemTime.getDateLabel() = " + docSemTime.getOwlTime().getDateLabel());
                // System.out.println("semEvent = " + semEvent.getId());

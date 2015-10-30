@@ -25,12 +25,14 @@ import java.util.*;
  */
 public class MatchEventObjects {
 
+    static boolean CROSSDOC = false;
     static boolean DEBUG = false;
     public static String MATCHTYPE= "ililemma";  // ili OR lemma OR ililemma OR none OR split
     public static boolean LCS = false;
     public static boolean ILIURI = false;
     public static boolean VERBOSEMENTIONS = false;
     public static String CHAINING = "3";
+    static ArrayList<String> crossDocCorefSet = new ArrayList<String>(); /// just for debugging
 
     static final String usage = "MatchEventObjects reads obj files stored in time-folders with CompositeEventObjects and outputs a single RDF-TRiG file\n" +
             "The parameters are:\n" +
@@ -81,6 +83,9 @@ public class MatchEventObjects {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
+            }
+            else if (arg.equals("--cross-doc")) {
+                CROSSDOC = true;
             }
             else if (arg.equals("--phrase-match") && args.length>(i+1)) {
                 try {
@@ -236,6 +241,7 @@ public class MatchEventObjects {
 
                 /// events is initialised outside the loop so that events are compared against the total list
                 events = new HashMap<String, CompositeEvent>();
+                HashMap<String, CompositeEvent> crossDocEvents = new HashMap<String, CompositeEvent>();
                 ArrayList<File> files = Util.makeRecursiveFileList(nextEventFolder, ".obj");
                 //if (DEBUG)
                     System.out.println("files.size() = " + files.size());
@@ -279,17 +285,37 @@ public class MatchEventObjects {
                                             phraseMatchThreshold,
                                             conceptMatchThreshold,
                                             roleNeededArrayList);
+                    if (CROSSDOC) {
+                        for (int i = 0; i < crossDocCorefSet.size(); i++) {
+                            String s = crossDocCorefSet.get(i);
+                            if (events.containsKey(s)) {
+                                CompositeEvent compositeEvent = events.get(s);
+                                crossDocEvents.put(s, compositeEvent);
+                            }
+
+                        }
+                    }
                 }
                 //if (DEBUG)
                 System.out.println("events after chaining = " + events.size());
                 date = new Date();
                 System.out.println("End chaining:"+dateFormat.format(date));
 
-                JenaSerialization.serializeJenaSingleCompositeEvents(fos,
-                        events,
-                        sourceMetaHashMap,
-                        ILIURI,
-                        VERBOSEMENTIONS);
+                if (CROSSDOC) {
+                    JenaSerialization.serializeJenaSingleCompositeEvents(fos,
+                            events,
+                            sourceMetaHashMap,
+                            ILIURI,
+                            VERBOSEMENTIONS);
+                }
+                else {
+
+                    JenaSerialization.serializeJenaSingleCompositeEvents(fos,
+                            crossDocEvents,
+                            sourceMetaHashMap,
+                            ILIURI,
+                            VERBOSEMENTIONS);
+                }
                 date = new Date();
                 System.out.println("End writing sem.trig:"+dateFormat.format(date));
                 fos.close();
@@ -499,6 +525,10 @@ public class MatchEventObjects {
             }
             else {
                 if (!modifiedEvents.contains(mergedEventId)) modifiedEvents.add(mergedEventId);
+                /// for debugging
+                if (CROSSDOC) {
+                    if (!crossDocCorefSet.contains(mergedEventId)) crossDocCorefSet.add(mergedEventId);
+                }
                 if (DEBUG) System.out.println("MATCH");
               //  System.out.println("mergedEventId = " + mergedEventId);
             }
