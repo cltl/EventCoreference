@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -229,7 +230,16 @@ public class ClusterEventObjects {
 
 
           //  System.out.println("file.getName() = " + file.getName());
-            kafSaxParser.parseFile(file.getAbsolutePath());
+            if (!file.getAbsolutePath().toLowerCase().endsWith(".gz")) {
+                kafSaxParser.parseFile(file.getAbsolutePath());
+            }
+            else {
+                InputStream fileStream = new FileInputStream(file.getAbsolutePath());
+                InputStream gzipStream = new GZIPInputStream(fileStream);
+                kafSaxParser.parseFile(gzipStream);
+            }
+
+
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
                 System.out.println("file.getName() = " + file.getName());
                 kafSaxParser.getKafMetaData().setUrl(file.getName());

@@ -6,8 +6,12 @@ import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,14 +46,16 @@ public class GetPerspectiveFromNafFile {
         String extension = "";
 
 
+
 /*
         pathToNafFile = "/Code/vu/newsreader/EventCoreference/carheaderexample";
         project = "cars";
-        extension = ".xml";
+        extension = ".gz";
         sourceFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/source.txt";
         grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/grammatical.txt";
         contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/contextual.txt";
 */
+
 
 
         for (int i = 0; i < args.length; i++) {
@@ -76,25 +82,37 @@ public class GetPerspectiveFromNafFile {
         sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
         grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
         contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
-        File nafFile = new File(pathToNafFile);
-        if (nafFile.isDirectory()) {
-            ArrayList<File> files = Util.makeRecursiveFileList(nafFile, extension);
-            for (int i = 0; i < files.size(); i++) {
-                File file = files.get(i);
-               // System.out.println("file.getName() = " + file.getName());
-                getPerspectiveFromFile(file.getAbsolutePath(), project);
+        try {
+            File nafFile = new File(pathToNafFile);
+            if (nafFile.isDirectory()) {
+                ArrayList<File> files = Util.makeRecursiveFileList(nafFile, extension);
+                for (int i = 0; i < files.size(); i++) {
+                    File file = files.get(i);
+                   // System.out.println("file.getName() = " + file.getName());
+                    getPerspectiveFromFile(file.getAbsolutePath(), project);
+                }
             }
-        }
-        else {
-            getPerspectiveFromFile(pathToNafFile, project);
+            else {
+                getPerspectiveFromFile(pathToNafFile, project);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
 
-    static public void getPerspectiveFromFile (String pathToNafFile, String project) {
+    static public void getPerspectiveFromFile (String pathToNafFile, String project) throws IOException {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         KafSaxParser kafSaxParser = new KafSaxParser();
-        kafSaxParser.parseFile(pathToNafFile);
+        if (!pathToNafFile.toLowerCase().endsWith(".gz")) {
+            kafSaxParser.parseFile(pathToNafFile);
+        }
+        else {
+            InputStream fileStream = new FileInputStream(pathToNafFile);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            kafSaxParser.parseFile(gzipStream);
+        }
+
         if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
             System.out.println("file.getName() = " + new File(pathToNafFile).getName());
             kafSaxParser.getKafMetaData().setUrl(new File (pathToNafFile).getName());
