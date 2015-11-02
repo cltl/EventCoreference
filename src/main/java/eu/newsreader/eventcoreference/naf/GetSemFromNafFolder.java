@@ -7,12 +7,10 @@ import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -110,7 +108,19 @@ public class GetSemFromNafFolder {
             ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
             ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
             KafSaxParser kafSaxParser = new KafSaxParser();
-            kafSaxParser.parseFile(pathToNafFile);
+            //kafSaxParser.parseFile(pathToNafFile);
+            if (!pathToNafFile.toLowerCase().endsWith(".gz")) {
+                kafSaxParser.parseFile(pathToNafFile);
+            }
+            else {
+                try {
+                    InputStream fileStream = new FileInputStream(pathToNafFile);
+                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                    kafSaxParser.parseFile(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
                 System.out.println("file.getName() = " + new File(pathToNafFile).getName());
                 kafSaxParser.getKafMetaData().setUrl(new File (pathToNafFile).getName());
