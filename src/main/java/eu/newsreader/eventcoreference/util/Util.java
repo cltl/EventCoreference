@@ -1248,6 +1248,12 @@ public class Util {
                 //cleanLabel = cleanLabel.replaceAll("\'", "");
                 aUri = URLEncoder.encode(cleanLabel, "UTF-8");
                 if (!aUri.isEmpty()) {
+/*
+                    if (aUri.indexOf("Schreyer")>-1) {
+                        System.out.println("aUri = " + aUri);
+                        System.out.println("kafEntity = " + kafEntity.getTokenString());
+                    }
+*/
                     semObject.addPhraseCounts(aUri);
                 }
             } catch (UnsupportedEncodingException e) {
@@ -1257,14 +1263,17 @@ public class Util {
     //    System.out.println("semObject.getPhrase() = " + semObject.getPhraseCounts().toString());
         uri = semObject.getTopPhraseAsLabel().trim();
         if (uri.isEmpty()) {
-            System.out.println("semObject.getPhraseCounts().size() = " + semObject.getPhraseCounts().size());
+          //  System.out.println("semObject.getPhraseCounts().size() = " + semObject.getPhraseCounts().size());
             for (int i = 0; i < semObject.getPhraseCounts().size(); i++) {
                 PhraseCount phraseCount = semObject.getPhraseCounts().get(i);
-                System.out.println("phraseCount = " + phraseCount);
+            //    System.out.println("phraseCount = " + phraseCount);
             }
             uri = semObject.getPhrase();
         }
-   //     System.out.println("semObject topPhrase = " + uri);
+/*
+        if (uri.indexOf("Schreyer")>-1)
+            System.out.println("semObject uri = " + uri);
+*/
 
         return uri;
     }
@@ -2557,5 +2566,34 @@ public class Util {
             }
         }
         return l3;
+    }
+
+    static public String fixUri (String inputLine) {
+        /// PeterShaffyPeterShaffyPeterShaffy
+        String fixed = "";
+        String buffer = "";
+        for (int i = 0; i < inputLine.length(); i++) {
+            char c = inputLine.charAt(i);
+            buffer += c;
+            if (repeatingString(buffer, inputLine)) {
+                return buffer;
+            }
+        }
+        return inputLine;
+    }
+
+    static public boolean repeatingString (String s1, String s2) {
+        /// PeterShaffyPeterShaffyPeterShaffy
+        String s3 = s1;
+        if (s2.startsWith(s3) && s2.endsWith(s3)) {
+             s3 = s2.substring(s1.length());
+             if (s3.equals(s1)) {
+                 return true;
+             }
+            else {
+                 return repeatingString(s1, s3);
+             }
+        }
+        return false;
     }
 }

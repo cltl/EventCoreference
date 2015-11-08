@@ -32,6 +32,7 @@ public class GetPerspectiveFromNafFile {
             "--naf                  <path> <The path to the NAF file or folder with NAF files>\n" +
             "--extension            <string> <The file extension for the NAF files>\n" +
             "--project              <string> <The name of the project for creating URIs>\n" +
+            "--not-filter-source      <Source can be any a0 role\n"+
             "--contextual-frames    <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
             "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
             "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>"
@@ -47,14 +48,13 @@ public class GetPerspectiveFromNafFile {
 
 
 
-/*
-        pathToNafFile = "/Code/vu/newsreader/EventCoreference/carheaderexample";
-        project = "cars";
-        extension = ".gz";
+
+        pathToNafFile = "/Users/piek/Desktop/NWR/timeline/demo/data/naf/";
+        project = "wikinews";
+        extension = ".naf";
         sourceFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/source.txt";
         grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/grammatical.txt";
         contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/contextual.txt";
-*/
 
 
 
@@ -68,6 +68,8 @@ public class GetPerspectiveFromNafFile {
                 project = args[i + 1];
             } else if (arg.equals("--source-frames") && args.length > (i + 1)) {
                 sourceFrameFile = args[i + 1];
+            } else if (arg.equals("--not-filter-source")) {
+                GetPerspectiveRelations.FILTERA0 = false;
             } else if (arg.equals("--grammatical-frames") && args.length > (i + 1)) {
                 grammaticalFrameFile = args[i + 1];
             } else if (arg.equals("--contextual-frames") && args.length > (i + 1)) {

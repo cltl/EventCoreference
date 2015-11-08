@@ -30,7 +30,7 @@ import java.util.Vector;
  * Created by piek on 11/03/15.
  */
 public class GetPerspectiveRelations {
-
+        static public boolean FILTERA0 = true;
 
         static public void main (String[] args) {
             String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
@@ -91,7 +91,7 @@ public class GetPerspectiveRelations {
                     contextualVector,
                     communicationVector,
                     grammaticalVector);
-            perspectiveObjects = selectSourceEntityToPerspectives(kafSaxParser, perspectiveObjects, semActors);
+            if (FILTERA0) perspectiveObjects = selectSourceEntityToPerspectives(kafSaxParser, perspectiveObjects, semActors);
             return perspectiveObjects;
         }
 

@@ -345,14 +345,24 @@ public class SemObject implements Serializable {
                         if (Util.hasAlphaNumeric(phraseCount.getPhrase())) {
                             top = phraseCount.getCount();
                             label = phraseCount.getPhrase();
+/*
+                            if (label.indexOf("Schreyer")>-1)
+                                System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
+*/
                         } else {
-                            //  System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
+/*
+                            if (label.indexOf("Schreyer")>-1)
+                                System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
+*/
                         }
                     }
                 }
             }
         }
-      //  System.out.println("label = " + label);
+/*
+        if (label.indexOf("Schreyer")>-1)
+        System.out.println("label = " + label);
+*/
         return label;
     }
 

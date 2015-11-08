@@ -52,6 +52,15 @@ public class GetSemFromNafFolder {
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";
         String project = "";
+
+        pathToNafFolder = "/Users/piek/Desktop/NWR/timeline/demo/data/naf/";
+        project = "wikinews";
+        extension = ".naf";
+        sourceFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/source.txt";
+        grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/grammatical.txt";
+        contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/contextual.txt";
+
+
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-folder") && args.length > (i + 1)) {

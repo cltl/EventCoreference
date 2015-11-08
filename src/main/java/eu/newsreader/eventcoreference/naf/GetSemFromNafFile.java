@@ -46,6 +46,7 @@ public class GetSemFromNafFile {
 
     static public void main(String[] args) {
         String pathToNafFile = "";
+        //"/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/test/4KJ5-2R90-TX51-F3C4.xml.1a0sdakjs.xml";
         String sourceFrameFile = "";
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";
