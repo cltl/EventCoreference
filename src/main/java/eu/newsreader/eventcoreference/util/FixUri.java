@@ -12,11 +12,21 @@ public class FixUri {
 
     static public void main (String[] args) {
         String pathToFile = "";
+        String extension = "";
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("--input") && args.length>(i+1)) {
+                pathToFile = args[i+1];
+            }
+            else if (arg.equals("--extension") && args.length>(i+1)) {
+                extension = args[i+1];
+            }
+        }
         pathToFile = args[0];
        // pathToFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/test/4KJ5-2R90-TX51-F3C4.xml.1a0sdakjs.xml.trig.gz";
        File file = new File(pathToFile);
         if (file.isDirectory()) {
-            ArrayList<File> files = Util.makeRecursiveFileList(file);
+            ArrayList<File> files = Util.makeRecursiveFileList(file, extension);
             for (int i = 0; i < files.size(); i++) {
                 File file1 = files.get(i);
                 processFile(file1);
