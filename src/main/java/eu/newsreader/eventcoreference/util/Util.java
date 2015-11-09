@@ -2596,4 +2596,41 @@ public class Util {
         }
         return false;
     }
+
+    static public void fixUriCompositeEvent (CompositeEvent compositeEvent) {
+        for (int i = 0; i < compositeEvent.getMySemActors().size(); i++) {
+            SemActor semActor = compositeEvent.getMySemActors().get(i);
+            String id = semActor.getId();
+            String newid = fixUriId(id);
+            if (!id.equals(newid)) {
+                semActor.setId(newid);
+            }
+        }
+        for (int i = 0; i < compositeEvent.getMySemRelations().size(); i++) {
+            SemRelation semRelation = compositeEvent.getMySemRelations().get(i);
+            String id = semRelation.getObject();
+            String newid = fixUriId(id);
+            if (!id.equals(newid)) {
+                semRelation.setObject(newid);
+            }
+        }
+    }
+
+    static public String fixUriId (String id) {
+        int idx = id.indexOf("/entities/");
+        if (idx>-1) {
+           // System.out.println("id = " + id);
+            idx = id.lastIndexOf("/");
+            String s1 = id.substring(0, idx+1);
+            String s2 = id.substring(idx+1);
+            String s2new = Util.fixUri(s2);
+            if (!s2.equals(s2new)) {
+                String newId = s1+s2new;
+               // System.out.println("id = " + id);
+               // System.out.println("newId = " + newId);
+                return newId;
+            }
+        }
+        return id;
+    }
 }

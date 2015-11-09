@@ -15,6 +15,8 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,6 +28,8 @@ import java.util.*;
 public class MatchEventObjects {
 
     static boolean CROSSDOC = false;
+    static boolean FIXURI = false;
+    static boolean GZIP = false;
     static boolean DEBUG = false;
     public static String MATCHTYPE= "ililemma";  // ili OR lemma OR ililemma OR none OR split
     public static boolean LCS = false;
@@ -37,6 +41,7 @@ public class MatchEventObjects {
     static final String usage = "MatchEventObjects reads obj files stored in time-folders with CompositeEventObjects and outputs a single RDF-TRiG file\n" +
             "The parameters are:\n" +
             "--event-folder  <path>     <Path to the event folder that has subfolders for each time-description, e.g. \"e-2012-03-29\". Object file (*.obj) should be stored in these subfolders\n" +
+            "--gz                       <OPTIONAL for reading gzipped object files with gz extension and writing trig.gz" +
             "--wordnet-lmf   <path>     <(OPTIONAL, not yet used) Path to a WordNet-LMF file\n>" +
             "--concept-match <int>      <threshold for conceptual matches of events, default is 50>\n" +
             "--phrase-match  <int>      <threshold for phrase matches of events, default is 50>\n" +
@@ -84,8 +89,14 @@ public class MatchEventObjects {
                     e.printStackTrace();
                 }
             }
+            else if (arg.equals("--gz")) {
+                GZIP = true;
+            }
             else if (arg.equals("--cross-doc")) {
                 CROSSDOC = true;
+            }
+            else if (arg.equals("--uri-fix")) {
+                FIXURI = true;
             }
             else if (arg.equals("--phrase-match") && args.length>(i+1)) {
                 try {
@@ -234,22 +245,39 @@ public class MatchEventObjects {
         for (int f = 0; f < eventFolders.size(); f++) {
             File nextEventFolder =  eventFolders.get(f);
             try {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                Date date = new Date();
-                System.out.println("Start reading obj files:"+dateFormat.format(date));
-                OutputStream fos = new FileOutputStream(nextEventFolder.getAbsolutePath()+"/sem.trig");
+                if (DEBUG) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    System.out.println("Start reading obj files:" + dateFormat.format(date));
+                }
+
+                OutputStream fos = null;
+                if (GZIP) {
+                    OutputStream fileOutStream  = new FileOutputStream(nextEventFolder.getAbsolutePath()+"/sem.trig.gz");
+                    fos = new GZIPOutputStream(fileOutStream);
+
+                }
+                else {
+                    fos = new FileOutputStream(nextEventFolder.getAbsolutePath()+"/sem.trig");
+                }
 
                 /// events is initialised outside the loop so that events are compared against the total list
                 events = new HashMap<String, CompositeEvent>();
                 HashMap<String, CompositeEvent> crossDocEvents = new HashMap<String, CompositeEvent>();
-                ArrayList<File> files = Util.makeRecursiveFileList(nextEventFolder, ".obj");
-                //if (DEBUG)
+                ArrayList<File> files = new ArrayList<File>();
+                if (GZIP) {
+                    files = Util.makeRecursiveFileList(nextEventFolder, ".obj.gz");
+                }
+                else {
+                    files = Util.makeRecursiveFileList(nextEventFolder, ".obj");
+                }
+                if (DEBUG)
                     System.out.println("files.size() = " + files.size());
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
-                  //  System.out.println("file.getName() = " + file.getName());
+                    if (DEBUG)  System.out.println("file.getName() = " + file.getName());
                     readCompositeEventArrayListFromObjectFile(file, events);
-                  //  System.out.println("events.size() = " + events.size());
+                    if (DEBUG) System.out.println("events.size() = " + events.size());
                 }
                 /// we create a =n ArrayList with the event ids so that we can call the recursive chaining function
                 ArrayList<String> eventIds = new ArrayList<String>();
@@ -260,11 +288,13 @@ public class MatchEventObjects {
                     eventIds.add(id);
                 }
 
-                date = new Date();
-                System.out.println("End reading object files:"+dateFormat.format(date));
+                if (DEBUG) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    System.out.println("End reading object files:" + dateFormat.format(date));
+                }
 
-                //if (DEBUG) 
-                    System.out.println("events before chaining = " + events.size());
+                if (DEBUG) System.out.println("events before chaining = " + events.size());
                 if (CHAINING.equals("1")) {
                     chaining1(events, eventIds,
                             phraseMatchThreshold,
@@ -279,7 +309,7 @@ public class MatchEventObjects {
                 }
                 else if (CHAINING.equals("3")) {
                     HashMap<String, ArrayList<String>> conceptEventMap = buildConceptEventMap(events);
-                    System.out.println("conceptEventMap.size() = " + conceptEventMap.size());
+                    if (DEBUG) System.out.println("conceptEventMap.size() = " + conceptEventMap.size());
 
                                     chaining3(events, conceptEventMap, eventIds,
                                             phraseMatchThreshold,
@@ -296,14 +326,16 @@ public class MatchEventObjects {
                         }
                     }
                 }
-                //if (DEBUG)
-                System.out.println("events after chaining = " + events.size());
-                date = new Date();
-                System.out.println("End chaining:"+dateFormat.format(date));
+                if (DEBUG) {
+                    System.out.println("events after chaining = " + events.size());
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    System.out.println("End chaining:" + dateFormat.format(date));
+                }
 
                 if (CROSSDOC) {
                     JenaSerialization.serializeJenaSingleCompositeEvents(fos,
-                            events,
+                            crossDocEvents,
                             sourceMetaHashMap,
                             ILIURI,
                             VERBOSEMENTIONS);
@@ -311,13 +343,16 @@ public class MatchEventObjects {
                 else {
 
                     JenaSerialization.serializeJenaSingleCompositeEvents(fos,
-                            crossDocEvents,
+                            events,
                             sourceMetaHashMap,
                             ILIURI,
                             VERBOSEMENTIONS);
                 }
-                date = new Date();
-                System.out.println("End writing sem.trig:"+dateFormat.format(date));
+                if (DEBUG) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    System.out.println("End writing sem.trig:" + dateFormat.format(date));
+                }
                 fos.close();
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -333,14 +368,22 @@ public class MatchEventObjects {
             int cnt = 0;
             if (DEBUG) System.out.println("file = " + file.getName());
             try {
-                FileInputStream fis = new FileInputStream(file);
+                InputStream fis = new FileInputStream(file);
+
+                if (GZIP) {
+                    InputStream fileStream = new FileInputStream(file);
+                    fis = new GZIPInputStream(fileStream);
+                }
+
                 ObjectInputStream ois =  new ObjectInputStream(fis);
+
                 Object obj = null;
                 while (fis.available()>0) {
                     while ((obj = ois.readObject()) != null) {
                         cnt++;
                         if (obj instanceof CompositeEvent) {
                             CompositeEvent compositeEvent = (CompositeEvent) obj;
+                            if (FIXURI) Util.fixUriCompositeEvent(compositeEvent);
                             if (DEBUG) System.out.println("compositeEvent.getEvent().getPhrase() = " + compositeEvent.getEvent().getPhrase());
                             events.put(compositeEvent.getEvent().getId(), compositeEvent);
                         } else {
