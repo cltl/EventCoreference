@@ -2626,8 +2626,10 @@ public class Util {
             String s2new = Util.fixUri(s2);
             if (!s2.equals(s2new)) {
                 String newId = s1+s2new;
-               // System.out.println("id = " + id);
-               // System.out.println("newId = " + newId);
+                /*if (id.indexOf("Frank")>-1) {
+                     System.out.println("id = " + id);
+                     System.out.println("newId = " + newId);
+                }*/
                 return newId;
             }
         }

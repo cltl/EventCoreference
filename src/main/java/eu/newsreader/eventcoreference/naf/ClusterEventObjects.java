@@ -59,6 +59,8 @@ public class ClusterEventObjects {
     static public String done = "";
     static public boolean ADDITIONALROLES = false;
     static public boolean PERSPECTIVE = false;
+    static public boolean ALL = false;
+
 
     static public void main (String [] args) {
         if (args.length==0) {
@@ -112,6 +114,9 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--perspective")) {
                 PERSPECTIVE = true;
+            }
+            else if (arg.equals("--all")) {
+                ALL = true;
             }
             else if (arg.equals("--microstories")&& args.length>(i+1)) {
                 MICROSTORIES = true;
@@ -304,7 +309,7 @@ public class ClusterEventObjects {
             ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
            // ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
             CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
-            if (!compositeEvent.isValid()) {
+            if (!compositeEvent.isValid() && !ALL) {
                 continue;
             }
             ///////// DIVISION IN BASIC EVENT TYPES

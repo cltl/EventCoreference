@@ -275,11 +275,12 @@ public class MatchEventObjects {
                     System.out.println("files.size() = " + files.size());
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
-                    if (DEBUG)  System.out.println("file.getName() = " + file.getName());
+                    if (DEBUG) System.out.println("file.getName() = " + file.getName());
                     readCompositeEventArrayListFromObjectFile(file, events);
                     if (DEBUG) System.out.println("events.size() = " + events.size());
                 }
                 /// we create a =n ArrayList with the event ids so that we can call the recursive chaining function
+
                 ArrayList<String> eventIds = new ArrayList<String>();
                 Set keySet = events.keySet();
                 Iterator<String> keys = keySet.iterator();

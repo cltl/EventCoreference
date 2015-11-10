@@ -28,6 +28,7 @@ public class GetSemFromNafFolder {
     static public boolean NONENTITIES = false;
     static public boolean ILIURI = false;
     static public boolean VERBOSE = false;
+    static public boolean ALL = false;
 
 
     static final String USAGE = "This program processes a single NAF file and generates SEM RDF-TRiG results" +
@@ -76,6 +77,9 @@ public class GetSemFromNafFolder {
             }
             else if (arg.equals("--verbose")) {
                 VERBOSE = true;
+            }
+            else if (arg.equals("--all")) {
+                ALL = true;
             }
 
             else if (arg.equals("--ili") && args.length > (i + 1)) {
@@ -146,7 +150,7 @@ public class GetSemFromNafFolder {
                     ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
                     ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
                     CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
-                    if (compositeEvent.isValid()) {
+                    if (compositeEvent.isValid() || ALL) {
                         FrameTypes.setEventTypeString(compositeEvent.getEvent(), contextualVector, sourceVector, grammaticalVector);
                         compositeEventArraylist.add(compositeEvent);
                     }
