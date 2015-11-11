@@ -299,7 +299,9 @@ public class GetPerspectiveRelations {
      * @param actors
      * @return
      */
-        static public ArrayList<PerspectiveObject> selectSourceEntityToPerspectives (KafSaxParser kafSaxParser, ArrayList<PerspectiveObject> perspectives, ArrayList<SemObject> actors) {
+        static public ArrayList<PerspectiveObject> selectSourceEntityToPerspectives (KafSaxParser kafSaxParser,
+                                                                                     ArrayList<PerspectiveObject> perspectives,
+                                                                                     ArrayList<SemObject> actors) {
             ArrayList<PerspectiveObject> sourcePerspectives = new ArrayList<PerspectiveObject>();
             for (int i = 0; i < perspectives.size(); i++) {
                 PerspectiveObject perspectiveObject = perspectives.get(i);

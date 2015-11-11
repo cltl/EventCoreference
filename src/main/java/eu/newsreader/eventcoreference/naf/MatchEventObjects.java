@@ -231,6 +231,133 @@ public class MatchEventObjects {
         }
     }
 
+    public static void processEventFolderHashMap (File pathToEventFolder, int conceptMatchThreshold,
+                                                            int phraseMatchThreshold,
+                                                            HashMap<String, SourceMeta> sourceMetaHashMap,
+                                                            WordnetData wordnetData,
+                                                            ArrayList<String> roleNeededArrayList
+
+
+                                                   ) {
+        HashMap<String, CompositeEvent> events = new HashMap<String, CompositeEvent>();
+
+            try {
+                if (DEBUG) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    System.out.println("Start reading obj files:" + dateFormat.format(date));
+                }
+
+                OutputStream fos = null;
+                if (GZIP) {
+                    OutputStream fileOutStream  = new FileOutputStream(pathToEventFolder.getAbsolutePath()+"/sem.trig.gz");
+                    fos = new GZIPOutputStream(fileOutStream);
+
+                }
+                else {
+                    fos = new FileOutputStream(pathToEventFolder.getAbsolutePath()+"/sem.trig");
+                }
+
+                /// events is initialised outside the loop so that events are compared against the total list
+                events = new HashMap<String, CompositeEvent>();
+                HashMap<String, CompositeEvent> crossDocEvents = new HashMap<String, CompositeEvent>();
+                ArrayList<File> files = new ArrayList<File>();
+                if (GZIP) {
+                    files = Util.makeRecursiveFileList(pathToEventFolder, ".obj.gz");
+                }
+                else {
+                    files = Util.makeRecursiveFileList(pathToEventFolder, ".obj");
+                }
+                if (DEBUG)
+                    System.out.println("files.size() = " + files.size());
+                for (int i = 0; i < files.size(); i++) {
+                    File file = files.get(i);
+                    if (DEBUG) System.out.println("file.getName() = " + file.getName());
+                    readCompositeEventArrayListFromObjectFile(file, events);
+                    if (DEBUG) System.out.println("events.size() = " + events.size());
+                }
+                /// we create a =n ArrayList with the event ids so that we can call the recursive chaining function
+
+                ArrayList<String> eventIds = new ArrayList<String>();
+                Set keySet = events.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String id = keys.next();
+                    eventIds.add(id);
+                }
+
+                if (DEBUG) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    System.out.println("End reading object files:" + dateFormat.format(date));
+                }
+
+                if (DEBUG) System.out.println("events before chaining = " + events.size());
+                if (CHAINING.equals("1")) {
+                    chaining1(events, eventIds,
+                            phraseMatchThreshold,
+                            conceptMatchThreshold,
+                            roleNeededArrayList);
+                }
+                else if (CHAINING.equals("2")) {
+                                    chaining2(events, eventIds, eventIds,
+                                            phraseMatchThreshold,
+                                            conceptMatchThreshold,
+                                            roleNeededArrayList);
+                }
+                else if (CHAINING.equals("3")) {
+                    HashMap<String, ArrayList<String>> conceptEventMap = buildConceptEventMap(events);
+                    if (DEBUG) System.out.println("conceptEventMap.size() = " + conceptEventMap.size());
+
+                                    chaining3(events, conceptEventMap, eventIds,
+                                            phraseMatchThreshold,
+                                            conceptMatchThreshold,
+                                            roleNeededArrayList);
+                    if (CROSSDOC) {
+                        for (int i = 0; i < crossDocCorefSet.size(); i++) {
+                            String s = crossDocCorefSet.get(i);
+                            if (events.containsKey(s)) {
+                                CompositeEvent compositeEvent = events.get(s);
+                                crossDocEvents.put(s, compositeEvent);
+                            }
+
+                        }
+                    }
+                }
+                if (DEBUG) {
+                    System.out.println("events after chaining = " + events.size());
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    System.out.println("End chaining:" + dateFormat.format(date));
+                }
+
+                if (CROSSDOC) {
+                    JenaSerialization.serializeJenaSingleCompositeEvents(fos,
+                            crossDocEvents,
+                            sourceMetaHashMap,
+                            ILIURI,
+                            VERBOSEMENTIONS);
+                }
+                else {
+
+                    JenaSerialization.serializeJenaSingleCompositeEvents(fos,
+                            events,
+                            sourceMetaHashMap,
+                            ILIURI,
+                            VERBOSEMENTIONS);
+                }
+                if (DEBUG) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    System.out.println("End writing sem.trig:" + dateFormat.format(date));
+                }
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+    }
+
     public static void processEventFoldersHashMap (File pathToEventFolder, int conceptMatchThreshold,
                                                             int phraseMatchThreshold,
                                                             HashMap<String, SourceMeta> sourceMetaHashMap,
