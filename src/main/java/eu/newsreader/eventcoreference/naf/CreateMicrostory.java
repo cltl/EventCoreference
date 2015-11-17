@@ -416,7 +416,9 @@ public class CreateMicrostory {
         while (keys.hasNext()) {
             String key = keys.next().toString(); //role
           //  System.out.println("key = " + key);
-            if (key.equalsIgnoreCase("pb/A0") || key.equalsIgnoreCase("pb/A1") || key.equalsIgnoreCase("pb/A2")) {
+            if (key.equalsIgnoreCase("pb/A0") || key.equalsIgnoreCase("pb/A1") || key.equalsIgnoreCase("pb/A2")
+                    || key.toLowerCase().startsWith("fn/")
+                    || key.toLowerCase().startsWith("eso/")) {
                 JSONArray actors = actorObject.getJSONArray(key);
                 // System.out.println("actors.toString() = " + actors.toString());
                 for (int i = 0; i < events.size(); i++) {
@@ -427,7 +429,9 @@ public class CreateMicrostory {
                         Iterator oKeys = oActorObject.sortedKeys();
                         while (oKeys.hasNext()) {
                             String oKey = oKeys.next().toString();
-                            if (oKey.equalsIgnoreCase("pb/A0") || oKey.equalsIgnoreCase("pb/A1") || oKey.equalsIgnoreCase("pb/A1")) {
+                            if (oKey.equalsIgnoreCase("pb/A0") || oKey.equalsIgnoreCase("pb/A1") || oKey.equalsIgnoreCase("pb/A1")
+                                    || key.toLowerCase().startsWith("fn/")
+                                    || key.toLowerCase().startsWith("eso/")) {
                                 JSONArray oActors = oActorObject.getJSONArray(oKey);
                                 // System.out.println("oActors.toString() = " + oActors.toString());
                                 for (int j = 0; j < actors.length(); j++) {

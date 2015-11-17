@@ -33,6 +33,7 @@ public class TrigToJsonTimeLineClimax {
     static HashMap<String, ArrayList<Statement>> tripleMapInstances = new HashMap<String, ArrayList<Statement>>();
     static HashMap<String, ArrayList<Statement>> tripleMapOthers = new HashMap<String, ArrayList<Statement>>();
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
+    static ArrayList<String> blacklist = new ArrayList<String>();
     static String ACTORNAMESPACES = "";
     static boolean ALL = false; /// if true we do not filter events
     static EsoReader esoReader = new EsoReader();
@@ -43,6 +44,7 @@ public class TrigToJsonTimeLineClimax {
     static int climaxThreshold = 0;
     static String entityFilter = "";
     static HashMap <String, Integer> actorCount = new HashMap<String, Integer>();
+    static Integer actorThreshold = -1;
 
 
 
@@ -50,6 +52,8 @@ public class TrigToJsonTimeLineClimax {
         String project = "NewsReader timeline";
         String pathToILIfile = "";
         String trigfolder = "";
+        String pathToRawTextIndexFile = "";
+        String blackListFile = "";
         String fnFile = "";
         String esoFile = "";
         fnLevel = 0;
@@ -66,6 +70,15 @@ public class TrigToJsonTimeLineClimax {
             }
             else if (arg.equals("--ili") && args.length>(i+1)) {
                 pathToILIfile = args[i+1];
+            }
+            else if (arg.equals("--raw-text") && args.length>(i+1)) {
+                pathToRawTextIndexFile = args[i+1];
+            }
+            else if (arg.equals("--black-list") && args.length>(i+1)) {
+                blackListFile = args[i+1];
+            }
+            else if (arg.equals("--actor-cnt") && args.length>(i+1)) {
+                actorThreshold = Integer.parseInt(args[i+1]);
             }
             else if (arg.equals("--all")){
                 ALL = true;
@@ -109,6 +122,10 @@ public class TrigToJsonTimeLineClimax {
         //trigfolder = "/tmp/naf2jsonWulzvC/events/contextual";
         System.out.println("fnFile = " + fnFile);
         System.out.println("trigfolder = " + trigfolder);
+        if (!blackListFile.isEmpty()) {
+            blacklist = Util.ReadFileToStringArrayList(blackListFile);
+        }
+
         if (!fnFile.isEmpty()) {
             frameNetReader.parseFile(fnFile);
             topFrames = frameNetReader.getTopsFrameNetTree();
@@ -189,8 +206,15 @@ public class TrigToJsonTimeLineClimax {
         }
         try {
             ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
-            //System.out.println("jsonObjects.size() = " + jsonObjects.size());
-            writeJsonObjectArray(trigfolder, project, jsonObjects);
+           // System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
+            if (!pathToILIfile.isEmpty()) {
+                ArrayList<String> rawTextArrayList = Util.ReadFileToStringArrayList(pathToRawTextIndexFile);
+                writeJsonObjectArray(trigfolder, project, jsonObjects, rawTextArrayList);
+
+            }//System.out.println("jsonObjects.size() = " + jsonObjects.size());
+            else {
+                writeJsonObjectArray(trigfolder, project, jsonObjects);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -400,20 +424,20 @@ public class TrigToJsonTimeLineClimax {
                             ///date error, e.g. 12-07-198"
                             continue;
                         }
-                        ///skipping histiric events
+                        ///skipping historic events
                         if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
                             jsonObject.put("time", timeAnchor);
 
                             JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
                             if (jsonClasses.keys().hasNext()) {
-                                /// TOOK THIS OUT TO SAVE SPACE
-                                //  jsonObject.put("classes", jsonClasses);
+                                /// TAKE THIS OUT TO SAVE SPACE
+                                  jsonObject.put("classes", jsonClasses);
                             }
 
                             if (fnLevel > 0) {
                                 getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
                             } else if (esoLevel > 0) {
-                                //   getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+                                getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
                             }
 
                             JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
@@ -437,19 +461,89 @@ public class TrigToJsonTimeLineClimax {
         }
        // jsonObjectArrayList = createGroupsForJSONArrayList(jsonObjectArrayList);
         try {
+
+            System.out.println("jsonObjectArrayList0 = " + jsonObjectArrayList.size());
+            jsonObjectArrayList = filterEventsForBlackList (jsonObjectArrayList);
+            System.out.println("jsonObjectArrayList1 = " + jsonObjectArrayList.size());
+            jsonObjectArrayList = filterEventsForActors(jsonObjectArrayList);
+            System.out.println("jsonObjectArrayList2 = " + jsonObjectArrayList.size());
             jsonObjectArrayList = createStoryLinesForJSONArrayList(jsonObjectArrayList);
+            System.out.println("jsonObjectArrayList3 = " + jsonObjectArrayList.size());
         } catch (JSONException e) {
-          //  e.printStackTrace();
+            e.printStackTrace();
         }
         return jsonObjectArrayList;
     }
 
+    static ArrayList<JSONObject> filterEventsForActors(ArrayList<JSONObject> events) throws JSONException {
+        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
+        /*
+        "actors":{"pb/A0":["http://www.newsreader-project.eu/data/timeline/non-entities/to_a_single_defense_contractor"]}
+         */
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject jsonObject = events.get(i);
+            try {
+                JSONObject actors = (JSONObject) jsonObject.get("actors");
+                if (actors!=null) {
+                    Iterator<String> keys = actors.keys();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                       // System.out.println("key = " + key);
+                        //String actor = (String) actors.getString(key);
+                        String actor = (String) actors.getJSONArray(key).get(0);
+                      //  System.out.println("actor = " + actor);
+                        if (actorCount.containsKey(actor)) {
+                            Integer cnt = actorCount.get(actor);
+                            if (cnt>actorThreshold) {
+                          //  if (cnt>20) {
+                                jsonObjectArrayList.add(jsonObject);
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+    /*
+                    System.out.println("No actors");
+                    System.out.println("jsonObject = " + jsonObject.toString());
+    */
+                }
+            } catch (JSONException e) {
+             //   e.printStackTrace();
+            }
+        }
 
-    /**
-     * Determines the climax values by summing the inverse values of the sentence nr of each mention
-     * @param jsonObjects
-     * @return
-     */
+        return jsonObjectArrayList;
+    }
+
+    static ArrayList<JSONObject> filterEventsForBlackList(ArrayList<JSONObject> events) throws JSONException {
+        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject jsonObject = events.get(i);
+            try {
+                JSONArray labels = (JSONArray) jsonObject.get("labels");
+                if (labels != null) {
+                    for (int j = 0; j < labels.length(); j++) {
+                        String label = labels.getString(j);
+                        if (!blacklist.contains(label)) {
+                            jsonObjectArrayList.add(jsonObject);
+                            break;
+                        }
+                    }
+
+                } else {
+                }
+            } catch (JSONException e) {
+                //   e.printStackTrace();
+            }
+        }
+        return jsonObjectArrayList;
+    }
+        /**
+         * Determines the climax values by summing the inverse values of the sentence nr of each mention
+         * @param jsonObjects
+         * @return
+         */
     static TreeSet determineClimaxValues (ArrayList<JSONObject> jsonObjects) {
         //1. We determine the climax score for each individual event and return a sorted list by climax
         // We sum the inverse sentence numbers of all mentions
@@ -733,6 +827,40 @@ public class TrigToJsonTimeLineClimax {
         }
     }
 
+    static void addObjectToGroup (ArrayList<JSONObject> groupObjects,
+                                  String group, String groupName, String groupScore,
+                                  JSONObject object,
+                                  int divide) throws JSONException {
+        Float size = null;
+        object.put("group", group);
+        object.put("groupName", groupName);
+        object.put("groupScore", groupScore);
+        Double climax = 0.0;
+        try {
+            climax = Double.parseDouble(object.get("climax").toString());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (climax >= climaxThreshold) {
+            // size = 5 * Float.valueOf((float) (1.0 * climax / groupClimax));
+            try {
+                if (climax==0) {
+                    size = new Float(1);
+
+                }
+                else {
+                    size = Float.valueOf((float) (climax / divide));
+                }
+                object.put("size", size.toString());
+                groupObjects.add(object);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     static String climaxString (Integer climax) {
         String str = "";
         if (climax==100) {
@@ -787,11 +915,15 @@ public class TrigToJsonTimeLineClimax {
                     //Float size = 1 + Float.valueOf((float) (10*climax / maxClimax));
                     jsonObject.put("size", size.toString());
                     String group = climaxString(groupClimax) + ":" + jsonObject.get("labels").toString();
+                    String groupName = jsonObject.get("labels").toString();
+                    String groupScore = climaxString(groupClimax);
                     group += getfirstActorByRoleFromEvent(jsonObject, "pb/A1"); /// for representation purposes
-
+                    groupName += getfirstActorByRoleFromEvent(jsonObject, "pb/A1");
                     if (DEBUG) debugStr = group+":"+groupClimax+":"+size+"\n";
 
                     jsonObject.put("group", group);
+                    jsonObject.put("groupName", groupName);
+                    jsonObject.put("groupScore", groupScore);
                     groupObjects.add(jsonObject);
 
                     ArrayList<String> coparticipantsA0 = getActorsByRoleFromEvent(jsonObject, "pb/A0");
@@ -844,7 +976,7 @@ public class TrigToJsonTimeLineClimax {
                         if (!hasObject(groupedObjects, object)) {
                             addObjectToGroup(
                                     groupObjects,
-                                    group,
+                                    group, groupName, groupScore,
                                     object,
                                     6);
                             if (PRINTEXAMPLE) {
@@ -905,7 +1037,7 @@ public class TrigToJsonTimeLineClimax {
                             if (!hasObject(groupedObjects, object)) {
                                 addObjectToGroup(
                                         groupObjects,
-                                        group,
+                                        group,groupName, groupScore,
                                         object,
                                         8);
                                 if (PRINTEXAMPLE) {
@@ -1211,6 +1343,72 @@ public class TrigToJsonTimeLineClimax {
         }
     }
 
+    static void writeJsonObjectArray (String pathToFolder,
+                                      String project,
+                                      ArrayList<JSONObject> objects,
+                                      ArrayList<String> rawTextArrayList) {
+        try {
+            try {
+               // OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + folder.getName()+".timeline.json");
+                JSONObject timeLineObject = JsonEvent.createTimeLineProperty(new File(pathToFolder).getName(), project);
+                Set keySet = actorCount.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    Integer cnt = actorCount.get(key);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("name", key);
+                    jsonObject.put("event_count", cnt);
+                    timeLineObject.append("actors", jsonObject);
+                }
+                for (int j = 0; j < objects.size(); j++) {
+                    JSONObject jsonObject = objects.get(j);
+                    timeLineObject.append("events", jsonObject);
+                }
+                if (rawTextArrayList.size()>0) {
+
+                    for (int i = 0; i < rawTextArrayList.size(); i++) {
+                        String string = rawTextArrayList.get(i);
+                        String[] fields = string.split("\t");
+                        if (fields.length > 1) {
+                            String uri = fields[0];
+                            String text = fields[1];
+                            //System.out.println("string = " + string);
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("uri", uri);
+                            jsonObject.put("text", text);
+                            timeLineObject.append("sources", jsonObject);
+                        }
+                    }
+                }
+                File folder = new File(pathToFolder);
+                OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + "contextual.timeline.json");
+
+                String str = "{ \"timeline\":\n";
+                jsonOut.write(str.getBytes());
+               // JSONObject jsonObject = (JSONObject) timeLineObject.get("events");
+             //   System.out.println(timeLineObject.get("rawText").toString());
+             //   System.out.println(timeLineObject.toString());
+              //  jsonOut.write(timeLineObject.toString().getBytes());
+             //   jsonOut.write(timeLineObject.get("sources").toString().getBytes());
+             //   jsonOut.write(timeLineObject.get("actors").toString().getBytes());
+             //   jsonOut.write(timeLineObject.get("events").toString().getBytes());
+                //.get("Event.toString(0).getBytes());
+                jsonOut.write(timeLineObject.toString(0).getBytes());
+               // jsonOut.write(timeLineObject.toString(0).getBytes());
+                str ="}\n";
+                jsonOut.write(str.getBytes());
+                //// OR simply
+               // jsonOut.write(timeLineObject.toString().getBytes());
+                jsonOut.close();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -1435,12 +1633,13 @@ public class TrigToJsonTimeLineClimax {
                         }
                         else {
                             predicate = property + "/" + getValue(predicate);
+                           // System.out.println("property = " + property);
                         }
                         String[] values = object.split(",");
                         ArrayList<String> coveredValues = new ArrayList<String>();
                         for (int j = 0; j < values.length; j++) {
                             String value = values[j];
-                            value = value.replace("+", "_");
+                            value = value.replace("+", "_"); //// just to make it look nicer
                             if (!coveredValues.contains(value)) {
                                 coveredValues.add(value);
                                 jsonActorsObject.append(predicate, value);

@@ -60,6 +60,7 @@ public class ClusterEventObjects {
     static public boolean ADDITIONALROLES = false;
     static public boolean PERSPECTIVE = false;
     static public boolean ALL = false;
+    static public boolean RAWTEXTINDEX = false;
 
 
     static public void main (String [] args) {
@@ -117,6 +118,9 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--all")) {
                 ALL = true;
+            }
+            else if (arg.equals("--raw-text")) {
+                RAWTEXTINDEX = true;
             }
             else if (arg.equals("--microstories")&& args.length>(i+1)) {
                 MICROSTORIES = true;
@@ -591,6 +595,29 @@ public class ClusterEventObjects {
                 //   System.out.println("timeFile = " + timeFile);
             }
         }
+        if (RAWTEXTINDEX) {
+            String rawTextIndexFilePath = contextualFolder.getParent()+"/"+"rawtext.idx";
+            String rawText = kafSaxParser.getFullText();
+            String uri = kafSaxParser.getKafMetaData().getUrl();
+            String str = uri+"\t"+rawText+"\n";
+            File rawTextIndexFile = new File(rawTextIndexFilePath);
+            OutputStream os = null;
+            if (rawTextIndexFile!=null && rawTextIndexFile.exists()) {
+                os = new FileOutputStream(rawTextIndexFile, true);
+
+            }
+            else if (rawTextIndexFile!=null) {
+                os = new FileOutputStream(rawTextIndexFile);
+            }
+            try {
+                os.write(str.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            os.flush();
+            os.close();
+        }
+
         if (PERSPECTIVE) {
             ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 

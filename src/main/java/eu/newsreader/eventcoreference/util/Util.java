@@ -2557,6 +2557,32 @@ public class Util {
         return vector;
     }
 
+    static public ArrayList<String> ReadFileToStringArrayList(String fileName) {
+        ArrayList<String> vector = new ArrayList<String>();
+        if (new File(fileName).exists() ) {
+            try {
+                FileInputStream fis = new FileInputStream(fileName);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                while (in.ready()&&(inputLine = in.readLine()) != null) {
+                    //System.out.println(inputLine);
+                    if (inputLine.trim().length()>0) {
+                      //  System.out.println("inputLine = " + inputLine);
+                        vector.add(inputLine.trim());
+                    }
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            System.out.println("Cannot find fileName = " + fileName);
+        }
+        return vector;
+    }
+
     static public ArrayList<String> getDifference (ArrayList<String> l1, ArrayList<String> l2) {
         ArrayList<String> l3 = new ArrayList<String>();
         for (int i = 0; i < l1.size(); i++) {
