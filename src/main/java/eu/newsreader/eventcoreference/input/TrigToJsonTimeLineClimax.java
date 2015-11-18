@@ -539,12 +539,140 @@ public class TrigToJsonTimeLineClimax {
         }
         return jsonObjectArrayList;
     }
+
+
+    /*
+                        if (values.length==4) {
+                        JSONObject mObject = new JSONObject();
+                        String charOffset = values[0];
+                        String tokens = values[1];
+                        String terms = values[2];
+                        String sentence = values[3];
+                        mObject.append("uri", uri);
+                        addValuesFromMention(mObject, "char", charOffset);
+                        addValuesFromMention(mObject, "tokens", tokens);
+                        addValuesFromMention(mObject, "terms", terms);
+                        addValuesFromMention(mObject, "sentence", sentence);
+                        jsonClassesObject.append("mentions", mObject);
+     */
+
         /**
          * Determines the climax values by summing the inverse values of the sentence nr of each mention
          * @param jsonObjects
          * @return
          */
     static TreeSet determineClimaxValues (ArrayList<JSONObject> jsonObjects) {
+        //1. We determine the climax score for each individual event and return a sorted list by climax
+        // We sum the inverse sentence numbers of all mentions
+        TreeSet climaxObjects = new TreeSet(new climaxCompare());
+        Double maxClimax = 0.0;
+        for (int i = 0; i < jsonObjects.size(); i++) {
+            JSONObject jsonObject = jsonObjects.get(i);
+            try {
+                double sumClimax =0.0;
+                JSONArray mentions = (JSONArray) jsonObject.get("mentions");
+                int earliestEventMention = -1;
+                for (int j = 0; j < mentions.length(); j++) {
+                    JSONObject mentionObject = (JSONObject) mentions.get(j);
+/*                    String sentenceValue = mentionObject.getString("sentence");
+                    System.out.println("sentenceValue = " + sentenceValue);
+                    if (sentenceValue!=null && !sentenceValue.isEmpty()){*/
+                    JSONArray sentences = mentionObject.getJSONArray("sentence");
+                    if (sentences!=null ){
+                        String sentenceValue = sentences.get(0).toString();
+                        int sentenceNr = Integer.parseInt(sentenceValue);
+                        if (sentenceNr < earliestEventMention || earliestEventMention == -1) {
+                            earliestEventMention = sentenceNr;
+                            jsonObject.put("sentence", sentenceValue);
+                        }
+                        sumClimax += 1.0 / sentenceNr;
+                        //String mention = mentions.get(j).toString();
+                    }
+                    else {
+                        JSONArray charValues = mentionObject.getJSONArray("char");
+                        //"["4160","4165"]"
+                        if (charValues!=null ) {
+                            String charValue = charValues.get(0).toString();
+                            //System.out.println("charValue = " + charValue);
+                            int sentenceNr = Integer.parseInt(charValue);
+                            if (sentenceNr < earliestEventMention || earliestEventMention == -1) {
+                                earliestEventMention = sentenceNr;
+                                jsonObject.put("sentence", charValue);
+                            }
+                            sumClimax += 1.0 / sentenceNr;
+                        }
+                    }
+
+/*                    System.out.println("mention = " + mention);
+                    int idx = mention.indexOf("sentence=");
+                    if (idx >-1) {
+                        idx = mention.lastIndexOf("=");
+                        int sentenceNr = Integer.parseInt(mention.substring(idx+1));
+                        if (sentenceNr<earliestEventMention || earliestEventMention==-1) {
+                            earliestEventMention = sentenceNr;
+                            jsonObject.put("sentence", mention.substring(idx + 1));
+                        }
+                        sumClimax += 1.0/sentenceNr;
+                    }
+                    else {
+                        //mention = http://www.newsreader-project.eu/data/2008/07/03/6479113.xml#char=359
+                        // if the sentence is not part of the mention than we take the char value
+                        idx = mention.indexOf("char=");
+                        if (idx >-1) {
+                            idx = mention.lastIndexOf("=");
+                            int sentenceNr = Integer.parseInt(mention.substring(idx+1));
+                            if (sentenceNr<earliestEventMention || earliestEventMention==-1) {
+                                earliestEventMention = sentenceNr;
+                                jsonObject.put("sentence", mention.substring(idx + 1));
+                            }
+                            sumClimax += 1.0/sentenceNr;
+                        }
+                       // System.out.println("mention = " + mention);
+                    }*/
+                }
+                if (sumClimax>maxClimax) {
+                    maxClimax = sumClimax;
+                }
+            //    System.out.println("sumClimax = " + sumClimax);
+                jsonObject.put("climax", sumClimax);
+            } catch (JSONException e) {
+                //   e.printStackTrace();
+            }
+        }
+       // System.out.println("maxClimax = " + maxClimax);
+        /// next we normalize the climax values and store it in the tree
+        for (int i = 0; i < jsonObjects.size(); i++) {
+            JSONObject jsonObject = jsonObjects.get(i);
+            try {
+                Double climax = Double.parseDouble(jsonObject.get("climax").toString());
+                Double proportion = climax/maxClimax;
+                Integer climaxInteger = new Integer ((int)(100*proportion));
+                if (climaxInteger>=climaxThreshold) {
+               //     System.out.println("climaxInteger = " + climaxInteger);
+                    jsonObject.put("climax", climaxInteger);
+                    climaxObjects.add(jsonObject);
+                }
+
+             /*   System.out.println("jsonObject.get(\"labels\").toString() = " + jsonObject.get("labels").toString());
+                System.out.println("jsonObject.get(\"climax\").toString() = " + jsonObject.get("climax").toString());
+                System.out.println("\tmaxClimax = " + maxClimax);
+                System.out.println("\tclimax = " + climax);
+                System.out.println("\tpropertion = " + propertion);
+                System.out.println("\tclimaxInteger = " + climaxInteger);*/
+
+            } catch (JSONException e) {
+                //   e.printStackTrace();
+            }
+        }
+        return climaxObjects;
+    }
+
+    /**
+         * Determines the climax values by summing the inverse values of the sentence nr of each mention
+         * @param jsonObjects
+         * @return
+         */
+    static TreeSet determineClimaxValues_org_using_old_mention_structure (ArrayList<JSONObject> jsonObjects) {
         //1. We determine the climax score for each individual event and return a sorted list by climax
         // We sum the inverse sentence numbers of all mentions
         TreeSet climaxObjects = new TreeSet(new climaxCompare());
@@ -1758,19 +1886,76 @@ public class TrigToJsonTimeLineClimax {
                 } else if (statement.getObject().isURIResource()) {
                     object = statement.getObject().asResource().getURI();
                 }
-                
-                //"http://www.w3.org/1999/02/22-rdf-syntax-ns#type":"http://www.newsreader-project.eu/ontologies/framenet/Manufacturing"
-                String [] values = object.split(",");
-                for (int j = 0; j < values.length; j++) {
-                    String value = values[j];
-                    if (!coveredValues.contains(value)) {
-                        coveredValues.add(value);
-                        jsonClassesObject.append("mentions", value);
+               // System.out.println("object = " + object);
+                /*
+                object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=20,28&word=w3&term=t3&sentence=1
+object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=2227,2235&word=w391&term=t391&sentence=18
+object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=135,143&word=w22&term=t22&sentence=3
+object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=20,28&word=w3&term=t3&sentence=1
+object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=2227,2235&word=w391&term=t391&sentence=18
+object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=135,143&word=w22&term=t22&sentence=3
+object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=217,228&word=w36&term=t36&sentence=3
+object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=217,228&word=w36&term=t36&sentence=3
+object = http://en.wikinews.org/wiki/Boeing_rolls_out_first_787_Dreamliner_to_go_into_service#char=744,750&word=w144&term=t144&sentence=10
+object = http://en.wikinews.org/wiki/Boeing_rolls_out_first_787_Dreamliner_to_go_into_service#char=775,779&word=w149&term=t149&sentence=10
+object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_development#char=659,667&word=w111&term=t111&sentence=6
+                 */
+/*
+                "http://en.wikinews.org/wiki/Indonesia's_transport_minister_tells_airlines_not_to_buy_European_aircraft_due_to_EU_ban#char=85",
+"88&word=w15&term=t15&sentence=1",
+"http://en.wikinews.org/wiki/Indonesia's_transport_minister_tells_airlines_not_to_buy_European_aircraft_due_to_EU_ban#char=462",
+"465&word=w88&term=t88&sentence=5",
+"http://en.wikinews.org/wiki/Indonesia's_transport_minister_tells_airlines_not_to_buy_European_aircraft_due_to_EU_ban#char=415",
+"421&word=w77&term=t77&sentence=4",
+"http://en.wikinews.org/wiki/Indonesia's_transport_minister_tells_airlines_not_to_buy_European_aircraft_due_to_EU_ban#char=1122",
+"1128&word=w222&term=t222&sentence=7"
+                 */
+
+                //object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_development#char=659,667&word=w111&term=t111&sentence=6
+                int idx = object.lastIndexOf("#");
+                if (idx >-1) {
+                    String uri = object.substring(0, idx);
+                    String mentionString = object.substring(idx+1);
+                    String[] values = object.split("&");
+                    if (values.length==4) {
+                        JSONObject mObject = new JSONObject();
+                        String charOffset = values[0];
+                        String tokens = values[1];
+                        String terms = values[2];
+                        String sentence = values[3];
+                        mObject.append("uri", uri);
+                        addValuesFromMention(mObject, "char", charOffset);
+                        addValuesFromMention(mObject, "tokens", tokens);
+                        addValuesFromMention(mObject, "terms", terms);
+                        addValuesFromMention(mObject, "sentence", sentence);
+                        jsonClassesObject.append("mentions", mObject);
                     }
                 }
+              //  jsonClassesObject.append("mentions", object);
+
             }
         }
         return jsonClassesObject;
+    }
+
+    static void addValuesFromMention (JSONObject object, String key, String str) throws JSONException {
+        int idx_s = str.indexOf("=");
+        String [] v = str.substring(idx_s+1).split(",");
+        for (int i = 0; i < v.length; i++) {
+            String s = v[i];
+            object.append(key, s);
+        }
+    }
+
+    static ArrayList<String> getValuesFromMention (String str) {
+        ArrayList<String> values = new ArrayList<String>();
+        int idx_s = str.indexOf("=");
+        String [] v = str.substring(idx_s).split(",");
+        for (int i = 0; i < v.length; i++) {
+            String s = v[i];
+            values.add(s);
+        }
+        return values;
     }
 
     static JSONObject getLabelsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {

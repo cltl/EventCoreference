@@ -597,14 +597,17 @@ public class ClusterEventObjects {
         }
         if (RAWTEXTINDEX) {
             String rawTextIndexFilePath = contextualFolder.getParent()+"/"+"rawtext.idx";
-            String rawText = kafSaxParser.getFullText();
+
+            String rawText = kafSaxParser.rawText;
+           // System.out.println("rawText = " + rawText);
+            rawText = rawText.replaceAll("\n", "_");
+            rawText = rawText.replaceAll("\"", "^");
             String uri = kafSaxParser.getKafMetaData().getUrl();
             String str = uri+"\t"+rawText+"\n";
             File rawTextIndexFile = new File(rawTextIndexFilePath);
             OutputStream os = null;
             if (rawTextIndexFile!=null && rawTextIndexFile.exists()) {
                 os = new FileOutputStream(rawTextIndexFile, true);
-
             }
             else if (rawTextIndexFile!=null) {
                 os = new FileOutputStream(rawTextIndexFile);
