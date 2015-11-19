@@ -272,6 +272,8 @@ public class ProcessEventObjectsStream {
                 final QuerySolution rb = rs.nextSolution();
                 // Get title - variable names do not include the ’?’
                 final RDFNode eventId = rb.get("ev");
+                if (!eventId.toString().contains("http://www.newsreader-project.eu/data/cars/2004/10/08/4DH5-8HM0-00BT-N3MS.xml#ev192"))
+                    continue;
                 final Resource z = rb.getResource("ev");
 
                 // Now get the details for each event
@@ -318,7 +320,7 @@ public class ProcessEventObjectsStream {
                             neededRoles = contextualNeededRoles;
                         } else if (rdfType.contains("http://www.newsreader-project.eu/ontologies/framenet/")) {
                             myFrames.add(rdfType);
-                        } else if (!rdfType.equals("http://semanticweb.cs.vu.nl/2009/11/sem/Event")) { // wordnet ILIs
+                        } else if (rdfType.contains("http://globalwordnet.org/ili/")) { // wordnet ILIs
                             myILIs.add(rdfType);
                         }
 
@@ -327,7 +329,8 @@ public class ProcessEventObjectsStream {
                     evQexec.close();
                 }
 
-
+                if (eventId.toString().contains("http://www.newsreader-project.eu/data/cars/2004/10/08/4DH5-8HM0-00BT-N3MS.xml#ev192"))
+                    System.out.println("Our event: " + myILIs);
                 if (!myFrames.isEmpty()) {
                     for (int i = 0; i < myFrames.size(); i++) {
                         String et = myFrames.get(i);
@@ -390,12 +393,10 @@ public class ProcessEventObjectsStream {
                 // Roles done!
 
                 // Match Type now:
-
                 boolean matchMultiple=false;
                 boolean matchLemma=false;
                 boolean matchILI=false;
                 ArrayList<Node> allLemmas = new ArrayList<Node>();
-
                 if (MATCHTYPE.equals("ILILEMMA") && myILIs.size() > 0) {
                     matchILI=true;
                     if (myILIs.size() == 1) {
@@ -413,13 +414,17 @@ public class ProcessEventObjectsStream {
                         sparqlQuery += iliFilter.substring(0, iliFilter.length() - 2) + ") ) . ";
 
                     }
-
+                    System.out.println("ILIS exist " + eventId);
                 } else {
+
                     for (Iterator<Quad> iter = g.find(null, eventNode, lemmaNode, null); iter.hasNext(); ) {
                         Quad q = iter.next();
                         allLemmas.add(q.asTriple().getObject());
                     }
+
                     if (!allLemmas.isEmpty()) {
+                        if (allLemmas.get(0).equals("appearance"))
+                            System.out.println("EVENTID " + eventId.toString());
                         matchLemma=true;
                         if (allLemmas.size() == 1) {
                             sparqlSelectQuery+="(COUNT(distinct ?lbl) as ?conceptcount) ";
@@ -745,6 +750,7 @@ public class ProcessEventObjectsStream {
             sparqlQuery += "GROUP BY ?ev";
         }
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
+        System.out.println(sparqlQuery);
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
         int threshold;
