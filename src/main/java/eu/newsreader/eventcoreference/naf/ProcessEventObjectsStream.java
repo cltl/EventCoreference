@@ -91,7 +91,8 @@ public class ProcessEventObjectsStream {
 
     static public String done = "";
 
-    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars2/sparql";
+//    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars2/sparql";
+    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/aitor/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
     public static String authStr = user + ":" + pass;
