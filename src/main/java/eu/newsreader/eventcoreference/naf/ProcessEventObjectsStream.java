@@ -272,8 +272,6 @@ public class ProcessEventObjectsStream {
                 final QuerySolution rb = rs.nextSolution();
                 // Get title - variable names do not include the ’?’
                 final RDFNode eventId = rb.get("ev");
-                if (!eventId.toString().contains("http://www.newsreader-project.eu/data/cars/2004/10/08/4DH5-8HM0-00BT-N3MS.xml#ev192"))
-                    continue;
                 final Resource z = rb.getResource("ev");
 
                 // Now get the details for each event
@@ -345,7 +343,8 @@ public class ProcessEventObjectsStream {
                 }
 
                 Node eventNode = NodeFactory.createURI(eventId.toString());
-
+                System.out.println(eventId);
+                System.out.println(neededRoles);
                 if (!neededRoles.isEmpty()) {
                     boolean skip = false;
 
@@ -377,11 +376,11 @@ public class ProcessEventObjectsStream {
                             } else if (allActors.size() == 1) {
                                 sparqlQuery += "?ev " + role + " <" + allActors.get(0) + "> . ";
                             } else {
-                                String rolevar = "?" + role;
+                                String rolevar = "?role" + i;
 
-                                String filter = " { ?ev " + role + " " + rolevar + " . FILTER ( " + rolevar + " IN (";
+                                String filter = " ?ev " + role + " " + rolevar + " . FILTER ( " + rolevar + " IN (";
                                 for (int j = 0; j < allActors.size(); j++) {
-                                    filter += allActors.get(j) + ", ";
+                                    filter += "<" + allActors.get(j) + ">, ";
                                 }
                                 sparqlQuery += filter.substring(0, filter.length() - 2) + ") ) . ";
                             }
@@ -414,7 +413,6 @@ public class ProcessEventObjectsStream {
                         sparqlQuery += iliFilter.substring(0, iliFilter.length() - 2) + ") ) . ";
 
                     }
-                    System.out.println("ILIS exist " + eventId);
                 } else {
 
                     for (Iterator<Quad> iter = g.find(null, eventNode, lemmaNode, null); iter.hasNext(); ) {
@@ -423,12 +421,10 @@ public class ProcessEventObjectsStream {
                     }
 
                     if (!allLemmas.isEmpty()) {
-                        if (allLemmas.get(0).equals("appearance"))
-                            System.out.println("EVENTID " + eventId.toString());
                         matchLemma=true;
                         if (allLemmas.size() == 1) {
                             sparqlSelectQuery+="(COUNT(distinct ?lbl) as ?conceptcount) ";
-                            sparqlQuery += "?ev <http://www.w3.org/2000/01/rdf-schema#label> " + allLemmas.get(0) + " . ?ev <http://www.w3.org/2000/01/rdf-schema#label> ?lbl . ";
+                            sparqlQuery += "?ev <http://www.w3.org/2000/01/rdf-schema#label> ?l. FILTER (STR(?l) = STR(" + allLemmas.get(0) + ")) . ?ev <http://www.w3.org/2000/01/rdf-schema#label> ?lbl . ";
                         } else {
                             matchMultiple=true;
                             sparqlSelectQuery+="(COUNT(distinct ?lbl) as ?conceptcount) (COUNT(distinct ?mylbls) as ?myconceptcount) ";
