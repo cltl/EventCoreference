@@ -111,8 +111,8 @@ public class ProcessEventObjectsStream {
     public static final Node begintimeNode = NodeFactory.createURI("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp");
     public static final Node endtimeNode = NodeFactory.createURI("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp");
 
-    public static int conceptMatchThreshold = 10;
-    public static int phraseMatchThreshold = 10;
+    public static int conceptMatchThreshold = 50;
+    public static int phraseMatchThreshold = 50;
 
     static public String matchSingleTmx(Node tmx, DatasetGraph g, Model m){
         String sq="";
@@ -327,8 +327,6 @@ public class ProcessEventObjectsStream {
                     evQexec.close();
                 }
 
-                if (eventId.toString().contains("http://www.newsreader-project.eu/data/cars/2004/10/08/4DH5-8HM0-00BT-N3MS.xml#ev192"))
-                    System.out.println("Our event: " + myILIs);
                 if (!myFrames.isEmpty()) {
                     for (int i = 0; i < myFrames.size(); i++) {
                         String et = myFrames.get(i);
@@ -343,8 +341,6 @@ public class ProcessEventObjectsStream {
                 }
 
                 Node eventNode = NodeFactory.createURI(eventId.toString());
-                System.out.println(eventId);
-                System.out.println(neededRoles);
                 if (!neededRoles.isEmpty()) {
                     boolean skip = false;
 
@@ -400,11 +396,11 @@ public class ProcessEventObjectsStream {
                     matchILI=true;
                     if (myILIs.size() == 1) {
                         sparqlSelectQuery+="(COUNT(distinct ?allilis) as ?conceptcount) ";
-                        sparqlQuery += "?ev a <" + myILIs.get(0) + "> . ?ev a ?allilis . FILTER strstarts(str(?allilis), \"http://www.newsreader-project.eu/ontologies/ili-30-\") . ";
+                        sparqlQuery += "?ev a <" + myILIs.get(0) + "> . ?ev a ?allilis . FILTER strstarts(str(?allilis), \"http://globalwordnet.org/ili/\") . ";
                     } else {
                         matchMultiple=true;
                         sparqlSelectQuery+="(COUNT(distinct ?allilis) as ?conceptcount) (COUNT(distinct ?myilis) as ?myconceptcount) ";
-                        sparqlQuery += "?ev a ?allilis . FILTER strstarts(str(?allilis), \"http://www.newsreader-project.eu/ontologies/ili-30-\") . ";
+                        sparqlQuery += "?ev a ?allilis . FILTER strstarts(str(?allilis), \"http://globalwordnet.org/ili/\") . ";
 
                         String iliFilter = "?ev a ?myilis . FILTER ( ?myilis IN (";
                         for (int i = 0; i < myILIs.size(); i++) {
@@ -746,7 +742,6 @@ public class ProcessEventObjectsStream {
             sparqlQuery += "GROUP BY ?ev";
         }
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
-        System.out.println(sparqlQuery);
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
         int threshold;
