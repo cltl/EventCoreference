@@ -1190,7 +1190,27 @@ public class Util {
             topSense = getBestScoringExternalReference(kafEntity.getExternalReferences());
         }
         if (topSense!=null) {
-            uri = topSense.getSensecode();
+            if (topSense.getChildren().size()>0) {
+                //// Crosslingual mapping
+/*
+                <externalRef confidence="1.0" reference="http://es.dbpedia.org/resource/Fuerza_Aérea_de_los_Estados_Unidos" reftype="es" resource="spotlight_v1" source="es">
+                <externalRef confidence="1.0" reference="http://dbpedia.org/resource/United_States_Air_Force" reftype="en" resource="wikipedia-db-esEn" source="es"/>
+                </externalRef>
+*/
+                for (int i = 0; i < topSense.getChildren().size(); i++) {
+                    KafSense kafSense = topSense.getChildren().get(i);
+                  //  System.out.println("kafSense.getRefType() = " + kafSense.getRefType());
+                    if (kafSense.getRefType().equals("en")) {
+                        uri = kafSense.getSensecode();
+                       // System.out.println("uri = " + uri);
+                        break;
+                    }
+                }
+
+            }
+            else {
+                uri = topSense.getSensecode();
+            }
         }
         return uri;
     }
@@ -1204,7 +1224,25 @@ public class Util {
         String uri="";
         KafSense topSense = getBestScoringExternalReference(kafEntity.getExternalReferences());
         if (topSense!=null) {
-            uri = topSense.getSensecode();
+            if (topSense.getChildren().size()>0) {
+                //// Crosslingual mapping
+/*
+                <externalRef confidence="1.0" reference="http://es.dbpedia.org/resource/Fuerza_Aérea_de_los_Estados_Unidos" reftype="es" resource="spotlight_v1" source="es">
+                <externalRef confidence="1.0" reference="http://dbpedia.org/resource/United_States_Air_Force" reftype="en" resource="wikipedia-db-esEn" source="es"/>
+                </externalRef>
+*/
+                for (int i = 0; i < topSense.getChildren().size(); i++) {
+                    KafSense kafSense = topSense.getChildren().get(i);
+                    if (kafSense.getRefType().equals("en")) {
+                        uri = kafSense.getSensecode();
+                        break;
+                    }
+                }
+
+            }
+            else {
+                uri = topSense.getSensecode();
+            }
         }
         return uri;
     }

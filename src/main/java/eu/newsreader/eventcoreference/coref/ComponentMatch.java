@@ -42,10 +42,11 @@ public class ComponentMatch {
         int nMatches = 0;
         for (int i = 0; i < compositeEvent1.getEvent().getConcepts().size(); i++) {
             KafSense kafSense1 = compositeEvent1.getEvent().getConcepts().get(i);
-            if (kafSense1.getResource().equalsIgnoreCase("wordnet")) {
+            if (kafSense1.getResource().equalsIgnoreCase("wordnet") ||
+                    kafSense1.getSensecode().startsWith("ili")) {
                 for (int j = 0; j < compositeEvent2.getEvent().getConcepts().size(); j++) {
                     KafSense kafSense2 = compositeEvent2.getEvent().getConcepts().get(j);
-                    if (kafSense2.getResource().equalsIgnoreCase("wordnet")) {
+                    if (kafSense2.getResource().equalsIgnoreCase("wordnet") || kafSense1.getSensecode().startsWith("ili")) {
                         if (kafSense1.getSensecode().equals(kafSense2.getSensecode())) {
                             nMatches++;
                         }

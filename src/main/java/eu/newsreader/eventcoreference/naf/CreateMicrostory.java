@@ -244,7 +244,7 @@ public class CreateMicrostory {
         return fnRelatedEvents;
     }
 
-    public static ArrayList<JSONObject> getEventsThroughEsotBridging(ArrayList<JSONObject> events,
+    public static ArrayList<JSONObject> getEventsThroughEsoBridging(ArrayList<JSONObject> events,
                                                                         JSONObject event,
                                                                          FrameNetReader frameNetReader)
             throws JSONException {
@@ -416,37 +416,33 @@ public class CreateMicrostory {
         while (keys.hasNext()) {
             String key = keys.next().toString(); //role
           //  System.out.println("key = " + key);
-            if (key.equalsIgnoreCase("pb/A0") || key.equalsIgnoreCase("pb/A1") || key.equalsIgnoreCase("pb/A2")
+            if (key.equalsIgnoreCase("pb/A0")
+                    || key.equalsIgnoreCase("pb/A1")
+                    || key.equalsIgnoreCase("pb/A2")
                     || key.toLowerCase().startsWith("fn/")
                     || key.toLowerCase().startsWith("eso/")) {
                 JSONArray actors = actorObject.getJSONArray(key);
                 // System.out.println("actors.toString() = " + actors.toString());
                 for (int i = 0; i < events.size(); i++) {
                     JSONObject oEvent = events.get(i);
-                    boolean match = false;
                     if (!oEvent.get("instance").toString().equals(event.get("instance").toString())) {
+                        ///skip event itself
                         JSONObject oActorObject = oEvent.getJSONObject("actors");
                         Iterator oKeys = oActorObject.sortedKeys();
                         while (oKeys.hasNext()) {
                             String oKey = oKeys.next().toString();
-                            if (oKey.equalsIgnoreCase("pb/A0") || oKey.equalsIgnoreCase("pb/A1") || oKey.equalsIgnoreCase("pb/A1")
+                            if (oKey.equalsIgnoreCase("pb/A0")
+                                    || oKey.equalsIgnoreCase("pb/A1")
+                                    || oKey.equalsIgnoreCase("pb/A1")
                                     || key.toLowerCase().startsWith("fn/")
                                     || key.toLowerCase().startsWith("eso/")) {
                                 JSONArray oActors = oActorObject.getJSONArray(oKey);
                                 // System.out.println("oActors.toString() = " + oActors.toString());
-                                for (int j = 0; j < actors.length(); j++) {
-                                    String actor = actors.getString(j);
-                                    for (int k = 0; k < oActors.length(); k++) {
-                                        String oActor = oActors.getString(k);
-                                        if (actor.equals(oActor)) {
-                                            if (!coPartipantEvents.contains(oEvent)) {
-                                                coPartipantEvents.add(oEvent);
-                                                match = true;
-                                                break;
-                                            }
-                                        }
-
+                                if (intersectingActor(actors, oActors)) {
+                                    if (!coPartipantEvents.contains(oEvent)) {
+                                         coPartipantEvents.add(oEvent);
                                     }
+                                    break;
                                 }
                             }
                         }
@@ -457,6 +453,18 @@ public class CreateMicrostory {
         return coPartipantEvents;
     }
 
+    static boolean intersectingActor (JSONArray actors, JSONArray oActors) throws JSONException {
+        for (int j = 0; j < actors.length(); j++) {
+            String actor = actors.getString(j);
+            for (int k = 0; k < oActors.length(); k++) {
+                String oActor = oActors.getString(k);
+                if (actor.equals(oActor)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Obtain participants through bridging relations

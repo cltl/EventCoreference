@@ -273,15 +273,35 @@ public class SemObject implements Serializable {
     public void setIdByDBpediaReference() {
         KafSense topSense = Util.getBestScoringExternalReference(concepts);
         if (topSense!=null) {
-            if ((topSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
-                    (topSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
+            if (topSense.getChildren().size()>0) {
+                //// Crosslingual mapping
+/*
+                <externalRef confidence="1.0" reference="http://es.dbpedia.org/resource/Fuerza_Aérea_de_los_Estados_Unidos" reftype="es" resource="spotlight_v1" source="es">
+                <externalRef confidence="1.0" reference="http://dbpedia.org/resource/United_States_Air_Force" reftype="en" resource="wikipedia-db-esEn" source="es"/>
+                </externalRef>
+*/
+                for (int i = 0; i < topSense.getChildren().size(); i++) {
+                    KafSense kafSense = topSense.getChildren().get(i);
+                    //  System.out.println("kafSense.getRefType() = " + kafSense.getRefType());
+                    if (kafSense.getRefType().equals("en")) {
+                        id = getNameSpaceTypeReference(kafSense); //kafSense.getSensecode();
+                        // System.out.println("uri = " + uri);
+                        break;
+                    }
+                }
+
+            }
+            else {
+                if ((topSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
+                        (topSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
                     - using them as the subject of extracted triples (suggested), or
                     - linking them to entity/event URIs using owl:sameAs triples
                  */
-                id = getNameSpaceTypeReference(topSense);
+                    id = getNameSpaceTypeReference(topSense);
+                }
             }
         }
     }

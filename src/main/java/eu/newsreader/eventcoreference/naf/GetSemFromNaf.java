@@ -65,6 +65,7 @@ public class GetSemFromNaf {
         String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
         String entityUri = ResourcesUri.nwrdata + project + "/entities/";
         if (!baseUrl.toLowerCase().startsWith("http")) {
+           //  System.out.println("baseUrl = " + baseUrl);
             baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
         }
         processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
@@ -109,8 +110,8 @@ public class GetSemFromNaf {
                         ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
                         semEvent.addNafMentions(mentionArrayList);
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
-                     //   semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
-                        semEvent.addConceptsExcept(event.getExternalReferences(), "WordNet");  /// these are concepts added by the SRL except for the WordNet references since we assume they come from the coreference sets
+                        semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
+                     //   semEvent.addConceptsExcept(event.getExternalReferences(), "WordNet");  /// these are concepts added by the SRL except for the WordNet references since we assume they come from the coreference sets
 
                     }
                 }
@@ -222,7 +223,13 @@ public class GetSemFromNaf {
                 }
             }
             if (!uri.isEmpty()) {
-               // System.out.println("uri = " + uri);
+                if (uri.toLowerCase().indexOf("/dbpedia")>-1) {
+                  //  System.out.println("dbpedia uri = " + uri);
+                }
+                else {
+                   // System.out.println("other uri = " + uri);
+                    continue;
+                }
                 if (kafEntityActorUriMap.containsKey(uri)) {
                     ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
                     entities.add(kafEntity);
@@ -315,6 +322,14 @@ public class GetSemFromNaf {
                 Util.addObject(semActors, semActor);
             }
         }
+
+/*
+        for (int i = 0; i < semActors.size(); i++) {
+            SemObject semObject = semActors.get(i);
+            System.out.println("semObject.getId() = " + semObject.getId());
+            System.out.println("semObject.getURI() = " + semObject.getURI());
+        }
+*/
     }
 
 

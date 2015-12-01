@@ -602,7 +602,14 @@ public class ClusterEventObjects {
            // System.out.println("rawText = " + rawText);
             rawText = rawText.replaceAll("\n", "_");
             rawText = rawText.replaceAll("\"", "^");
+
             String uri = kafSaxParser.getKafMetaData().getUrl();
+            if (!uri.toLowerCase().startsWith("http")) {
+              //  System.out.println("uri = " + uri);
+                uri = ResourcesUri.nwrdata  + uri.substring(uri.indexOf("/")+1);
+              //  System.out.println("uri = " + uri);
+            }
+
             String str = uri+"\t"+rawText+"\n";
             File rawTextIndexFile = new File(rawTextIndexFilePath);
             OutputStream os = null;

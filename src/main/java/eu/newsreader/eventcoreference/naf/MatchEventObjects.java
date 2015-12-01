@@ -180,6 +180,9 @@ public class MatchEventObjects {
             else if (kafSense.getResource().toLowerCase().startsWith("wn")) {
                 iliReferences.add(kafSense);
             }
+            else if (kafSense.getResource().toLowerCase().startsWith("ili")) {
+                iliReferences.add(kafSense);
+            }
         }
         return iliReferences;
     }
