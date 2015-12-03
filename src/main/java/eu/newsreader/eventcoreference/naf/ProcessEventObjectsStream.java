@@ -91,7 +91,8 @@ public class ProcessEventObjectsStream {
 
     static public String done = "";
 
-    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars2/sparql";
+//    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars2/sparql";
+    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/aitor/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
     public static String authStr = user + ":" + pass;
@@ -110,8 +111,8 @@ public class ProcessEventObjectsStream {
     public static final Node begintimeNode = NodeFactory.createURI("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestBeginTimeStamp");
     public static final Node endtimeNode = NodeFactory.createURI("http://semanticweb.cs.vu.nl/2009/11/sem/hasEarliestEndTimeStamp");
 
-    public static int conceptMatchThreshold = 10;
-    public static int phraseMatchThreshold = 10;
+    public static int conceptMatchThreshold = 50;
+    public static int phraseMatchThreshold = 50;
 
     static public String matchSingleTmx(Node tmx, DatasetGraph g, Model m){
         String sq="";
@@ -317,7 +318,7 @@ public class ProcessEventObjectsStream {
                             neededRoles = contextualNeededRoles;
                         } else if (rdfType.contains("http://www.newsreader-project.eu/ontologies/framenet/")) {
                             myFrames.add(rdfType);
-                        } else if (!rdfType.equals("http://semanticweb.cs.vu.nl/2009/11/sem/Event")) { // wordnet ILIs
+                        } else if (rdfType.contains("http://globalwordnet.org/ili/")) { // wordnet ILIs
                             myILIs.add(rdfType);
                         }
 
@@ -325,7 +326,6 @@ public class ProcessEventObjectsStream {
                 } finally {
                     evQexec.close();
                 }
-
 
                 if (!myFrames.isEmpty()) {
                     for (int i = 0; i < myFrames.size(); i++) {
@@ -341,7 +341,6 @@ public class ProcessEventObjectsStream {
                 }
 
                 Node eventNode = NodeFactory.createURI(eventId.toString());
-
                 if (!neededRoles.isEmpty()) {
                     boolean skip = false;
 
@@ -373,11 +372,11 @@ public class ProcessEventObjectsStream {
                             } else if (allActors.size() == 1) {
                                 sparqlQuery += "?ev " + role + " <" + allActors.get(0) + "> . ";
                             } else {
-                                String rolevar = "?" + role;
+                                String rolevar = "?role" + i;
 
-                                String filter = " { ?ev " + role + " " + rolevar + " . FILTER ( " + rolevar + " IN (";
+                                String filter = " ?ev " + role + " " + rolevar + " . FILTER ( " + rolevar + " IN (";
                                 for (int j = 0; j < allActors.size(); j++) {
-                                    filter += allActors.get(j) + ", ";
+                                    filter += "<" + allActors.get(j) + ">, ";
                                 }
                                 sparqlQuery += filter.substring(0, filter.length() - 2) + ") ) . ";
                             }
@@ -389,21 +388,19 @@ public class ProcessEventObjectsStream {
                 // Roles done!
 
                 // Match Type now:
-
                 boolean matchMultiple=false;
                 boolean matchLemma=false;
                 boolean matchILI=false;
                 ArrayList<Node> allLemmas = new ArrayList<Node>();
-
                 if (MATCHTYPE.equals("ILILEMMA") && myILIs.size() > 0) {
                     matchILI=true;
                     if (myILIs.size() == 1) {
                         sparqlSelectQuery+="(COUNT(distinct ?allilis) as ?conceptcount) ";
-                        sparqlQuery += "?ev a <" + myILIs.get(0) + "> . ?ev a ?allilis . FILTER strstarts(str(?allilis), \"http://www.newsreader-project.eu/ontologies/ili-30-\") . ";
+                        sparqlQuery += "?ev a <" + myILIs.get(0) + "> . ?ev a ?allilis . FILTER strstarts(str(?allilis), \"http://globalwordnet.org/ili/\") . ";
                     } else {
                         matchMultiple=true;
                         sparqlSelectQuery+="(COUNT(distinct ?allilis) as ?conceptcount) (COUNT(distinct ?myilis) as ?myconceptcount) ";
-                        sparqlQuery += "?ev a ?allilis . FILTER strstarts(str(?allilis), \"http://www.newsreader-project.eu/ontologies/ili-30-\") . ";
+                        sparqlQuery += "?ev a ?allilis . FILTER strstarts(str(?allilis), \"http://globalwordnet.org/ili/\") . ";
 
                         String iliFilter = "?ev a ?myilis . FILTER ( ?myilis IN (";
                         for (int i = 0; i < myILIs.size(); i++) {
@@ -412,17 +409,18 @@ public class ProcessEventObjectsStream {
                         sparqlQuery += iliFilter.substring(0, iliFilter.length() - 2) + ") ) . ";
 
                     }
-
                 } else {
+
                     for (Iterator<Quad> iter = g.find(null, eventNode, lemmaNode, null); iter.hasNext(); ) {
                         Quad q = iter.next();
                         allLemmas.add(q.asTriple().getObject());
                     }
+
                     if (!allLemmas.isEmpty()) {
                         matchLemma=true;
                         if (allLemmas.size() == 1) {
                             sparqlSelectQuery+="(COUNT(distinct ?lbl) as ?conceptcount) ";
-                            sparqlQuery += "?ev <http://www.w3.org/2000/01/rdf-schema#label> " + allLemmas.get(0) + " . ?ev <http://www.w3.org/2000/01/rdf-schema#label> ?lbl . ";
+                            sparqlQuery += "?ev <http://www.w3.org/2000/01/rdf-schema#label> ?l. FILTER (STR(?l) = STR(" + allLemmas.get(0) + ")) . ?ev <http://www.w3.org/2000/01/rdf-schema#label> ?lbl . ";
                         } else {
                             matchMultiple=true;
                             sparqlSelectQuery+="(COUNT(distinct ?lbl) as ?conceptcount) (COUNT(distinct ?mylbls) as ?myconceptcount) ";

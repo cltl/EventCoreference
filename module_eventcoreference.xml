@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_eventcoreference" default="compile.module.eventcoreference">
+  <dirname property="module.eventcoreference.basedir" file="${ant.file.module_eventcoreference}"/>
+  
+  <property name="module.jdk.home.eventcoreference" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.eventcoreference" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.eventcoreference" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.eventcoreference" value="-encoding UTF-8 -source 1.6 -target 1.8 ${compiler.args}"/>
+  
+  <property name="eventcoreference.output.dir" value="${module.eventcoreference.basedir}/target/classes"/>
+  <property name="eventcoreference.testoutput.dir" value="${module.eventcoreference.basedir}/target/test-classes"/>
+  
+  <path id="eventcoreference.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="eventcoreference.module.production.classpath">
+    <path refid="${module.jdk.classpath.eventcoreference}"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-distribution:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-apibinding:3.4.10.classpath"/>
+    <path refid="library.maven:_org.apache.felix:org.osgi.core:1.4.0.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-api:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-tools:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-impl:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-parsers:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-oboformat:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-contract:3.4.10.classpath"/>
+    <path refid="library.maven:_wordnettools:wordnettools:1.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-tdb:1.0.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-arq:2.11.0.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.2.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.2.2.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.6.classpath"/>
+    <path refid="library.maven:_org.slf4j:jcl-over-slf4j:1.6.4.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.6.4.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.6.4.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.16.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-core:2.11.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-iri:1.0.0.classpath"/>
+    <path refid="library.maven:_xerces:xercesimpl:2.11.0.classpath"/>
+    <path refid="library.maven:_xml-apis:xml-apis:1.4.01.classpath"/>
+    <path refid="library.maven:_org.json:json:20090211.classpath"/>
+    <pathelement location="${basedir}/../KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-rdfxml:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-model:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-api:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-util:2.7.9.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-turtle:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-trig:2.7.9.classpath"/>
+    <path refid="library.maven:_org.jdom:jdom:1.1.classpath"/>
+    <path refid="library.maven:_com.cedarsoftware:json-io:3.0.1.classpath"/>
+  </path>
+  
+  <path id="eventcoreference.runtime.production.module.classpath">
+    <pathelement location="${eventcoreference.output.dir}"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-distribution:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-apibinding:3.4.10.classpath"/>
+    <path refid="library.maven:_org.apache.felix:org.osgi.core:1.4.0.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-api:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-tools:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-impl:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-parsers:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-oboformat:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-contract:3.4.10.classpath"/>
+    <path refid="library.maven:_wordnettools:wordnettools:1.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-tdb:1.0.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-arq:2.11.0.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.2.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.2.2.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.6.classpath"/>
+    <path refid="library.maven:_org.slf4j:jcl-over-slf4j:1.6.4.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.6.4.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.6.4.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.16.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-core:2.11.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-iri:1.0.0.classpath"/>
+    <path refid="library.maven:_xerces:xercesimpl:2.11.0.classpath"/>
+    <path refid="library.maven:_xml-apis:xml-apis:1.4.01.classpath"/>
+    <path refid="library.maven:_org.json:json:20090211.classpath"/>
+    <pathelement location="${basedir}/../KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-rdfxml:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-model:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-api:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-datatypes:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-languages:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-util:2.7.9.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-turtle:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-trig:2.7.9.classpath"/>
+    <path refid="library.maven:_org.jdom:jdom:1.1.classpath"/>
+    <path refid="library.maven:_com.cedarsoftware:json-io:3.0.1.classpath"/>
+  </path>
+  
+  <path id="eventcoreference.module.classpath">
+    <path refid="${module.jdk.classpath.eventcoreference}"/>
+    <pathelement location="${eventcoreference.output.dir}"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-distribution:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-apibinding:3.4.10.classpath"/>
+    <path refid="library.maven:_org.apache.felix:org.osgi.core:1.4.0.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-api:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-tools:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-impl:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-parsers:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-oboformat:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-contract:3.4.10.classpath"/>
+    <path refid="library.maven:_wordnettools:wordnettools:1.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-tdb:1.0.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-arq:2.11.0.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.2.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.2.2.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.6.classpath"/>
+    <path refid="library.maven:_org.slf4j:jcl-over-slf4j:1.6.4.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.6.4.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.6.4.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.16.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-core:2.11.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-iri:1.0.0.classpath"/>
+    <path refid="library.maven:_xerces:xercesimpl:2.11.0.classpath"/>
+    <path refid="library.maven:_xml-apis:xml-apis:1.4.01.classpath"/>
+    <path refid="library.maven:_org.json:json:20090211.classpath"/>
+    <pathelement location="${basedir}/../KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-rdfxml:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-model:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-api:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-datatypes:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-languages:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-util:2.7.9.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-turtle:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-trig:2.7.9.classpath"/>
+    <path refid="library.maven:_org.jdom:jdom:1.1.classpath"/>
+    <path refid="library.maven:_com.cedarsoftware:json-io:3.0.1.classpath"/>
+  </path>
+  
+  <path id="eventcoreference.runtime.module.classpath">
+    <pathelement location="${eventcoreference.testoutput.dir}"/>
+    <pathelement location="${eventcoreference.output.dir}"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-distribution:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-apibinding:3.4.10.classpath"/>
+    <path refid="library.maven:_org.apache.felix:org.osgi.core:1.4.0.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-api:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-tools:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-impl:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-parsers:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-oboformat:3.4.10.classpath"/>
+    <path refid="library.maven:_net.sourceforge.owlapi:owlapi-contract:3.4.10.classpath"/>
+    <path refid="library.maven:_wordnettools:wordnettools:1.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-tdb:1.0.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-arq:2.11.0.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.2.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.2.2.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.6.classpath"/>
+    <path refid="library.maven:_org.slf4j:jcl-over-slf4j:1.6.4.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.6.4.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.6.4.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.16.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-core:2.11.0.classpath"/>
+    <path refid="library.maven:_org.apache.jena:jena-iri:1.0.0.classpath"/>
+    <path refid="library.maven:_xerces:xercesimpl:2.11.0.classpath"/>
+    <path refid="library.maven:_xml-apis:xml-apis:1.4.01.classpath"/>
+    <path refid="library.maven:_org.json:json:20090211.classpath"/>
+    <pathelement location="${basedir}/../KafSaxParser/target/KyotoKafSaxParser-1.0-jar-with-dependencies.jar"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-rdfxml:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-model:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-api:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-datatypes:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-languages:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-util:2.7.9.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.4.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-turtle:2.7.9.classpath"/>
+    <path refid="library.maven:_org.openrdf.sesame:sesame-rio-trig:2.7.9.classpath"/>
+    <path refid="library.maven:_org.jdom:jdom:1.1.classpath"/>
+    <path refid="library.maven:_com.cedarsoftware:json-io:3.0.1.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.eventcoreference">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.eventcoreference">
+    <patternset refid="excluded.from.module.eventcoreference"/>
+  </patternset>
+  
+  <path id="eventcoreference.module.sourcepath">
+    <dirset dir="${module.eventcoreference.basedir}">
+      <include name="src/main/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.eventcoreference" depends="compile.module.eventcoreference.production,compile.module.eventcoreference.tests" description="Compile module EventCoreference"/>
+  
+  <target name="compile.module.eventcoreference.production" depends="register.custom.compilers" description="Compile module EventCoreference; production classes">
+    <mkdir dir="${eventcoreference.output.dir}"/>
+    <javac2 destdir="${eventcoreference.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.eventcoreference}/javac">
+      <compilerarg line="${compiler.args.eventcoreference}"/>
+      <bootclasspath refid="eventcoreference.module.bootclasspath"/>
+      <classpath refid="eventcoreference.module.production.classpath"/>
+      <src refid="eventcoreference.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.eventcoreference"/>
+    </javac2>
+    
+    <copy todir="${eventcoreference.output.dir}">
+      <fileset dir="${module.eventcoreference.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.eventcoreference.tests" depends="register.custom.compilers,compile.module.eventcoreference.production" description="compile module EventCoreference; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.eventcoreference" description="cleanup module">
+    <delete dir="${eventcoreference.output.dir}"/>
+    <delete dir="${eventcoreference.testoutput.dir}"/>
+  </target>
+</project>
