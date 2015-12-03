@@ -373,8 +373,6 @@ public class JenaSerialization {
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
             addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.prov, authorPerspectiveObjects);
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
-
-
     }
 
 

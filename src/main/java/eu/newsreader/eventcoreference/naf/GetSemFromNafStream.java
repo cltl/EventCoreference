@@ -33,9 +33,10 @@ public class GetSemFromNafStream {
     static public Vector<String> contextualVector = null;
     static public int TIMEEXPRESSIONMAX = 5;
     static public boolean NONENTITIES = false;
-
     static public boolean ILIURI = false;
     static public boolean VERBOSE = false;
+    static public boolean PERSPECTIVE = false;
+
     static public void main(String[] args) {
         String sourceFrameFile = "";
         String contextualFrameFile = "";
@@ -50,6 +51,9 @@ public class GetSemFromNafStream {
             }
             else if (arg.equals("--verbose")) {
                 VERBOSE = true;
+            }
+            else if (arg.equals("--perspective")) {
+                PERSPECTIVE = true;
             }
             else if (arg.equals("--ili") && args.length > (i + 1)) {
                 String pathToILIFile = args[i+1];
@@ -116,6 +120,19 @@ public class GetSemFromNafStream {
 */
             }
         }
-        JenaSerialization.serializeJenaCompositeEvents(System.out, compositeEventArraylist, null, ILIURI, VERBOSE);
+        if (!PERSPECTIVE) {
+            JenaSerialization.serializeJenaCompositeEvents(System.out, compositeEventArraylist, null, ILIURI, VERBOSE);
+        }
+        else {
+            ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
+                    project,
+                    semActors,
+                    contextualVector,
+                    sourceVector,
+                    grammaticalVector);
+            ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(
+                    kafSaxParser, project, sourcePerspectives);
+            JenaSerialization.serializeJenaCompositeEventsAndPerspective(System.out, compositeEventArraylist, kafSaxParser, sourcePerspectives, documentPerspectives);
+        }
     }
 }
