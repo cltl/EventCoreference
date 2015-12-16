@@ -328,7 +328,7 @@ public class EventCorefWordnetSim {
               ArrayList<File> files = Util.makeRecursiveFileList(pathToNafFolder, extension);
               for (int i = 0; i < files.size(); i++) {
                   File file = files.get(i);
-                 // System.out.println("file.getName() = " + file.getName());
+                  System.out.println("file.getName() = " + file.getName());
                   KafSaxParser kafSaxParser = new KafSaxParser();
                   kafSaxParser.parseFile(file);
                   if (REMOVEEVENTCOREFS) {
@@ -514,7 +514,7 @@ public class EventCorefWordnetSim {
                   if (corefResultSet==null) {
                       continue;
                   }
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSetResource(wordnetData);
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event");
@@ -566,6 +566,8 @@ public class EventCorefWordnetSim {
           return false;
       }
 
+
+
       static void process(KafSaxParser kafSaxParser, boolean USEWSD) {
               String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
               String strEndDate = null;
@@ -581,6 +583,10 @@ public class EventCorefWordnetSim {
                   if (!Util.validPosEvent(theKafEvent, kafSaxParser)) {
                      continue; //// we only accept predicates with valid POS
                   }
+                  if (theKafEvent.getStatus().equalsIgnoreCase("false")) {
+                      continue; //// this predicate was marked as wrong by the event detection software
+                  }
+
                   Integer sentenceId = -1;
                   try {
                       KafTerm kafTerm = kafSaxParser.getTerm(theKafEvent.getSpanIds().get(0)); /// get the term from the first span
@@ -664,6 +670,7 @@ public class EventCorefWordnetSim {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
                     corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
+                corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
             for (int i = 0; i < sourceCorefMatchList.size(); i++) {
                 CorefResultSet corefResultSet = sourceCorefMatchList.get(i);
@@ -675,6 +682,7 @@ public class EventCorefWordnetSim {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
                     corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
+                corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
             for (int i = 0; i < corefMatchList.size(); i++) {
                 CorefResultSet corefResultSet = corefMatchList.get(i);
@@ -686,6 +694,7 @@ public class EventCorefWordnetSim {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
                     corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
+                corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
               //// now we need to compare these lemma lists but not the source and grammatical sets
               for (int i = 0; i < corefMatchList.size(); i++) {
@@ -751,7 +760,7 @@ public class EventCorefWordnetSim {
                   if (corefResultSet==null) {
                       continue;
                   }
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSetResource(wordnetData);
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event");
@@ -763,7 +772,7 @@ public class EventCorefWordnetSim {
                   if (corefResultSet==null) {
                       continue;
                   }
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSetResource(wordnetData);
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event");
@@ -774,7 +783,7 @@ public class EventCorefWordnetSim {
                   if (corefResultSet==null) {
                       continue;
                   }
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSetResource(wordnetData);
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event");
@@ -859,6 +868,7 @@ public class EventCorefWordnetSim {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
                     corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
+                corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
             for (int i = 0; i < sourceCorefMatchList.size(); i++) {
                 CorefResultSet corefResultSet = sourceCorefMatchList.get(i);
@@ -870,6 +880,7 @@ public class EventCorefWordnetSim {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
                     corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
+                corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
             for (int i = 0; i < corefMatchList.size(); i++) {
                 CorefResultSet corefResultSet = corefMatchList.get(i);
@@ -881,6 +892,7 @@ public class EventCorefWordnetSim {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
                     corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
                 }
+                corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
               //// now we need to compare these lemma lists but not the source and grammatical sets
               for (int i = 0; i < corefMatchList.size(); i++) {
@@ -946,7 +958,7 @@ public class EventCorefWordnetSim {
                   if (corefResultSet==null) {
                       continue;
                   }
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSetResource(wordnetData);
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event");
@@ -958,7 +970,7 @@ public class EventCorefWordnetSim {
                   if (corefResultSet==null) {
                       continue;
                   }
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSetResource(wordnetData);
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event-grammatical");
@@ -969,7 +981,7 @@ public class EventCorefWordnetSim {
                   if (corefResultSet==null) {
                       continue;
                   }
-                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSet(wordnetData.getResource());
+                  KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSetResource(wordnetData);
                   String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);
                   kafCoreferenceSet.setCoid(corefId);
                   kafCoreferenceSet.setType("event-source");

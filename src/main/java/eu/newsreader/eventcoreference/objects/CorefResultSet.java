@@ -13,6 +13,7 @@ public class CorefResultSet {
     private ArrayList<ArrayList<CorefTarget>> sources;
     private ArrayList<CorefMatch> targets;
     private ArrayList<KafSense> bestSenses;
+    private ArrayList<KafSense> hyperSenses;
 
     public CorefResultSet(String sourceLemma,ArrayList<CorefTarget> source) {
         this.sourceLemma = sourceLemma;
@@ -20,6 +21,7 @@ public class CorefResultSet {
         this.sources.add(source);
         this.targets = new ArrayList<CorefMatch>();
         this.bestSenses = new ArrayList<KafSense>();
+        this.hyperSenses = new ArrayList<KafSense>();
     }
 
     public String getSourceLemma() {
@@ -65,6 +67,30 @@ public class CorefResultSet {
     public boolean hasBestSense (KafSense kafSense) {
         for (int i = 0; i < bestSenses.size(); i++) {
             KafSense sense = bestSenses.get(i);
+            if (sense.getSensecode().equals(kafSense.getSensecode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ArrayList<KafSense> getHyperSenses() {
+        return hyperSenses;
+    }
+
+    public void setHyperSenses(ArrayList<KafSense> hyperSenses) {
+        this.hyperSenses = hyperSenses;
+    }
+
+    public void addHyperSense (KafSense kafSense) {
+        if (!hasHyperSense(kafSense)) {
+            this.hyperSenses.add(kafSense);
+        }
+    }
+
+    public boolean hasHyperSense (KafSense kafSense) {
+        for (int i = 0; i < hyperSenses.size(); i++) {
+            KafSense sense = hyperSenses.get(i);
             if (sense.getSensecode().equals(kafSense.getSensecode())) {
                 return true;
             }
@@ -393,11 +419,40 @@ public class CorefResultSet {
                 KafSense kafSense = new KafSense();
                 kafSense.setSensecode(key);
                 kafSense.setConfidence(combinedScore);
-                kafSense.setSource("dominant_sense");
+                kafSense.setSource(KafSense.DOMINANT_SENSE);
                 kafSense.setResource(topResource);
                 this.bestSenses.add(kafSense);
             }
         }
+    }
+
+    public void addHypernyms (WordnetData wordnetData, String WNPREFIX) {
+        for (int i = 0; i < this.bestSenses.size(); i++) {
+            KafSense kafSense = this.bestSenses.get(i);
+            String senseString = kafSense.getSensecode();
+            if (!WNPREFIX.isEmpty()) {
+                int idx = senseString.indexOf("-");
+                if (idx>-1) {
+                    senseString = WNPREFIX+senseString.substring(idx);
+                }
+            }
+            if (wordnetData.getHyperRelations().containsKey(senseString)) {
+                ArrayList<String> hypers = wordnetData.getHyperRelations().get(senseString);
+              //  System.out.println("hypers.toString() = " + hypers.toString());
+                for (int j = 0; j < hypers.size(); j++) {
+                    String hyper = hypers.get(j);
+                    KafSense parentSense = new KafSense();
+                    parentSense.setSensecode(hyper);
+                    parentSense.setResource(wordnetData.getResource());
+                    parentSense.setSource(KafSense.HYPERNYM);
+                    this.addHyperSense(parentSense);
+                }
+            }
+            else {
+              //  System.out.println("No hypers for senseString = " + senseString);
+            }
+        }
+
     }
 
     public double getAverageMatchScore () {
@@ -464,7 +519,7 @@ public class CorefResultSet {
         return kafCoreferenceSet;
     }
 
-    public KafCoreferenceSet castToKafCoreferenceSet (String wnResource) {
+    public KafCoreferenceSet castToKafCoreferenceSetResource (WordnetData wordnetData) {
         KafCoreferenceSet kafCoreferenceSet = new KafCoreferenceSet();
         /// we add all the lemma sources
         for (int i = 0; i < sources.size(); i++) {
@@ -481,8 +536,8 @@ public class CorefResultSet {
                 KafSense kafSense = new KafSense();
                 kafSense.setSensecode(corefMatch.getLowestCommonSubsumer());
                 kafSense.setConfidence(corefMatch.getScore());
-                kafSense.setResource(wnResource);
-                kafSense.setSource("lowest_common_subsumer");
+                kafSense.setResource(wordnetData.getResource());
+                kafSense.setSource(KafSense.LOWEST_COMMON_SUBSUMER);
                 boolean hasSense = false;
                 for (int j = 0; j < kafCoreferenceSet.getExternalReferences().size(); j++) {
                     KafSense sense = kafCoreferenceSet.getExternalReferences().get(j);
@@ -497,9 +552,16 @@ public class CorefResultSet {
                     kafCoreferenceSet.addExternalReferences(kafSense);
                 }
             }
+            else {
+
+            }
         }
         for (int i = 0; i < bestSenses.size(); i++) {
             KafSense kafSense = bestSenses.get(i);
+            kafCoreferenceSet.addExternalReferences(kafSense);
+        }
+        for (int i = 0; i < hyperSenses.size(); i++) {
+            KafSense kafSense = hyperSenses.get(i);
             kafCoreferenceSet.addExternalReferences(kafSense);
         }
         return kafCoreferenceSet;

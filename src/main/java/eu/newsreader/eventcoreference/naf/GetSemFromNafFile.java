@@ -130,6 +130,7 @@ public class GetSemFromNafFile {
                 ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
                 ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
+
                 CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
                 if (myTimes.size()<=ClusterEventObjects.TIMEEXPRESSIONMAX) {
                     if (compositeEvent.isValid() || ALL) {

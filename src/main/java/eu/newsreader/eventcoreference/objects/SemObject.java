@@ -41,6 +41,7 @@ public class SemObject implements Serializable {
     private ArrayList<KafTopic> topics;
     private ArrayList<PhraseCount> phraseCounts;   //
     private ArrayList<KafSense> lcs;
+    private ArrayList<KafSense> hypers;
     private String label;
     private ArrayList<NafMention> nafMentions;    //
 
@@ -52,6 +53,7 @@ public class SemObject implements Serializable {
         this.label = "";
         this.uri = "";
         this.lcs = new ArrayList<KafSense>();
+        this.hypers = new ArrayList<KafSense>();
         this.score = 0;
         this.concepts = new ArrayList<KafSense>();
         this.phraseCounts = new ArrayList<PhraseCount>();
@@ -147,7 +149,7 @@ public class SemObject implements Serializable {
         for (int i = 0; i < phraseCounts.size(); i++) {
             PhraseCount phraseCount = phraseCounts.get(i);
             if (!phraseCount.getPhrase().isEmpty()) {
-                if (phrases.contains(phraseCount.getPhrase())) {
+                if (!phrases.contains(phraseCount.getPhrase())) {
                     phrases.add(phraseCount.getPhrase());
                 }
             }
@@ -237,6 +239,27 @@ public class SemObject implements Serializable {
 
     public void setLcs(ArrayList<KafSense> lcs) {
         this.lcs = lcs;
+    }
+
+    public void addHyper(KafSense concept) {
+            if (!concept.getSensecode().isEmpty()) {
+                this.hypers.add(concept);
+            }
+        }
+
+        public void addHypers(ArrayList<KafSense> hypers) {
+            for (int i = 0; i < hypers.size(); i++) {
+                KafSense kafSense = hypers.get(i);
+                this.addHyper(kafSense);
+            }
+        }
+
+        public void setHypers(ArrayList<KafSense> hypers) {
+            this.hypers = hypers;
+        }
+
+    public ArrayList<KafSense> getHypers() {
+        return hypers;
     }
 
     public String getId() {
@@ -488,12 +511,16 @@ public class SemObject implements Serializable {
         //// Top phrase
         String topLabel = this.getTopPhraseAsLabel();
         if (!topLabel.isEmpty()) {
-            resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+            Property property = model.createProperty(ResourcesUri.skos+SKOS.PREF_LABEL.getLocalName());
+            resource.addProperty(property, model.createLiteral(this.getTopPhraseAsLabel()));
             //// instead of
             for (int i = 0; i < phraseCounts.size(); i++) {
                 PhraseCount phraseCount = phraseCounts.get(i);
                 // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
-                if (!phraseCount.getPhrase().equalsIgnoreCase(getTopPhraseAsLabel()) && goodPhrase(phraseCount)) {
+/*                if (!phraseCount.getPhrase().equalsIgnoreCase(getTopPhraseAsLabel()) && goodPhrase(phraseCount)) {
+                    resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+                }*/
+                if (goodPhrase(phraseCount)) {
                     resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
                 }
             }

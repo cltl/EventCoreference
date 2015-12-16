@@ -101,8 +101,9 @@ public class GetSemFromNaf {
                 //// this is an event coreference set
                 //// no we get all the predicates for this set.
                 SemEvent semEvent = new SemEvent();
+                semEvent.addHypers(kafCoreferenceSet.getHypernymFromExternalReferences());
                 semEvent.addLcses(kafCoreferenceSet.getLcsFromExternalReferences());
-                semEvent.addConcepts(kafCoreferenceSet.getExternalReferencesWithoutLCS());
+                semEvent.addConcepts(kafCoreferenceSet.getDirectExternalReferences());
                 for (int j = 0; j < kafSaxParser.getKafEventArrayList().size(); j++) {
                     KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
                     if (Util.hasCorefTargetArrayList(event.getSpans(), kafCoreferenceSet.getSetsOfSpans())) {
@@ -450,7 +451,7 @@ public class GetSemFromNaf {
                 if (!RoleLabels.validRole(kafParticipant.getRole())) {
                     continue;
                 }
-                if (!RoleLabels.hasFrameNetRole(kafParticipant)) {
+                if (!RoleLabels.hasFrameNetRole(kafParticipant) &&!RoleLabels.isPRIMEPARTICIPANT(kafParticipant.getRole()) && !RoleLabels.isSECONDPARTICIPANT(kafParticipant.getRole())) {
                     ///// SKIP ROLE WITHOUT FRAMENET
                     continue;
                 }
@@ -1022,7 +1023,8 @@ public class GetSemFromNaf {
                     if (!RoleLabels.validRole(kafParticipant.getRole())) {
                         continue;
                     }
-                    //// we take all objects above threshold
+
+                        //// we take all objects above threshold
                     ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);

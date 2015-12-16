@@ -68,6 +68,19 @@ public class Util {
         }
         return objects;
     }
+    static public ArrayList<String> getObjectsForPredicate (ArrayList<SemRelation> semRelations) {
+        ArrayList objects = new ArrayList();
+        for (int j = 0; j < semRelations.size(); j++) {
+            SemRelation semRelation = semRelations.get(j);
+            for (int k = 0; k < semRelation.getPredicates().size(); k++) {
+                String relationPredicate = semRelation.getPredicates().get(k);
+                if (!relationPredicate.toLowerCase().endsWith("time")) {
+                    objects.add(semRelation.getObject());
+                }
+            }
+        }
+        return objects;
+    }
 
     static public String getValueForTimex (ArrayList<KafTimex> timexs, String timexId) {
         String value = "";

@@ -444,7 +444,8 @@ public class TrigToJsonTimeLineClimax {
                         /// we ignore events without actors.....
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("event", getValue(getSynsetsFromIli(key)));
-                        jsonObject.put("instance", getValue(key));
+                       // jsonObject.put("instance", getValue(key));
+                        jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
                         String timeAnchor = getTimeAnchor(otherTriples);
                         int idx = timeAnchor.lastIndexOf("/");
                         if (idx>-1) {
@@ -480,6 +481,10 @@ public class TrigToJsonTimeLineClimax {
                             JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
                             if (jsonLabels.keys().hasNext()) {
                                 jsonObject.put("labels", jsonLabels.get("labels"));
+                            }
+                            JSONObject jsonprefLabels = getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                            if (jsonprefLabels.keys().hasNext()) {
+                                jsonObject.put("prefLabel", jsonprefLabels.get("prefLabel"));
                             }
                             JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
                             if (jsonMentions.keys().hasNext()) {
@@ -572,21 +577,24 @@ public class TrigToJsonTimeLineClimax {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
         for (int i = 0; i < events.size(); i++) {
             JSONObject jsonObject = events.get(i);
+            JSONArray labels = null;
             try {
-                JSONArray labels = (JSONArray) jsonObject.get("labels");
-                if (labels != null) {
+                labels = (JSONArray) jsonObject.get("labels");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (labels != null) {
                     for (int j = 0; j < labels.length(); j++) {
                         String label = labels.getString(j);
+                       // System.out.println("label = " + label);
                         if (!blacklist.contains(label)) {
                             jsonObjectArrayList.add(jsonObject);
                             break;
                         }
                     }
 
-                } else {
-                }
-            } catch (JSONException e) {
-                //   e.printStackTrace();
+            } else {
+
             }
         }
         return jsonObjectArrayList;
@@ -848,6 +856,8 @@ public class TrigToJsonTimeLineClimax {
         for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject = objects.get(i);
             try {
+               // System.out.println("jsonObject.get(\"instance\").toString() = " + jsonObject.get("instance").toString());
+
                 if (jsonObject.get("instance").toString().equals(object.get("instance").toString())) {
                     return true;
                 }
@@ -1077,7 +1087,7 @@ public class TrigToJsonTimeLineClimax {
         TreeSet climaxObjects = determineClimaxValues(jsonObjects);
         //TreeSet climaxObjects = determineClimaxValuesFirstMentionOnly(jsonObjects);
 
-
+        System.out.println("climaxObjects.size() = " + climaxObjects.size());
         ArrayList<JSONObject> groupObjects = new ArrayList<JSONObject>();
         ArrayList<JSONObject> singletonObjects = new ArrayList<JSONObject>();
         Iterator<JSONObject> sortedObjects = climaxObjects.iterator();
@@ -1222,6 +1232,12 @@ public class TrigToJsonTimeLineClimax {
 
                     if (DEBUG) System.out.println(debugStr);
 
+                    for (int i = 0; i < groupObjects.size(); i++) {
+                        JSONObject object = groupObjects.get(i);
+                        groupedObjects.add(object);
+                    }
+
+/*
                     if (groupObjects.size()>1) {
                         for (int i = 0; i < groupObjects.size(); i++) {
                             JSONObject object = groupObjects.get(i);
@@ -1229,8 +1245,10 @@ public class TrigToJsonTimeLineClimax {
                         }
                     }
                     else {
+                        //// these are now ignored
                         singletonObjects.add(groupObjects.get(0));
                     }
+*/
                 } catch (JSONException e) {
                     // e.printStackTrace();
                 }
@@ -2387,6 +2405,32 @@ object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_developm
                     if (!coveredValues.contains(value)) {
                         coveredValues.add(value);
                         jsonClassesObject.append("labels", value);
+                    }
+                }
+            }
+        }
+        return jsonClassesObject;
+    }
+    static JSONObject getPrefLabelsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+        JSONObject jsonClassesObject = new JSONObject();
+        ArrayList<String> coveredValues = new ArrayList<String>();
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#prefLabel")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String [] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    if (!coveredValues.contains(value)) {
+                        coveredValues.add(value);
+                        jsonClassesObject.append("prefLabel", value);
                     }
                 }
             }
