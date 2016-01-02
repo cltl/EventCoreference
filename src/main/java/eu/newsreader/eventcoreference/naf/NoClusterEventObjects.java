@@ -188,7 +188,7 @@ public class NoClusterEventObjects {
             allFolder.mkdir();
         }
         if (!allFolder.exists()) {
-            System.out.println("Cannot create the speechFolder = " + allFolder);
+            System.out.println("Cannot create the allFolder = " + allFolder);
             return;
         }
 

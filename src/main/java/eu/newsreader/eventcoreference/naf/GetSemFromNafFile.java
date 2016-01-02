@@ -6,6 +6,7 @@ import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
+import org.apache.jena.atlas.logging.Log;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class GetSemFromNafFile {
     ;
 
     static public void main(String[] args) {
+        Log.setLog4j("jena-log4j.properties");
         String pathToNafFile = "";
         //"/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/test/4KJ5-2R90-TX51-F3C4.xml.1a0sdakjs.xml";
         String sourceFrameFile = "";
@@ -122,15 +124,23 @@ public class GetSemFromNafFile {
         }
         GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
         try {
-
-            ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
            // System.out.println("semEvents = " + semEvents.size());
+           // System.out.println("semActors = " + semActors.size());
+            /*for (int i = 0; i < semActors.size(); i++) {
+                SemObject semObject = semActors.get(i);
+                System.out.println("semObject.getId() = " + semObject.getId());
+            }
+            for (int i = 0; i < semRelations.size(); i++) {
+                SemRelation semRelation = semRelations.get(i);
+                System.out.println("semRelation.getObject() = " + semRelation.getObject());
+            }*/
+            ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
             for (int j = 0; j < semEvents.size(); j++) {
                 SemEvent mySemEvent = (SemEvent) semEvents.get(j);
                 ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
                 ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
-
+               // System.out.println("myActors = " + myActors.size());
                 CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
                 if (myTimes.size()<=ClusterEventObjects.TIMEEXPRESSIONMAX) {
                     if (compositeEvent.isValid() || ALL) {

@@ -6,6 +6,7 @@ import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
+import org.apache.jena.atlas.logging.Log;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -38,6 +39,7 @@ public class GetSemFromNafStream {
     static public boolean PERSPECTIVE = false;
 
     static public void main(String[] args) {
+        Log.setLog4j("jena-log4j.properties");
         String sourceFrameFile = "";
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";

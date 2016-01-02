@@ -2681,6 +2681,8 @@ public class Util {
             String newid = fixUriId(id);
             if (!id.equals(newid)) {
                 semActor.setId(newid);
+                semActor.setUri(newid);
+               // System.out.println("newid = " + newid);
             }
         }
         for (int i = 0; i < compositeEvent.getMySemRelations().size(); i++) {

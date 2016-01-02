@@ -440,19 +440,27 @@ public class GetSemFromNaf {
                 KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
 
                 //// SKIP LARGE PHRASES
+/*
                 if (kafParticipant.getSpans().size() > Util.SPANMAXPARTICIPANT) {
                     continue;
                 }
+*/
+/*
                 if (kafParticipant.getSpans().size() < Util.SPANMINPARTICIPANT) {
                     continue;
                 }
+*/
 
                 // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
                 if (!RoleLabels.validRole(kafParticipant.getRole())) {
                     continue;
                 }
-                if (!RoleLabels.hasFrameNetRole(kafParticipant) &&!RoleLabels.isPRIMEPARTICIPANT(kafParticipant.getRole()) && !RoleLabels.isSECONDPARTICIPANT(kafParticipant.getRole())) {
-                    ///// SKIP ROLE WITHOUT FRAMENET
+                if (!RoleLabels.hasFrameNetRole(kafParticipant)
+                        &&!RoleLabels.isPRIMEPARTICIPANT(kafParticipant.getRole()) &&
+                        !RoleLabels.isSECONDPARTICIPANT(kafParticipant.getRole()) &&
+                        !RoleLabels.hasESORole(kafParticipant)
+                        ) {
+                    ///// SKIP ROLE WITHOUT FRAMENET PRIME OR ESO
                     continue;
                 }
                 //// we take all objects above threshold
@@ -483,7 +491,11 @@ public class GetSemFromNaf {
                         }
                     }
                     else {
+                     //   System.out.println("kafParticipant.getTokenString() = " + kafParticipant.getTokenString());
                     }
+                }
+                else {
+                  //  System.out.println("semObjects.size() = " + semObjects.size());
                 }
             }
         }
@@ -497,16 +509,16 @@ public class GetSemFromNaf {
      * @param kafSaxParser
      * @param semActors
      */
-    static void processSrlForRemainingFramenetRolesOrg(String project,
+/*    static void processSrlForRemainingFramenetRolesOrg(String project,
                                                     KafSaxParser kafSaxParser,
                                                     ArrayList<SemObject> semActors) {
-        /*
+        *//*
             - We are missing good actors in predicates and coreference sets that are not entities
             - iterate over the SRL for roles with particular labels: A0, A1, A2, LOC, etc..
             - get the span:
             - check all actors for span match or span head match
             - if none create a new actor or place
-        */
+        *//*
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentionMap = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
         String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
         if (!baseUrl.toLowerCase().startsWith("http")) {
@@ -586,7 +598,7 @@ public class GetSemFromNaf {
             semActor.setIdByDBpediaReference();
             Util.addObject(semActors, semActor); /// always add since there may be phrases that embed entity references
         }
-    }
+    }*/
 
 
     /** @Deprecated
@@ -1013,21 +1025,31 @@ public class GetSemFromNaf {
                     break;
                 }
             }
+           // System.out.println("semEventId = " + semEventId);
             if (semEventId.isEmpty()) {
                 //// this is an event without SRL representation, which is not allowed
                 // SHOULD NEVER OCCUR
             } else {
+               // System.out.println("kafEvent.getParticipants().size() = " + kafEvent.getParticipants().size());
                 for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
                     KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
                     // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
+                  //  System.out.println("kafParticipant.getRole() = " + kafParticipant.getRole());
                     if (!RoleLabels.validRole(kafParticipant.getRole())) {
+                       // System.out.println("invalid kafParticipant.getRole() = " + kafParticipant.getRole());
                         continue;
+                    }
+                    else {
+                      //  System.out.println("valid kafParticipant.getRole() = " + kafParticipant.getRole());
+
                     }
 
                         //// we take all objects above threshold
                     ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+                   // System.out.println("semObjects.size() = " + semObjects.size());
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
+                     //   System.out.println("semObject.getUniquePhrases().toString() = " + semObject.getUniquePhrases().toString());
                         if (semObject != null) {
                             SemRelation semRelation = new SemRelation();
                             String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
@@ -1049,6 +1071,9 @@ public class GetSemFromNaf {
                             semRelation.setSubject(semEventId);
                             semRelation.setObject(semObject.getId());
                             semRelations.add(semRelation);
+                        }
+                        else {
+                            System.out.println();
                         }
                     }
                 }

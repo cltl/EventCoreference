@@ -548,4 +548,30 @@ public class OwlTime implements Serializable {
         return str.trim();
     }
 
+    public String toString (String granularity) {
+        if (granularity.isEmpty()) {
+            return toString();
+        }
+        String str = this.year;
+        if (!granularity.equalsIgnoreCase("year")) {
+            if (!this.month.isEmpty()) {
+                str += "-";
+                if (this.month.length() == 1) {
+                    str += "0";
+                }
+                str += this.month;
+                if (!granularity.equalsIgnoreCase("month")) {
+                    if (!this.day.isEmpty()) {
+                        str += "-";
+                        if (this.day.length() == 1) {
+                            str += "0";
+                        }
+                        str += this.day;
+                    }
+                }
+            }
+        }
+        return str.trim();
+    }
+
 }

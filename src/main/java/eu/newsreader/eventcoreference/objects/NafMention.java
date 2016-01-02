@@ -13,6 +13,9 @@ import java.util.Collections;
  * Created by piek on 1/22/14.
  */
 public class NafMention implements Serializable {
+    /*
+        @TODO remove serialVersionUID
+     */
     private static final long serialVersionUID = 4092249317963110327L;
 
     private String baseUri;

@@ -83,7 +83,7 @@ public class Naf2SemTest {
         MatchEventObjects.VERBOSEMENTIONS = VERBOSEMENTIONS;
         MatchEventObjects.MATCHTYPE = "ILILEMMA";
         MatchEventObjects.LCS = false;
-        MatchEventObjects.DEBUG = true;
+        MatchEventObjects.DEBUG = 0;
 
         String pathToObjEventFolder = pathToEventFolder+"/events/contextual";
 /*      @Deprecated

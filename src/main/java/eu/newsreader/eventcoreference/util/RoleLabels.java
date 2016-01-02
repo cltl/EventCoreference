@@ -255,6 +255,16 @@ public class RoleLabels {
         return false;
     }
 
+    static public boolean hasESORole (KafParticipant kafParticipant) {
+        for (int k = 0; k < kafParticipant.getExternalReferences().size(); k++) {
+            KafSense kafSense =  kafParticipant.getExternalReferences().get(k);
+            if (kafSense.getResource().equalsIgnoreCase("ESO")) {
+                return  true;
+            }
+        }
+        return false;
+    }
+
     static public boolean hasSourceTarget (KafParticipant kafParticipant) {
         /**
          *           <externalRef resource="VerbNet" reference="indicate-78@Topic"/>

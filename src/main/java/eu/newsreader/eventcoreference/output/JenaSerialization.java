@@ -314,7 +314,11 @@ public class JenaSerialization {
 
         createModels();
         addJenaCompositeEvents(semEvents, sourceMetaHashMap, ILIURI,VERBOSE_MENTIONS);
-        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        try {
+            RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        } catch (Exception e) {
+          //  e.printStackTrace();
+        }
     }
 
     static public void serializeJenaSingleCompositeEvents (OutputStream stream,
@@ -335,7 +339,11 @@ public class JenaSerialization {
                 addJenaCompositeEvent(semEvent, sourceMetaHashMap, ILIURI, VERBOSE_MENTIONS);
             }
         }
-        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        try {
+            RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        } catch (Exception e) {
+           // e.printStackTrace();
+        }
     }
 
     static public void serializeJenaCompositeEvents (OutputStream stream,
@@ -351,7 +359,11 @@ public class JenaSerialization {
 
         addJenaCompositeEvents(semEvents, sourceMetaHashMap, ILIURI, VERBOSE_MENTIONS);
 
-        RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        try {
+            RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        } catch (Exception e) {
+          //  e.printStackTrace();
+        }
 
 
     }
@@ -372,7 +384,11 @@ public class JenaSerialization {
             addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
             addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.prov, authorPerspectiveObjects);
+        try {
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        } catch (Exception e) {
+          //  e.printStackTrace();
+        }
     }
 
 

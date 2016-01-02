@@ -6,6 +6,7 @@ import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
+import org.apache.tools.bzip2.CBZip2InputStream;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -61,6 +62,8 @@ public class ClusterEventObjects {
     static public boolean PERSPECTIVE = false;
     static public boolean ALL = false;
     static public boolean RAWTEXTINDEX = false;
+    static public String TIME = "";
+
 
 
     static public void main (String [] args) {
@@ -144,6 +147,10 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
                 contextualFrameFile = args[i+1];
+            }
+
+            else if (arg.equals("--time") && args.length>(i+1)) {
+                TIME = args[i+1];
             }
             else if (arg.equals("--rename") && args.length>(i+1)) {
                 done = args[i+1];
@@ -239,16 +246,20 @@ public class ClusterEventObjects {
 
 
           //  System.out.println("file.getName() = " + file.getName());
-            if (!file.getAbsolutePath().toLowerCase().endsWith(".gz")) {
+            if (!file.getAbsolutePath().toLowerCase().endsWith(".gz") &&
+                !file.getAbsolutePath().toLowerCase().endsWith(".bz2")) {
                 kafSaxParser.parseFile(file.getAbsolutePath());
             }
-            else {
+            else if (file.getAbsolutePath().toLowerCase().endsWith(".gz")) {
                 InputStream fileStream = new FileInputStream(file.getAbsolutePath());
                 InputStream gzipStream = new GZIPInputStream(fileStream);
                 kafSaxParser.parseFile(gzipStream);
             }
-
-
+            else if (file.getAbsolutePath().toLowerCase().endsWith(".bz2")) {
+                InputStream fileStream = new FileInputStream(file.getAbsolutePath());
+                InputStream gzipStream = new CBZip2InputStream(fileStream);
+                kafSaxParser.parseFile(gzipStream);
+            }
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
                 System.out.println("file.getName() = " + file.getName());
                 kafSaxParser.getKafMetaData().setUrl(file.getName());
@@ -326,150 +337,138 @@ public class ClusterEventObjects {
                     folder = grammaticalFolder;
                 }
             }
-
-
-            ///////// DIVISION IN TEMPORAL CONTAINERS
-            File timeFile = null;
-            ArrayList<SemTime> outputTimes = myTimes;
-
-            //System.out.println("outputTimes.size() = " + outputTimes.size());
             //// we create two different tree sets with time phrases to store event in temporal buckets
             //// Future events are stored in separate buckets since the date is relative to a point in the current (usually the document creation time)
             //// Other events are stored within the basic event type folders: contextual, source and grammatical, where we created
             //// temporal buckets for each time anchoring
             TreeSet<String> treeSet = new TreeSet<String>();
             TreeSet<String> treeSetFuture = new TreeSet<String>();
+            File timeFile = null;
 
-            if (outputTimes.size() == 0) {
-                /// this should never happen
-                //String timePhrase = "timeless";
-                //treeSet.add(timePhrase);
-                continue;
+            if (TIME.equalsIgnoreCase("none")) {
+               treeSet.add("none");
             }
-            else
+            else {
+                ///////// DIVISION IN TEMPORAL CONTAINERS
+                ArrayList<SemTime> outputTimes = myTimes;
 
-            if (outputTimes.size() > TIMEEXPRESSIONMAX) {
+                //System.out.println("outputTimes.size() = " + outputTimes.size());
+
+                if (outputTimes.size() == 0) {
+                    /// this should never happen
+                    //String timePhrase = "timeless";
+                    //treeSet.add(timePhrase);
+                    continue;
+                } else if (outputTimes.size() > TIMEEXPRESSIONMAX) {
 /*
                 String timePhrase = "timeless";
                 treeSet.add(timePhrase);
 */
-                continue;
-            }
-            else if (outputTimes.size() == 1) {
-                /// time: same year or exact?
-                SemTime semTime = outputTimes.get(0);
-                String timePhrase = "";
+                    continue;
+                } else if (outputTimes.size() == 1) {
+                    /// time: same year or exact?
+                    SemTime semTime = outputTimes.get(0);
+                    String timePhrase = "";
 
 
-                timePhrase = semTime.getOwlTime().toString();
-                if (timePhrase.isEmpty())  {
-                    /// try to create a period, because DURATION timex can have begin and endpoints and not date
-                    if (!semTime.getOwlTimeBegin().toString().isEmpty() && !semTime.getOwlTimeEnd().toString().isEmpty() ) {
-                        timePhrase = semTime.getOwlTimeBegin().toString() + "-" + semTime.getOwlTimeEnd().toString();
-                    }
-                    else if (!semTime.getOwlTimeBegin().toString().isEmpty()) {
-                        timePhrase = semTime.getOwlTimeBegin().toString();
-                    }
-                    else if (!semTime.getOwlTimeEnd().toString().isEmpty()) {
-                        timePhrase = semTime.getOwlTimeEnd().toString();
-                    }
-                }
-                if (!timePhrase.isEmpty()) {
-                    if (Util.futureTimeRelation(semTime, myRelations)) {
-                        if (!treeSetFuture.contains(timePhrase)) {
-                            treeSetFuture.add(timePhrase);
+                    timePhrase = semTime.getOwlTime().toString(TIME);
+                    if (timePhrase.isEmpty()) {
+                        /// try to create a period, because DURATION timex can have begin and endpoints and not date
+                        if (!semTime.getOwlTimeBegin().toString().isEmpty() && !semTime.getOwlTimeEnd().toString().isEmpty()) {
+                            timePhrase = semTime.getOwlTimeBegin().toString(TIME) + "-" + semTime.getOwlTimeEnd().toString(TIME);
+                        } else if (!semTime.getOwlTimeBegin().toString().isEmpty()) {
+                            timePhrase = semTime.getOwlTimeBegin().toString(TIME);
+                        } else if (!semTime.getOwlTimeEnd().toString().isEmpty()) {
+                            timePhrase = semTime.getOwlTimeEnd().toString(TIME);
                         }
                     }
-                    else if (!treeSet.contains(timePhrase)) {
-                        treeSet.add(timePhrase);
-                    }
-                }
-            }
-            else  {
-                String timePhrase = "";
-                /// we first create the periods in case the event is anchored to two time points and not to a duration
-                ArrayList<String> beginPoints = new ArrayList<String>();
-                ArrayList<String> endPoints = new ArrayList<String>();
-                for (int i = 0; i < myRelations.size(); i++) {
-                    SemRelation semRelation = myRelations.get(i);
-                    for (int k = 0; k < semRelation.getPredicates().size(); k++) {
-                        String predicate = semRelation.getPredicates().get(k);
-                        if (predicate.endsWith(Sem.hasBeginTime.getLocalName())) {
-                            beginPoints.add(semRelation.getObject());
-                        }
-                        else if (predicate.toLowerCase().endsWith(Sem.hasEarliestBeginTime.getLocalName())) {
-                            beginPoints.add(semRelation.getObject());
-                        }
-                        else if (predicate.toLowerCase().endsWith(Sem.hasEndTime.getLocalName())) {
-                            endPoints.add(semRelation.getObject());
-                        }
-                        else if (predicate.toLowerCase().endsWith(Sem.hasEarliestEndTime.getLocalName())) {
-                            endPoints.add(semRelation.getObject());
-                        }
-                    }
-                }
-                /// we first add the beginpoints to the time phrase
-                for (int i = 0; i < outputTimes.size(); i++) {
-                    SemTime semTime = outputTimes.get(i);
-                    if (beginPoints.contains(semTime.getId())) {
-                        if (!timePhrase.isEmpty()) timePhrase += "-";
-                        timePhrase += semTime.getOwlTime().toString();
-                    }
-                }
-                /// next we add the endpoints to the time phrase
-                for (int i = 0; i < outputTimes.size(); i++) {
-                    SemTime semTime = outputTimes.get(i);
-                    if (endPoints.contains(semTime.getId())) {
-                        if (!timePhrase.isEmpty()) timePhrase += "-";
-                        timePhrase += semTime.getOwlTime().toString();
-                    }
-                }
-                if (!timePhrase.isEmpty()) {
-                    /// we now have a indication of a period with at least a begin and end point and possibly both
-                    if (!treeSet.contains(timePhrase)) {
-                        treeSet.add(timePhrase);
-                    }
-                }
-                else {
-                    ///// the time info is not considered a period and therefore we create separate time buckets for each timex associated with the event
-                    //// we now duplicate the event to multiple time folders
-                    for (int k = 0; k < outputTimes.size(); k++) {
-                        SemTime semTime = (SemTime) outputTimes.get(k);
-
-
-                        timePhrase = semTime.getOwlTime().toString();
-                        if (timePhrase.isEmpty())  {
-                            //// this should not happen since it should be captured by the previous conditions
-                            if (!semTime.getOwlTimeBegin().toString().isEmpty() && !semTime.getOwlTimeEnd().toString().isEmpty() ) {
-                                timePhrase = semTime.getOwlTimeBegin().toString() + "-" + semTime.getOwlTimeEnd().toString();
+                    if (!timePhrase.isEmpty()) {
+                        if (Util.futureTimeRelation(semTime, myRelations)) {
+                            if (!treeSetFuture.contains(timePhrase)) {
+                                treeSetFuture.add(timePhrase);
                             }
-                            else if (!semTime.getOwlTimeBegin().toString().isEmpty()) {
-                                timePhrase = semTime.getOwlTimeBegin().toString();
-                            }
-                            else if (!semTime.getOwlTimeEnd().toString().isEmpty()) {
-                                timePhrase = semTime.getOwlTimeEnd().toString();
+                        } else if (!treeSet.contains(timePhrase)) {
+                            treeSet.add(timePhrase);
+                        }
+                    }
+                } else {
+                    String timePhrase = "";
+                    /// we first create the periods in case the event is anchored to two time points and not to a duration
+                    ArrayList<String> beginPoints = new ArrayList<String>();
+                    ArrayList<String> endPoints = new ArrayList<String>();
+                    for (int i = 0; i < myRelations.size(); i++) {
+                        SemRelation semRelation = myRelations.get(i);
+                        for (int k = 0; k < semRelation.getPredicates().size(); k++) {
+                            String predicate = semRelation.getPredicates().get(k);
+                            if (predicate.endsWith(Sem.hasBeginTime.getLocalName())) {
+                                beginPoints.add(semRelation.getObject());
+                            } else if (predicate.toLowerCase().endsWith(Sem.hasEarliestBeginTime.getLocalName())) {
+                                beginPoints.add(semRelation.getObject());
+                            } else if (predicate.toLowerCase().endsWith(Sem.hasEndTime.getLocalName())) {
+                                endPoints.add(semRelation.getObject());
+                            } else if (predicate.toLowerCase().endsWith(Sem.hasEarliestEndTime.getLocalName())) {
+                                endPoints.add(semRelation.getObject());
                             }
                         }
+                    }
+                    /// we first add the beginpoints to the time phrase
+                    for (int i = 0; i < outputTimes.size(); i++) {
+                        SemTime semTime = outputTimes.get(i);
+                        if (beginPoints.contains(semTime.getId())) {
+                            if (!timePhrase.isEmpty()) timePhrase += "-";
+                            timePhrase += semTime.getOwlTime().toString(TIME);
+                        }
+                    }
+                    /// next we add the endpoints to the time phrase
+                    for (int i = 0; i < outputTimes.size(); i++) {
+                        SemTime semTime = outputTimes.get(i);
+                        if (endPoints.contains(semTime.getId())) {
+                            if (!timePhrase.isEmpty()) timePhrase += "-";
+                            timePhrase += semTime.getOwlTime().toString(TIME);
+                        }
+                    }
+                    if (!timePhrase.isEmpty()) {
+                        /// we now have a indication of a period with at least a begin and end point and possibly both
+                        if (!treeSet.contains(timePhrase)) {
+                            treeSet.add(timePhrase);
+                        }
+                    } else {
+                        ///// the time info is not considered a period and therefore we create separate time buckets for each timex associated with the event
+                        //// we now duplicate the event to multiple time folders
+                        for (int k = 0; k < outputTimes.size(); k++) {
+                            SemTime semTime = (SemTime) outputTimes.get(k);
 
-                        if (timePhrase.isEmpty()) {
+
+                            timePhrase = semTime.getOwlTime().toString();
+                            if (timePhrase.isEmpty()) {
+                                //// this should not happen since it should be captured by the previous conditions
+                                if (!semTime.getOwlTimeBegin().toString().isEmpty() && !semTime.getOwlTimeEnd().toString().isEmpty()) {
+                                    timePhrase = semTime.getOwlTimeBegin().toString(TIME) + "-" + semTime.getOwlTimeEnd().toString(TIME);
+                                } else if (!semTime.getOwlTimeBegin().toString().isEmpty()) {
+                                    timePhrase = semTime.getOwlTimeBegin().toString(TIME);
+                                } else if (!semTime.getOwlTimeEnd().toString().isEmpty()) {
+                                    timePhrase = semTime.getOwlTimeEnd().toString(TIME);
+                                }
+                            }
+
+                            if (timePhrase.isEmpty()) {
                             /*System.out.println("semTime.getOwlTime() = " + semTime.getOwlTime());
                             System.out.println("semTime.getOwlTimeBegin() = " + semTime.getOwlTimeBegin());
                             System.out.println("semTime.getId() = " + semTime.getId());
                             System.out.println("semTime.getType() = " + semTime.getType());*/
-                        }
-                        else {
-                            if (Util.futureTimeRelation(semTime, myRelations)) {
-                                if (!treeSetFuture.contains(timePhrase)) {
-                                    treeSetFuture.add(timePhrase);
+                            } else {
+                                if (Util.futureTimeRelation(semTime, myRelations)) {
+                                    if (!treeSetFuture.contains(timePhrase)) {
+                                        treeSetFuture.add(timePhrase);
+                                    }
+                                } else if (!treeSet.contains(timePhrase)) {
+                                    treeSet.add(timePhrase);
                                 }
-                            }
-                            else if (!treeSet.contains(timePhrase)) {
-                                treeSet.add(timePhrase);
                             }
                         }
                     }
-                }
 
+                }
             }
 
             if (treeSet.size()>0) {

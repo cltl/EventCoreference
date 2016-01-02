@@ -25,6 +25,9 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public class SemObject implements Serializable {
+    /*
+    @TODO remove serialVersionUID
+ */
     private static final long serialVersionUID = 5418194900752121897L;
 
     static public final String EVENT = "EVENT";
