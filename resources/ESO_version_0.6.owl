@@ -1,0 +1,2598 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.newsreader-project.eu/domain-ontology#"
+     xml:base="http://www.newsreader-project.eu/domain-ontology"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.newsreader-project.eu/domain-ontology">
+        <owl:versionInfo xml:lang="en">0.6</owl:versionInfo>
+        <rdfs:comment xml:lang="en">This is the Events and Situations Ontology (ESO) for the Global Automotive Industry domain, built for the Newsreader Project (www.newsreader-project.eu).
+
+Date: 25/09/14</rdfs:comment>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#correspondToFrameNetElement -->
+
+    <owl:AnnotationProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#correspondToFrameNetElement"/>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#correspondToFrameNetFrame -->
+
+    <owl:AnnotationProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#correspondToFrameNetFrame">
+        <rdfs:comment xml:lang="en">This property is used to refer to FrameNet frames</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#correspondToSUMOClass -->
+
+    <owl:AnnotationProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#correspondToSUMOClass">
+        <rdfs:comment xml:lang="en">This property is used to refer to SUMO classes</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasNwrRole -->
+
+    <owl:AnnotationProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasNwrRole"/>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasSituationAssertionObject -->
+
+    <owl:AnnotationProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasSituationAssertionObject"/>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasSituationAssertionObjectValue -->
+
+    <owl:AnnotationProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasSituationAssertionObjectValue"/>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasSituationAssertionProperty -->
+
+    <owl:AnnotationProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasSituationAssertionProperty"/>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasSituationAssertionSubject -->
+
+    <owl:AnnotationProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasSituationAssertionSubject"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#atPlace -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#atPlace">
+        <rdfs:label xml:lang="en">atPlace</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: BeingAtAPlace and DynamicEvents: Translocation and all of its subclasses.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notAtPlace"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#atPlace-location -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#atPlace-location">
+        <rdfs:label xml:lang="en">atPlace-location</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Location</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#atPlace-theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#atPlace-theme">
+        <rdfs:label xml:lang="en">atPlace-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Theme</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Resident</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Entity</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Guest</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#binaryProperty -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#binaryProperty">
+        <rdfs:label xml:lang="en">Binary Property</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#collaboratesWith -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#collaboratesWith">
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+        <rdfs:label xml:lang="en">collaboratesWith</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: Collaboration</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#collaboration-partner_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#collaboration-partner_1">
+        <rdfs:label xml:lang="en">collaboration-partner_1</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Partner_1</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#collaboration-partner_2 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#collaboration-partner_2">
+        <rdfs:label xml:lang="en">collaboration-partner_2</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Partner_2</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#creating_theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#creating_theme">
+        <rdfs:label xml:lang="en">creating-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Product</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Created_entity</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#destroying-theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#destroying-theme">
+        <rdfs:label xml:lang="en">destroying-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Whole_patient</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Executed</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Undergoer</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Victim</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#employedAt -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#employedAt">
+        <rdfs:label xml:lang="en">employedAt</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: InEmployment and DynamicEvents: JoiningAnOrganization and LeavingAnOrganization.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notEmployedAt"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#employment-employee -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#employment-employee">
+        <rdfs:label xml:lang="en">employment-employee</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Employee</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#employment-employer -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#employment-employer">
+        <rdfs:label xml:lang="en">employment-employer</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Employer</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#employs -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#employs">
+        <rdfs:label xml:lang="en">employs</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: InEmployment and DynamicEvents: JoiningAnOrganization and LeavingAnOrganization.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#employedAt"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notEmploys"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#exist-theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#exist-theme">
+        <rdfs:label xml:lang="en">exist-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Entity</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasInPossession -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasInPossession">
+        <rdfs:label xml:lang="en">hasInPossession</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: HavingInPossession and DynamicEvent: ChangeOfPossession and all its subclasses.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#inPossessionOf"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notHasInPossession"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasLeader -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasLeader">
+        <rdfs:label xml:lang="en">hasLeader</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: BeingLeader.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasPostSituation -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasPostSituation">
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasSituation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasPreSituation -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasPreSituation">
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasSituation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasRole -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasSituation -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasSituation">
+        <rdfs:comment xml:lang="en">this property will be used to assert the pre and post situation of a spcific event (i.e., are instantiated by the reasoning module on the dataset). They will actually point ot a &quot;named graph&quot; associated to a Situation, were all the assertion relative to that situation are defined</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasSituationRuleAssertion -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasSituationRuleAssertion">
+        <rdfs:domain rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdfs:range rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRuleAssertion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#hasValue -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#hasValue">
+        <rdfs:label xml:lang="en">hasValue</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvent: QuantityChange.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#inPossessionOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#inPossessionOf">
+        <rdfs:label xml:lang="en">inPossessionOf</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: HavingInPossession and DynamicEvent: ChangeOfPossession and all its subclasses.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notInPossessionOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#inRelationshipWith -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#inRelationshipWith">
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+        <rdfs:label xml:lang="en">inRelationshipWith</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: BeingInARelationship.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notInRelationshipWith"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#installing-goal -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#installing-goal">
+        <rdfs:label>installing-goal</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Fixed_location</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#installing-theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#installing-theme">
+        <rdfs:label xml:lang="en">installing-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Theme</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#isLeaderOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#isLeaderOf">
+        <rdfs:label xml:lang="en">isLeaderOf</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: BeingLeader</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasLeader"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#isPlaceOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#isPlaceOf">
+        <rdfs:comment xml:lang="en">Used for StaticEvent: BeingAtAPlace and DynamicEvents: Translocation and all its subclasses.</rdfs:comment>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#atPlace"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notIsPlaceOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#isValueOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#isValueOf">
+        <rdfs:label xml:lang="en">isValueOf</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvent: QuantityChange.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasValue"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#leader-entity -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#leader-entity">
+        <rdfs:label xml:lang="en">leader-entity</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Leader</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#leader-governed_entity -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#leader-governed_entity">
+        <rdfs:label xml:lang="en">leader-governed_entity</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Governed</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#merging-theme_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#merging-theme_1">
+        <rdfs:label xml:lang="en">merging-theme_1</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Part_1</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#merging-theme_2 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#merging-theme_2">
+        <rdfs:label xml:lang="en">merging-theme_2</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Part_2</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#merging-theme_3 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#merging-theme_3">
+        <rdfs:label xml:lang="en">merging-theme_3</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Whole</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notAtPlace -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notAtPlace">
+        <rdfs:label xml:lang="en">notAtPlace</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvent: Translocation and all its subclasses.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notCollaboratesWith -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notCollaboratesWith">
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+        <rdfs:label xml:lang="en">notCollaboratesWith</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: Collaboration.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#collaboratesWith"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notEmployedAt -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notEmployedAt">
+        <rdfs:label xml:lang="en">notEmployedAt</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvents: JoiningAnOrganization and LeavingAnOrganization.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notEmploys -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notEmploys">
+        <rdfs:label xml:lang="en">notEmploys</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvents: JoiningAnOrganization and LeavingAnorganization.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#notEmployedAt"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notHasInPossession -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notHasInPossession">
+        <rdfs:label xml:lang="en">notHasInPossession</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvent: ChangeOfPossession and all its subclasses.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notInPossessionOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notInPossessionOf">
+        <rdfs:label xml:lang="en">notInPossessionOf</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvent: ChangeOfPossession and all its subclasses.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#notHasInPossession"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notInRelationshipWith -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notInRelationshipWith">
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+        <rdfs:label xml:lang="en">notInRelationshipWith</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: BeingInARelationship.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notIsPlaceOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notIsPlaceOf">
+        <rdfs:label xml:lang="en">notIsPlaceOf</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvent Translocation and all its subclasses.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#binaryProperty"/>
+        <owl:inverseOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#notAtPlace"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#operational-theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#operational-theme">
+        <rdfs:label xml:lang="en">operational-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Device</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#possession-owner -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#possession-owner">
+        <rdfs:label xml:lang="en">possession-owner</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Owner</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#possession-owner_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#possession-owner_1">
+        <rdfs:label xml:lang="en">possession-owner_1</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Supplier</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Lender</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Exporter</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Sender</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Victim</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Donor</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Seller</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Agent</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Source</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#possession-owner_2 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#possession-owner_2">
+        <rdfs:label xml:lang="en">possession-owner_2</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Perpetrator</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Lessee</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Buyer</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Recipient</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Borrower</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Goal</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#possession-theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#possession-theme">
+        <rdfs:label xml:lang="en">possession-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Theme</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Possession</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#quantity-theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#quantity-theme">
+        <rdfs:label xml:lang="en">quantity-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Item</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Set</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#quantity-value_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#quantity-value_1">
+        <rdfs:label xml:lang="en">quantity-value_1</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Initial_value</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Initial_size</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Initial_number</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Value_1</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#quantity-value_2 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#quantity-value_2">
+        <rdfs:label xml:lang="en">quantity-value_2</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Final_value</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Final_number</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Value_2</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Result_size</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#relationship-partner_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#relationship-partner_1">
+        <rdfs:label xml:lang="en">relationship-partner_1</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Partner_1</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#relationship-partner_2 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#relationship-partner_2">
+        <rdfs:label xml:lang="en">relationship-partner_2</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Partner_2</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#separating-theme_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#separating-theme_1">
+        <rdfs:label xml:lang="en">separating-theme_1</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Part_1</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#separating-theme_2 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#separating-theme_2">
+        <rdfs:label xml:lang="en">separating-theme_2</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Part_2</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#separating-theme_3 -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#separating-theme_3">
+        <rdfs:label xml:lang="en">separating-theme_3</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Whole</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#translocation-goal -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#translocation-goal">
+        <rdfs:label xml:lang="en">translocation-goal</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Goal</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#translocation-source -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#translocation-source">
+        <rdfs:label xml:lang="en">translocation-source</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Source</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#translocation-theme -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#translocation-theme">
+        <rdfs:label xml:lang="en">translocation-theme</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Deliverer</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Self_mover</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Agent</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Driver</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Carrier</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Traveler</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Vehicle</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Escapee</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Cotheme</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Individuals</correspondToFrameNetElement>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Component</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule">
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersSituationRule"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule">
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersSituationRule"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule">
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersSituationRule"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#triggersSituationRule -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#triggersSituationRule">
+        <rdfs:comment xml:lang="en">This property is used to define the rules that are triggered by an event</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.newsreader-project.eu/domain-ontology#DynamicEvent"/>
+                    <rdf:Description rdf:about="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#working-entity -->
+
+    <owl:ObjectProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#working-entity">
+        <rdfs:label xml:lang="en">working-entity</rdfs:label>
+        <correspondToFrameNetElement>http://www.newsreader-project.eu/framenet#Agent</correspondToFrameNetElement>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#hasRole"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#UnaryProperty -->
+
+    <owl:DatatypeProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#UnaryProperty">
+        <rdfs:label xml:lang="en">UnaryProperty</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#exist -->
+
+    <owl:DatatypeProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#exist">
+        <rdfs:label xml:lang="en">exist</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: BeingInExistence and DynamicEvents: Creating, Constructing, Manufacturing, Destroying, Killing, Merging, Separating.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnaryProperty"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notExist"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#isOperational -->
+
+    <owl:DatatypeProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#isOperational">
+        <rdfs:label xml:lang="en">isOperational</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: BeingOperational.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnaryProperty"/>
+        <owl:propertyDisjointWith rdf:resource="http://www.newsreader-project.eu/domain-ontology#notIsOperational"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notExist -->
+
+    <owl:DatatypeProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notExist">
+        <rdfs:label xml:lang="en">notExist</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for DynamicEvents: Creating, Constructing, Manufacturing, Destroying, Killing, Merging, Separating.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnaryProperty"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#notIsOperational -->
+
+    <owl:DatatypeProperty rdf:about="http://www.newsreader-project.eu/domain-ontology#notIsOperational">
+        <rdfs:label xml:lang="en">notIsOperational</rdfs:label>
+        <rdfs:comment xml:lang="en">Used for StaticEvent: beingOperational.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnaryProperty"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Arriving -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Arriving">
+        <rdfs:label xml:lang="en">Arriving</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Translocation"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Arriving</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Vehicle_landing</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Arriving</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Translocation where someone or something arrives at a location.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Attacking -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Attacking">
+        <rdfs:label xml:lang="en">Attacking</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#IntentionalEvent"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Attack</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Attack</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of IntentionalEvent where someone is assaulted</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#BeingAtAPlace -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#BeingAtAPlace">
+        <rdfs:label xml:lang="en">BeingAtAPlace</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-BeingAtAPlace"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Static event where some entity is at a location</rdfs:comment>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Residence</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Temporary_stay</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Presence</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Being_located</correspondToFrameNetFrame>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#BeingInAPersonalRelationship -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#BeingInAPersonalRelationship">
+        <rdfs:label xml:lang="en">BeingInAPersonalRelationship</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-BeingInAPersonalRelationship"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Personal_Relationship</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">Static event where two persons are in a personal relationship.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#BeingInExistence -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#BeingInExistence">
+        <rdfs:label xml:lang="en">BeingInExistence</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-BeingInExistence"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Static event where some entity exists.</rdfs:comment>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Existence</correspondToFrameNetFrame>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#BeingLeader -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#BeingLeader">
+        <rdfs:label xml:lang="en">BeingLeader</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-BeingLeader"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Leadership</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">Static event where someone is leader of a group of persons.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#BeingOperational -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#BeingOperational">
+        <rdfs:label xml:lang="en">BeingOperational</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-BeingOperational"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Static event where some device is in function.</rdfs:comment>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Being_operational</correspondToFrameNetFrame>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion">
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRuleAssertion"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Borrowing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Borrowing">
+        <rdfs:label xml:lang="en">Borrowing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Getting"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Borrowing</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Borrowing</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Getting where a person gets something in possession for some period of time after which the item should be given back. Note that instances of this class allow for an eventive and a more situation-like interpretation.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Buying -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Buying">
+        <rdfs:label xml:lang="en">Buying</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#FinancialTransaction"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Buying</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Commerce_buy</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of FinancialTransaction where some entity changes of ownership in exchange for money. Note that the buyer is not necessarily the new owner of the entity.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#ChangeOfLeadership -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#ChangeOfLeadership">
+        <rdfs:label xml:lang="en">ChangeOfLeadership</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#OrganizationalEvent"/>
+        <rdfs:comment xml:lang="en">Events where there is a change of leadership within an organization</rdfs:comment>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Change_of_leadership</correspondToFrameNetFrame>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#ChangeOfPossession -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#ChangeOfPossession">
+        <rdfs:label xml:lang="en">ChangeOfPossession</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#DynamicEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_ChangePossession"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#ChangeOfPossession</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Event where some entity changes of ownership. Note that this often implies a change of location of the entity.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#ChangeOfRelationship -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#ChangeOfRelationship">
+        <rdfs:label xml:lang="en">ChangeOfRelationship</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#SocialInteraction"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Forming_relationships</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">The subclass of IntentionalEvent where someone forms or ends a personal relationship with someone else.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#ChangingPositionInOrganization -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#ChangingPositionInOrganization">
+        <rdfs:label xml:lang="en">ChangingPositionInOrganization</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#OrganizationalEvent"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl# TransferringPosition</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">Events where a persons changes of position within an organization, e.g. promotion and demotion.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#ChangingShape -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#ChangingShape">
+        <rdfs:label xml:lang="en">ChangingShape</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#InternalChange"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Manipulate_into_shape</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#ShapeChange</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Reshaping</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of InternalChange where the shape of an object is changed</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Collaboration -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Collaboration">
+        <rdfs:label xml:lang="en">Collaboration</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-Collaboration"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Static event where people work together for some period of time.</rdfs:comment>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#collaboratesWith</correspondToFrameNetFrame>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Constructing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Constructing">
+        <rdfs:label xml:lang="en">Constructing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Creating"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Building</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Constructing</correspondToSUMOClass>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Making</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Creating for single construction of an artifact</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Creating -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Creating">
+        <rdfs:label xml:lang="en">Creating</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#InternalChange"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Creating"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Creating"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Creating</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Creation</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Intentionally_create</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of InternalChange where something is created</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Damaging -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Damaging">
+        <rdfs:label xml:lang="en">Damaging</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#InternalChange"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Damaging</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Render_nonfunctional</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Damaging</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of InternalChange where something is damaged</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Destroying -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Destroying">
+        <rdfs:label xml:lang="en">Destroying</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#InternalChange"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Destroying"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Destroying"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Cause_to_fragment</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Destroying</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Destruction</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of InternalChange where something gets destroyed.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Distribution -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Distribution">
+        <rdfs:label xml:lang="en">Distribution</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Translocation"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Dispersal</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Translocation where someone or something translocates physical objects from one location to a bigger area.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#DynamicEvent -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#DynamicEvent">
+        <rdfs:label xml:lang="en">DynamicEvent</rdfs:label>
+        <rdfs:comment xml:lang="en">This class is the root of the dynamic event type hierarchy</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Escaping -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Escaping">
+        <rdfs:label xml:lang="en">Escaping</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Leaving"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Escaping</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Escaping</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Fleeing</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Leaving where a person leaves an unwanted location.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Exporting -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Exporting">
+        <rdfs:label xml:lang="en">Exporting</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Selling"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Exporting</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Exporting</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Selling where goods change of ownership between nations in exchange for money.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#FinancialTransaction -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#FinancialTransaction">
+        <rdfs:label xml:lang="en">FinancialTransaction</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#ChangeOfPossession"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Commercial_transaction</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#FinancialTransaction</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of ChangeOfPossession where some entity changes of ownership in exchange for money.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Getting -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Getting">
+        <rdfs:label xml:lang="en">Getting</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#ChangeOfPossession"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Getting</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Getting</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Receiving</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of ChangeOfPossession where a person gets something.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Giving -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Giving">
+        <rdfs:label xml:lang="en">Giving</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#ChangeOfPossession"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Giving</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Giving</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Supply</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Sending</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of ChangeOfPossession where a person gives something.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#HavingInPossession -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#HavingInPossession">
+        <rdfs:label xml:lang="en">HavingInPossession</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-HavingInPossession"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Possession</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">Static event where someone has something in possession. Note that HavingInPossession is not as strong as ownership.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Importing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Importing">
+        <rdfs:label xml:lang="en">Importing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Buying"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Importing</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Exporting</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Buying where goods change of ownership between nations in exchange for money.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#InEmployment -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#InEmployment">
+        <rdfs:label xml:lang="en">InEmployment</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-InEmployment"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Employing</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">Static event where someone is working in a position and is compensated for her work by some form of payment.</rdfs:comment>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Being_employed</correspondToFrameNetFrame>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Injuring -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Injuring">
+        <rdfs:label xml:lang="en">Injuring</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Damaging"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Injuring</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Cause_harm</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Experience_bodily_harm</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Damaging where someone gets injured</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Installing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Installing">
+        <rdfs:label xml:lang="en">Installing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Placing"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Installing"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Installing"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Installing</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Installing</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Placing where some entity is put in a new and fixed location, e.g. the installation of fixtures.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#IntentionalEvent -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#IntentionalEvent">
+        <rdfs:label xml:lang="en">IntentionalEvent</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#DynamicEvent"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Intentionally_act</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">SUMO: A process that has a specific purpose for the cognitive agent who performs it.</rdfs:comment>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#IntentionalProcess</correspondToSUMOClass>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#InternalChange -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#InternalChange">
+        <rdfs:label xml:lang="en">InternalChange</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#DynamicEvent"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#InternalChange</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">The subclass of Event that encompasses events that involve the change of some (internal) qualities of an object. This includes properties like &apos;dead&apos;, &apos;exist&apos; and &apos;alive&apos;.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Investing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Investing">
+        <rdfs:label xml:lang="en">Investing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#FinancialTransaction"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Investing</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">The subclass of FinancialTransaction where money is put into some asset in the expectation of future benefit. Note that this includes investing in e.g. one&apos;s own company and investing in other companies. In most cases (?), money is not paid but transferred.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#JoiningAnOrganization -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#JoiningAnOrganization">
+        <rdfs:label xml:lang="en">JoiningAnOrganization</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#OrganizationalEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_JoiningAnOrganization"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_JoiningAnOrganization"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Hiring</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#JoiningAnOrganization</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Get_a_job</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">subclass of OrganizationalEvent where a person joins an organization</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Killing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Killing">
+        <rdfs:label xml:lang="en">Killing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Destroying"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Killing</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Execution</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Killing</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Destroying where animate beings are killed</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Leaving -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Leaving">
+        <rdfs:label xml:lang="en">Leaving</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Translocation"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Vehicle_departure_initial_state</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Leaving</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Quitting_a_place</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Setting_out</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Departing</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Translocation where someone or something leaves a location.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#LeavingAnOrganization -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#LeavingAnOrganization">
+        <rdfs:label xml:lang="en">LeavingAnOrganization</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#OrganizationalEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_LeavingAnOrganization"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_LeavingAnOrganization"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Firing</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#LeavingAnOrganization</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Quitting</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">subclass of OrganizationalEvent where a person leaves an organization</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Lending -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Lending">
+        <rdfs:label xml:lang="en">Lending</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Giving"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Lending</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Lending</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Giving where a person gives something in possession for some period of time after which the item should be given back. Note that instances of this class allow for an eventive and a more situation-like interpretation.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Manufacturing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Manufacturing">
+        <rdfs:label xml:lang="en">Manufacturing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Creating"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Manufacturing</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Manufacture</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Creating for serial productions of artifacts</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Meeting -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Meeting">
+        <rdfs:label xml:lang="en">Meeting</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#SocialInteraction"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Social_event</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Meeting</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Come_together</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Assemble</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">subclass of IntentionalEvent where people intentionally come together for some purpose.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Merging -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Merging">
+        <rdfs:label xml:lang="en">Merging</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#InternalChange"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Merging"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Merging"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Combining</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Amalgamation</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Cause_to_amalgamate</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of InternalChange where two entities are merged into a whole</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Motion -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Motion">
+        <rdfs:label xml:lang="en">Motion</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#DynamicEvent"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Motion</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Motion</correspondToFrameNetFrame>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#OrganizationalEvent -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#OrganizationalEvent">
+        <rdfs:label xml:lang="en">OrganizationalEvent</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#IntentionalEvent"/>
+        <rdfs:comment>subclass of IntentionalEvent that relate to businesses and organizations</rdfs:comment>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#OrganizationalProcess</correspondToSUMOClass>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Paying -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Paying">
+        <rdfs:label xml:lang="en">Paying</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#FinancialTransaction"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Payment</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">SUMO:&apos;The partial or complete discharge of an obligation by its settlement in the form of the transfer of funds, assets, or services equal to the monetary value of part or all of the debtor&apos;s obligation&apos;.</rdfs:comment>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Commerce_pay</correspondToFrameNetFrame>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Placing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Placing">
+        <rdfs:label xml:lang="en">Placing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Translocation"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Putting</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Placing</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Translocation where some entity is put in a new location.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#QuantityChange -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#QuantityChange">
+        <rdfs:label xml:lang="en">QuantityChange</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#InternalChange"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_QuantityChange"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_QuantityChange"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#QuantityChange</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Change_of_quantity_of_possession</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Cause_change_of_position_on_a_scale</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Change_position_on_a_scale</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Cause_proliferation_in_number</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Expansion</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Cause_expansion</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Proliferating_in_number</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of InternalChange where physical quantities are alternated.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Removing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Removing">
+        <rdfs:label xml:lang="en">Removing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Translocation"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Removing</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Removing</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Translocation where some entity is taken away from its location.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Renting -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Renting">
+        <rdfs:label xml:lang="en">Renting</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Getting"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Renting</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Renting</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Getting where a person gets something in possession from someone for some period in exchange for money. Note that instances of this class allow for an eventive and a more situation-like interpretation</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#RentingOut -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#RentingOut">
+        <rdfs:label xml:lang="en">RentingOut</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Giving"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Renting_out</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Giving where a person gives someone something in possession for some period in exchange for money. Note that instances of this class allow for an eventive and a more situation-like interpretation.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Replacing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Replacing">
+        <rdfs:label xml:lang="en">Replacing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#IntentionalEvent"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Substituting</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Take_place_of</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Replacing</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of IntentionalEvent where some entity is replaced with something else. Note that, due to Framenet, this includes artifacts and persons in a specific role.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Selling -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Selling">
+        <rdfs:label xml:lang="en">Selling</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#FinancialTransaction"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Selling</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Commerce_sell</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of FinancialTransaction where some entity changes of ownership in exchange for money.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Separating -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Separating">
+        <rdfs:label xml:lang="en">Separating</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#InternalChange"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Separating"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Separating"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Separating</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Becoming_separated</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Separating</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of InternalChange where some whole is split into parts</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Situation -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Situation">
+        <rdfs:comment xml:lang="en">this class will be instantiated by the reasoning module with the actual pre/post situations</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#SituationRule -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#SituationRule">
+        <rdfs:comment xml:lang="en">Individuals of this class are used to determine the pre and post situation to be triggered for a given event.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#SituationRuleAssertion -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#SituationRuleAssertion"/>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#SocialInteraction -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#SocialInteraction">
+        <rdfs:label xml:lang="en">SocialInteraction</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#IntentionalEvent"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#SocialInteraction</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">subclass of IntentionalEvent that relate to social interactions between people</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#StaticEvent -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#StaticEvent">
+        <rdfs:label xml:lang="en">StaticEvent</rdfs:label>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#State</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">A StaticEvent is an entity which is associated with a period of time where a set of propositions is true</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Stealing -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Stealing">
+        <rdfs:label xml:lang="en">Stealing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Taking"/>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Stealing</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Theft</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Taking where a person takes something without permission of the owner.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Taking -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Taking">
+        <rdfs:label xml:lang="en">Taking</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Getting"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Taking</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#UnilateralGetting</correspondToSUMOClass>
+        <rdfs:comment xml:lang="en">the subclass of Getting where a person takes something.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Translocation -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Translocation">
+        <rdfs:label xml:lang="en">Translocation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Motion"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPostSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Translocation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersPreSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Translocation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Cause_motion</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Traversing</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Ride_vehicle</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Travel</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Cotheme</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Intentional_traversing</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Translocation</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Self_motion</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Use_vehicle</correspondToFrameNetFrame>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Operate_vehicle</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Motion where physical objects or animate beings change from location</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Transportation -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Transportation">
+        <rdfs:label xml:lang="en">Transportation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#Translocation"/>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Delivery</correspondToFrameNetFrame>
+        <correspondToSUMOClass>http://www.ontologyportal.org/SUMO.owl#Transportation</correspondToSUMOClass>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Bringing</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">the subclass of Translocation where physical objects and animate beings together change from location and the physical object is not the means of translocation</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion">
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRuleAssertion"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#Working -->
+
+    <owl:Class rdf:about="http://www.newsreader-project.eu/domain-ontology#Working">
+        <rdfs:label xml:lang="en">Working</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.newsreader-project.eu/domain-ontology#StaticEvent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.newsreader-project.eu/domain-ontology#triggersDuringSituationRule"/>
+                <owl:hasValue rdf:resource="http://www.newsreader-project.eu/domain-ontology#during-Working"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <correspondToFrameNetFrame>http://www.newsreader-project.eu/framenet#Working</correspondToFrameNetFrame>
+        <rdfs:comment xml:lang="en">Static event where someone is doing work. Note that there is some overlap with the event property InEmployment.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="&owl;Thing"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-BeingAtAPlace -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-BeingAtAPlace">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_BeingAtAPlace_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-BeingInAPersonalRelationship -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-BeingInAPersonalRelationship">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_BeingInAPersonalRelationship_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-BeingInExistence -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-BeingInExistence">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_BeingInExistence_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-BeingLeader -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-BeingLeader">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_BeingLeader_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-BeingOperational -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-BeingOperational">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_BeingOperational_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-Collaboration -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-Collaboration">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_Collaboration_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-HavingInPossession -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-HavingInPossession">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_HavingInPossession_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-InEmployment -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-InEmployment">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_InEmployment_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during-Working -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during-Working">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#during_Working_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_BeingAtAPlace_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_BeingAtAPlace_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#atPlace</hasSituationAssertionProperty>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#atPlace-location</hasSituationAssertionObject>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#atPlace-theme</hasSituationAssertionSubject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_BeingInAPersonalRelationship_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_BeingInAPersonalRelationship_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#inRelationshipWith</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#relationship-partner_1</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#relationship-partner_2</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_BeingInExistence_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_BeingInExistence_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist-theme</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_BeingLeader_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_BeingLeader_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#isLeaderOf</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#leader-entity</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#leader-governed_entity</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_BeingOperational_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_BeingOperational_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#isOperational</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#operational-theme</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_Collaboration_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_Collaboration_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#collaboratesWith</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#collaboration-partner_1</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#collaboration-partner_2</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_HavingInPossession_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_HavingInPossession_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#hasInPossession</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-owner</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-theme</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_InEmployment_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_InEmployment_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employedAt</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employee</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employer</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#during_Working_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#during_Working_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#working-entity</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#works</hasSituationAssertionProperty>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_ChangePossession -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_ChangePossession">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_ChangePossession_assertion_1"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_ChangePossession_assertion_2"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_ChangePossession_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_ChangePossession_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#hasInPossession</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-owner_2</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-theme</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_ChangePossession_assertion_2 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_ChangePossession_assertion_2">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notHasInPossession</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-owner_1</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-theme</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Creating -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Creating">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Creating_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Creating_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Creating_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#creating-theme</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Destroying -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Destroying">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Destroying_assertion_1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Destroying_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Destroying_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#destroying-theme</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notExist</hasSituationAssertionProperty>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Installing -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Installing">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Installing_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Installing_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Installing_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#atPlace</hasSituationAssertionProperty>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#installing-goal</hasSituationAssertionObject>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#installing-theme</hasSituationAssertionSubject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_JoiningAnOrganization -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#post_JoiningAnOrganization">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_JoiningAnOrganization_assertion_1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_JoiningAnOrganization_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_JoiningAnOrganization_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employedAt</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employee</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employer</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_LeavingAnOrganization -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#post_LeavingAnOrganization">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_LeavingAnOrganization_assertion_1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_LeavingAnOrganization_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_LeavingAnOrganization_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employee</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employer</hasSituationAssertionObject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notEmployedAt</hasSituationAssertionProperty>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Merging -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Merging">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_1"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_2"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_3"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#merging-theme_3</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_2">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#merging-theme_1</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notExist</hasSituationAssertionProperty>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Merging_assertion_3">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#merging-theme_2</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notExist</hasSituationAssertionProperty>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_QuantityChange -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_QuantityChange">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_QuantityChange_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_QuantityChange_assertion_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#post_QuantityChange_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-ontology.eu/domain-ontology#quantity-value_2</hasSituationAssertionObject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#hasValue</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#quantity-theme</hasSituationAssertionSubject>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Separating -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Separating">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_1"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_2"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_3"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#separating-theme_1</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_2">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#separating-theme_2</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Separating_assertion_3">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notExist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#separating-theme_3</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Translocation -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Translocation">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Translocation_assertion_1"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#post_Translocation_assertion_2"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Translocation_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Translocation_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#atPlace</hasSituationAssertionProperty>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#translocation-goal</hasSituationAssertionObject>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#translocation-theme</hasSituationAssertionSubject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#post_Translocation_assertion_2 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#post_Translocation_assertion_2">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession_assertion_1"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession_assertion_2"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#hasInPossession</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-owner_1</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-theme</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession_assertion_2 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_ChangePossession_assertion_2">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notHasInPossession</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-owner_2</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#possession-theme</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Creating -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Creating">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Creating_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Creating_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Creating_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#creating-theme</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notExist</hasSituationAssertionProperty>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Destroying -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Destroying">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Destroying_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Destroying_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Destroying_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#destroying-theme</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Installing -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Installing">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Installing_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Installing_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Installing_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#installing-goal</hasSituationAssertionObject>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#installing-theme</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notAtPlace</hasSituationAssertionProperty>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_JoiningAnOrganization -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_JoiningAnOrganization">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_JoiningAnOrganization_assertion_1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_JoiningAnOrganization_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_JoiningAnOrganization_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employee</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employer</hasSituationAssertionObject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notEmployedAt</hasSituationAssertionProperty>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_LeavingAnOrganization -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_LeavingAnOrganization">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_LeavingAnOrganization_assertion_1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_LeavingAnOrganization_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_LeavingAnOrganization_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employedAt</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employee</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#employment-employer</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Merging -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Merging">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_1"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_2"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_3"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#merging-theme_1</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_2 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_2">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#merging-theme_2</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_3 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Merging_assertion_3">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#merging-theme_3</hasSituationAssertionSubject>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notExist</hasSituationAssertionProperty>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_QuantityChange -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_QuantityChange">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_QuantityChange_assertion_1"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_QuantityChange_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_QuantityChange_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#hasValue</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#quantity-theme</hasSituationAssertionSubject>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#quantity-value_1</hasSituationAssertionObject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Separating -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Separating">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_1"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_2"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_3"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notExist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#separating-theme_1</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_2">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#notExist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#separating-theme_2</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_3 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Separating_assertion_3">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#UnarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#exist</hasSituationAssertionProperty>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#separating-theme_3</hasSituationAssertionSubject>
+        <hasSituationAssertionObjectValue rdf:datatype="&xsd;boolean">true</hasSituationAssertionObjectValue>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Translocation -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Translocation">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#SituationRule"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Translocation_assertion_1"/>
+        <hasSituationRuleAssertion rdf:resource="http://www.newsreader-project.eu/domain-ontology#pre_Translocation_assertion_2"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Translocation_assertion_1 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Translocation_assertion_1">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+        <hasSituationAssertionProperty rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#atPlace</hasSituationAssertionProperty>
+        <hasSituationAssertionObject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#translocation-source</hasSituationAssertionObject>
+        <hasSituationAssertionSubject rdf:datatype="&xsd;anyURI">http://www.newsreader-project.eu/domain-ontology#translocation-theme</hasSituationAssertionSubject>
+    </owl:Thing>
+    
+
+
+    <!-- http://www.newsreader-project.eu/domain-ontology#pre_Translocation_assertion_2 -->
+
+    <owl:Thing rdf:about="http://www.newsreader-project.eu/domain-ontology#pre_Translocation_assertion_2">
+        <rdf:type rdf:resource="http://www.newsreader-project.eu/domain-ontology#BinarySituationRuleAssertion"/>
+        <rdf:type rdf:resource="&owl;NamedIndividual"/>
+    </owl:Thing>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.5.0) http://owlapi.sourceforge.net -->
+
