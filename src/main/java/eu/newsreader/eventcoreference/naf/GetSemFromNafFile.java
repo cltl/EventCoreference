@@ -30,6 +30,8 @@ public class GetSemFromNafFile {
     static public boolean ILIURI = false;
     static public boolean VERBOSE = false;
     static public boolean ALL = false;
+    static public boolean PERSPECTIVE = false;
+
 
 
     static final String USAGE = "This program processes a single NAF file and generates SEM RDF-TRiG results" +
@@ -71,6 +73,9 @@ public class GetSemFromNafFile {
                 ALL = true;
             }
 
+            else if (arg.equals("--perspective")) {
+                PERSPECTIVE = true;
+            }
             else if (arg.equals("--ili") && args.length > (i + 1)) {
                 String pathToILIFile = args[i+1];
                 JenaSerialization.initILI(pathToILIFile);
@@ -163,7 +168,20 @@ public class GetSemFromNafFile {
             }
             String pathToTrigFile = pathToNafFile + ".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
-            JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, ILIURI, VERBOSE);
+            if (!PERSPECTIVE) {
+                JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, ILIURI, VERBOSE);
+            }
+            else {
+                ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
+                        project,
+                        semActors,
+                        contextualVector,
+                        sourceVector,
+                        grammaticalVector);
+                ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(
+                        kafSaxParser, project, sourcePerspectives);
+                JenaSerialization.serializeJenaCompositeEventsAndPerspective(fos, compositeEventArraylist, kafSaxParser, sourcePerspectives, documentPerspectives);
+            }
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
