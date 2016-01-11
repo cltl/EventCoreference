@@ -37,7 +37,7 @@ public class MatchEventObjects {
     public static boolean LCS = false;
     public static boolean ILIURI = false;
     public static boolean VERBOSEMENTIONS = false;
-    public static String CHAINING = "4";
+    public static String CHAINING = "3";
     static ArrayList<String> crossDocCorefSet = new ArrayList<String>(); /// just for debugging
     static public String TIME = "";
 
