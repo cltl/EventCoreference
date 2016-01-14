@@ -233,15 +233,81 @@ public class MatchEventObjects {
      */
     public static void serializeEventFoldersHashMap (File pathToEventFolder) {
         HashMap<String, CompositeEvent> events = new HashMap<String, CompositeEvent>();
+
+            try {
+
+                ArrayList<File> files = new ArrayList<File>();
+                if (GZIP) {
+                    files = Util.makeRecursiveFileList(pathToEventFolder, ".obj.gz");
+                }
+                else {
+                    files = Util.makeRecursiveFileList(pathToEventFolder, ".obj");
+                }
+                for (int i = 0; i < files.size(); i++) {
+                    File file = files.get(i);
+                    OutputStream fos = null;
+                    String filePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("."))+"sem.trig";
+
+                    if (GZIP) {
+                        filePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("."))+"sem.trig.gz";
+
+                        OutputStream fileOutStream  = new FileOutputStream(filePath);
+                        fos = new GZIPOutputStream(fileOutStream);
+
+                    }
+                    else {
+                        fos = new FileOutputStream(filePath);
+                    }
+
+                    events = new HashMap<String, CompositeEvent>();
+                    readCompositeEventArrayListFromObjectFile(file, events);
+                    JenaSerialization.serializeJenaSingleCompositeEvents(fos,
+                            events,
+                            null,
+                            ILIURI,
+                            VERBOSEMENTIONS);
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+    }
+
+    /**
+     * if MATCHTYPE==none No comparison and events are serialized to separate TRiG files per object file
+     * @param pathToEventFolder
+     */
+    public static void serializeEventFoldersHashMapList (File pathToEventFolder) {
+        HashMap<String, CompositeEvent> events = new HashMap<String, CompositeEvent>();
         ArrayList<File> eventFolders = Util.makeFolderList(pathToEventFolder);
         for (int f = 0; f < eventFolders.size(); f++) {
             File nextEventFolder =  eventFolders.get(f);
             try {
-                ArrayList<File> files = Util.makeRecursiveFileList(nextEventFolder, ".obj");
+
+                ArrayList<File> files = new ArrayList<File>();
+                if (GZIP) {
+                    files = Util.makeRecursiveFileList(nextEventFolder, ".obj.gz");
+                }
+                else {
+                    files = Util.makeRecursiveFileList(nextEventFolder, ".obj");
+                }
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
+                    OutputStream fos = null;
                     String filePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("."))+"sem.trig";
-                    OutputStream fos = new FileOutputStream(filePath);
+
+                    if (GZIP) {
+                        filePath = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("."))+"sem.trig.gz";
+
+                        OutputStream fileOutStream  = new FileOutputStream(filePath);
+                        fos = new GZIPOutputStream(fileOutStream);
+
+                    }
+                    else {
+                        fos = new FileOutputStream(filePath);
+                    }
+
                     events = new HashMap<String, CompositeEvent>();
                     readCompositeEventArrayListFromObjectFile(file, events);
                     JenaSerialization.serializeJenaSingleCompositeEvents(fos,
