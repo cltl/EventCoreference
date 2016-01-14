@@ -31,6 +31,7 @@ public class MatchEventObjects {
     static boolean CROSSDOC = false;
     static boolean FIXURI = false;
     static boolean GZIP = false;
+    static boolean SUBFOLDER = false;
     static int DEBUG = 0;
     public static String MATCHTYPE= "ililemma";  // ili OR lemma OR ililemma OR none OR split
     public static boolean HYPERS = false;
@@ -97,6 +98,9 @@ public class MatchEventObjects {
             }
             else if (arg.equals("--gz")) {
                 GZIP = true;
+            }
+            else if (arg.equals("--subfolder")) {
+                SUBFOLDER = true;
             }
             else if (arg.equals("--cross-doc")) {
                 CROSSDOC = true;
@@ -202,18 +206,22 @@ public class MatchEventObjects {
 
     public static ArrayList<KafSense> getHyperILIreferences(SemObject semEvent) {
         ArrayList<KafSense> iliReferences = new ArrayList<KafSense>();
-        for (int i = 0; i < semEvent.getHypers().size(); i++) {
-            KafSense kafSense = semEvent.getHypers().get(i);
-            iliReferences.add(kafSense);
+        if (semEvent.getHypers()!=null) {
+            for (int i = 0; i < semEvent.getHypers().size(); i++) {
+                KafSense kafSense = semEvent.getHypers().get(i);
+                iliReferences.add(kafSense);
+            }
         }
         return iliReferences;
     }
 
     public static ArrayList<KafSense> getLcsILIreferences(SemObject semEvent) {
         ArrayList<KafSense> iliReferences = new ArrayList<KafSense>();
-        for (int i = 0; i < semEvent.getLcs().size(); i++) {
-            KafSense kafSense = semEvent.getLcs().get(i);
-            iliReferences.add(kafSense);
+        if (semEvent.getLcs()!=null) {
+            for (int i = 0; i < semEvent.getLcs().size(); i++) {
+                KafSense kafSense = semEvent.getLcs().get(i);
+                iliReferences.add(kafSense);
+            }
         }
         return iliReferences;
     }
@@ -401,9 +409,15 @@ public class MatchEventObjects {
 
                                                    ) {
         HashMap<String, CompositeEvent> allCompositeEvents = new HashMap<String, CompositeEvent>();
-        ArrayList<File> eventFolders = Util.makeFolderList(pathToEventFolder);
-        if (eventFolders.size()==0) {
-            eventFolders.add(pathToEventFolder);
+        ArrayList<File> eventFolders = new ArrayList<File>();
+        if (SUBFOLDER) {
+                eventFolders.add(pathToEventFolder);
+        }
+        else {
+            eventFolders = Util.makeFolderList(pathToEventFolder);
+            if (eventFolders.size() == 0) {
+                eventFolders.add(pathToEventFolder);
+            }
         }
         if (DEBUG==2) System.out.println("eventFolders.size() = " + eventFolders.size());
         for (int f = 0; f < eventFolders.size(); f++) {

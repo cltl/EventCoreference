@@ -1034,9 +1034,9 @@ public class GetSemFromNaf {
                 for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
                     KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
                     // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
-                  //  System.out.println("kafParticipant.getRole() = " + kafParticipant.getRole());
+                    //System.out.println(kafParticipant.getSpanIds().toString()+": kafParticipant.getRole() = " + kafParticipant.getRole());
                     if (!RoleLabels.validRole(kafParticipant.getRole())) {
-                       // System.out.println("invalid kafParticipant.getRole() = " + kafParticipant.getRole());
+                        // System.out.println("invalid kafParticipant.getRole() = " + kafParticipant.getRole());
                         continue;
                     }
                     else {
@@ -1046,7 +1046,7 @@ public class GetSemFromNaf {
 
                         //// we take all objects above threshold
                     ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
-                   // System.out.println("semObjects.size() = " + semObjects.size());
+                    //  System.out.println("semObjects.size() = " + semObjects.size());
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
                      //   System.out.println("semObject.getUniquePhrases().toString() = " + semObject.getUniquePhrases().toString());

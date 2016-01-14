@@ -15,7 +15,7 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Util {
-    static final int SPANMATCHTHRESHOLD = 75;
+    static final int SPANMATCHTHRESHOLD = 50;
     static public final int SPANMAXTIME = 10;
     static public final int SPANMAXLOCATION= 10;
     static public final int SPANMINLOCATION = 2;

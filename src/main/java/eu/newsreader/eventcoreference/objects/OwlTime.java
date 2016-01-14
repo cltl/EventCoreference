@@ -14,7 +14,13 @@ import java.io.Serializable;
  * Created by piek on 4/10/14.
  */
 public class OwlTime implements Serializable {
-
+    /*
+       @TODO remove serialVersionUID
+    */
+    //stream classdesc serialVersionUID = -3825371661027150878, local class serialVersionUID = 3238395448961710768
+    //stream classdesc serialVersionUID = -3825371661027150878, local class serialVersionUID = 3238395448961710768
+   // stream classdesc serialVersionUID = -3825371661027150878, local class serialVersionUID = 3825371661027150878
+    private static final long serialVersionUID = -3825371661027150878L;
 
 
          /*

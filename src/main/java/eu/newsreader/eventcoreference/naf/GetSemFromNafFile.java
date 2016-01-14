@@ -100,6 +100,9 @@ public class GetSemFromNafFile {
                 contextualFrameFile = args[i+1];
             }
         }
+        ALL = true;
+        pathToNafFile = "/Users/piek/Desktop/NWR/Wikinews/Cross-lingual-pip3/spanish-wikinews/corpus_apple/58772_Apple_Inc._doubled_its_profits.xml.naf";
+      //  System.out.println("pathToNafFile = " + pathToNafFile);
         sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
         grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
         contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
@@ -129,25 +132,28 @@ public class GetSemFromNafFile {
         }
         GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
         try {
-           // System.out.println("semEvents = " + semEvents.size());
-           // System.out.println("semActors = " + semActors.size());
-            /*for (int i = 0; i < semActors.size(); i++) {
+            System.out.println("semEvents = " + semEvents.size());
+            System.out.println("semActors = " + semActors.size());
+            System.out.println("semRelations = " + semRelations.size());
+            for (int i = 0; i < semActors.size(); i++) {
                 SemObject semObject = semActors.get(i);
                 System.out.println("semObject.getId() = " + semObject.getId());
+                System.out.println("semObject.getURI() = " + semObject.getURI());
             }
             for (int i = 0; i < semRelations.size(); i++) {
                 SemRelation semRelation = semRelations.get(i);
-                System.out.println("semRelation.getObject() = " + semRelation.getObject());
-            }*/
+                if (semRelation.getObject().indexOf("#tmx")==-1 && semRelation.getObject().indexOf("#mdct")==-1)
+                    System.out.println("semRelation.getObject() = " + semRelation.getObject());
+            }
             ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
             for (int j = 0; j < semEvents.size(); j++) {
                 SemEvent mySemEvent = (SemEvent) semEvents.get(j);
                 ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
                 ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
-               // System.out.println("myActors = " + myActors.size());
+                System.out.println("myActors = " + myActors.size());
                 CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
-                if (myTimes.size()<=ClusterEventObjects.TIMEEXPRESSIONMAX) {
+                if (myTimes.size()<=ClusterEventObjects.TIMEEXPRESSIONMAX || ALL) {
                     if (compositeEvent.isValid() || ALL) {
                         FrameTypes.setEventTypeString(compositeEvent.getEvent(),contextualVector, sourceVector, grammaticalVector);
                         compositeEventArraylist.add(compositeEvent);

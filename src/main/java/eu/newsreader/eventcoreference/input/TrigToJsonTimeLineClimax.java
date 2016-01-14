@@ -89,6 +89,7 @@ public class TrigToJsonTimeLineClimax {
         String project = "NewsReader timeline";
         String pathToILIfile = "";
         String trigfolder = "";
+        String trigfile = "";
         String pathToRawTextIndexFile = "";
         String blackListFile = "";
         String fnFile = "";
@@ -99,11 +100,14 @@ public class TrigToJsonTimeLineClimax {
         fnFile = "/Users/piek/Desktop/NWR/timeline/vua-naf2jsontimeline_2015/resources/frRelation.xml";
         fnLevel = 3;
        // esoLevel = 2;
-        trigfolder = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_NAF_input_noTok_uriOK_0915_v3processed/corpus_stock/events/contextualEvent";
+       // trigfolder = "/Users/piek/Desktop/NWR/NWR-ontology/wikinews_NAF_input_noTok_uriOK_0915_v3processed/corpus_stock/events/contextualEvent";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
                 trigfolder = args[i+1];
+            }
+            else if (arg.equals("--trig-file") && args.length>(i+1)) {
+                trigfile = args[i+1];
             }
             else if (arg.equals("--ili") && args.length>(i+1)) {
                 pathToILIfile = args[i+1];
@@ -172,7 +176,13 @@ public class TrigToJsonTimeLineClimax {
             esoReader.parseFile(esoFile);
         }
         iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
-        ArrayList<File> trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
+        ArrayList<File> trigFiles = new ArrayList<File>();
+        if (trigfile.isEmpty()) {
+            trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
+        }
+        else {
+            trigFiles.add(new File(trigfile));
+        }
         for (int i = 0; i < trigFiles.size(); i++) {
             File file = trigFiles.get(i);
             //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
@@ -250,7 +260,12 @@ public class TrigToJsonTimeLineClimax {
 
             }//System.out.println("jsonObjects.size() = " + jsonObjects.size());
             else {
-                writeJsonObjectArray(trigfolder, project, jsonObjects);
+                if (trigfile.isEmpty()) {
+                    writeJsonObjectArray(trigfolder, project, jsonObjects);
+                }
+                else {
+                    writeJsonObjectArray(trigfile, project, jsonObjects);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

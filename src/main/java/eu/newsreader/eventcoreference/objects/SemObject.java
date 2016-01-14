@@ -305,6 +305,11 @@ public class SemObject implements Serializable {
                 <externalRef confidence="1.0" reference="http://es.dbpedia.org/resource/Fuerza_Aérea_de_los_Estados_Unidos" reftype="es" resource="spotlight_v1" source="es">
                 <externalRef confidence="1.0" reference="http://dbpedia.org/resource/United_States_Air_Force" reftype="en" resource="wikipedia-db-esEn" source="es"/>
                 </externalRef>
+
+               <externalRef resource="spotlight_v1" reference="http://it.dbpedia.org/resource/Apple" confidence="1.0" reftype="it" source="it">
+               <externalRef resource="wikipedia-db-itEn" reference="http://dbpedia.org/resource/Apple_Inc." confidence="1.0" reftype="en" source="it" />
+        </externalRef>
+
 */
                 for (int i = 0; i < topSense.getChildren().size(); i++) {
                     KafSense kafSense = topSense.getChildren().get(i);
@@ -685,6 +690,8 @@ public class SemObject implements Serializable {
         } else if (kafSense.getResource().toLowerCase().startsWith("spotlight")
                    ||
                    kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")
+                   ||
+                   kafSense.getResource().toLowerCase().startsWith("wikipedia")
                   ) {
             ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
          // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);

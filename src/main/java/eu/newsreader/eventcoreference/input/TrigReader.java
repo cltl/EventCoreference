@@ -113,7 +113,7 @@ public class TrigReader {
         if (subject.indexOf("dbpedia.org")>-1) {
             type = "DBP";
         }
-        else if (subject.indexOf("/entities/")>-1) {
+        else if (subject.indexOf("entities/")>-1) {
             type = "ENT";
         }
         else if (subject.indexOf("ili-30")>-1) {
@@ -194,6 +194,7 @@ public class TrigReader {
     static public void main (String[] args) {
         try {
             String trigfolder = "";
+            String trigFile = "";
             String outputFileInstances = "";
             String outputFileProvenance = "";
             String outputFileOthers = "";
@@ -207,6 +208,9 @@ public class TrigReader {
                 }
                 else if (arg.equals("--trig-folder") && args.length>(i+1)) {
                     trigfolder = args[i+1];
+                }
+                else if (arg.equals("--trig-file") && args.length>(i+1)) {
+                    trigFile = args[i+1];
                 }
                 else if (arg.equals("--provenance-out") && args.length>(i+1)) {
                     outputFileProvenance = args[i+1];
@@ -224,70 +228,22 @@ public class TrigReader {
                     filter = args[i+1];
                 }
             }
-//            trigfolder = "/Users/piek/Desktop/EventWorkshop/examples/crosslingual/events/contextual/e-2007-03-19";
-//            statsFile = "/Users/piek/Desktop/EventWorkshop/examples/crosslingual/events/contextual/e-2007-03-19/sem.trig.stats";
-/*
-            trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus/events/contextual";
-            outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualInstances.trp";
-            outputFileProvenance = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualProvenance.trp";
-            outputFileOthers = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus_contextualOthers.trp";
-            statsFile = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_airbus.stats";
-*/
-
-
-
-
-
-
-
-/*
-
-
-            String trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_apple/events/contextual";
-            String outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_apple_contextualInstances.trp";
-            String outputFileProvenance = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_apple_contextualProvenance.trp";
-            String outputFileOthers = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_apple_contextualOthers.trp";
-            String statsFile = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_apple.stats";
-*/
-
-
-
-
-
-
-/*
-
-            String trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford/events/contextual";
-            String outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford_contextualInstances.trp";
-            String outputFileProvenance = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford_contextualProvenance.trp";
-            String outputFileOthers = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford_contextualOthers.trp";
-            String statsFile = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_gm_chrysler_ford.stats";
-*/
-
-
-
-
-
-
-/*
-            String trigfolder = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_stock_market/events/contextual";
-            String outputFileInstances = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_stock_market_contextualInstances.trp";
-            String outputFileProvenance = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_stock_market_contextualProvenance.trp";
-            String outputFileOthers = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_stock_market_contextualOthers.trp";
-            String statsFile = "/Users/piek/Desktop/NWR/Cross-lingual/corpus_NAF_output_141214-lemma/corpus_stock_market.stats";
-*/
-
-
 
             //pathToILIfile = "/Users/piek/Desktop/NWR/Cross-lingual/wn3-ili-synonyms.txt";
             iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
             Dataset dataset = TDBFactory.createDataset();
             ArrayList<File> trigFiles = new ArrayList<File>();
-            if (filter.isEmpty()) {
-                trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
+            if (!trigFile.isEmpty()) {
+                File file = new File(trigFile) ;
+                System.out.println("trig file.getName() = " + file.getName());
+                trigFiles.add(file);
             }
             else {
-                trigFiles = Util.makeRecursiveFileListFromFilteredFolders(new File(trigfolder), ".trig", filter);
+                if (filter.isEmpty()) {
+                    trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
+                } else {
+                    trigFiles = Util.makeRecursiveFileListFromFilteredFolders(new File(trigfolder), ".trig", filter);
+                }
             }
             System.out.println("prefix = " + filter);
             System.out.println("trigFiles.size() = " + trigFiles.size());

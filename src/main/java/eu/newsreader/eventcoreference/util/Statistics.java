@@ -32,12 +32,12 @@ public class Statistics {
     static public void main (String [] args) {
         String  folderPath = "";
         folderPath = args[0];
-        //folderPath = "/Users/piek/Desktop/NWR/Cross-lingual/stats.4/relations/airbus";
         File folder = new File(folderPath);
         ArrayList<File> files = Util.makeFlatFileList(folder, ".xls");
         fileMap = new ArrayList<String>(files.size());
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
+            System.out.println("file.getName() = " + file.getName());
             getStats(file, i, files.size());
         }
         try {
@@ -167,6 +167,23 @@ public class Statistics {
            }
     }
 
+    static void updateMapUsingTripleMap (String key, String triple, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
+           if (map.containsKey(triple)) {
+               ArrayList<Integer> counts = map.get(triple);
+               counts.set(fileNr, count);
+               map.put(triple, counts);
+           }
+           else {
+                   ArrayList<Integer> counts = new ArrayList<Integer>();
+                   for (int i = 0; i < nrFiles; i++) {
+                       counts.add(0);
+                   }
+                   counts.set(fileNr, count);
+                   map.put(triple, counts);
+           }
+    }
+
+
     static void updateMapUsingTripleSubjectSubstringIntersection (String key, String triple, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
            if (map.containsKey(triple)) {
                ArrayList<Integer> counts = map.get(triple);
@@ -217,6 +234,7 @@ public class Statistics {
                }
            }
     }
+
  static void updateMapUsingTripleSubjectSubstringIntersectionDebug (String key, String triple, Integer count, HashMap<String, ArrayList<Integer>> map, int fileNr, int nrFiles) {
            if (map.containsKey(triple)) {
                ArrayList<Integer> counts = map.get(triple);
@@ -294,6 +312,13 @@ public class Statistics {
                         DBPENTITY = true;
                     }
                     else if (inputLine.startsWith("MENTIONS OF NEW entities")) {
+                        /*
+                        MENTIONS OF NEW entities
+                        AmericanairlineVirginAtlantic	1
+                        GermanairlineAirBerlin	1
+                        GermanmagazineDerSpiegel	1
+                        thePeoplesRepublicofChina	1
+                         */
                         setALLFALSE();
                         NEWENTITY = true;
                     }
@@ -337,14 +362,18 @@ public class Statistics {
                                     String triple = subject + ":" + predicate + ":" + object;
                                     String so_pair = subject+":"+object;
                                     Integer count = Integer.parseInt(fields[3]);
-                                    updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleMap, fileNr, nrFiles);
+
+                                    updateMapUsingTripleMap(subject, triple, count, tripleMap, fileNr, nrFiles);
+                                   // updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleMap, fileNr, nrFiles);
                                     if (predicate.toLowerCase().endsWith("hasactor")
                                             ||
                                             predicate.toLowerCase().endsWith("hasplace")
                                             ) {
-                                        updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleSemMap, fileNr, nrFiles);
+                                        updateMapUsingTripleMap(subject, triple, count, tripleSemMap, fileNr, nrFiles);
+                                       // updateMapUsingTripleSubjectSubstringIntersection(subject, triple, count, tripleSemMap, fileNr, nrFiles);
                                     }
-                                    updateMapUsingTripleSubjectSubstringIntersection(subject, so_pair, count, subjectObjectMap, fileNr, nrFiles);
+                                    updateMapUsingTripleMap(subject, so_pair, count, subjectObjectMap, fileNr, nrFiles);
+                                    //updateMapUsingTripleSubjectSubstringIntersection(subject, so_pair, count, subjectObjectMap, fileNr, nrFiles);
                                    // updateMap(triple, count, tripleMap, fileNr, nrFiles);
                                 }
                             }
@@ -400,6 +429,7 @@ public class Statistics {
 
         tableFos.write(str.getBytes());
 
+        System.out.println("STARTING OVERVIEW");
         int nReferenceKeys = 0;
         str = "\t\t";
         for (int i = 0; i < fileMap.size(); i++) {
@@ -419,6 +449,8 @@ public class Statistics {
         }
         str += "\n";
         overviewFos.write(str.getBytes());
+
+
         str = "";
         ArrayList<Integer> totalValues = new ArrayList<Integer>();
         ArrayList<Integer> totalReferences = new ArrayList<Integer>();
@@ -499,6 +531,8 @@ public class Statistics {
         str += "\n\n";
 
         overviewFos.write(str.getBytes());
+        tableFos.flush();
+        overviewFos.flush();
     }
 
 }
