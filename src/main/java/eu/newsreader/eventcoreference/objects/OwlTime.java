@@ -17,10 +17,13 @@ public class OwlTime implements Serializable {
     /*
        @TODO remove serialVersionUID
     */
+    //java.io.InvalidClassException: eu.newsreader.eventcoreference.objects.OwlTime;
+    // local class incompatible: stream classdesc serialVersionUID = 3238395448961710768, local class serialVersionUID = -3825371661027150878
     //stream classdesc serialVersionUID = -3825371661027150878, local class serialVersionUID = 3238395448961710768
     //stream classdesc serialVersionUID = -3825371661027150878, local class serialVersionUID = 3238395448961710768
    // stream classdesc serialVersionUID = -3825371661027150878, local class serialVersionUID = 3825371661027150878
-    private static final long serialVersionUID = -3825371661027150878L;
+   // private static final long serialVersionUID = -3825371661027150878L;
+    private static final long serialVersionUID = 3238395448961710768L;
 
 
          /*

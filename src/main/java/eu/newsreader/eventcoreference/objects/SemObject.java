@@ -540,6 +540,12 @@ public class SemObject implements Serializable {
 
         addConceptsToResource(resource, model);
 
+        for (int i = 0; i < this.getTopics().size(); i++) {
+            KafTopic kafTopic = this.getTopics().get(i);
+            Property property = model.createProperty(ResourcesUri.skos+SKOS.RELATED.getLocalName());
+            resource.addProperty(property, model.createLiteral(kafTopic.getTopic()));
+        }
+
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
             Property property = model.createProperty(ResourcesUri.gaf + "denotedBy");

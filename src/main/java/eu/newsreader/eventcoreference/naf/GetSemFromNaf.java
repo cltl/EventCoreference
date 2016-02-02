@@ -112,6 +112,7 @@ public class GetSemFromNaf {
                         semEvent.addNafMentions(mentionArrayList);
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
                         semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
+                        semEvent.setTopics(kafSaxParser.kafTopicsArrayList);
                      //   semEvent.addConceptsExcept(event.getExternalReferences(), "WordNet");  /// these are concepts added by the SRL except for the WordNet references since we assume they come from the coreference sets
 
                     }
@@ -1035,7 +1036,12 @@ public class GetSemFromNaf {
                     KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
                     // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
                     //System.out.println(kafParticipant.getSpanIds().toString()+": kafParticipant.getRole() = " + kafParticipant.getRole());
-                    if (!RoleLabels.validRole(kafParticipant.getRole())) {
+/*                    if (!RoleLabels.validRole(kafParticipant.getRole()) && !Util.hasEsoReference(kafParticipant.getExternalReferences())) {
+                        // System.out.println("invalid kafParticipant.getRole() = " + kafParticipant.getRole());
+                        continue;
+                    }*/
+                    if (!RoleLabels.validRole(kafParticipant.getRole())
+                            ) {
                         // System.out.println("invalid kafParticipant.getRole() = " + kafParticipant.getRole());
                         continue;
                     }

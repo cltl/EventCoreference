@@ -215,6 +215,53 @@ public class CreateMicrostory {
         return fnRelatedEvents;
     }
 
+
+    public static ArrayList<JSONObject> getEventsThroughTopicBridging(ArrayList<JSONObject> events,
+                                                                        JSONObject event,
+                                                                      int topicThreshold) {
+        ArrayList<JSONObject> topicEvents = new ArrayList<JSONObject>();
+        //System.out.println("bridging");
+        try {
+            JSONArray topics = (JSONArray) event.get("topics");
+            if (topics!=null) {
+               // System.out.println("topics = " + topics.length());
+                for (int i = 0; i < events.size(); i++) {
+                    JSONObject oEvent = events.get(i);
+                    if (!oEvent.equals(event)) {
+                        JSONArray oTopics = (JSONArray) oEvent.get("topics");
+                        if (oTopics!=null) {
+                           // System.out.println("otopics = " + oTopics.length());
+                            int sharedTopics = 0;
+                            for (int j = 0; j < topics.length(); j++) {
+                                String topic = (String) topics.get(j);
+                                for (int k = 0; k < oTopics.length(); k++) {
+                                    String oTopic = (String) oTopics.get(k);
+                                    if (topic.equals(oTopic)) {
+                                        sharedTopics++;
+                                    }
+                                }
+                            }
+                            int prop1 = sharedTopics*100/topics.length();
+                            int prop2 = sharedTopics*100/oTopics.length();
+                            //System.out.println("sharedTopics = " + sharedTopics);
+                            //System.out.println("prop1 = " + prop1);
+                            //System.out.println("prop2 = " + prop2);
+                            if (prop1>=topicThreshold && prop2>= topicThreshold) {
+                                //System.out.println("topicThreshold = " + topicThreshold);
+                                if (!topicEvents.contains(oEvent)) {
+                                    topicEvents.add(oEvent);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return topicEvents;
+    }
+
     public static ArrayList<JSONObject> getEventsThroughFrameNetBridging(ArrayList<JSONObject> events,
                                                                         JSONObject event,
                                                                          FrameNetReader frameNetReader)
@@ -227,7 +274,7 @@ public class CreateMicrostory {
                 for (int i = 0; i < events.size(); i++) {
                     JSONObject oEvent = events.get(i);
                     if (!oEvent.equals(event)) {
-                        JSONArray oSuperFrames = (JSONArray) event.get("fnsuperframes");
+                        JSONArray oSuperFrames = (JSONArray) oEvent.get("fnsuperframes");
                         for (int k = 0; k < oSuperFrames.length(); k++) {
                             String oFrame = (String) oSuperFrames.get(k);
                             if (frame.equals(oFrame)) {
@@ -256,7 +303,7 @@ public class CreateMicrostory {
                 for (int i = 0; i < events.size(); i++) {
                     JSONObject oEvent = events.get(i);
                     if (!oEvent.equals(event)) {
-                        JSONArray oSuperFrames = (JSONArray) event.get("esosuperclasses");
+                        JSONArray oSuperFrames = (JSONArray) oEvent.get("esosuperclasses");
                         for (int k = 0; k < oSuperFrames.length(); k++) {
                             String oFrame = (String) oSuperFrames.get(k);
                             if (frame.equals(oFrame)) {
@@ -406,6 +453,7 @@ public class CreateMicrostory {
         }
         return coparticipationEvents;
     }
+
 
     public static ArrayList<JSONObject> getEventsThroughCoparticipation(ArrayList<JSONObject> events,
                                                                  JSONObject event)

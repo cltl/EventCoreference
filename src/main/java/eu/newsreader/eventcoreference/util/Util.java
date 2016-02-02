@@ -2226,6 +2226,15 @@ public class Util {
         return predicateIds;
     }
 
+    static public boolean hasEsoReference(ArrayList<KafSense> kafSenses) {
+        for (int i = 0; i < kafSenses.size(); i++) {
+            KafSense kafSense = kafSenses.get(i);
+            if (kafSense.getResource().equalsIgnoreCase("eso")) {
+                return true;
+            }
+        }
+        return false;
+    }
     static public boolean matchTimeReference (ArrayList<SemTime> times1, ArrayList<SemTime> times2, String time1Id, String time2Id) {
         SemTime semTime1 = null;
         SemTime semTime2 = null;
