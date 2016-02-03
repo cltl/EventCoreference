@@ -222,13 +222,23 @@ public class CreateMicrostory {
         ArrayList<JSONObject> topicEvents = new ArrayList<JSONObject>();
         //System.out.println("bridging");
         try {
-            JSONArray topics = (JSONArray) event.get("topics");
+            JSONArray topics = null;
+            try {
+                topics = (JSONArray) event.get("topics");
+            } catch (JSONException e) {
+               // e.printStackTrace();
+            }
             if (topics!=null) {
                // System.out.println("topics = " + topics.length());
                 for (int i = 0; i < events.size(); i++) {
                     JSONObject oEvent = events.get(i);
                     if (!oEvent.equals(event)) {
-                        JSONArray oTopics = (JSONArray) oEvent.get("topics");
+                        JSONArray oTopics = null;
+                        try {
+                            oTopics = (JSONArray) oEvent.get("topics");
+                        } catch (JSONException e) {
+                          //  e.printStackTrace();
+                        }
                         if (oTopics!=null) {
                            // System.out.println("otopics = " + oTopics.length());
                             int sharedTopics = 0;
@@ -464,9 +474,14 @@ public class CreateMicrostory {
         while (keys.hasNext()) {
             String key = keys.next().toString(); //role
           //  System.out.println("key = " + key);
-            if (key.equalsIgnoreCase("pb/A0")
+            if (key.toLowerCase().startsWith("pb/")
+/*
+                    || key.equalsIgnoreCase("pb/A0")
                     || key.equalsIgnoreCase("pb/A1")
                     || key.equalsIgnoreCase("pb/A2")
+                    || key.equalsIgnoreCase("pb/A3")
+                    || key.equalsIgnoreCase("pb/A4")
+*/
                     || key.toLowerCase().startsWith("fn/")
                     || key.toLowerCase().startsWith("eso/")) {
                 JSONArray actors = actorObject.getJSONArray(key);
@@ -479,11 +494,16 @@ public class CreateMicrostory {
                         Iterator oKeys = oActorObject.sortedKeys();
                         while (oKeys.hasNext()) {
                             String oKey = oKeys.next().toString();
-                            if (oKey.equalsIgnoreCase("pb/A0")
+                            if (oKey.toLowerCase().startsWith("pb/")
+/*
+                                    || oKey.equalsIgnoreCase("pb/A0")
                                     || oKey.equalsIgnoreCase("pb/A1")
-                                    || oKey.equalsIgnoreCase("pb/A1")
-                                    || key.toLowerCase().startsWith("fn/")
-                                    || key.toLowerCase().startsWith("eso/")) {
+                                    || oKey.equalsIgnoreCase("pb/A2")
+                                    || oKey.equalsIgnoreCase("pb/A3")
+                                    || oKey.equalsIgnoreCase("pb/A4")
+*/
+                                    || oKey.toLowerCase().startsWith("fn/")
+                                    || oKey.toLowerCase().startsWith("eso/")) {
                                 JSONArray oActors = oActorObject.getJSONArray(oKey);
                                 // System.out.println("oActors.toString() = " + oActors.toString());
                                 if (intersectingActor(actors, oActors)) {
@@ -500,6 +520,59 @@ public class CreateMicrostory {
         }
         return coPartipantEvents;
     }
+
+    public static ArrayList<JSONObject> getEventsThroughCoparticipation(ArrayList<JSONObject> events,
+                                                                        ArrayList<JSONObject> storyEvents)
+                throws JSONException {
+            ArrayList<JSONObject> coPartipantEvents = new ArrayList<JSONObject>();
+            for (int j = 0; j < events.size(); j++) {
+                JSONObject jsonObject = events.get(j);
+                JSONObject actorObject = jsonObject.getJSONObject("actors");
+                Iterator keys = actorObject.sortedKeys();
+                while (keys.hasNext()) {
+                    String key = keys.next().toString(); //role
+                    //  System.out.println("key = " + key);
+                    if (key.equalsIgnoreCase("pb/A0")
+                            || key.equalsIgnoreCase("pb/A1")
+                            || key.equalsIgnoreCase("pb/A2")
+                            || key.equalsIgnoreCase("pb/A3")
+                            || key.equalsIgnoreCase("pb/A4")
+                            || key.toLowerCase().startsWith("fn/")
+                            || key.toLowerCase().startsWith("eso/")) {
+                        JSONArray actors = actorObject.getJSONArray(key);
+                        // System.out.println("actors.toString() = " + actors.toString());
+                        for (int i = 0; i < storyEvents.size(); i++) {
+                            JSONObject oEvent = storyEvents.get(i);
+                            if (!oEvent.get("instance").toString().equals(jsonObject.get("instance").toString())) {
+                                ///skip event itself
+                                JSONObject oActorObject = oEvent.getJSONObject("actors");
+                                Iterator oKeys = oActorObject.sortedKeys();
+                                while (oKeys.hasNext()) {
+                                    String oKey = oKeys.next().toString();
+                                    if (oKey.equalsIgnoreCase("pb/A0")
+                                            || oKey.equalsIgnoreCase("pb/A1")
+                                            || oKey.equalsIgnoreCase("pb/A2")
+                                            || oKey.equalsIgnoreCase("pb/A3")
+                                            || oKey.equalsIgnoreCase("pb/A4")
+                                            || oKey.toLowerCase().startsWith("fn/")
+                                            || oKey.toLowerCase().startsWith("eso/")) {
+                                        JSONArray oActors = oActorObject.getJSONArray(oKey);
+                                        // System.out.println("oActors.toString() = " + oActors.toString());
+                                        if (intersectingActor(actors, oActors)) {
+                                            if (!coPartipantEvents.contains(oEvent)) {
+                                                coPartipantEvents.add(oEvent);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return coPartipantEvents;
+        }
 
     static boolean intersectingActor (JSONArray actors, JSONArray oActors) throws JSONException {
         for (int j = 0; j < actors.length(); j++) {

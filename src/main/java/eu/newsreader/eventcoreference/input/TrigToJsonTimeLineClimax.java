@@ -83,6 +83,9 @@ public class TrigToJsonTimeLineClimax {
     static HashMap <String, Integer> actorCount = new HashMap<String, Integer>();
     static Integer actorThreshold = -1;
     static int topicThreshold = 0;
+    static int nEvents = 0;
+    static int nActors = 0;
+    static int nStories = 0;
 
 
 
@@ -536,13 +539,14 @@ public class TrigToJsonTimeLineClimax {
         }
         try {
 
-            System.out.println("all events = " + jsonObjectArrayList.size());
+            System.out.println("Events in SEM-RDF files = " + jsonObjectArrayList.size());
             jsonObjectArrayList = filterEventsForBlackList (jsonObjectArrayList);
-            System.out.println("filter by blacklist = " + jsonObjectArrayList.size());
+            System.out.println("Events after blacklist filter= " + jsonObjectArrayList.size());
             jsonObjectArrayList = filterEventsForActors(jsonObjectArrayList);
-            System.out.println("filtered by actors = " + jsonObjectArrayList.size());
+            System.out.println("Events after actor count filter = " + jsonObjectArrayList.size());
             jsonObjectArrayList = createStoryLinesForJSONArrayList(jsonObjectArrayList);
-            System.out.println("filtered by stories = " + jsonObjectArrayList.size());
+            System.out.println("Events after storyline filter = " + jsonObjectArrayList.size());
+            nEvents = jsonObjectArrayList.size();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1108,7 +1112,6 @@ public class TrigToJsonTimeLineClimax {
     }
 
     static ArrayList<JSONObject> createStoryLinesForJSONArrayList (ArrayList<JSONObject> jsonObjects)  throws JSONException {
-        int nGroups = 0;
         String entity = "Airbus";
         String entityTimeLine = entity+"\n";
         String entityMatch = "";
@@ -1136,7 +1139,7 @@ public class TrigToJsonTimeLineClimax {
 
         //TreeSet climaxObjects = determineClimaxValuesFirstMentionOnly(jsonObjects);
 
-        System.out.println("events above climax threshold = " + climaxObjects.size());
+        System.out.println("Events above climax threshold = " + climaxObjects.size());
         ArrayList<JSONObject> storyObjects = new ArrayList<JSONObject>();
         ArrayList<JSONObject> singletonObjects = new ArrayList<JSONObject>();
         sortedObjects = climaxObjects.iterator();
@@ -1164,7 +1167,7 @@ public class TrigToJsonTimeLineClimax {
                     jsonObject.put("groupName", groupName);
                     jsonObject.put("groupScore", groupScore);
                     storyObjects.add(jsonObject);
-                    nGroups++;
+                    nStories++;
                     ArrayList<String> coparticipantsA0 = getActorsByRoleFromEvent(jsonObject, "pb/A0");
                     ArrayList<String> coparticipantsA1 = getActorsByRoleFromEvent(jsonObject, "pb/A1");
                     ArrayList<String> coparticipantsA2 = getActorsByRoleFromEvent(jsonObject, "pb/A2");
@@ -1188,11 +1191,21 @@ public class TrigToJsonTimeLineClimax {
                     }
 
                     ArrayList<JSONObject> coevents = CreateMicrostory.getEventsThroughCoparticipation(selectedEvents, jsonObject);
+                    //ArrayList<JSONObject> coevents = CreateMicrostory.getEventsThroughCoparticipation(selectedEvents, storyObjects);
                   //  System.out.println("coevents.size() = " + coevents.size());
                     ArrayList<JSONObject> topicevents = CreateMicrostory.getEventsThroughTopicBridging(selectedEvents, jsonObject, topicThreshold);
                    // System.out.println("topicevents = " + topicevents.size());
-                    ArrayList<JSONObject> intersection = intersectEventObjects(coevents, topicevents);
-                  //  ArrayList<JSONObject> intersection = CreateMicrostory.getEventsThroughTopicBridging(selectedEvents, jsonObject, topicThreshold);
+                    ArrayList<JSONObject> intersection = coevents;
+                    if (topicevents.size()>0) {
+                        if (coevents.size()==0) {
+                            intersection = topicevents;
+                        }
+                        else {
+                            intersection = intersectEventObjects(coevents, topicevents);
+                        }
+                    }
+
+
 
                     for (int i = 0; i < intersection.size(); i++) {
                         JSONObject object = intersection.get(i);
@@ -1351,7 +1364,8 @@ public class TrigToJsonTimeLineClimax {
             System.out.println("entityTimeLine = " + entityTimeLine);
             /////// FOR EXAMPLE OUTPUT
         }
-        System.out.println("Nr of stories = " + nGroups);
+        System.out.println("Nr of stories = " + nStories);
+
         return groupedObjects;
     }
 
@@ -1592,7 +1606,59 @@ public class TrigToJsonTimeLineClimax {
      Float size = 1+Float.valueOf(((float)((5*climaxIndex.size()-5*climaxIndex.indexOf(sentenceNr))/(float)climaxIndex.size())));
      //
      */
+    static int countMentions (ArrayList<JSONObject> objects) {
+         int nMentions = 0;
+        for (int i = 0; i < objects.size(); i++) {
+            JSONObject jsonObject = objects.get(i);
+            try {
+                JSONArray mentions = (JSONArray) jsonObject.get("mentions");
+                nMentions+=mentions.length();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return nMentions;
+    }
 
+    public static int countActors(ArrayList<JSONObject> events) {
+                ArrayList<String> actorNames = new ArrayList<String>();
+                for (int i = 0; i < events.size(); i++) {
+                    JSONObject oEvent = events.get(i);
+                    JSONObject oActorObject = null;
+                    try {
+                        oActorObject = oEvent.getJSONObject("actors");
+                        Iterator oKeys = oActorObject.sortedKeys();
+                        while (oKeys.hasNext()) {
+                            String oKey = oKeys.next().toString();
+                            if (oKey.equalsIgnoreCase("pb/")
+                                    || oKey.equalsIgnoreCase("pb/A0")
+                                    || oKey.equalsIgnoreCase("pb/A1")
+                                    || oKey.equalsIgnoreCase("pb/A2")
+                                    || oKey.equalsIgnoreCase("pb/A3")
+                                    || oKey.equalsIgnoreCase("pb/A4")
+                                    || oKey.toLowerCase().startsWith("fn/")
+                                    || oKey.toLowerCase().startsWith("eso/")) {
+                                JSONArray oActors = null;
+                                try {
+                                    JSONArray actors = oActorObject.getJSONArray(oKey);
+                                    for (int j = 0; j < actors.length(); j++) {
+                                        String nextActor = actors.getString(j);
+                                        nextActor = nextActor.substring(nextActor.lastIndexOf("/") + 1);
+                                        if (!actorNames.contains(nextActor)) {
+                                            actorNames.add(nextActor);
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            return actorNames.size();
+    }
 
     static public class climaxCompare implements Comparator {
         public int compare (Object aa, Object bb) {
@@ -1842,6 +1908,10 @@ public class TrigToJsonTimeLineClimax {
                     jsonObject.put("event_count", cnt);
                     timeLineObject.append("actors", jsonObject);
                 }*/
+                timeLineObject.append("event_cnt", nEvents);
+                timeLineObject.append("story_cnt", nStories);
+                timeLineObject.append("actor_cnt", countActors(objects));
+                timeLineObject.append("mention_cnt", countMentions(objects));
                 for (int j = 0; j < objects.size(); j++) {
                     JSONObject jsonObject = objects.get(j);
                     timeLineObject.append("events", jsonObject);
