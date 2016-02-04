@@ -145,6 +145,22 @@ public class NoClusterEventObjects {
             else if (arg.equals("--rename") && args.length>(i+1)) {
                 done = args[i+1];
             }
+            else if (arg.equals("--eurovoc-en") && args.length > (i + 1)) {
+                String pathToEurovocFile = args[i+1];
+                GetSemFromNaf.initEurovoc(pathToEurovocFile, "en");
+            }
+            else if (arg.equals("--eurovoc-nl") && args.length > (i + 1)) {
+                String pathToEurovocFile = args[i+1];
+                GetSemFromNaf.initEurovoc(pathToEurovocFile, "nl");
+            }
+            else if (arg.equals("--eurovoc-es") && args.length > (i + 1)) {
+                String pathToEurovocFile = args[i+1];
+                GetSemFromNaf.initEurovoc(pathToEurovocFile, "es");
+            }
+            else if (arg.equals("--eurovoc-it") && args.length > (i + 1)) {
+                String pathToEurovocFile = args[i+1];
+                GetSemFromNaf.initEurovoc(pathToEurovocFile, "it");
+            }
         }
 
         if (!fnFile.isEmpty()) {

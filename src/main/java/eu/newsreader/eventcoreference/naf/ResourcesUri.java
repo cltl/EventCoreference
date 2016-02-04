@@ -7,6 +7,7 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public class ResourcesUri {
 
+    final static public String eurovoc = "http://eurovoc.europa.eu/";
     final static public String skos = "http://www.w3.org/2004/02/skos/core#";
     final static public String nwr = "http://www.newsreader-project.eu/";
     final static public String nwrtime = "http://www.newsreader-project.eu/time/";
@@ -61,6 +62,7 @@ public class ResourcesUri {
         model.setNsPrefix("owl", ResourcesUri.owl);
         model.setNsPrefix("time", ResourcesUri.owltime);
         model.setNsPrefix("skos", ResourcesUri.skos);
+        model.setNsPrefix("eurovoc", ResourcesUri.eurovoc);
         model.setNsPrefix("rdf", ResourcesUri.rdf);
         model.setNsPrefix("rdfs", ResourcesUri.rdfs);
     }

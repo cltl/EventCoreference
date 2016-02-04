@@ -15,7 +15,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,7 +54,7 @@ public class SemObject implements Serializable {
     public SemObject(String type) {
         this.nafMentions = new ArrayList<NafMention>();
         this.id = "";
-        this.type = ENTITY;
+        this.type = type;
         this.nafIds = new ArrayList<String>();
         this.label = "";
         this.uri = "";
@@ -85,6 +88,27 @@ public class SemObject implements Serializable {
 
     public void setTopics(ArrayList<KafTopic> topics) {
         this.topics = topics;
+    }
+
+    public void getUriForTopicLabel(HashMap<String, String> uriMap) {
+        for (int i = 0; i < topics.size(); i++) {
+            KafTopic kafTopic = topics.get(i);
+            if (uriMap.containsKey(kafTopic.getTopic())) {
+               String uri = uriMap.get(kafTopic.getTopic());
+                kafTopic.setUri(uri);
+            }
+            else {
+                if (kafTopic.getUri().isEmpty()) {
+                    String aUri = ResourcesUri.nwrontology+"topic/"+kafTopic.getTopic();
+                    try {
+                        aUri = URLEncoder.encode(aUri, "UTF-8");
+                        kafTopic.setUri(uri);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     public boolean hasTopic(KafTopic topic) {
@@ -396,24 +420,12 @@ public class SemObject implements Serializable {
                         if (Util.hasAlphaNumeric(phraseCount.getPhrase())) {
                             top = phraseCount.getCount();
                             label = phraseCount.getPhrase();
-/*
-                            if (label.indexOf("Schreyer")>-1)
-                                System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
-*/
                         } else {
-/*
-                            if (label.indexOf("Schreyer")>-1)
-                                System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
-*/
                         }
                     }
                 }
             }
         }
-/*
-        if (label.indexOf("Schreyer")>-1)
-        System.out.println("label = " + label);
-*/
         return label;
     }
 
@@ -542,8 +554,9 @@ public class SemObject implements Serializable {
 
         for (int i = 0; i < this.getTopics().size(); i++) {
             KafTopic kafTopic = this.getTopics().get(i);
-            Property property = model.createProperty(ResourcesUri.skos+SKOS.RELATED.getLocalName());
-            resource.addProperty(property, model.createLiteral(kafTopic.getTopic()));
+            Property property = model.createProperty(ResourcesUri.skos+SKOS.RELATED_MATCH.getLocalName());
+           // resource.addProperty(property, model.createLiteral(kafTopic.getUri()));
+            resource.addProperty(property, model.createResource(kafTopic.getUri()));
         }
 
         for (int i = 0; i < nafMentions.size(); i++) {
@@ -601,21 +614,26 @@ public class SemObject implements Serializable {
             }
             String nameSpaceType = getNameSpaceTypeReference(kafSense);
             if (!nameSpaceType.isEmpty()) {
-                if (!type.equals(NONENTITY)) {
-                    //  System.out.println("nameSpaceType = " + nameSpaceType);
-                    Resource conceptResource = model.createResource(nameSpaceType);
-                    resource.addProperty(RDF.type, conceptResource);
-                }
-                else {
-                    //  System.out.println("nameSpaceType = " + nameSpaceType);
+                if (type.equals(NONENTITY)) {
+                     //  System.out.println("nameSpaceType = " + nameSpaceType);
                   //  Property property = model.createProperty(SKOS.RELATED_MATCH.getLocalName());
                     Property property = model.createProperty(SKOS.RELATED_MATCH.toString());
                     Resource conceptResource = model.createResource(nameSpaceType);
                     resource.addProperty(property, conceptResource);
-
                     conceptResource = model.createResource(ResourcesUri.nwrontology+SemObject.NONENTITY);
                     resource.addProperty(RDF.type, conceptResource);
 
+                }
+                /*else if (type.equals(ENTITY)) {
+                    Property property = model.createProperty(SKOS.RELATED_MATCH.toString());
+                    Resource conceptResource = model.createResource(nameSpaceType);
+                    resource.addProperty(property, conceptResource);
+                    conceptResource = model.createResource(ResourcesUri.nwrontology+SemObject.ENTITY);
+                    resource.addProperty(RDF.type, conceptResource);
+                }*/
+                else {
+                    Resource conceptResource = model.createResource(nameSpaceType);
+                    resource.addProperty(RDF.type, conceptResource);
                 }
             }
         }

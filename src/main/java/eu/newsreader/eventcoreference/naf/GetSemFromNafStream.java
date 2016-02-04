@@ -57,6 +57,22 @@ public class GetSemFromNafStream {
             else if (arg.equals("--perspective")) {
                 PERSPECTIVE = true;
             }
+            else if (arg.equals("--eurovoc-en") && args.length > (i + 1)) {
+                String pathToEurovocFile = args[i+1];
+                GetSemFromNaf.initEurovoc(pathToEurovocFile, "en");
+            }
+            else if (arg.equals("--eurovoc-nl") && args.length > (i + 1)) {
+                String pathToEurovocFile = args[i+1];
+                GetSemFromNaf.initEurovoc(pathToEurovocFile, "nl");
+            }
+            else if (arg.equals("--eurovoc-es") && args.length > (i + 1)) {
+                String pathToEurovocFile = args[i+1];
+                GetSemFromNaf.initEurovoc(pathToEurovocFile, "es");
+            }
+            else if (arg.equals("--eurovoc-it") && args.length > (i + 1)) {
+                String pathToEurovocFile = args[i+1];
+                GetSemFromNaf.initEurovoc(pathToEurovocFile, "it");
+            }
             else if (arg.equals("--ili") && args.length > (i + 1)) {
                 String pathToILIFile = args[i+1];
                 JenaSerialization.initILI(pathToILIFile);

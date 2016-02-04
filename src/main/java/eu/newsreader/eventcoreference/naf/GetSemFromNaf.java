@@ -2,6 +2,7 @@ package eu.newsreader.eventcoreference.naf;
 
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
+import eu.newsreader.eventcoreference.util.EuroVoc;
 import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.TimeLanguage;
 import eu.newsreader.eventcoreference.util.Util;
@@ -26,7 +27,12 @@ public class GetSemFromNaf {
     static final int MINEVENTLABELSIZE = 3;
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
+    static public HashMap<String, String> eurovoc = new HashMap<String, String>();
 
+    static public void initEurovoc (String path, String lang) {
+        EuroVoc.readEuroVoc(path, lang);
+        eurovoc = EuroVoc.labelUriMap;
+    }
 
 
     /**
@@ -113,13 +119,12 @@ public class GetSemFromNaf {
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
                         semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
                         semEvent.setTopics(kafSaxParser.kafTopicsArrayList);
+                        semEvent.getUriForTopicLabel(eurovoc);
                      //   semEvent.addConceptsExcept(event.getExternalReferences(), "WordNet");  /// these are concepts added by the SRL except for the WordNet references since we assume they come from the coreference sets
-
                     }
                 }
                 semEvent.addPhraseCountsForMentions(kafSaxParser);
                 String eventName = semEvent.getTopPhraseAsLabel();
-                //if (Util.hasAlphaNumeric(eventName)) {
                 if (eventName.length() >= MINEVENTLABELSIZE) {
                     //semEvent.setId(baseUrl+event.getId());
                     //semEvent.setId(baseUrl + eventName + "Event");

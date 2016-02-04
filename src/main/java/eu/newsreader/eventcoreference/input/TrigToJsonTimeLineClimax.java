@@ -2595,8 +2595,10 @@ object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_developm
             Statement statement = statements.get(i);
 
             String predicate = statement.getPredicate().getURI();
-            if (predicate.endsWith("skos/core#related")) {
-            //    System.out.println("predicate = " + predicate);
+           // System.out.println("predicate = " + predicate);
+            if ((predicate.toLowerCase().endsWith("skos/core#relatedmatch")) ||
+                (predicate.toLowerCase().endsWith("skos/core#related"))) {
+               // System.out.println("predicate = " + predicate);
                 String object = "";
                 if (statement.getObject().isLiteral()) {
                     object = statement.getObject().asLiteral().toString();
