@@ -8,9 +8,9 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.newsreader.eventcoreference.naf.CreateMicrostory;
 import eu.newsreader.eventcoreference.objects.JsonEvent;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
+import eu.newsreader.eventcoreference.objects.Triple;
 import eu.newsreader.eventcoreference.util.RoleLabels;
 import eu.newsreader.eventcoreference.util.Util;
-import org.apache.jena.riot.RDFDataMgr;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,49 +26,8 @@ import java.util.*;
  */
 public class TrigToJsonTimeLineClimax {
 
-
-    public static class Triple {
-        private String subject;
-        private String predicate;
-        private String object;
-
-        public Triple() {
-            this.subject = "";
-            this.object = "";
-            this.predicate = "";
-        }
-
-        public String getSubject() {
-            return subject;
-        }
-
-        public void setSubject(String subject) {
-            this.subject = subject;
-        }
-
-        public String getObject() {
-            return object;
-        }
-
-        public void setObject(String object) {
-            this.object = object;
-        }
-
-        public String getPredicate() {
-            return predicate;
-        }
-
-        public void setPredicate(String predicate) {
-            this.predicate = predicate;
-        }
-    }
-
+    static TrigTripleData trigTripleData = new TrigTripleData();
     static Dataset dataset = TDBFactory.createDataset();
-    static final String provenanceGraph = "http://www.newsreader-project.eu/provenance";
-    static final String instanceGraph = "http://www.newsreader-project.eu/instances";
-    static HashMap<String, ArrayList<Statement>> tripleMapProvenance = new HashMap<String, ArrayList<Statement>>();
-    static HashMap<String, ArrayList<Statement>> tripleMapInstances = new HashMap<String, ArrayList<Statement>>();
-    static HashMap<String, ArrayList<Statement>> tripleMapOthers = new HashMap<String, ArrayList<Statement>>();
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static ArrayList<String> blacklist = new ArrayList<String>();
     static String ACTORNAMESPACES = "";
@@ -90,6 +49,7 @@ public class TrigToJsonTimeLineClimax {
 
 
     static public void main (String[] args) {
+        trigTripleData = new TrigTripleData();
         String project = "NewsReader timeline";
         String pathToILIfile = "";
         String trigfolder = "";
@@ -198,75 +158,8 @@ public class TrigToJsonTimeLineClimax {
         else {
             trigFiles.add(new File(trigfile));
         }
+        trigTripleData= TrigTripleReader.readTripleFromTrigFiles(trigFiles);
         System.out.println("trigFiles.size() = " + trigFiles.size());
-        for (int i = 0; i < trigFiles.size(); i++) {
-            File file = trigFiles.get(i);
-            //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
-            dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
-            Iterator<String> it = dataset.listNames();
-            while (it.hasNext()) {
-                String name = it.next();
-                // System.out.println("name = " + name);
-                if (name.equals(provenanceGraph)) {
-                    Model namedModel = dataset.getNamedModel(name);
-                    StmtIterator siter = namedModel.listStatements();
-                    while (siter.hasNext()) {
-                        Statement s = siter.nextStatement();
-                        String subject = s.getSubject().getURI();
-                        if (tripleMapProvenance.containsKey(subject)) {
-                            ArrayList<Statement> triples = tripleMapProvenance.get(subject);
-                            triples.add(s);
-                            tripleMapProvenance.put(subject, triples);
-                        }
-                        else {
-
-                            ArrayList<Statement> triples = new ArrayList<Statement>();
-                            triples.add(s);
-                            tripleMapProvenance.put(subject, triples);
-                        }
-                    }
-                }
-                else if (name.equals(instanceGraph)) {
-                    Model namedModel = dataset.getNamedModel(name);
-                    StmtIterator siter = namedModel.listStatements();
-                    while (siter.hasNext()) {
-                        Statement s = siter.nextStatement();
-                        String subject = s.getSubject().getURI();
-                        if (tripleMapInstances.containsKey(subject)) {
-                            ArrayList<Statement> triples = tripleMapInstances.get(subject);
-                            triples.add(s);
-                            tripleMapInstances.put(subject, triples);
-                        }
-                        else {
-
-                            ArrayList<Statement> triples = new ArrayList<Statement>();
-                            triples.add(s);
-                            tripleMapInstances.put(subject, triples);
-                        }
-                    }
-                }
-                else {
-                    Model namedModel = dataset.getNamedModel(name);
-                    StmtIterator siter = namedModel.listStatements();
-                    while (siter.hasNext()) {
-                        Statement s = siter.nextStatement();
-                        String subject = s.getSubject().getURI();
-                        if (tripleMapOthers.containsKey(subject)) {
-                            ArrayList<Statement> triples = tripleMapOthers.get(subject);
-                            triples.add(s);
-                            tripleMapOthers.put(subject, triples);
-                        } else {
-
-                            ArrayList<Statement> triples = new ArrayList<Statement>();
-                            triples.add(s);
-                            tripleMapOthers.put(subject, triples);
-                        }
-                    }
-                }
-            }
-            dataset.close();
-            dataset = null;
-        }
         try {
             ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
            // System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
@@ -306,15 +199,15 @@ public class TrigToJsonTimeLineClimax {
             Statement s = siter.nextStatement();
             String subject = s.getSubject().getURI();
             if (events.contains(subject)) {
-                if (tripleMapOthers.containsKey(subject)) {
-                    ArrayList<Statement> triples = tripleMapOthers.get(subject);
+                if (trigTripleData.tripleMapOthers.containsKey(subject)) {
+                    ArrayList<Statement> triples = trigTripleData.tripleMapOthers.get(subject);
                     triples.add(s);
-                    tripleMapOthers.put(subject, triples);
+                    trigTripleData.tripleMapOthers.put(subject, triples);
                 } else {
 
                     ArrayList<Statement> triples = new ArrayList<Statement>();
                     triples.add(s);
-                    tripleMapOthers.put(subject, triples);
+                    trigTripleData.tripleMapOthers.put(subject, triples);
                 }
             }
         }
@@ -399,8 +292,8 @@ public class TrigToJsonTimeLineClimax {
                 } else if (statement.getObject().isURIResource()) {
                     object = statement.getObject().asResource().getURI();
                 }
-                if (tripleMapInstances.containsKey( object)) {
-                    ArrayList<Statement> instanceTriples = tripleMapInstances.get(object);
+                if (trigTripleData.tripleMapInstances.containsKey( object)) {
+                    ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(object);
                     for (int j = 0; j < instanceTriples.size(); j++) {
                         Statement timeStatement = instanceTriples.get(j);
                         /**    WHAT TO DO WITH PERIODS????
@@ -463,14 +356,14 @@ public class TrigToJsonTimeLineClimax {
     static ArrayList<JSONObject> getJSONObjectArray() throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
 
-        Set keySet = tripleMapInstances.keySet();
+        Set keySet = trigTripleData.tripleMapInstances.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
-            ArrayList<Statement> instanceTriples = tripleMapInstances.get(key);
+            ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
             if (hasILI(instanceTriples) || hasFrameNet(instanceTriples) || ALL) {
-                if (tripleMapOthers.containsKey( key)) {
-                    ArrayList<Statement> otherTriples = tripleMapOthers.get(key);
+                if (trigTripleData.tripleMapOthers.containsKey( key)) {
+                    ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
                     if (hasActor(otherTriples) || ALL) {
                         /// we ignore events without actors.....
                         JSONObject jsonObject = new JSONObject();
@@ -671,10 +564,14 @@ public class TrigToJsonTimeLineClimax {
                 int earliestEventMention = -1;
                 for (int j = 0; j < mentions.length(); j++) {
                     JSONObject mentionObject = (JSONObject) mentions.get(j);
-/*                    String sentenceValue = mentionObject.getString("sentence");
-                    System.out.println("sentenceValue = " + sentenceValue);
-                    if (sentenceValue!=null && !sentenceValue.isEmpty()){*/
-                    JSONArray sentences = mentionObject.getJSONArray("sentence");
+                   // System.out.println("charValue = " + mentionObject.getString("char"));
+                   // System.out.println("sentenceValue = " + mentionObject.getString("sentence"));
+                    JSONArray sentences = null;
+                    try {
+                        sentences = mentionObject.getJSONArray("sentence");
+                    } catch (JSONException e) {
+                      //  e.printStackTrace();
+                    }
                     if (sentences!=null ){
                         String sentenceValue = sentences.get(0).toString();
                         int sentenceNr = Integer.parseInt(sentenceValue);
@@ -686,7 +583,12 @@ public class TrigToJsonTimeLineClimax {
                         //String mention = mentions.get(j).toString();
                     }
                     else {
-                        JSONArray charValues = mentionObject.getJSONArray("char");
+                        JSONArray charValues = null;
+                        try {
+                            charValues = mentionObject.getJSONArray("char");
+                        } catch (JSONException e) {
+                       //     e.printStackTrace();
+                        }
                         //"["4160","4165"]"
                         if (charValues!=null ) {
                             String charValue = charValues.get(0).toString();
@@ -702,33 +604,6 @@ public class TrigToJsonTimeLineClimax {
                          //   System.out.println("charValues = null");
                         }
                     }
-
-/*                    System.out.println("mention = " + mention);
-                    int idx = mention.indexOf("sentence=");
-                    if (idx >-1) {
-                        idx = mention.lastIndexOf("=");
-                        int sentenceNr = Integer.parseInt(mention.substring(idx+1));
-                        if (sentenceNr<earliestEventMention || earliestEventMention==-1) {
-                            earliestEventMention = sentenceNr;
-                            jsonObject.put("sentence", mention.substring(idx + 1));
-                        }
-                        sumClimax += 1.0/sentenceNr;
-                    }
-                    else {
-                        //mention = http://www.newsreader-project.eu/data/2008/07/03/6479113.xml#char=359
-                        // if the sentence is not part of the mention than we take the char value
-                        idx = mention.indexOf("char=");
-                        if (idx >-1) {
-                            idx = mention.lastIndexOf("=");
-                            int sentenceNr = Integer.parseInt(mention.substring(idx+1));
-                            if (sentenceNr<earliestEventMention || earliestEventMention==-1) {
-                                earliestEventMention = sentenceNr;
-                                jsonObject.put("sentence", mention.substring(idx + 1));
-                            }
-                            sumClimax += 1.0/sentenceNr;
-                        }
-                       // System.out.println("mention = " + mention);
-                    }*/
                 }
                 if (sumClimax>maxClimax) {
                     maxClimax = sumClimax;
@@ -1803,11 +1678,11 @@ public class TrigToJsonTimeLineClimax {
     static ArrayList<JSONObject> getJSONObjectArrayRDF() throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
 
-        Set keySet = tripleMapOthers.keySet();
+        Set keySet = trigTripleData.tripleMapOthers.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
-            ArrayList<Statement> otherTriples = tripleMapOthers.get(key);
+            ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
             if (!hasActor(otherTriples)) {
                /// we ignore events without actors.....
             }
@@ -1820,8 +1695,8 @@ public class TrigToJsonTimeLineClimax {
                 // String timeString = semTime.getOwlTime().toString().replaceAll("-", ",");
 
                 jsonObject.put("time", timeAnchor);
-                if (tripleMapInstances.containsKey( key)) {
-                    ArrayList<Statement> instanceTriples = tripleMapInstances.get(key);
+                if (trigTripleData.tripleMapInstances.containsKey( key)) {
+                    ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
                     for (int i = 0; i < instanceTriples.size(); i++) {
                         Statement statement = instanceTriples.get(i);
                         String predicate = statement.getPredicate().getURI();
@@ -2502,6 +2377,13 @@ object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_developm
                         addValuesFromMention(mObject, "tokens", tokens);
                         addValuesFromMention(mObject, "terms", terms);
                         addValuesFromMention(mObject, "sentence", sentence);
+                        jsonClassesObject.append("mentions", mObject);
+                    }
+                    else if (values.length==1) {
+                        JSONObject mObject = new JSONObject();
+                        String charOffset = values[0];
+                        mObject.append("uri", uri);
+                        addValuesFromMention(mObject, "char", charOffset);
                         jsonClassesObject.append("mentions", mObject);
                     }
                 }

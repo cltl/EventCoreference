@@ -3,7 +3,7 @@ package eu.newsreader.eventcoreference.output;
 import eu.newsreader.eventcoreference.input.CorefSaxParser;
 import eu.newsreader.eventcoreference.objects.CoRefSetAgata;
 import eu.newsreader.eventcoreference.objects.CorefTargetAgata;
-import eu.newsreader.eventcoreference.objects.Triple;
+import eu.newsreader.eventcoreference.objects.CorefTriple;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -283,9 +283,9 @@ public class CorefSetToSem {
         fos.write(str.getBytes());
         int relationCounter = 0;
         /// we iterate over the events of a single file
-        ArrayList<Triple> triplesA = new ArrayList<Triple>();
-        ArrayList<Triple> triplesP = new ArrayList<Triple>();
-        ArrayList<Triple> triplesT = new ArrayList<Triple>();
+        ArrayList<CorefTriple> triplesA = new ArrayList<CorefTriple>();
+        ArrayList<CorefTriple> triplesP = new ArrayList<CorefTriple>();
+        ArrayList<CorefTriple> triplesT = new ArrayList<CorefTriple>();
 
         for (int i = 0; i < coRefSetsEventAgatas.size(); i++) {
             CoRefSetAgata coRefSetAgata = coRefSetsEventAgatas.get(i);
@@ -311,16 +311,16 @@ public class CorefSetToSem {
                                         String predicate = "semHasAgent";
                                         String subject = key+"/e"+ coRefSetAgata.getId();
                                         String object =  key+"/a"+ refSet.getId();
-                                        Triple triple = new Triple(predicate, subject, object);
+                                        CorefTriple corefTriple = new CorefTriple(predicate, subject, object);
                                         String target = "\t\t<target id =\""+ eventTarget.getDocId()+"/"+eventTarget.getSentenceId()+"\""+"/>";
                                         target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+ corefTargetAgata.getWord()+" -->";
-                                        int givenTriple = getTriple(triplesA, triple);
+                                        int givenTriple = getTriple(triplesA, corefTriple);
                                         if (givenTriple==-1) {
                                             relationCounter++;
                                             String id = key+"/"+relationCounter;
-                                            triple.setId(id);
-                                            triple.addMentions(target);
-                                            triplesA.add(triple);
+                                            corefTriple.setId(id);
+                                            corefTriple.addMentions(target);
+                                            triplesA.add(corefTriple);
                                         }
                                         else {
                                             if (!triplesA.get(givenTriple).getMentions().contains(target)) {
@@ -351,16 +351,16 @@ public class CorefSetToSem {
                                         String predicate = "semHasTime";
                                         String subject = key+"/e"+ coRefSetAgata.getId();
                                         String object =  key+"/t"+ refSet.getId();
-                                        Triple triple = new Triple(predicate, subject, object);
+                                        CorefTriple corefTriple = new CorefTriple(predicate, subject, object);
                                         String target = "\t\t<target id =\""+ eventTarget.getDocId()+"/"+eventTarget.getSentenceId()+"\""+"/>";
                                         target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+ corefTargetAgata.getWord()+" -->";
-                                        int givenTriple = getTriple(triplesA, triple);
+                                        int givenTriple = getTriple(triplesA, corefTriple);
                                         if (givenTriple==-1) {
                                             relationCounter++;
                                             String id = key+"/"+relationCounter;
-                                            triple.setId(id);
-                                            triple.addMentions(target);
-                                            triplesA.add(triple);
+                                            corefTriple.setId(id);
+                                            corefTriple.addMentions(target);
+                                            triplesA.add(corefTriple);
                                         }
                                         else {
                                             if (!triplesA.get(givenTriple).getMentions().contains(target)) {
@@ -391,16 +391,16 @@ public class CorefSetToSem {
                                         String predicate = "semHasPlace";
                                         String subject = key+"/e"+ coRefSetAgata.getId();
                                         String object =  key+"/p"+ refSet.getId();
-                                        Triple triple = new Triple(predicate, subject, object);
+                                        CorefTriple corefTriple = new CorefTriple(predicate, subject, object);
                                         String target = "\t\t<target id =\""+ eventTarget.getDocId()+"/"+eventTarget.getSentenceId()+"\""+"/>";
                                         target += " <!-- "+eventTarget.getWord()+"--"+predicate+"--"+ corefTargetAgata.getWord()+" -->";
-                                        int givenTriple = getTriple(triplesA, triple);
+                                        int givenTriple = getTriple(triplesA, corefTriple);
                                         if (givenTriple==-1) {
                                             relationCounter++;
                                             String id = key+"/"+relationCounter;
-                                            triple.setId(id);
-                                            triple.addMentions(target);
-                                            triplesA.add(triple);
+                                            corefTriple.setId(id);
+                                            corefTriple.addMentions(target);
+                                            triplesA.add(corefTriple);
                                         }
                                         else {
                                             if (!triplesA.get(givenTriple).getMentions().contains(target)) {
@@ -420,18 +420,18 @@ public class CorefSetToSem {
             }
         }
         for (int k = 0; k < triplesA.size(); k++) {
-            Triple triple = triplesA.get(k);
-            str = triple.toString();
+            CorefTriple corefTriple = triplesA.get(k);
+            str = corefTriple.toString();
             fos.write(str.getBytes());
         }
         for (int k = 0; k < triplesP.size(); k++) {
-            Triple triple = triplesP.get(k);
-            str = triple.toString();
+            CorefTriple corefTriple = triplesP.get(k);
+            str = corefTriple.toString();
             fos.write(str.getBytes());
         }
         for (int k = 0; k < triplesT.size(); k++) {
-            Triple triple = triplesT.get(k);
-            str = triple.toString();
+            CorefTriple corefTriple = triplesT.get(k);
+            str = corefTriple.toString();
             fos.write(str.getBytes());
 
         }
@@ -439,9 +439,9 @@ public class CorefSetToSem {
 
     }
 
-    static int getTriple (ArrayList<Triple> triples, Triple triple) {
-        for (int i = 0; i < triples.size(); i++) {
-            Triple triple1 = triples.get(i);
+    static int getTriple (ArrayList<CorefTriple> corefTriples, CorefTriple corefTriple) {
+        for (int i = 0; i < corefTriples.size(); i++) {
+            CorefTriple corefTriple1 = corefTriples.get(i);
 /*
             System.out.println("triple1.toString() = " + triple1.toString());
             System.out.println("triple.toString() = " + triple.toString());
@@ -451,9 +451,9 @@ public class CorefSetToSem {
                 System.out.println(triple.getObject()+":"+triple1.getObject());
             }
 */
-            if ((triple1.getPredicate().equalsIgnoreCase(triple.getPredicate())) &&
-                (triple1.getSubject().equalsIgnoreCase(triple.getSubject())) &&
-                (triple1.getObject().equalsIgnoreCase(triple.getObject()))
+            if ((corefTriple1.getPredicate().equalsIgnoreCase(corefTriple.getPredicate())) &&
+                (corefTriple1.getSubject().equalsIgnoreCase(corefTriple.getSubject())) &&
+                (corefTriple1.getObject().equalsIgnoreCase(corefTriple.getObject()))
                     ) {
                 return i;
             }

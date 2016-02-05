@@ -1,6 +1,6 @@
 package eu.newsreader.eventcoreference.util;
 
-import eu.newsreader.eventcoreference.input.TrigReader;
+import eu.newsreader.eventcoreference.input.TrigStatsReader;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -356,7 +356,7 @@ public class Statistics {
                         else if (fields.length==4) {
                             if (TRIPLE) {
                                 String subject = fields[0];
-                                if (TrigReader.getInstanceType(subject).equals("IEV")) {
+                                if (TrigStatsReader.getInstanceType(subject).equals("IEV")) {
                                     String predicate = normalizePredicate(fields[1]);
                                     String object = fields[2];
                                     String triple = subject + ":" + predicate + ":" + object;

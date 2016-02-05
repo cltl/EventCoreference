@@ -17,11 +17,9 @@ import java.util.*;
 /**
  * Created by piek on 1/3/14.
  */
-public class TrigReader {
+public class TrigStatsReader {
 
 
-    static final String provenanceGraph = "http://www.newsreader-project.eu/provenance";
-    static final String instanceGraph = "http://www.newsreader-project.eu/instances";
     static HashMap<String, Integer> predicateMapInstances = new HashMap<String, Integer>();
     static HashMap<String, Integer> subjectMapInstances = new HashMap<String, Integer>();
     static HashMap<String, Integer> mentionMapDBPEntities = new HashMap<String, Integer>();
@@ -261,7 +259,7 @@ public class TrigReader {
                 while (it.hasNext()) {
                     String name = it.next();
                    // System.out.println("name = " + name);
-                    if (name.equals(provenanceGraph)) {
+                    if (name.equals(TrigTripleData.provenanceGraph)) {
                         Model namedModel = dataset.getNamedModel(name);
                         StmtIterator siter = namedModel.listStatements();
                         while (siter.hasNext()) {
@@ -272,7 +270,7 @@ public class TrigReader {
                             }
                         }
                     }
-                    else if (name.equals(instanceGraph)) {
+                    else if (name.equals(TrigTripleData.instanceGraph)) {
                         Model namedModel = dataset.getNamedModel(name);
                         StmtIterator siter = namedModel.listStatements();
                         while (siter.hasNext()) {
