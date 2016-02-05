@@ -367,7 +367,75 @@ public class TrigToJsonTimeLineClimax {
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
             ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
-            if (hasILI(instanceTriples) || hasFrameNet(instanceTriples) || ALL) {
+            if (trigTripleData.tripleMapOthers.containsKey( key)) {
+                /// this means it is an instance and has semrelations
+                ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
+                if (hasActor(otherTriples) || ALL) {
+                    /// we ignore events without actors.....
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("event", getValue(getSynsetsFromIli(key)));
+                    // jsonObject.put("instance", getValue(key));
+                    jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
+                    String timeAnchor = getTimeAnchor(otherTriples);
+                    int idx = timeAnchor.lastIndexOf("/");
+                    if (idx>-1) {
+                        timeAnchor = timeAnchor.substring(idx+1);
+                    }
+                    if (timeAnchor.length()==6) {
+                        //// this is a month so we pick the first day of the month
+                        timeAnchor+= "01";
+                    }if (timeAnchor.length()==4) {
+                        //// this is a year so we pick the first day of the year
+                        timeAnchor+= "0101";
+                    }
+                    if (timeAnchor.length()==3 || timeAnchor.length()==5 || timeAnchor.length()==7) {
+                        ///date error, e.g. 12-07-198"
+                        continue;
+                    }
+                    ///skipping historic events
+                    if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
+                        jsonObject.put("time", timeAnchor);
+
+                        JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonClasses.keys().hasNext()) {
+                            /// TAKE THIS OUT TO SAVE SPACE
+                            jsonObject.put("classes", jsonClasses);
+                        }
+
+                        if (fnLevel > 0) {
+                            getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+                        } else if (esoLevel > 0) {
+                            getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
+                        }
+
+                        JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonLabels.keys().hasNext()) {
+                            jsonObject.put("labels", jsonLabels.get("labels"));
+                        }
+                        JSONObject jsonprefLabels = getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonprefLabels.keys().hasNext()) {
+                            jsonObject.put("prefLabel", jsonprefLabels.get("prefLabel"));
+                        }
+                        JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonMentions.keys().hasNext()) {
+                            jsonObject.put("mentions", jsonMentions.get("mentions"));
+                        }
+                        JSONObject actors = getActorsJSONObjectFromInstanceStatement(otherTriples);
+                        if (actors.keys().hasNext()) {
+                            jsonObject.put("actors", actors);
+                        }
+                        JSONObject topics = getTopicsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (topics.keys().hasNext()) {
+                            //  System.out.println("topics.length() = " + topics.length());
+                            jsonObject.put("topics", topics.get("topics"));
+                        }
+                        jsonObjectArrayList.add(jsonObject);
+                    }
+
+                }
+            }
+
+            /*if (hasILI(instanceTriples) || hasFrameNet(instanceTriples) || ALL) {
                 if (trigTripleData.tripleMapOthers.containsKey( key)) {
                     ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
                     if (hasActor(otherTriples) || ALL) {
@@ -434,7 +502,7 @@ public class TrigToJsonTimeLineClimax {
 
                     }
                 }
-            }
+            }*/
         }
         try {
 
