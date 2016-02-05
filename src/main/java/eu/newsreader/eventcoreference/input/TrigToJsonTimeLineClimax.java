@@ -158,8 +158,8 @@ public class TrigToJsonTimeLineClimax {
         else {
             trigFiles.add(new File(trigfile));
         }
-        trigTripleData= TrigTripleReader.readTripleFromTrigFiles(trigFiles);
         System.out.println("trigFiles.size() = " + trigFiles.size());
+        trigTripleData= TrigTripleReader.readTripleFromTrigFiles(trigFiles);
         try {
             ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
            // System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
@@ -259,6 +259,12 @@ public class TrigToJsonTimeLineClimax {
                 object = statement.getObject().asResource().getURI();
             }
             if (object.indexOf("ili-")>-1) {
+                return true;
+            }
+            if (object.indexOf("ili:")>-1) {
+                return true;
+            }
+            if (object.indexOf("globalwordnet.org")>-1) {
                 return true;
             }
         }

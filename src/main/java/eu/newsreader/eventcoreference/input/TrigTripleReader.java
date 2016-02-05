@@ -103,6 +103,8 @@ public class TrigTripleReader {
             dataset.close();
             dataset = null;
         }
+        System.out.println("trigTripleData instances = " + trigTripleData.tripleMapInstances.size());
+        System.out.println("trigTripleData others = " + trigTripleData.tripleMapOthers.size());
         return trigTripleData;
     }
 }
