@@ -21,8 +21,8 @@ public class TrigKSReader {
 
 
     final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
-    public static String user = "nwr_partner";
-    public static String pass = "ks=2014!";
+    public static String user = "";
+    public static String pass = "";
     //public static String authStr = user + ":" + pass;
 
     HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
