@@ -17,7 +17,7 @@ import static com.hp.hpl.jena.rdf.model.ResourceFactory.createStatement;
 /**
  * Created by filipilievski on 2/7/16.
  */
-public class TrigKSReader {
+public class TrigKSTripleReader {
 
 
     final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
