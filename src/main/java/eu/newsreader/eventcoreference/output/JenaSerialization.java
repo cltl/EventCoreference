@@ -173,17 +173,17 @@ public class JenaSerialization {
         }
     }
 
-    static public void addDocMetaData(Dataset ds, KafSaxParser kafSaxParser) {
+    static public void addDocMetaData(KafSaxParser kafSaxParser) {
         String docId = kafSaxParser.getKafMetaData().getUrl();
-        Resource subject = ds.getDefaultModel().createResource(docId);
-        Property property = ds.getDefaultModel().createProperty(ResourcesUri.prov, "wasAttributedTo");
+        Resource subject = graspModel.createResource(docId);
+        Property property = graspModel.createProperty(ResourcesUri.prov, "wasAttributedTo");
         String author = kafSaxParser.getKafMetaData().getAuthor();
         String magazine = kafSaxParser.getKafMetaData().getMagazine();
         String publisher = kafSaxParser.getKafMetaData().getPublisher();
         if (!author.isEmpty()) {
             try {
                 author = URLEncoder.encode(author, "UTF-8");
-                Resource object = ds.getDefaultModel().createResource(ResourcesUri.nwrauthor+author);
+                Resource object = graspModel.createResource(ResourcesUri.nwrauthor+author);
                 subject.addProperty(property, object);
             } catch (UnsupportedEncodingException e) {
                 //  e.printStackTrace();
@@ -192,7 +192,7 @@ public class JenaSerialization {
         if (!magazine.isEmpty()) {
             try {
                 magazine = URLEncoder.encode(magazine, "UTF-8");
-                Resource object = ds.getDefaultModel().createResource(ResourcesUri.nwrmagazine+magazine);
+                Resource object = graspModel.createResource(ResourcesUri.nwrmagazine+magazine);
                 subject.addProperty(property, object);
             } catch (UnsupportedEncodingException e) {
                 //  e.printStackTrace();
@@ -201,7 +201,7 @@ public class JenaSerialization {
         if (!publisher.isEmpty()) {
             try {
                 publisher = URLEncoder.encode(publisher, "UTF-8");
-                Resource object = ds.getDefaultModel().createResource(ResourcesUri.nwrpublisher+publisher);
+                Resource object = graspModel.createResource(ResourcesUri.nwrpublisher+publisher);
                 subject.addProperty(property, object);
             } catch (UnsupportedEncodingException e) {
                 //  e.printStackTrace();
@@ -381,7 +381,7 @@ public class JenaSerialization {
 
             createModels();
             addJenaCompositeEvents(semEvents, null, false, false);
-            addDocMetaData(ds, kafSaxParser);
+            addDocMetaData(kafSaxParser);
             String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
             addJenaPerspectiveObjects(attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
