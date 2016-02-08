@@ -326,7 +326,7 @@ public class GetPerspectiveRelations {
           //  Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/perspective");
             ResourcesUri.prefixModelGaf(defaultModel);
             String attrBase = pathToTrigFile+"_";
-            JenaSerialization.addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, perspectiveObjects);
+            JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.gaf, perspectiveObjects);
             RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
             fos.close();
         } catch (IOException e) {
@@ -349,9 +349,9 @@ public class GetPerspectiveRelations {
 
                 JenaSerialization.addDocMetaData(ds, kafSaxParser);
                 String attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"s";
-                JenaSerialization.addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
+                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
                 attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"d";
-                JenaSerialization.addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.prov, authorPerspectiveObjects);
+                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, authorPerspectiveObjects);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
                 fos.close();
             } catch (IOException e) {
@@ -367,7 +367,7 @@ public class GetPerspectiveRelations {
               //  Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/perspective");
                 ResourcesUri.prefixModelGaf(defaultModel);
                 String attrBase = uri+"_";
-                JenaSerialization.addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, perspectiveObjects);
+                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.gaf, perspectiveObjects);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
     }
 

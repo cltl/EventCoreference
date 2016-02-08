@@ -254,7 +254,7 @@ nwr:hasAttribution nwrontology:attrPOSCERTNF .
     }
 
 
-    public void addToJenaDataSet (Dataset ds, String ns, String attrId) {
+    public void addToJenaDataSet (Model model, String ns, String attrId) {
         /*
         mentionId2      hasAttribution         attributionId1
                         gaf:generatedBy        mentionId3
@@ -282,7 +282,7 @@ doc-uri
 
         if ((targetEventMentions.size()>0)) {
 
-            Model model = ds.getDefaultModel();
+         //   Model model = ds.getDefaultModel();
             for (int i = 0; i < targetEventMentions.size(); i++) {
                 NafMention mention = targetEventMentions.get(i);
                 /// the mention of the target event is the subject
@@ -298,11 +298,13 @@ doc-uri
                         //  e.printStackTrace();
                     }
                     if (!uri.isEmpty()) {
-                        targetResource = ds.getDefaultModel().createResource(uri);
+                        //targetResource = ds.getDefaultModel().createResource(uri);
+                        targetResource = model.createResource(uri);
                     }
                 }
                 else {
-                    targetResource = ds.getDefaultModel().createResource(sourceEntity.getURI());
+                   // targetResource = ds.getDefaultModel().createResource(sourceEntity.getURI());
+                    targetResource = model.createResource(sourceEntity.getURI());
                 }
                 if (targetResource!=null) {
                     Resource attributionSubject = model.createResource(attrId);
@@ -310,7 +312,8 @@ doc-uri
                     mentionSubject.addProperty(property, attributionSubject);
                     if (!cueMention.toString().isEmpty()) {
                         property = model.createProperty(ResourcesUri.gaf, "generatedBy");
-                        Resource object = ds.getDefaultModel().createResource(this.cueMention.toString());
+                        //Resource object = ds.getDefaultModel().createResource(this.cueMention.toString());
+                        Resource object = model.createResource(this.cueMention.toString());
                         mentionSubject.addProperty(property, object);
                         mentionSubject.addProperty(RDFS.comment, model.createLiteral(cueMention.getSentenceText()));
                     }

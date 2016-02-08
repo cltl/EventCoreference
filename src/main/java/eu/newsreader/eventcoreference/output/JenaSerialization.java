@@ -27,6 +27,7 @@ import java.util.Set;
 public class JenaSerialization {
 
     static Dataset ds = null;
+    static Model graspModel = null;
     static Model provenanceModel = null;
     static Model instanceModel = null;
     static public ILIReader iliReader = null;
@@ -38,6 +39,7 @@ public class JenaSerialization {
 
     static public void createModels () {
         ds = TDBFactory.createDataset();
+        graspModel = ds.getNamedModel(ResourcesUri.nwr + "grasp");
         provenanceModel = ds.getNamedModel(ResourcesUri.nwr + "provenance");
         instanceModel = ds.getNamedModel(ResourcesUri.nwr+"instances");
         prefixModels();
@@ -162,12 +164,12 @@ public class JenaSerialization {
       //  System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
     }
 
-    static public void addJenaPerspectiveObjects(Dataset ds, String attrBase, String namespace,
+    static public void addJenaPerspectiveObjects(String attrBase, String namespace,
                                             ArrayList<PerspectiveObject> perspectiveObjects) {
         for (int i = 0; i < perspectiveObjects.size(); i++) {
             PerspectiveObject perspectiveObject = perspectiveObjects.get(i);
             String attrId = attrBase+"Attr"+i;
-            perspectiveObject.addToJenaDataSet(ds, namespace, attrId);
+            perspectiveObject.addToJenaDataSet(graspModel, namespace, attrId);
         }
     }
 
@@ -381,9 +383,9 @@ public class JenaSerialization {
             addJenaCompositeEvents(semEvents, null, false, false);
             addDocMetaData(ds, kafSaxParser);
             String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
-            addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
+            addJenaPerspectiveObjects(attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
-            addJenaPerspectiveObjects(ds, attrBase, ResourcesUri.prov, authorPerspectiveObjects);
+            addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, authorPerspectiveObjects);
         try {
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
         } catch (Exception e) {

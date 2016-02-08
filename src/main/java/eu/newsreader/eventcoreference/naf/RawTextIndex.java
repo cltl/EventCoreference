@@ -19,6 +19,7 @@ public class RawTextIndex {
 
         String pathToNafFolder = "";
         String extension = "";
+        String project = "";
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -27,6 +28,9 @@ public class RawTextIndex {
             }
             else if (arg.equals("--extension") && args.length > (i + 1)) {
                 extension = args[i + 1];
+            }
+            else if (arg.equals("--project") && args.length > (i + 1)) {
+                project = args[i + 1];
             }
         }
         String rawTextIndexFilePath = pathToNafFolder+"/"+"rawtext.idx";
@@ -42,7 +46,7 @@ public class RawTextIndex {
                 System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
             }
             try {
-                addRawText(rawTextIndexFilePath, kafSaxParser);
+                addRawText(rawTextIndexFilePath, kafSaxParser, project);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -50,7 +54,7 @@ public class RawTextIndex {
 
     }
 
-    static void addRawText (String rawTextIndexFilePath, KafSaxParser kafSaxParser) throws IOException {
+    static void addRawText (String rawTextIndexFilePath, KafSaxParser kafSaxParser, String project) throws IOException {
 
         String rawText = kafSaxParser.rawText;
         // System.out.println("rawText = " + rawText);
@@ -60,8 +64,7 @@ public class RawTextIndex {
         String uri = kafSaxParser.getKafMetaData().getUrl();
         if (!uri.toLowerCase().startsWith("http")) {
             //  System.out.println("uri = " + uri);
-            uri = ResourcesUri.nwrdata  + uri.substring(uri.indexOf("/")+1);
-            //  System.out.println("uri = " + uri);
+            uri = ResourcesUri.nwrdata + project + "/" + uri.substring(uri.indexOf("/")+1);
         }
 
         String str = uri+"\t"+rawText+"\n";
