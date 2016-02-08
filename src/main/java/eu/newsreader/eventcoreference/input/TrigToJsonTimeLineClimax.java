@@ -46,12 +46,11 @@ public class TrigToJsonTimeLineClimax {
     static int nActors = 0;
     static int nStories = 0;
 
-
-
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
-        String project = "NewsReader timeline";
+        String project = "NewsReader storyline";
         String pathToILIfile = "";
+        String query = "";
         String trigfolder = "";
         String trigfile = "";
         String pathToRawTextIndexFile = "";
@@ -69,6 +68,9 @@ public class TrigToJsonTimeLineClimax {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
                 trigfolder = args[i+1];
+            }
+            else if (arg.equals("--query") && args.length>(i+1)) {
+                query = args[i+1];
             }
             else if (arg.equals("--trig-file") && args.length>(i+1)) {
                 trigfile = args[i+1];
@@ -133,7 +135,6 @@ public class TrigToJsonTimeLineClimax {
         }
         //trigfolder = "/tmp/naf2jsonWulzvC/events/contextual";
         //System.out.println("fnFile = " + fnFile);
-        System.out.println("trigfolder = " + trigfolder);
         System.out.println("climaxThreshold = " + climaxThreshold);
         System.out.println("topicThreshold = " + topicThreshold);
         System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES.toString());
@@ -152,14 +153,30 @@ public class TrigToJsonTimeLineClimax {
         }
         iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
         ArrayList<File> trigFiles = new ArrayList<File>();
-        if (trigfile.isEmpty()) {
+        if (!trigfolder.isEmpty()) {
+            System.out.println("trigfolder = " + trigfolder);
             trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
         }
-        else {
+        else if (!trigfile.isEmpty()) {
+            System.out.println("trigfile = " + trigfile);
             trigFiles.add(new File(trigfile));
         }
-        System.out.println("trigFiles.size() = " + trigFiles.size());
-        trigTripleData= TrigTripleReader.readTripleFromTrigFiles(trigFiles);
+        if (trigFiles.size()>0) {
+            System.out.println("trigFiles.size() = " + trigFiles.size());
+            trigTripleData = TrigTripleReader.readTripleFromTrigFiles(trigFiles);
+        }
+        else if (!query.isEmpty()) {
+            System.out.println("querying KnowledgeStore for stories = " + query);
+            long startTime = System.currentTimeMillis();
+            trigTripleData = TrigKSTripleReader.readTriplesFromKS(query);
+            long estimatedTime = System.currentTimeMillis() - startTime;
+
+            System.out.println("Time elapsed:");
+            System.out.println(estimatedTime/1000.0);
+        }
+        else {
+            System.out.println("NO INPUT. NOTHING TO TELL");
+        }
         try {
             ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
            // System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
@@ -169,6 +186,9 @@ public class TrigToJsonTimeLineClimax {
 
             }//System.out.println("jsonObjects.size() = " + jsonObjects.size());
             else {
+                if (!query.isEmpty()) {
+                    writeJsonObjectArrayForQuery(query, project, jsonObjects);
+                }
                 if (trigfile.isEmpty()) {
                     writeJsonObjectArray(trigfolder, project, jsonObjects);
                 }
@@ -291,7 +311,7 @@ public class TrigToJsonTimeLineClimax {
         for (int i = 0; i < triples.size(); i++) {
             Statement statement = triples.get(i);
             String predicate = statement.getPredicate().getURI();
-            if (predicate.toLowerCase().endsWith("time")) {
+            if (predicate.toLowerCase().endsWith("hasattime")) {
                 String object = "";
                 if (statement.getObject().isLiteral()) {
                     object = statement.getObject().asLiteral().toString();
@@ -377,6 +397,7 @@ public class TrigToJsonTimeLineClimax {
                     // jsonObject.put("instance", getValue(key));
                     jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
                     String timeAnchor = getTimeAnchor(otherTriples);
+                   // System.out.println("timeAnchor = " + timeAnchor);
                     int idx = timeAnchor.lastIndexOf("/");
                     if (idx>-1) {
                         timeAnchor = timeAnchor.substring(idx+1);
@@ -433,6 +454,12 @@ public class TrigToJsonTimeLineClimax {
                     }
 
                 }
+                else {
+                  //  System.out.println("no actor relations in otherTriples.size() = " + otherTriples.size());
+                }
+            }
+            else {
+              //  System.out.println("No sem relations for = " + key);
             }
 
             /*if (hasILI(instanceTriples) || hasFrameNet(instanceTriples) || ALL) {
@@ -1555,8 +1582,31 @@ public class TrigToJsonTimeLineClimax {
      Float size = 1+Float.valueOf(((float)((5*climaxIndex.size()-5*climaxIndex.indexOf(sentenceNr))/(float)climaxIndex.size())));
      //
      */
-    static int countMentions (ArrayList<JSONObject> objects) {
-         int nMentions = 0;
+
+    static void createRawTextIndexFromMentions (ArrayList<JSONObject> objects, JSONObject timeLineObject) {
+        for (int i = 0; i < objects.size(); i++) {
+            JSONObject jsonObject = objects.get(i);
+            try {
+                JSONArray mentions = (JSONArray) jsonObject.get("mentions");
+                for (int j = 0; j < mentions.length(); j++) {
+                    JSONObject mObject  = mentions.getJSONObject(j);
+                    //System.out.println("mObject.toString() = " + mObject.toString());
+                    //mObject.toString() = {"char":["23","29"],"uri":["http://en.wikinews.org/wiki/Porsche_and_Volkswagen_automakers_agree_to_merger"]}
+                    //String uString = mObject.getString("uri");
+                    String uString = mObject.getJSONArray("uri").getString(0);
+                    JSONObject jsonSnippetObject = new JSONObject();
+                    jsonSnippetObject.put("uri", uString);
+                    jsonSnippetObject.put("text", "BLAHBLAH");
+                    timeLineObject.append("sources", jsonSnippetObject);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static int countMentions(ArrayList<JSONObject> objects) {
+        int nMentions = 0;
         for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject = objects.get(i);
             try {
@@ -1838,6 +1888,54 @@ public class TrigToJsonTimeLineClimax {
             e.printStackTrace();
         }
     }
+
+    static void writeJsonObjectArrayForQuery (String query,
+                                      String project,
+                                      ArrayList<JSONObject> objects) {
+        try {
+            try {
+                JSONObject timeLineObject = JsonEvent.createTimeLineProperty(query, project);
+                /*Set keySet = actorCount.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    Integer cnt = actorCount.get(key);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("name", key);
+                    jsonObject.put("event_count", cnt);
+                    timeLineObject.append("actors", jsonObject);
+                }*/
+                createRawTextIndexFromMentions(objects, timeLineObject);
+                timeLineObject.append("event_cnt", nEvents);
+                timeLineObject.append("story_cnt", nStories);
+                timeLineObject.append("actor_cnt", countActors(objects));
+                timeLineObject.append("mention_cnt", countMentions(objects));
+                for (int j = 0; j < objects.size(); j++) {
+                    JSONObject jsonObject = objects.get(j);
+                    try {
+                        timeLineObject.append("events", jsonObject);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                OutputStream jsonOut = new FileOutputStream( "./"+query + ".timeline.json");
+
+                String str = "{ \"timeline\":\n";
+                jsonOut.write(str.getBytes());
+                jsonOut.write(timeLineObject.toString(0).getBytes());
+                str ="}\n";
+                jsonOut.write(str.getBytes());
+                //// OR simply
+                //jsonOut.write(timeLineObject.toString().getBytes());
+                jsonOut.close();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     static void writeJsonObjectArray (String pathToFolder,
                                       String project,

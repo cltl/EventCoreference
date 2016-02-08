@@ -21,8 +21,8 @@ public class TrigKSTripleReader {
 
 
     final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
-    public static String user = "";
-    public static String pass = "";
+    public static String user = "nwr_partner";
+    public static String pass = "ks=2014!";
     //public static String authStr = user + ":" + pass;
 
     HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
@@ -42,7 +42,7 @@ public class TrigKSTripleReader {
                 "FILTER regex(str(?entlabel), \"^" + entityLabel + "$\") .\n" +
                 "?ent rdfs:label ?entlabel .\n" +
                 "?event sem:hasActor ?ent .\n" +
-                "} LIMIT 10 }\n" +
+                "} LIMIT 100 }\n" +
                 "?event ?relation ?object \n" +
                 "} ORDER BY ?event";
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
@@ -56,6 +56,7 @@ public class TrigKSTripleReader {
             String relString = solution.get("relation").toString();
             String currentEvent = solution.get("event").toString();
             Statement s = createStatement((Resource) solution.get("event"), ResourceFactory.createProperty(relString), solution.get("object"));
+          //  System.out.println("s.toString() = " + s.toString());
             if (isSemRelation(relString) || isESORelation(relString) || isFNRelation(relString) || isPBRelation(relString))
             {
                 otherRelations.add(s);
@@ -108,14 +109,14 @@ public class TrigKSTripleReader {
 
             }
             if (instanceRelations.size()>0){
-                trigTripleData.tripleMapInstances.put(oldEvent, instanceRelations);
+                trigTripleData.tripleMapInstances.put(rsrc, instanceRelations);
             }
             if (otherRelations.size()>0){
-                trigTripleData.tripleMapOthers.put(oldEvent, otherRelations);
+                trigTripleData.tripleMapOthers.put(rsrc, otherRelations);
             }
         }
-        //System.out.println(trigTripleData.tripleMapInstances.size());
-        //System.out.println(trigTripleData.tripleMapOthers.size());
+        System.out.println("instance statements = "+trigTripleData.tripleMapInstances.size());
+        System.out.println("sem statements = " + trigTripleData.tripleMapOthers.size());
         return trigTripleData;
     }
 
@@ -135,7 +136,15 @@ public class TrigKSTripleReader {
 
     static public void main(String[] args) {
         long startTime = System.currentTimeMillis();
-
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equalsIgnoreCase("--u") && args.length>(i+1)) {
+                user = args[i+1];
+            }
+            else if (arg.equalsIgnoreCase("--p") && args.length>(i+1)) {
+                pass = args[i+1];
+            }
+        }
         readTriplesFromKS("Airbus");
         long estimatedTime = System.currentTimeMillis() - startTime;
 
