@@ -187,11 +187,11 @@ public class TrigToJsonTimeLineClimax {
             if (!kslimit.isEmpty()) {
                 TrigKSTripleReader.limit = kslimit;
             }
-           // trigTripleData = TrigKSTripleReader.readTriplesFromKS(query);
+            trigTripleData = TrigKSTripleReader.readTriplesFromKS(query);
 
             //http://www.newsreader-project.eu/domain-ontology#translocation-source
             //http://www.newsreader-project.eu/ontologies/framenet/Cause_change_of_position_on_a_scale@Agent
-            trigTripleData = TrigKSTripleReader.readRoleTriplesFromKS(query, "domain-ontology");
+           // trigTripleData = TrigKSTripleReader.readRoleTriplesFromKS(query, "domain-ontology");
             long estimatedTime = System.currentTimeMillis() - startTime;
 
             System.out.println("Time elapsed:");
@@ -681,7 +681,8 @@ public class TrigToJsonTimeLineClimax {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
                 Double climax = Double.parseDouble(jsonObject.get("climax").toString());
-                Double proportion = Math.log(climax/maxClimax);
+               // Double proportion = Math.log(climax/maxClimax);
+                Double proportion = climax/maxClimax;
                 Integer climaxInteger = new Integer ((int)(100*proportion));
                 if (climaxInteger>=climaxThreshold) {
                //     System.out.println("climaxInteger = " + climaxInteger);
@@ -762,7 +763,8 @@ public class TrigToJsonTimeLineClimax {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
                 Double climax = Double.parseDouble(jsonObject.get("climax").toString());
-                Double proportion = Math.log(climax/maxClimax);
+               // Double proportion = Math.log(climax/maxClimax);
+                Double proportion = climax/maxClimax;
 
                 Integer climaxInteger = new Integer ((int)(100*proportion));
                 if (climaxInteger>=climaxThreshold) {
