@@ -521,6 +521,48 @@ public class CreateMicrostory {
         return coPartipantEvents;
     }
 
+    public static ArrayList<JSONObject> getEventsThroughCoparticipation(String entityFilter, ArrayList<JSONObject> events,
+                                                                 JSONObject event)
+            throws JSONException {
+        ArrayList<JSONObject> coPartipantEvents = new ArrayList<JSONObject>();
+        JSONObject actorObject = event.getJSONObject("actors");
+        Iterator keys = actorObject.sortedKeys();
+        while (keys.hasNext()) {
+            String key = keys.next().toString(); //role
+          //  System.out.println("key = " + key);
+            if (key.toLowerCase().startsWith("pb/")
+                    || key.toLowerCase().startsWith("fn/")
+                    || key.toLowerCase().startsWith("eso/")) {
+                JSONArray actors = actorObject.getJSONArray(key);
+                // System.out.println("actors.toString() = " + actors.toString());
+                for (int i = 0; i < events.size(); i++) {
+                    JSONObject oEvent = events.get(i);
+                    if (!oEvent.get("instance").toString().equals(event.get("instance").toString())) {
+                        ///skip event itself
+                        JSONObject oActorObject = oEvent.getJSONObject("actors");
+                        Iterator oKeys = oActorObject.sortedKeys();
+                        while (oKeys.hasNext()) {
+                            String oKey = oKeys.next().toString();
+                            if (oKey.toLowerCase().startsWith("pb/")
+                                    || oKey.toLowerCase().startsWith("fn/")
+                                    || oKey.toLowerCase().startsWith("eso/")) {
+                                JSONArray oActors = oActorObject.getJSONArray(oKey);
+                                // System.out.println("oActors.toString() = " + oActors.toString());
+                                if (intersectingActor(entityFilter, actors, oActors)) {
+                                    if (!coPartipantEvents.contains(oEvent)) {
+                                         coPartipantEvents.add(oEvent);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return coPartipantEvents;
+    }
+
     public static ArrayList<JSONObject> getEventsThroughCoparticipation(ArrayList<JSONObject> events,
                                                                         ArrayList<JSONObject> storyEvents)
                 throws JSONException {
@@ -581,6 +623,21 @@ public class CreateMicrostory {
                 String oActor = oActors.getString(k);
                 if (actor.equals(oActor)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static boolean intersectingActor (String entityFilter, JSONArray actors, JSONArray oActors) throws JSONException {
+        for (int j = 0; j < actors.length(); j++) {
+            String actor = actors.getString(j);
+            for (int k = 0; k < oActors.length(); k++) {
+                String oActor = oActors.getString(k);
+                if (actor.equals(oActor)) {
+                    if (actor.indexOf(entityFilter)==-1) {
+                        return true;
+                    }
                 }
             }
         }

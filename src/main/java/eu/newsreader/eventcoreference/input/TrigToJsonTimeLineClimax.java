@@ -45,12 +45,15 @@ public class TrigToJsonTimeLineClimax {
     static int nEvents = 0;
     static int nActors = 0;
     static int nStories = 0;
+    static String year = "";
 
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
         String project = "NewsReader storyline";
         String pathToILIfile = "";
         String query = "";
+        String ks = "";
+        String kslimit = "";
         String trigfolder = "";
         String trigfile = "";
         String pathToRawTextIndexFile = "";
@@ -71,6 +74,16 @@ public class TrigToJsonTimeLineClimax {
             }
             else if (arg.equals("--query") && args.length>(i+1)) {
                 query = args[i+1];
+                entityFilter = query;
+            }
+            else if (arg.equals("--year") && args.length>(i+1)) {
+                year = args[i+1];
+            }
+            else if (arg.equals("--ks") && args.length>(i+1)) {
+                ks = args[i+1];
+            }
+            else if (arg.equals("--ks-limit") && args.length>(i+1)) {
+                kslimit = args[i+1];
             }
             else if (arg.equals("--trig-file") && args.length>(i+1)) {
                 trigfile = args[i+1];
@@ -168,7 +181,17 @@ public class TrigToJsonTimeLineClimax {
         else if (!query.isEmpty()) {
             System.out.println("querying KnowledgeStore for stories = " + query);
             long startTime = System.currentTimeMillis();
-            trigTripleData = TrigKSTripleReader.readTriplesFromKS(query);
+            if (!ks.isEmpty()) {
+                TrigKSTripleReader.serviceEndpoint = ks;
+            }
+            if (!kslimit.isEmpty()) {
+                TrigKSTripleReader.limit = kslimit;
+            }
+           // trigTripleData = TrigKSTripleReader.readTriplesFromKS(query);
+
+            //http://www.newsreader-project.eu/domain-ontology#translocation-source
+            //http://www.newsreader-project.eu/ontologies/framenet/Cause_change_of_position_on_a_scale@Agent
+            trigTripleData = TrigKSTripleReader.readRoleTriplesFromKS(query, "domain-ontology");
             long estimatedTime = System.currentTimeMillis() - startTime;
 
             System.out.println("Time elapsed:");
@@ -461,75 +484,6 @@ public class TrigToJsonTimeLineClimax {
             else {
               //  System.out.println("No sem relations for = " + key);
             }
-
-            /*if (hasILI(instanceTriples) || hasFrameNet(instanceTriples) || ALL) {
-                if (trigTripleData.tripleMapOthers.containsKey( key)) {
-                    ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
-                    if (hasActor(otherTriples) || ALL) {
-                        /// we ignore events without actors.....
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("event", getValue(getSynsetsFromIli(key)));
-                       // jsonObject.put("instance", getValue(key));
-                        jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
-                        String timeAnchor = getTimeAnchor(otherTriples);
-                        int idx = timeAnchor.lastIndexOf("/");
-                        if (idx>-1) {
-                            timeAnchor = timeAnchor.substring(idx+1);
-                        }
-                        if (timeAnchor.length()==6) {
-                            //// this is a month so we pick the first day of the month
-                            timeAnchor+= "01";
-                        }if (timeAnchor.length()==4) {
-                            //// this is a year so we pick the first day of the year
-                            timeAnchor+= "0101";
-                        }
-                        if (timeAnchor.length()==3 || timeAnchor.length()==5 || timeAnchor.length()==7) {
-                            ///date error, e.g. 12-07-198"
-                            continue;
-                        }
-                        ///skipping historic events
-                        if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
-                            jsonObject.put("time", timeAnchor);
-
-                            JSONObject jsonClasses = getClassesJSONObjectFromInstanceStatement(instanceTriples);
-                            if (jsonClasses.keys().hasNext()) {
-                                /// TAKE THIS OUT TO SAVE SPACE
-                                  jsonObject.put("classes", jsonClasses);
-                            }
-
-                            if (fnLevel > 0) {
-                                getFrameNetSuperFramesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
-                            } else if (esoLevel > 0) {
-                                getEsoSuperClassesJSONObjectFromInstanceStatement(jsonObject, instanceTriples);
-                            }
-
-                            JSONObject jsonLabels = getLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                            if (jsonLabels.keys().hasNext()) {
-                                jsonObject.put("labels", jsonLabels.get("labels"));
-                            }
-                            JSONObject jsonprefLabels = getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                            if (jsonprefLabels.keys().hasNext()) {
-                                jsonObject.put("prefLabel", jsonprefLabels.get("prefLabel"));
-                            }
-                            JSONObject jsonMentions = getMentionsJSONObjectFromInstanceStatement(instanceTriples);
-                            if (jsonMentions.keys().hasNext()) {
-                                jsonObject.put("mentions", jsonMentions.get("mentions"));
-                            }
-                            JSONObject actors = getActorsJSONObjectFromInstanceStatement(otherTriples);
-                            if (actors.keys().hasNext()) {
-                                jsonObject.put("actors", actors);
-                            }
-                            JSONObject topics = getTopicsJSONObjectFromInstanceStatement(instanceTriples);
-                            if (topics.keys().hasNext()) {
-                              //  System.out.println("topics.length() = " + topics.length());
-                                jsonObject.put("topics", topics.get("topics"));
-                            }
-                            jsonObjectArrayList.add(jsonObject);
-                        }
-
-                    }
-                }
-            }*/
         }
         try {
 
@@ -727,7 +681,7 @@ public class TrigToJsonTimeLineClimax {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
                 Double climax = Double.parseDouble(jsonObject.get("climax").toString());
-                Double proportion = climax/maxClimax;
+                Double proportion = Math.log(climax/maxClimax);
                 Integer climaxInteger = new Integer ((int)(100*proportion));
                 if (climaxInteger>=climaxThreshold) {
                //     System.out.println("climaxInteger = " + climaxInteger);
@@ -808,7 +762,8 @@ public class TrigToJsonTimeLineClimax {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
                 Double climax = Double.parseDouble(jsonObject.get("climax").toString());
-                Double proportion = climax/maxClimax;
+                Double proportion = Math.log(climax/maxClimax);
+
                 Integer climaxInteger = new Integer ((int)(100*proportion));
                 if (climaxInteger>=climaxThreshold) {
                //     System.out.println("climaxInteger = " + climaxInteger);
@@ -1007,38 +962,6 @@ public class TrigToJsonTimeLineClimax {
     }
 
 
-/*    static void addObjectToGroup (ArrayList<JSONObject> groupObjects,
-                                  String groupName,
-                                  JSONObject object,
-                                  int divide) throws JSONException {
-        Float size = null;
-        object.put("group", groupName);
-        Double climax = 0.0;
-        try {
-            climax = Double.parseDouble(object.get("climax").toString());
-        } catch (NumberFormatException e) {
-          //  e.printStackTrace();
-        } catch (JSONException e) {
-          //  e.printStackTrace();
-        }
-        if (climax >= climaxThreshold) {
-            // size = 5 * Float.valueOf((float) (1.0 * climax / groupClimax));
-            try {
-                if (climax==0) {
-                    size = new Float(1);
-
-                }
-                else {
-                    size = Float.valueOf((float) (climax / divide));
-                }
-                object.put("size", size.toString());
-                groupObjects.add(object);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
-
     static void addObjectToGroup (ArrayList<JSONObject> groupObjects,
                                   String group, String groupName, String groupScore,
                                   JSONObject object,
@@ -1166,7 +1089,13 @@ public class TrigToJsonTimeLineClimax {
                         /////// FOR EXAMPLE OUTPUT
                     }
 
-                    ArrayList<JSONObject> coevents = CreateMicrostory.getEventsThroughCoparticipation(selectedEvents, jsonObject);
+                    ArrayList<JSONObject> coevents =  new ArrayList<JSONObject>();
+                    if (entityFilter.isEmpty()) {
+                        coevents = CreateMicrostory.getEventsThroughCoparticipation(selectedEvents, jsonObject);
+                    }
+                    else {
+                        coevents = CreateMicrostory.getEventsThroughCoparticipation(entityFilter, selectedEvents, jsonObject);
+                    }
                     //ArrayList<JSONObject> coevents = CreateMicrostory.getEventsThroughCoparticipation(selectedEvents, storyObjects);
                   //  System.out.println("coevents.size() = " + coevents.size());
                     ArrayList<JSONObject> topicevents = CreateMicrostory.getEventsThroughTopicBridging(selectedEvents, jsonObject, topicThreshold);
