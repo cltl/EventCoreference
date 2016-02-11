@@ -7,6 +7,7 @@ import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.atlas.logging.Log;
+import org.apache.tools.bzip2.CBZip2InputStream;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -137,28 +138,43 @@ public class GetSemFromNafFolder {
 
         ArrayList<File> files = Util.makeRecursiveFileList(new File(pathToNafFolder), extension);
         for (int i = 0; i < files.size(); i++) {
-            String pathToNafFile = files.get(i).getAbsolutePath();
+            File file = files.get(i);
+          //  String pathToNafFile = files.get(i).getAbsolutePath();
             ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
             ArrayList<SemObject> semActors = new ArrayList<SemObject>();
             ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
             ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
+           // System.out.println("files.get(i).getName() = " + files.get(i).getName());
             KafSaxParser kafSaxParser = new KafSaxParser();
-            //kafSaxParser.parseFile(pathToNafFile);
-            if (!pathToNafFile.toLowerCase().endsWith(".gz")) {
-                kafSaxParser.parseFile(pathToNafFile);
-            }
-            else {
+            if (file.getName().toLowerCase().endsWith(".gz")) {
                 try {
-                    InputStream fileStream = new FileInputStream(pathToNafFile);
+                    InputStream fileStream = new FileInputStream(file);
                     InputStream gzipStream = new GZIPInputStream(fileStream);
                     kafSaxParser.parseFile(gzipStream);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            //    BufferedReader br2 = new BufferedReader(new InputStreamReader(input));
+            //InputStream is = new CBZip2InputStream(new ByteArrayInputStream(bzip2));
+
+            else if (file.getName().toLowerCase().endsWith(".bz2")) {
+                try {
+                    InputStream fileStream = new FileInputStream(file);
+                    InputStream gzipStream = new CBZip2InputStream(fileStream);
+                  //  InputStream gzipStream = new GZIPInputStream(fileStream);
+
+                    kafSaxParser.parseFile(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+               kafSaxParser.parseFile(file);
+            }
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
-                System.out.println("file.getName() = " + new File(pathToNafFile).getName());
-                kafSaxParser.getKafMetaData().setUrl(new File (pathToNafFile).getName());
+                System.out.println("file.getName() = " + file.getName());
+                kafSaxParser.getKafMetaData().setUrl(file.getName());
                 System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
             }
             GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
@@ -184,7 +200,7 @@ public class GetSemFromNafFolder {
                         System.out.println("myRelations = " + myRelations.size());
                     }
                 }
-                String pathToTrigFile = pathToNafFile + ".trig";
+                String pathToTrigFile = file.getAbsolutePath() + ".trig";
                 OutputStream fos = new FileOutputStream(pathToTrigFile);
                 if (!PERSPECTIVE) {
                     JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, ILIURI, VERBOSE);
