@@ -56,7 +56,7 @@ public class TrigKSTripleReader {
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
-                "SELECT ?event ?relation ?object ?indatetime \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
                 "WHERE {\n" +
                 "{SELECT distinct ?event WHERE { \n" +
                 "FILTER regex(str(?entlabel), \"^" + entityLabel + "$\") .\n" +
@@ -69,7 +69,6 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        //System.out.println(sparqlQuery);
 
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
@@ -87,7 +86,7 @@ public class TrigKSTripleReader {
                 otherRelations.add(s);
                 if (isSemTimeRelation(relString)) {
                     if (solution.get("indatetime")!=null){
-
+//                            System.out.println("in " + solution.get("indatetime"));
                         String uri = ((Resource) obj).getURI();
                         Statement s2 = createStatement((Resource) obj, inDateTimeProperty, solution.get("indatetime"));
                         if (trigTripleData.tripleMapInstances.containsKey(uri)) {
@@ -102,6 +101,7 @@ public class TrigKSTripleReader {
                     }
                     else {
                         if (solution.get("begintime")!=null){
+//                            System.out.println("begin " + solution.get("begintime"));
                             String uri = ((Resource) obj).getURI();
                             Statement s2 = createStatement((Resource) obj, beginTimeProperty, solution.get("begintime"));
                             if (trigTripleData.tripleMapInstances.containsKey(uri)) {
@@ -115,6 +115,7 @@ public class TrigKSTripleReader {
                             }
                         }
                         else if (solution.get("endtime")!=null) {
+//                            System.out.println("end " + solution.get("endtime"));
                             String uri = ((Resource) obj).getURI();
                             Statement s2 = createStatement((Resource) solution.get("object"), endTimeProperty, solution.get("endtime"));
                             if (trigTripleData.tripleMapInstances.containsKey(uri)) {
@@ -244,7 +245,7 @@ public class TrigKSTripleReader {
             }
         }
 
-        readTriplesFromKS("Italy", "eso");
+        readTriplesFromKS("Airbus", "");
         long estimatedTime = System.currentTimeMillis() - startTime;
 
         System.out.println("Time elapsed:");
