@@ -4,12 +4,13 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import org.apache.jena.atlas.web.auth.HttpAuthenticator;
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
-import java.util.HashSet;
+
 import java.util.ArrayList;
 
 import static com.hp.hpl.jena.rdf.model.ResourceFactory.createStatement;
@@ -25,7 +26,7 @@ public class TrigKSTripleReader {
     //public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
-    public static String limit = "10";
+    public static String limit = "1000";
     //public static String authStr = user + ":" + pass;
 
     HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
@@ -40,6 +41,9 @@ public class TrigKSTripleReader {
 
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 
+        String relString2 = "http://www.w3.org/TR/owl-time#inDateTime";
+        Property inDateTimeProperty = ResourceFactory.createProperty(relString2);
+
         System.out.println("Filter  " +  filter);
         String eventFilter = "";
         if (filter.equals("eso")){
@@ -51,9 +55,10 @@ public class TrigKSTripleReader {
         }
 
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
-                "SELECT ?event ?relation ?object \n" +
+                "SELECT ?event ?relation ?object ?indatetime \n" +
                 "WHERE {\n" +
                 "{SELECT distinct ?event WHERE { \n" +
                 "FILTER regex(str(?entlabel), \"^" + entityLabel + "$\") .\n" +
@@ -61,7 +66,8 @@ public class TrigKSTripleReader {
                 "?event sem:hasActor ?ent .\n" +
                 eventFilter +
                 "} LIMIT "+limit+" }\n" +
-                "?event ?relation ?object \n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object owltime:inDateTime ?indatetime }\n" +
                 "} ORDER BY ?event";
         System.out.println(sparqlQuery);
 
@@ -70,7 +76,7 @@ public class TrigKSTripleReader {
         String oldEvent="";
         ArrayList<Statement> instanceRelations = new ArrayList<Statement>();
         ArrayList<Statement> otherRelations = new ArrayList<Statement>();
-        HashSet<String> objectSet = new HashSet<String>();
+//        HashSet<String> objectSet = new HashSet<String>();
         while (resultset.hasNext()) {
             QuerySolution solution = resultset.nextSolution();
             String relString = solution.get("relation").toString();
@@ -80,8 +86,16 @@ public class TrigKSTripleReader {
             if (isSemRelation(relString) || isESORelation(relString) || isFNRelation(relString) || isPBRelation(relString))
             {
                 otherRelations.add(s);
-                if (isSemTimeRelation(relString)) {
-                    objectSet.add(solution.get("object").toString());
+                if (isSemTimeRelation(relString) && solution.get("indatetime")!=null) {
+//                    objectSet.add(solution.get("object").toString());
+//                    System.out.println(solution.get("indatetime"));
+                    Statement s2 = createStatement((Resource) solution.get("object"), inDateTimeProperty, solution.get("indatetime"));
+                    ArrayList<Statement> tmxInstanceRelations = new ArrayList<Statement>();
+                    tmxInstanceRelations.add(s2);
+                    trigTripleData.tripleMapInstances.put(solution.get("object").toString(), tmxInstanceRelations);
+                }
+                else if (isSemTimeRelation(relString)){
+                    System.out.println(solution.get("object"));
                 }
             }
             else // Instances
@@ -104,6 +118,10 @@ public class TrigKSTripleReader {
             oldEvent=currentEvent;
         }
 
+        //System.out.println("Level 1 done");
+        // Now we go to the second level!!! //
+
+        /*
         //// get owltime:inDateTime
         for(String rsrc : objectSet) {
             instanceRelations = new ArrayList<Statement>();
@@ -125,9 +143,7 @@ public class TrigKSTripleReader {
                 trigTripleData.tripleMapInstances.put(rsrc, instanceRelations);
             }
         }
-
-        //System.out.println("Level 1 done");
-        // Now we go to the second level!!! //
+*/
 
    /*     for(String rsrc : objectSet) {
             instanceRelations = new ArrayList<Statement>();
