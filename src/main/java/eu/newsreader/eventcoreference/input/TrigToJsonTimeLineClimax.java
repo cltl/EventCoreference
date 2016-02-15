@@ -187,7 +187,7 @@ public class TrigToJsonTimeLineClimax {
             if (!kslimit.isEmpty()) {
                 TrigKSTripleReader.limit = kslimit;
             }
-            trigTripleData = TrigKSTripleReader.readTriplesFromKS(query);
+            trigTripleData = TrigKSTripleReader.readTriplesFromKS(query, "eso");
 
             //http://www.newsreader-project.eu/domain-ontology#translocation-source
             //http://www.newsreader-project.eu/ontologies/framenet/Cause_change_of_position_on_a_scale@Agent

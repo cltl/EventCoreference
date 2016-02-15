@@ -21,20 +21,34 @@ public class TrigKSTripleReader {
 
 
     //final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
-    //public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
-    public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/sparql";
+    public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
+    //public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
-    public static String limit = "100";
+    public static String limit = "1000";
     //public static String authStr = user + ":" + pass;
 
     HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 
 
     static TrigTripleData readTriplesFromKS(String entityLabel){
+        return readTriplesFromKS(entityLabel, "");
+    }
+
+    static TrigTripleData readTriplesFromKS(String entityLabel, String filter){
         TrigTripleData trigTripleData = new TrigTripleData();
 
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
+
+        System.out.println("Filter  " +  filter);
+        String eventFilter = "";
+        if (filter.equals("eso")){
+            eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
+                    "?type <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.newsreader-project.eu/domain-ontology#> . }\n";
+        } else if (filter.equals("fn")){
+            eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
+                    "?type <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.newsreader-project.eu/ontologies/framenet/> . }\n";
+        }
 
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
@@ -45,9 +59,12 @@ public class TrigKSTripleReader {
                 "FILTER regex(str(?entlabel), \"^" + entityLabel + "$\") .\n" +
                 "?ent rdfs:label ?entlabel .\n" +
                 "?event sem:hasActor ?ent .\n" +
+                eventFilter +
                 "} LIMIT "+limit+" }\n" +
                 "?event ?relation ?object \n" +
                 "} ORDER BY ?event";
+        System.out.println(sparqlQuery);
+
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
         String oldEvent="";
@@ -242,7 +259,8 @@ public class TrigKSTripleReader {
                 pass = args[i+1];
             }
         }
-        readTriplesFromKS("Airbus");
+
+        readTriplesFromKS("Airbus", "");
         long estimatedTime = System.currentTimeMillis() - startTime;
 
         System.out.println("Time elapsed:");
