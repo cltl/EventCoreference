@@ -4,10 +4,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.*;
 import org.apache.jena.atlas.web.auth.HttpAuthenticator;
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
 
@@ -41,10 +38,11 @@ public class TrigKSTripleReader {
 
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 
-        String relString2 = "http://www.w3.org/TR/owl-time#inDateTime";
-        Property inDateTimeProperty = ResourceFactory.createProperty(relString2);
+        Property inDateTimeProperty = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time#inDateTime");
+        Property beginTimeProperty = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time#hasBeginning");
+        Property endTimeProperty = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time#hasEnd");
 
-        System.out.println("Filter  " +  filter);
+
         String eventFilter = "";
         if (filter.equals("eso")){
             eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
@@ -67,35 +65,69 @@ public class TrigKSTripleReader {
                 eventFilter +
                 "} LIMIT "+limit+" }\n" +
                 "?event ?relation ?object .\n" +
-                "OPTIONAL { ?object owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        System.out.println(sparqlQuery);
+        //System.out.println(sparqlQuery);
 
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
         String oldEvent="";
         ArrayList<Statement> instanceRelations = new ArrayList<Statement>();
         ArrayList<Statement> otherRelations = new ArrayList<Statement>();
-//        HashSet<String> objectSet = new HashSet<String>();
         while (resultset.hasNext()) {
             QuerySolution solution = resultset.nextSolution();
             String relString = solution.get("relation").toString();
             String currentEvent = solution.get("event").toString();
-            Statement s = createStatement((Resource) solution.get("event"), ResourceFactory.createProperty(relString), solution.get("object"));
-          //  System.out.println("s.toString() = " + s.toString());
-            if (isSemRelation(relString) || isESORelation(relString) || isFNRelation(relString) || isPBRelation(relString))
+            RDFNode obj = solution.get("object");
+            Statement s = createStatement((Resource) solution.get("event"), ResourceFactory.createProperty(relString), obj);
+            if (isSemRelation(relString))
             {
                 otherRelations.add(s);
-                if (isSemTimeRelation(relString) && solution.get("indatetime")!=null) {
-//                    objectSet.add(solution.get("object").toString());
-//                    System.out.println(solution.get("indatetime"));
-                    Statement s2 = createStatement((Resource) solution.get("object"), inDateTimeProperty, solution.get("indatetime"));
-                    ArrayList<Statement> tmxInstanceRelations = new ArrayList<Statement>();
-                    tmxInstanceRelations.add(s2);
-                    trigTripleData.tripleMapInstances.put(solution.get("object").toString(), tmxInstanceRelations);
-                }
-                else if (isSemTimeRelation(relString)){
-                    System.out.println(solution.get("object"));
+                if (isSemTimeRelation(relString)) {
+                    if (solution.get("indatetime")!=null){
+
+                        String uri = ((Resource) obj).getURI();
+                        Statement s2 = createStatement((Resource) obj, inDateTimeProperty, solution.get("indatetime"));
+                        if (trigTripleData.tripleMapInstances.containsKey(uri)) {
+                            ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(uri);
+                            triples.add(s2);
+                            trigTripleData.tripleMapInstances.put(uri, triples);
+                        } else {
+                            ArrayList<Statement> triples = new ArrayList<Statement>();
+                            triples.add(s2);
+                            trigTripleData.tripleMapInstances.put(uri, triples);
+                        }
+                    }
+                    else {
+                        if (solution.get("begintime")!=null){
+                            String uri = ((Resource) obj).getURI();
+                            Statement s2 = createStatement((Resource) obj, beginTimeProperty, solution.get("begintime"));
+                            if (trigTripleData.tripleMapInstances.containsKey(uri)) {
+                                ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(uri);
+                                triples.add(s2);
+                                trigTripleData.tripleMapInstances.put(uri, triples);
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                triples.add(s2);
+                                trigTripleData.tripleMapInstances.put(uri, triples);
+                            }
+                        }
+                        else if (solution.get("endtime")!=null) {
+                            String uri = ((Resource) obj).getURI();
+                            Statement s2 = createStatement((Resource) solution.get("object"), endTimeProperty, solution.get("endtime"));
+                            if (trigTripleData.tripleMapInstances.containsKey(uri)) {
+                                ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(uri);
+                                triples.add(s2);
+                                trigTripleData.tripleMapInstances.put(uri, triples);
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                triples.add(s2);
+                                trigTripleData.tripleMapInstances.put(uri, triples);
+                            }
+                        }
+                    }
                 }
             }
             else // Instances
@@ -212,7 +244,7 @@ public class TrigKSTripleReader {
             }
         }
 
-        readTriplesFromKS("Airbus", "");
+        readTriplesFromKS("Italy", "eso");
         long estimatedTime = System.currentTimeMillis() - startTime;
 
         System.out.println("Time elapsed:");
