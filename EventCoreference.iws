@@ -5,118 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="445384b5-3667-4928-9720-8c2fa43cd0aa" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/pom.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/EventCoreference-1.0-SNAPSHOT-jar-with-dependencies.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/EventCoreference-1.0-SNAPSHOT.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/ChainCorefSets.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/ComponentMatch.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/Scoring.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/evaluation/EvaluateCorefs.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/CorefSaxParser.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/EsoReader.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/FrameNetReader.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEntityCounts.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEntityStats.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEsoCounts.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEventStats.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/NarrativeChains.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/RdfReader.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SelectEntityTrig.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SemDomParser.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SesameTrigReader.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLine.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLineClimax$climaxCompare.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLineClimax.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigUtil.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ClusterEventObjects.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/CreateMicrostory.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefSingletonBaseline.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile$PerspectiveStats.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNaf.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects_org.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/Naf2SemTest.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/NafObjectToSemTest.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ParcAttributionTask.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ProcessEventObjectsStream.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ResourcesUri.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/AgataMention.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CoRefSetAgata.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CompositeEvent.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefMatch.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefResultSet.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefTargetAgata.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/JsonEvent.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/NafMention.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/OwlTime.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PerspectiveObject.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PhraseCount$Compare.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PhraseCount.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/Sem.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemActor.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemEvent.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemObject.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemPlace.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemRelation.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemTime.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SourceMeta.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/TimeTypes.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/Triple.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/NodeData.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/OwlReader.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/RdfSense.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/Tree.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/TreeNode.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CombineCorefOutputPerEvent.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CorefSetToSem.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CoreferenceBaseline.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/DocumentToCorpusCoreferences.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/FixSynsetReferences.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/MergeDocumentToCorpusCoreferencesByLemma.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/pwn/ILIReader.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/pwn/PwnSaxParser.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/timeline/EntityTimeLine.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Anaphor.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Clusterer.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/CompareTrigFiles.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/EntityTypes.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/EventTypes.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FilterCorefSets.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FixUri.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FrameTypes.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/LabelCount.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/RemoveEventCoreferences.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/RoleLabels.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/SemUtilObject.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/SplitTechCrunch.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Statistics.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/TimeLanguage.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util$AppendableObjectOutputStream.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/trigs/4DH5-8HM0-00BT-N3MS.xml.1a212o4ft.xml.trig" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/trigs/9549_Reactions_to_Apple.naf.trig" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/MentionResolver.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigKSTripleReader.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigStatsReader.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigTripleData.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigTripleReader.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iws" afterPath="$PROJECT_DIR$/EventCoreference.iws" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/MentionResolver.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/MentionResolver.java" />
@@ -208,11 +101,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MentionResolver.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MentionResolver.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/MentionResolver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6421515">
+            <state vertical-scroll-proportion="0.0">
               <caret line="75" column="34" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.45827985">
+              <caret line="21" column="8" selection-start-line="21" selection-start-column="8" selection-end-line="21" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -320,13 +223,21 @@
     </option>
   </component>
   <component name="MavenProjectNavigator">
-    <treeState />
+    <treeState>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+      </PATH>
+    </treeState>
   </component>
   <component name="MavenRunner">
     <option name="runMavenInBackground" value="false" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
+    <option name="x" value="57" />
+    <option name="y" value="38" />
     <option name="width" value="1863" />
     <option name="height" value="1032" />
   </component>
@@ -377,10 +288,150 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eventcoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eventcoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="naf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eventcoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="input" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -938,12 +989,6 @@
       <option name="number" value="Default" />
       <updated>1382608862052</updated>
     </task>
-    <task id="LOCAL-00163" summary="-- bug fix: entity URI was based on the first result but some versions of dbspotlight list them in reverse order. Now the top scoring URI is taken">
-      <created>1433016149426</created>
-      <option name="number" value="00163" />
-      <option name="project" value="LOCAL" />
-      <updated>1433016149427</updated>
-    </task>
     <task id="LOCAL-00164" summary="--- timelines">
       <created>1434270437574</created>
       <option name="number" value="00164" />
@@ -1232,18 +1277,24 @@
       <option name="project" value="LOCAL" />
       <updated>1455524830129</updated>
     </task>
-    <option name="localTasksCounter" value="212" />
+    <task id="LOCAL-00212" summary="Merge branch 'master' of https://github.com/cltl/EventCoreference&#10;&#10;# Conflicts:&#10;#&#9;target/EventCoreference-1.0-SNAPSHOT-jar-with-dependencies.jar&#10;#&#9;target/EventCoreference-1.0-SNAPSHOT.jar&#10;#&#9;target/classes/eu/newsreader/eventcoreference/coref/ComponentMatch.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/CorefSaxParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/EsoReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/FrameNetReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEntityCounts.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEntityStats.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEsoCounts.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEventStats.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader$1.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader2.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SelectEntityTrig.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SemDomParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SesameTrigReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLine.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLineClimax.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigUtil.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ClusterEventObjects.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/CreateMicrostory.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefSingletonBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects_org.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ParcAttributionTask.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ProcessEventObjectsStream.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ResourcesUri.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/CompositeEvent.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/CorefResultSet.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/OwlTime.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/PerspectiveObject.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/Sem.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemEvent.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemObject.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemPlace.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemRelation.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemTime.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/ontology/thesis/NodeData.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/ontology/thesis/Tree.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CorefSetToSem.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CoreferenceBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/FixSynsetReferences.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/pwn/PwnSaxParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Anaphor.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/CompareTrigFiles.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/FrameTypes.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/RoleLabels.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Statistics.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Util.class&#10;#&#9;target/maven-archiver/pom.properties&#10;">
+      <created>1455529596124</created>
+      <option name="number" value="00212" />
+      <option name="project" value="LOCAL" />
+      <updated>1455529596125</updated>
+    </task>
+    <option name="localTasksCounter" value="213" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1863" height="1032" extended-state="0" />
+    <frame x="57" y="38" width="1863" height="1032" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25783476" sideWeight="0.50104165" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16584295" sideWeight="0.95652175" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1674904" sideWeight="0.95652175" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12988506" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1260,7 +1311,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39970502" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1049936" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1696905" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28708646" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12379936" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1309,8 +1360,6 @@
     <option name="PERFORM_UPDATE_IN_BACKGROUND" value="false" />
     <option name="PERFORM_COMMIT_IN_BACKGROUND" value="false" />
     <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="true" />
-    <MESSAGE value="-- fixexternal reference without english" />
-    <MESSAGE value="-- bug fix: entity URI was based on the first result but some versions of dbspotlight list them in reverse order. Now the top scoring URI is taken" />
     <MESSAGE value="--- timelines" />
     <MESSAGE value="---trig stats on events" />
     <MESSAGE value="-- patch for wrong entity types Dutch pipelines" />
@@ -1334,7 +1383,9 @@
     <MESSAGE value="-- EventCorefWordnetSim class was deleted by accident" />
     <MESSAGE value="-- working on storylines" />
     <MESSAGE value="-- stories" />
-    <option name="LAST_COMMIT_MESSAGE" value="-- stories" />
+    <MESSAGE value="Merge branch 'master' of https://github.com/cltl/EventCoreference&#10;&#10;" />
+    <MESSAGE value="Merge branch 'master' of https://github.com/cltl/EventCoreference&#10;&#10;# Conflicts:&#10;#&#9;target/EventCoreference-1.0-SNAPSHOT-jar-with-dependencies.jar&#10;#&#9;target/EventCoreference-1.0-SNAPSHOT.jar&#10;#&#9;target/classes/eu/newsreader/eventcoreference/coref/ComponentMatch.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/CorefSaxParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/EsoReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/FrameNetReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEntityCounts.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEntityStats.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEsoCounts.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEventStats.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader$1.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader2.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SelectEntityTrig.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SemDomParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SesameTrigReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLine.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLineClimax.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigUtil.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ClusterEventObjects.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/CreateMicrostory.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefSingletonBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects_org.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ParcAttributionTask.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ProcessEventObjectsStream.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ResourcesUri.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/CompositeEvent.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/CorefResultSet.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/OwlTime.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/PerspectiveObject.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/Sem.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemEvent.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemObject.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemPlace.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemRelation.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemTime.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/ontology/thesis/NodeData.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/ontology/thesis/Tree.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CorefSetToSem.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CoreferenceBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/FixSynsetReferences.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/pwn/PwnSaxParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Anaphor.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/CompareTrigFiles.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/FrameTypes.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/RoleLabels.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Statistics.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Util.class&#10;#&#9;target/maven-archiver/pom.properties&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'master' of https://github.com/cltl/EventCoreference&#10;&#10;# Conflicts:&#10;#&#9;target/EventCoreference-1.0-SNAPSHOT-jar-with-dependencies.jar&#10;#&#9;target/EventCoreference-1.0-SNAPSHOT.jar&#10;#&#9;target/classes/eu/newsreader/eventcoreference/coref/ComponentMatch.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/CorefSaxParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/EsoReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/FrameNetReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEntityCounts.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEntityStats.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEsoCounts.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/GetEventStats.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader$1.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/OwlReader2.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SelectEntityTrig.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SemDomParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/SesameTrigReader.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLine.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigToJsonTimeLineClimax.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/input/TrigUtil.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ClusterEventObjects.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/CreateMicrostory.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefSingletonBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects_org.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ParcAttributionTask.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ProcessEventObjectsStream.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/naf/ResourcesUri.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/CompositeEvent.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/CorefResultSet.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/OwlTime.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/PerspectiveObject.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/Sem.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemEvent.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemObject.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemPlace.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemRelation.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/objects/SemTime.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/ontology/thesis/NodeData.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/ontology/thesis/Tree.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CorefSetToSem.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/CoreferenceBaseline.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/FixSynsetReferences.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/pwn/PwnSaxParser.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Anaphor.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/CompareTrigFiles.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/FrameTypes.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/RoleLabels.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Statistics.class&#10;#&#9;target/classes/eu/newsreader/eventcoreference/util/Util.class&#10;#&#9;target/maven-archiver/pom.properties&#10;" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1348,6 +1399,14 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/KyotoKafSaxParser/KyotoKafSaxParser/1.0/KyotoKafSaxParser-1.0.jar!/eu/kyotoproject/kaf/KafCoreferenceSet.class">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.35321102">
@@ -1619,9 +1678,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="349" column="49" selection-start-line="349" selection-start-column="49" selection-end-line="349" selection-end-column="49" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1629,9 +1685,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="117" column="1" selection-start-line="117" selection-start-column="1" selection-end-line="117" selection-end-column="1" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1639,9 +1692,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="550" column="68" selection-start-line="550" selection-start-column="68" selection-end-line="550" selection-end-column="68" />
-          <folding>
-            <element signature="e#26534#26546#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1649,7 +1699,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="146" column="13" selection-start-line="146" selection-start-column="13" selection-end-line="146" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1657,7 +1706,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="16" column="32" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1673,7 +1721,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="183" column="16" selection-start-line="183" selection-start-column="16" selection-end-line="183" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1681,7 +1728,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="19" column="26" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1701,18 +1747,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/MentionResolver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.80744547">
-          <caret line="37" column="15" selection-start-line="37" selection-start-column="15" selection-end-line="37" selection-end-column="15" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="75" column="34" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/MentionResolver.java">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6421515">
-          <caret line="75" column="34" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.45827985">
+          <caret line="21" column="8" selection-start-line="21" selection-start-column="8" selection-end-line="21" selection-end-column="8" />
           <folding />
         </state>
       </provider>

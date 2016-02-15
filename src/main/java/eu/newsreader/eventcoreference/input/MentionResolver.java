@@ -7,6 +7,11 @@ import com.hp.hpl.jena.query.ResultSet;
 import org.apache.jena.atlas.web.auth.HttpAuthenticator;
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashSet;
 
 /**
@@ -57,6 +62,34 @@ public class MentionResolver {
 
     }*/
 
+
+
+    private static String getNafFile(String urlString, String fileName) throws Exception {
+
+        URLConnection request = new URL(urlString).openConnection();
+        InputStream in = request.getInputStream();
+
+//        File downloadedFile = File.createTempFile("tempfile", "txt");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        FileOutputStream out = new FileOutputStream(fileName);
+        byte[] buffer = new byte[1024];
+        int len = in.read(buffer);
+        while (len != -1) {
+            out.write(buffer, 0, len);
+            len = in.read(buffer);
+            if (Thread.interrupted()) {
+                throw new InterruptedException();
+            }
+        }
+        in.close();
+        out.close();
+        byte[] response = out.toByteArray();
+
+        FileOutputStream fos = new FileOutputStream(fileName);
+        fos.write(response);
+        fos.close();
+        return "success";
+    }
 
     static void readRawTextFromKS(String docId){
         TrigTripleData trigTripleData = new TrigTripleData();

@@ -420,7 +420,7 @@ public class TrigToJsonTimeLineClimax {
                     // jsonObject.put("instance", getValue(key));
                     jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
                     String timeAnchor = getTimeAnchor(otherTriples);
-                   // System.out.println("timeAnchor = " + timeAnchor);
+                    System.out.println("timeAnchor = " + timeAnchor);
                     int idx = timeAnchor.lastIndexOf("/");
                     if (idx>-1) {
                         timeAnchor = timeAnchor.substring(idx+1);
