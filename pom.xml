@@ -47,7 +47,7 @@
         <dependency>
             <groupId>WordnetTools</groupId>
             <artifactId>WordnetTools</artifactId>
-            <version>1.0</version>
+            <version>3.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>KyotoKafSaxParser</groupId>
             <artifactId>KyotoKafSaxParser</artifactId>
-            <version>1.0</version>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>

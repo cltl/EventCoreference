@@ -20,10 +20,7 @@
     <orderEntry type="library" name="Maven: net.sourceforge.owlapi:owlapi-tools:3.4.10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.felix:org.osgi.core:1.4.0" level="project" />
     <orderEntry type="library" name="Maven: net.sourceforge.owlapi:owlapi-contract:3.4.10" level="project" />
-    <orderEntry type="library" name="Maven: WordnetTools:WordnetTools:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.json:json:20090211" level="project" />
-    <orderEntry type="library" name="Maven: KyotoKafSaxParser:KyotoKafSaxParser:1.0" level="project" />
-    <orderEntry type="library" name="Maven: ant:ant:1.6.5" level="project" />
+    <orderEntry type="library" name="Maven: WordnetTools:WordnetTools:3.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jena:jena-tdb:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jena:jena-arq:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jena:jena-core:2.11.0" level="project" />
@@ -37,6 +34,8 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.2.2" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.6" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.6.4" level="project" />
+    <orderEntry type="library" name="Maven: org.json:json:20090211" level="project" />
+    <orderEntry type="library" name="Maven: KyotoKafSaxParser:KyotoKafSaxParser:3.0" level="project" />
     <orderEntry type="library" name="Maven: org.openrdf.sesame:sesame-rio-rdfxml:2.7.9" level="project" />
     <orderEntry type="library" name="Maven: org.openrdf.sesame:sesame-model:2.7.9" level="project" />
     <orderEntry type="library" name="Maven: org.openrdf.sesame:sesame-util:2.7.9" level="project" />
