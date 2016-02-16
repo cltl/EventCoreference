@@ -1,5 +1,32 @@
 EventCoreference
 ================
+version 3.0
+Copyright: VU University Amsterdam
+email: piek.vossen@vu.nl
 
+DESCRIPTION
 Compares descriptions of events within and across documents to decide if they refer to the same events.
-Edit
+It creates an event-coreference layer within NAF for within document coreference and it creates RDF-TRiG according
+to the SEM and GRASP model for cross-document coreference.
+
+
+SOURCE CODE:
+
+https://github.com/cltl/EventCoreference
+
+The binaries can be built using maven and the pom.xml
+
+> mvn install
+
+REQUIREMENTS
+EventCoreference is developed in Java 1.6 and can run on any platform that supports Java 1.6
+
+LICENSE
+    EventCoreference is free software: you can redistribute it and/or modify
+    it under the terms of the The Apache License, Version 2.0:
+        http://www.apache.org/licenses/LICENSE-2.0.txt.
+
+    EventCoreference is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.

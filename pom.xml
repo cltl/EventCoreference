@@ -3,11 +3,40 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>EventCoreference</groupId>
+    <groupId>eu.newsreaderproject.EventCoreference</groupId>
     <artifactId>EventCoreference</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.0</version>
+    <packaging>jar</packaging>
+    <name>EventCoreference and NAF2SEM-GRASP</name>
+    <description>Reads NewsReader NAF files and creates event coreference relations in NAF or RDF-TRiG according to the NewsReader SEM and GRASP model.</description>
+    <url>http://www.newsreader-project.eu</url>
+    <scm>
+        <connection>scm:git:git@github.com/cltl/EventCoreference</connection>
+        <developerConnection>scm:git:git@github.com/cltl/EventCoreference</developerConnection>
+        <url>git@github.com/cltl/EventCoreferencet</url>
+    </scm>
 
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Piek Vossen</name>
+            <email>piekvossen@gmail.com</email>
+            <organization>VU University Amsterdam</organization>
+            <organizationUrl>http://www.cltl.nl</organizationUrl>
+        </developer>
+        <developer>
+            <name>Filip Ilievski</name>
+            <email>filip.dbrsk@gmail.com</email>
+            <organization>VU University Amsterdam</organization>
+            <organizationUrl>http://www.cltl.nl</organizationUrl>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
@@ -18,7 +47,7 @@
         <dependency>
             <groupId>WordnetTools</groupId>
             <artifactId>WordnetTools</artifactId>
-            <version>1.0</version>
+            <version>3.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -38,9 +67,9 @@
             <version>20090211</version>
         </dependency>
         <dependency>
-            <groupId>KyotoKafSaxParser</groupId>
+            <groupId>eu.kyotoproject.KyotoKafSaxParser</groupId>
             <artifactId>KyotoKafSaxParser</artifactId>
-            <version>1.0</version>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
@@ -67,6 +96,11 @@
             <groupId>com.cedarsoftware</groupId>
             <artifactId>json-io</artifactId>
             <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>EventCoreference</groupId>
+            <artifactId>EventCoreference</artifactId>
+            <version>3.0</version>
         </dependency>
 
     </dependencies>
