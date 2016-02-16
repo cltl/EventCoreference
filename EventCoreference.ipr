@@ -446,6 +446,17 @@
     </option>
   </component>
   <component name="libraryTable">
+    <library name="Maven: ant:ant:1.6.5">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: com.cedarsoftware:json-io:3.0.1">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/cedarsoftware/json-io/3.0.1/json-io-3.0.1.jar!/" />
@@ -477,6 +488,28 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.4/commons-io-2.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: eu.kyotoproject.KyotoKafSaxParser:KyotoKafSaxParser:3.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/eu/kyotoproject/KyotoKafSaxParser/KyotoKafSaxParser/3.0/KyotoKafSaxParser-3.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/eu/kyotoproject/KyotoKafSaxParser/KyotoKafSaxParser/3.0/KyotoKafSaxParser-3.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/eu/kyotoproject/KyotoKafSaxParser/KyotoKafSaxParser/3.0/KyotoKafSaxParser-3.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: EventCoreference:EventCoreference:3.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/EventCoreference/EventCoreference/3.0/EventCoreference-3.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/EventCoreference/EventCoreference/3.0/EventCoreference-3.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/EventCoreference/EventCoreference/3.0/EventCoreference-3.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: KyotoKafSaxParser:KyotoKafSaxParser:3.0">

@@ -84,7 +84,11 @@ public class MentionResolver {
         in.close();
         out.close();
         byte[] response = out.toByteArray();
-
+/*
+        KafSaxParser kafSaxParser = new KafSaxParser();
+        kafSaxParser.parseFile(out.toString());
+        System.out.println("kafSaxParser.rawText = " + kafSaxParser.rawText);
+*/
         FileOutputStream fos = new FileOutputStream(fileName);
         fos.write(response);
         fos.close();
@@ -106,7 +110,23 @@ public class MentionResolver {
     }
      //https://knowledgestore2.fbk.eu/nwr/cars3/files?id=http%3A%2F%2Fwww.newsreader-project.eu%2Fdata%2Fcars%2F2004%2F10%2F18%2F4DKT-30W0-00S0-W39B.xml
     static public void main (String[] args) {
-        String url = "http://www.newsreader-project.eu/data/cars/2004/10/18/4DKT-30W0-00S0-W39B.xml";
-        readRawTextFromKS(url);
+
+
+        //String url = "http://www.newsreader-project.eu/data/cars/2004/10/18/4DKT-30W0-00S0-W39B.xml";
+        //String url = "http://en.wikinews.org/wiki/Mexican_president_defends_emigration.naf";
+/*
+        String url = "https://knowledgestore2.fbk.eu/nwr/wikinews-new/files?id=<http://en.wikinews.org/wiki/Mexican_president_defends_emigration.naf>";
+        try {
+            getNafFile(url, "test.naf");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+*/
+
+        try {
+            System.out.println(getNafFile("https://knowledgestore2.fbk.eu/nwr/cars3/files?id=%3Chttp%3A%2F%2Fwww.newsreader-project.eu%2Fdata%2Fcars%2F2004%2F10%2F18%2F4DKT-30W0-00S0-W39B.xml.naf%3E", "test.naf"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
