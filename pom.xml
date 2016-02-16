@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>EventCoreference</groupId>
+    <groupId>eu.newsreader.EventCoreference</groupId>
     <artifactId>EventCoreference</artifactId>
     <version>3.0</version>
     <packaging>jar</packaging>
@@ -96,6 +96,11 @@
             <groupId>com.cedarsoftware</groupId>
             <artifactId>json-io</artifactId>
             <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>EventCoreference</groupId>
+            <artifactId>EventCoreference</artifactId>
+            <version>3.0</version>
         </dependency>
 
     </dependencies>
