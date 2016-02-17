@@ -4,6 +4,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import eu.newsreader.eventcoreference.input.GetNAF;
 import eu.newsreader.eventcoreference.input.TrigTripleData;
 import org.apache.jena.atlas.web.auth.HttpAuthenticator;
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
@@ -14,6 +15,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -122,6 +125,21 @@ public class MentionResolver {
         return response.toString();
 
     }
+    public static String getKSNafContent(String urlString) throws Exception {
+        String content = "";
+        long startTime = System.currentTimeMillis();
+        Authenticator.setDefault(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(user, pass.toCharArray());
+            }
+        });
+        content = GetNAF.getFile(urlString);
+                //"https://knowledgestore2.fbk.eu/nwr/cars3/files?id=%3Chttp%3A%2F%2Fwww.newsreader-project.eu%2Fdata%2Fcars%2F2004%2F10%2F18%2F4DKT-30W0-00S0-W39B.xml.naf%3E"));
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        return content;
+
+    }
 
     public static String makeRequestUrl (String knowledgeStore, String mentionUri) {
         //https://knowledgestore2.fbk.eu/nwr/wikinews-new/files?id=<
@@ -171,7 +189,7 @@ public class MentionResolver {
      //
      */
 
-    static void createRawTextIndexFromMentions (ArrayList<JSONObject> objects, JSONObject timeLineObject, String KS) {
+    static void createRawTextIndexFromMentionsOrg (ArrayList<JSONObject> objects, JSONObject timeLineObject, String KS) {
         for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject = objects.get(i);
             try {
@@ -200,6 +218,50 @@ public class MentionResolver {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    static void createRawTextIndexFromMentions (ArrayList<JSONObject> objects, JSONObject timeLineObject, String KS) {
+        ArrayList<String> sourceUriList = new ArrayList<String>();
+        for (int i = 0; i < objects.size(); i++) {
+            JSONObject jsonObject = objects.get(i);
+            try {
+                JSONArray mentions = (JSONArray) jsonObject.get("mentions");
+                for (int j = 0; j < mentions.length(); j++) {
+                    JSONObject mObject  = mentions.getJSONObject(j);
+                    //System.out.println("mObject.toString() = " + mObject.toString());
+                    //mObject.toString() = {"char":["23","29"],"uri":["http://en.wikinews.org/wiki/Porsche_and_Volkswagen_automakers_agree_to_merger"]}
+                    //String uString = mObject.getString("uri");
+                    String uString = mObject.getJSONArray("uri").getString(0);
+                    if (!sourceUriList.contains(uString)) {
+                        sourceUriList.add(uString);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < sourceUriList.size(); i++) {
+            String sourceUri = sourceUriList.get(i);
+            try {
+                String nafURI = makeRequestUrl(KS, sourceUri);
+                String rawtext = MentionResolver.getKSNafContent(nafURI);
+                JSONObject jsonSnippetObject = new JSONObject();
+                jsonSnippetObject.put("uri", sourceUri);
+                jsonSnippetObject.put("text", rawtext);
+                timeLineObject.append("sources", jsonSnippetObject);
+                System.out.println("rawtext = " + rawtext);
+            } catch (Exception e) {
+               // e.printStackTrace();
+                JSONObject jsonSnippetObject = new JSONObject();
+                try {
+                    jsonSnippetObject.put("uri", sourceUri);
+                    jsonSnippetObject.put("text", "Source file not found");
+                    timeLineObject.append("sources", jsonSnippetObject);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }

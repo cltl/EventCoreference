@@ -93,18 +93,18 @@ public class SemObject implements Serializable {
     public void getUriForTopicLabel(HashMap<String, String> uriMap) {
         for (int i = 0; i < topics.size(); i++) {
             KafTopic kafTopic = topics.get(i);
-            if (uriMap.containsKey(kafTopic.getTopic())) {
-               String uri = uriMap.get(kafTopic.getTopic());
-                kafTopic.setUri(uri);
-            }
-            else {
-                if (kafTopic.getUri().isEmpty()) {
-                    String aUri = ResourcesUri.nwrontology+"topic/"+kafTopic.getTopic();
-                    try {
-                        aUri = URLEncoder.encode(aUri, "UTF-8");
-                        kafTopic.setUri(uri);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+            if (!kafTopic.getTopic().isEmpty()) {
+                if (uriMap.containsKey(kafTopic.getTopic())) {
+                    String uri = uriMap.get(kafTopic.getTopic());
+                    kafTopic.setUri(uri);
+                } else {
+                    if (kafTopic.getUri().isEmpty() && !kafTopic.getTopic().isEmpty()) {
+                        try {
+                            String aUri = ResourcesUri.nwrontology + "topic/"+URLEncoder.encode(kafTopic.getTopic(), "UTF-8");
+                            kafTopic.setUri(aUri);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -554,9 +554,11 @@ public class SemObject implements Serializable {
 
         for (int i = 0; i < this.getTopics().size(); i++) {
             KafTopic kafTopic = this.getTopics().get(i);
-            Property property = model.createProperty(ResourcesUri.skos+SKOS.RELATED_MATCH.getLocalName());
-           // resource.addProperty(property, model.createLiteral(kafTopic.getUri()));
-            resource.addProperty(property, model.createResource(kafTopic.getUri()));
+            if (!kafTopic.getUri().isEmpty()) {
+                Property property = model.createProperty(ResourcesUri.skos + SKOS.RELATED_MATCH.getLocalName());
+                // resource.addProperty(property, model.createLiteral(kafTopic.getUri()));
+                resource.addProperty(property, model.createResource(kafTopic.getUri()));
+            }
         }
 
         for (int i = 0; i < nafMentions.size(); i++) {
