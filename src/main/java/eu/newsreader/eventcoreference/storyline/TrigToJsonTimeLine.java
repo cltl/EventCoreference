@@ -1,10 +1,12 @@
-package eu.newsreader.eventcoreference.input;
+package eu.newsreader.eventcoreference.storyline;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.tdb.TDBFactory;
+import eu.newsreader.eventcoreference.input.EsoReader;
+import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.objects.JsonEvent;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.RoleLabels;

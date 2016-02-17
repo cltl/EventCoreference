@@ -17,7 +17,7 @@ import java.util.Iterator;
 public class TrigTripleReader {
 
 
-    static TrigTripleData readTripleFromTrigFiles (ArrayList<File> trigFiles) {
+    static public TrigTripleData readTripleFromTrigFiles (ArrayList<File> trigFiles) {
         TrigTripleData trigTripleData = new TrigTripleData();
         Dataset dataset = TDBFactory.createDataset();
 

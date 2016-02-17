@@ -23,17 +23,19 @@ public class TrigKSTripleReader {
     //public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
-    public static String limit = "1000";
+    public static String limit = "100";
     //public static String authStr = user + ":" + pass;
 
     HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 
-
-    static TrigTripleData readTriplesFromKS(String entityLabel){
+    static public void setServicePoint (String ks) {
+        serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
+    }
+    static public TrigTripleData readTriplesFromKS(String entityLabel){
         return readTriplesFromKS(entityLabel, "");
     }
 
-    static TrigTripleData readTriplesFromKS(String entityLabel, String filter){
+    static public TrigTripleData readTriplesFromKS(String entityLabel, String filter){
         TrigTripleData trigTripleData = new TrigTripleData();
 
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());

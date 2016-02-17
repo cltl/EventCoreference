@@ -1,17 +1,22 @@
-package eu.newsreader.eventcoreference.input;
+package eu.newsreader.eventcoreference.storyline;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import eu.newsreader.eventcoreference.input.TrigTripleData;
 import org.apache.jena.atlas.web.auth.HttpAuthenticator;
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -19,6 +24,7 @@ import java.util.HashSet;
  */
 public class MentionResolver {
     final String USER_AGENT = "Mozilla/5.0";
+    public static String serviceBase = "https://knowledgestore2.fbk.eu/";
     public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/files?id=";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
@@ -64,7 +70,7 @@ public class MentionResolver {
 
 
 
-    private static String getNafFile(String urlString, String fileName) throws Exception {
+    public static String getNafFile(String urlString, String fileName) throws Exception {
 
         URLConnection request = new URL(urlString).openConnection();
         InputStream in = request.getInputStream();
@@ -95,6 +101,35 @@ public class MentionResolver {
         return "success";
     }
 
+    public static String getNafContent(String urlString) throws Exception {
+
+        URLConnection request = new URL(urlString).openConnection();
+        InputStream in = request.getInputStream();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = in.read(buffer);
+        while (len != -1) {
+            out.write(buffer, 0, len);
+            len = in.read(buffer);
+            if (Thread.interrupted()) {
+                throw new InterruptedException();
+            }
+        }
+        in.close();
+        out.close();
+        byte[] response = out.toByteArray();
+        return response.toString();
+
+    }
+
+    public static String makeRequestUrl (String knowledgeStore, String mentionUri) {
+        //https://knowledgestore2.fbk.eu/nwr/wikinews-new/files?id=<
+        //knowledgestore2.fbk.eu/nwr/wikinews-new
+       // knowledgeStore = "nwr/wikinews-new";
+        String str = serviceBase + knowledgeStore+"/files?id=<"+mentionUri+".naf>";
+        return str;
+    }
     static void readRawTextFromKS(String docId){
         TrigTripleData trigTripleData = new TrigTripleData();
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
@@ -129,4 +164,45 @@ public class MentionResolver {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Integer climax = 1+climaxIndex.size()-climaxIndex.indexOf(sentenceNr);
+     Float size = 1+Float.valueOf(((float)((5*climaxIndex.size()-5*climaxIndex.indexOf(sentenceNr))/(float)climaxIndex.size())));
+     //
+     */
+
+    static void createRawTextIndexFromMentions (ArrayList<JSONObject> objects, JSONObject timeLineObject, String KS) {
+        for (int i = 0; i < objects.size(); i++) {
+            JSONObject jsonObject = objects.get(i);
+            try {
+                JSONArray mentions = (JSONArray) jsonObject.get("mentions");
+                for (int j = 0; j < mentions.length(); j++) {
+                    JSONObject mObject  = mentions.getJSONObject(j);
+                    //System.out.println("mObject.toString() = " + mObject.toString());
+                    //mObject.toString() = {"char":["23","29"],"uri":["http://en.wikinews.org/wiki/Porsche_and_Volkswagen_automakers_agree_to_merger"]}
+                    //String uString = mObject.getString("uri");
+                    String uString = mObject.getJSONArray("uri").getString(0);
+                    String nafURI = makeRequestUrl(KS, uString);
+                    try {
+                        String rawtext = MentionResolver.getNafContent(nafURI);
+                        JSONObject jsonSnippetObject = new JSONObject();
+                        jsonSnippetObject.put("uri", uString);
+                        jsonSnippetObject.put("text", rawtext);
+                        timeLineObject.append("sources", jsonSnippetObject);
+                        System.out.println("rawtext = " + rawtext);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        JSONObject jsonSnippetObject = new JSONObject();
+                        jsonSnippetObject.put("uri", uString);
+                        jsonSnippetObject.put("text", "BLAHBLAH");
+                        timeLineObject.append("sources", jsonSnippetObject);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }
