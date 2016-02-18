@@ -182,10 +182,10 @@ public class TrigToJsonTimeLineClimax {
                 TrigKSTripleReader.limit = kslimit;
             }
             if (ALL) {
-                trigTripleData = TrigKSTripleReader.readTriplesFromKS(query, "");
+                trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(query, "");
             }
             else {
-                trigTripleData = TrigKSTripleReader.readTriplesFromKS(query, ACTORNAMESPACES.toLowerCase());
+                trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(query, ACTORNAMESPACES.toLowerCase());
             }
 
             long estimatedTime = System.currentTimeMillis() - startTime;
