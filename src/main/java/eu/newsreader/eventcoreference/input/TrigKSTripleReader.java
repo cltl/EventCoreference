@@ -23,7 +23,7 @@ public class TrigKSTripleReader {
     //public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
-    public static String limit = "200";
+    public static String limit = "100";
     //public static String authStr = user + ":" + pass;
 
     HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
@@ -31,12 +31,45 @@ public class TrigKSTripleReader {
     static public void setServicePoint (String ks) {
         serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
     }
-    static public TrigTripleData readTriplesFromKS(String entityLabel){
-        return readTriplesFromKS(entityLabel, "");
+
+    static public TrigTripleData readTriplesFromKSforEventType(String eventType){
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event rdf:type " + eventType + " .\n" +
+                "} LIMIT "+limit+" }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
+                "} ORDER BY ?event";
+
+        return readTriplesFromKs(sparqlQuery);
+    }
+
+    static public TrigTripleData readTriplesFromKSforEntity(String entityLabel){
+        return readTriplesFromKSforEntity(entityLabel, "");
     }
 
 
-    static String makeEntityQuery (String entityLabel, String eventFilter) {
+    static public TrigTripleData readTriplesFromKSforEntity(String entityLabel, String filter){
+
+
+        String eventFilter = "";
+        if (filter.equals("eso")){
+            eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
+                    "?type <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.newsreader-project.eu/domain-ontology#> . }\n";
+        } else if (filter.equals("fn")){
+            eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
+                    "?type <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.newsreader-project.eu/ontologies/framenet/> . }\n";
+        }
+
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
@@ -54,33 +87,14 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        return sparqlQuery;
+
+        return readTriplesFromKs(sparqlQuery);
     }
 
-    static String makeEventQuery (String entityLabel, String eventFilter) {
-        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
-                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
-                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
-                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
-                "WHERE {\n" +
-                "{SELECT distinct ?event WHERE { \n" +
-                "FILTER regex(str(?eventlabel), \"^" + entityLabel + "$\") .\n" +
-                "?event rdfs:label ?eventlabel .\n" +
-                "?event sem:hasActor ?ent .\n" +
-                eventFilter +
-                "} LIMIT "+limit+" }\n" +
-                "?event ?relation ?object .\n" +
-                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
-                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
-                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
-                "} ORDER BY ?event";
-        return sparqlQuery;
-    }
 
-    static public TrigTripleData readTriplesFromKS(String entityLabel, String filter){
+    public static TrigTripleData readTriplesFromKs(String sparqlQuery){
+
         TrigTripleData trigTripleData = new TrigTripleData();
-
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 
         Property inDateTimeProperty = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time#inDateTime");
@@ -88,18 +102,6 @@ public class TrigKSTripleReader {
         Property endTimeProperty = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time#hasEnd");
 
 
-        String eventFilter = "";
-        if (filter.equals("eso")){
-            eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
-                    "?type <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.newsreader-project.eu/domain-ontology#> . }\n";
-        } else if (filter.equals("fn")){
-            eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
-                    "?type <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.newsreader-project.eu/ontologies/framenet/> . }\n";
-        }
-
-        String sparqlQuery = makeEntityQuery(entityLabel, eventFilter);
-
-        System.out.println("sparqlQuery = " + sparqlQuery);
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
         String oldEvent="";
@@ -111,7 +113,7 @@ public class TrigKSTripleReader {
             String currentEvent = solution.get("event").toString();
             RDFNode obj = solution.get("object");
             Statement s = createStatement((Resource) solution.get("event"), ResourceFactory.createProperty(relString), obj);
-            if (isSemRelation(relString) || isESORelation(relString) || isFNRelation(relString) || isPBRelation(relString))
+            if (isSemRelation(relString))
             {
                 otherRelations.add(s);
                 if (isSemTimeRelation(relString)) {
@@ -180,70 +182,12 @@ public class TrigKSTripleReader {
             }
             oldEvent=currentEvent;
         }
-
-        //System.out.println("Level 1 done");
-        // Now we go to the second level!!! //
-
-        /*
-        //// get owltime:inDateTime
-        for(String rsrc : objectSet) {
-            instanceRelations = new ArrayList<Statement>();
-            System.out.println("rsrc = " + rsrc);
-            String sparqlQuery2 =  "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
-                    "SELECT ?object2 \n" +
-                    "WHERE {\n" +
-                    "<" + rsrc + "> owltime:inDateTime ?object2 .\n" +
-                    "}";
-            QueryExecution x2 = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery2, authenticator);
-            ResultSet resultset2 = x2.execSelect();
-            while (resultset2.hasNext()) {
-                QuerySolution solution2 = resultset2.nextSolution();
-                String relString2 = "http://www.w3.org/TR/owl-time#inDateTime";
-                Statement s2 = createStatement(ResourceFactory.createResource(rsrc), ResourceFactory.createProperty(relString2), solution2.get("object2"));
-                instanceRelations.add(s2);
-            }
-            if (instanceRelations.size()>0){
-                trigTripleData.tripleMapInstances.put(rsrc, instanceRelations);
-            }
-        }
-*/
-
-   /*     for(String rsrc : objectSet) {
-            instanceRelations = new ArrayList<Statement>();
-            otherRelations = new ArrayList<Statement>();
-            String sparqlQuery2 = "SELECT * \n" +
-                    "WHERE {\n" +
-                    "<" + rsrc + "> ?relation2 ?object2 .\n" +
-                    "}";
-            QueryExecution x2 = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery2, authenticator);
-            ResultSet resultset2 = x2.execSelect();
-            while (resultset2.hasNext()) {
-                QuerySolution solution2 = resultset2.nextSolution();
-                String relString2 = solution2.get("relation2").toString();
-                Statement s2 = createStatement(ResourceFactory.createResource(rsrc), ResourceFactory.createProperty(solution2.get("relation2").toString()), solution2.get("object2"));
-            //    if (isSemRelation(relString2) || isESORelation(relString2) || isFNRelation(relString2) || isPBRelation(relString2))
-                if (isSemRelation(relString2))
-                {
-                    otherRelations.add(s2);
-                }
-                else // Instances
-                {
-                    instanceRelations.add(s2);
-                }
-
-            }
-            if (instanceRelations.size()>0){
-                trigTripleData.tripleMapInstances.put(rsrc, instanceRelations);
-            }
-            if (otherRelations.size()>0){
-                trigTripleData.tripleMapOthers.put(rsrc, otherRelations);
-            }
-        }*/
         System.out.println("instance statements = "+trigTripleData.tripleMapInstances.size());
         System.out.println("sem statements = " + trigTripleData.tripleMapOthers.size());
-        return trigTripleData;
-    }
 
+        return trigTripleData;
+
+    }
 
     private static boolean isSemRelation(String relation) {
         return relation.startsWith("http://semanticweb.cs.vu.nl/2009/11/sem/");
@@ -275,7 +219,9 @@ public class TrigKSTripleReader {
             }
         }
 
-        readTriplesFromKS("Airbus", "");
+        readTriplesFromKSforEventType("fn:Arriving");
+
+        //readTriplesFromKSforEntity("Airbus", "");
         long estimatedTime = System.currentTimeMillis() - startTime;
 
         System.out.println("Time elapsed:");
