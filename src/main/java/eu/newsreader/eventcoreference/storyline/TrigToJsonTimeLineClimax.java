@@ -24,7 +24,7 @@ public class TrigToJsonTimeLineClimax {
     static Dataset dataset = TDBFactory.createDataset();
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static ArrayList<String> blacklist = new ArrayList<String>();
-    static String ACTORNAMESPACES = "";
+    static String ACTORTYPE = "";
     static boolean ALL = false; /// if true we do not filter events
     static EsoReader esoReader = new EsoReader();
     static FrameNetReader frameNetReader = new FrameNetReader();
@@ -33,11 +33,11 @@ public class TrigToJsonTimeLineClimax {
     static int esoLevel = 0;
     static int climaxThreshold = 0;
     static String entityFilter = "";
-    static HashMap <String, Integer> actorCount = new HashMap<String, Integer>();
     static Integer actorThreshold = -1;
     static int topicThreshold = 0;
     static int nEvents = 0;
     static int nActors = 0;
+    static int nMentions = 0;
     static int nStories = 0;
     static String year = "";
     static String KS = "nwr/wikinews-new";
@@ -98,7 +98,7 @@ public class TrigToJsonTimeLineClimax {
                 ALL = true;
             }
             else if (arg.equals("--actors") && args.length>(i+1)) {
-                ACTORNAMESPACES = args[i+1];
+                ACTORTYPE = args[i+1];
                // System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
             }
 
@@ -144,7 +144,7 @@ public class TrigToJsonTimeLineClimax {
         //System.out.println("fnFile = " + fnFile);
         System.out.println("climaxThreshold = " + climaxThreshold);
         System.out.println("topicThreshold = " + topicThreshold);
-        System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES.toString());
+        System.out.println("actor type = " + ACTORTYPE);
         System.out.println("actorThreshold = " + actorThreshold);
         if (!blackListFile.isEmpty()) {
             blacklist = Util.ReadFileToStringArrayList(blackListFile);
@@ -185,7 +185,7 @@ public class TrigToJsonTimeLineClimax {
                 trigTripleData = TrigKSTripleReader.readTriplesFromKS(query, "");
             }
             else {
-                trigTripleData = TrigKSTripleReader.readTriplesFromKS(query, ACTORNAMESPACES.toLowerCase());
+                trigTripleData = TrigKSTripleReader.readTriplesFromKS(query, ACTORTYPE.toLowerCase());
             }
 
             long estimatedTime = System.currentTimeMillis() - startTime;
@@ -198,12 +198,10 @@ public class TrigToJsonTimeLineClimax {
         }
         try {
             ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
-           // System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
 
-
-            int nActors = JsonStoryUtil.countActors(jsonObjects);
-            int nMentions = JsonStoryUtil.countMentions(jsonObjects);
-
+            nActors = JsonStoryUtil.countActors(jsonObjects);
+            nMentions = JsonStoryUtil.countMentions(jsonObjects);
+            nStories = JsonStoryUtil.countGroups(jsonObjects);
             if (!query.isEmpty()) {
                 JsonSerialization.writeJsonObjectArrayForQuery(KS, query, project, jsonObjects, nEvents, nStories, nActors, nMentions);
             }
@@ -224,6 +222,10 @@ public class TrigToJsonTimeLineClimax {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        System.out.println("story_cnt = " + nStories);
+        System.out.println("event_cnt = " + nEvents);
+        System.out.println("mention_cnt = "+ nMentions);
+        System.out.println("actor_cnt = " + nActors);
     }
 
 
@@ -316,13 +318,12 @@ public class TrigToJsonTimeLineClimax {
             System.out.println("Events in SEM-RDF files = " + jsonObjectArrayList.size());
             jsonObjectArrayList = filterEventsForBlackList (jsonObjectArrayList, blacklist);
             System.out.println("Events after blacklist filter= " + jsonObjectArrayList.size());
-            //jsonObjectArrayList = filterEventsForActors(jsonObjectArrayList);
-            //System.out.println("Events after actor count filter = " + jsonObjectArrayList.size());
+            jsonObjectArrayList = filterEventsForActors(jsonObjectArrayList,actorThreshold);
+            System.out.println("Events after actor count filter = " + jsonObjectArrayList.size());
             jsonObjectArrayList = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjectArrayList,
                     topicThreshold,
                     climaxThreshold,
-                    entityFilter,
-                    nStories);
+                    entityFilter);
             System.out.println("Events after storyline filter = " + jsonObjectArrayList.size());
             nEvents = jsonObjectArrayList.size();
         } catch (JSONException e) {
@@ -332,62 +333,46 @@ public class TrigToJsonTimeLineClimax {
     }
 
     static ArrayList<JSONObject> filterEventsForActors(ArrayList<JSONObject> events,
-                                                       String namespace,
                                                        int actorThreshold) throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
         /*
         "actors":{"pb/A0":["http://www.newsreader-project.eu/data/timeline/non-entities/to_a_single_defense_contractor"]}
          */
+        HashMap <String, Integer> actorCount  = JsonStoryUtil.createActorCount(events);
         for (int i = 0; i < events.size(); i++) {
-            JSONObject event = events.get(i);
+            JSONObject oEvent = events.get(i);
+            boolean hasActorCount = false;
+            JSONObject oActorObject = null;
             try {
-                JSONObject actors = (JSONObject) event.get("actors");
-                if (actors!=null) {
-                    /// check event for actor namespace
-                    boolean hasActorNs = false;
-                    boolean hasActorCount = false;
-                    Iterator<String> keys = actors.keys();
-                    while (keys.hasNext()) {
-                        String key = keys.next(); /// this is role
-                        /* key = pb/A0
-                        key = eso/employment-employee
-                        key = fn/Agent
-                        key = fn/Item
-                        */
-                        String ns = key.substring(0, key.indexOf("/"));
-                        if (namespace.equalsIgnoreCase("all") ||
-                                namespace.isEmpty() ||
-                                namespace.indexOf(ns)>-1) {
-                            hasActorNs = true;
-                        }
-                        String actor = (String) actors.getJSONArray(key).get(0); /// this is actor ID
-
-                        if (actorCount.containsKey(actor)) {
-                            Integer cnt = actorCount.get(actor);
-                            if (cnt>actorThreshold) {
-                                hasActorCount = true;
+                oActorObject = oEvent.getJSONObject("actors");
+                Iterator oKeys = oActorObject.sortedKeys();
+                while (oKeys.hasNext()) {
+                    String oKey = oKeys.next().toString();
+                    try {
+                        JSONArray actors = oActorObject.getJSONArray(oKey);
+                        for (int j = 0; j < actors.length(); j++) {
+                            String actor = actors.getString(j);
+                            actor = actor.substring(actor.lastIndexOf("/") + 1);
+                            if (actorCount.containsKey(actor)) {
+                                Integer cnt = actorCount.get(actor);
+                                if (cnt>=actorThreshold) {
+                                    hasActorCount = true;
+                                }
                             }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    if (hasActorNs && hasActorCount) {
-                        jsonObjectArrayList.add(event);
-                    }
-                    else {
-                      //  System.out.println("hasActorNs = " + hasActorNs);
-                     //   System.out.println("hasActorCount = " + hasActorCount);
-                    }
-                }
-                else {
-    /*
-                    System.out.println("No actors");
-                    System.out.println("jsonObject = " + jsonObject.toString());
-    */
                 }
             } catch (JSONException e) {
-             //   e.printStackTrace();
+                // e.printStackTrace();
+            }
+            if (hasActorCount) {
+                jsonObjectArrayList.add(oEvent);
+            }
+            else {
             }
         }
-
         return jsonObjectArrayList;
     }
 

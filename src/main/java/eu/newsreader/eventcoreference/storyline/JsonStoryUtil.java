@@ -17,8 +17,8 @@ public class JsonStoryUtil {
     static ArrayList<JSONObject> createStoryLinesForJSONArrayList (ArrayList<JSONObject> jsonObjects,
                                                                    int topicThreshold,
                                                                    int climaxThreshold,
-                                                                   String entityFilter,
-                                                                   int nStories)  throws JSONException {
+                                                                   String entityFilter
+                                                                   )  throws JSONException {
         String entity = "Airbus";
         String entityTimeLine = entity+"\n";
         String entityMatch = "";
@@ -74,7 +74,6 @@ public class JsonStoryUtil {
                     jsonObject.put("groupName", groupName);
                     jsonObject.put("groupScore", groupScore);
                     storyObjects.add(jsonObject);
-                    nStories++;
                     ArrayList<String> coparticipantsA0 = getActorsByRoleFromEvent(jsonObject, "pb/A0");
                     ArrayList<String> coparticipantsA1 = getActorsByRoleFromEvent(jsonObject, "pb/A1");
                     ArrayList<String> coparticipantsA2 = getActorsByRoleFromEvent(jsonObject, "pb/A2");
@@ -278,7 +277,6 @@ public class JsonStoryUtil {
             System.out.println("entityTimeLine = " + entityTimeLine);
             /////// FOR EXAMPLE OUTPUT
         }
-        System.out.println("Nr of stories = " + nStories);
 
         return groupedObjects;
     }
@@ -532,7 +530,7 @@ public class JsonStoryUtil {
         //1. We determine the climax score for each individual event and return a sorted list by climax
         // We sum the inverse sentence numbers of all mentions
         TreeSet climaxObjects = new TreeSet(new climaxCompare());
-        Double maxClimax = 0.0;
+        Double maxClimax = -1.0;
         for (int i = 0; i < jsonObjects.size(); i++) {
             JSONObject jsonObject = jsonObjects.get(i);
             // System.out.println("jsonObject.toString() = " + jsonObject.toString());
@@ -570,7 +568,7 @@ public class JsonStoryUtil {
                         //"["4160","4165"]"
                         if (charValues!=null ) {
                             String charValue = charValues.get(0).toString();
-                            //   System.out.println("charValue = " + charValue);
+                           // System.out.println("charValue = " + charValue);
                             int sentenceNr = Integer.parseInt(charValue);
                             if (sentenceNr < earliestEventMention || earliestEventMention == -1) {
                                 earliestEventMention = sentenceNr;
@@ -768,6 +766,22 @@ public class JsonStoryUtil {
         }
         return nMentions;
     }
+    static int countGroups(ArrayList<JSONObject> events) {
+        ArrayList<String> groups = new ArrayList<String>();
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject jsonObject = events.get(i);
+            try {
+                String groupValue = jsonObject.get("group").toString();
+               // System.out.println("groupValue = " + groupValue);
+                if (!groups.contains(groupValue)) {
+                    groups.add(groupValue);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return groups.size();
+    }
 
     public static int countActors(ArrayList<JSONObject> events) {
         ArrayList<String> actorNames = new ArrayList<String>();
@@ -779,27 +793,17 @@ public class JsonStoryUtil {
                 Iterator oKeys = oActorObject.sortedKeys();
                 while (oKeys.hasNext()) {
                     String oKey = oKeys.next().toString();
-                    if (oKey.toLowerCase().startsWith("pb/")/*
-                                    || oKey.equalsIgnoreCase("pb/A0")
-                                    || oKey.equalsIgnoreCase("pb/A1")
-                                    || oKey.equalsIgnoreCase("pb/A2")
-                                    || oKey.equalsIgnoreCase("pb/A3")
-                                    || oKey.equalsIgnoreCase("pb/A4")*/
-                            || oKey.toLowerCase().startsWith("fn/")
-                            || oKey.toLowerCase().startsWith("eso/")) {
-                        JSONArray oActors = null;
-                        try {
-                            JSONArray actors = oActorObject.getJSONArray(oKey);
-                            for (int j = 0; j < actors.length(); j++) {
-                                String nextActor = actors.getString(j);
-                                nextActor = nextActor.substring(nextActor.lastIndexOf("/") + 1);
-                                if (!actorNames.contains(nextActor)) {
-                                    actorNames.add(nextActor);
-                                }
+                    try {
+                        JSONArray actors = oActorObject.getJSONArray(oKey);
+                        for (int j = 0; j < actors.length(); j++) {
+                            String nextActor = actors.getString(j);
+                            nextActor = nextActor.substring(nextActor.lastIndexOf("/") + 1);
+                            if (!actorNames.contains(nextActor)) {
+                                actorNames.add(nextActor);
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             } catch (JSONException e) {
@@ -808,6 +812,42 @@ public class JsonStoryUtil {
         }
         return actorNames.size();
     }
+
+    public static HashMap <String, Integer> createActorCount (ArrayList<JSONObject> events) {
+        HashMap <String, Integer> actorCount = new HashMap<String, Integer>();
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject oEvent = events.get(i);
+            JSONObject oActorObject = null;
+            try {
+                oActorObject = oEvent.getJSONObject("actors");
+                Iterator oKeys = oActorObject.sortedKeys();
+                while (oKeys.hasNext()) {
+                    String oKey = oKeys.next().toString();
+                    try {
+                        JSONArray actors = oActorObject.getJSONArray(oKey);
+                        for (int j = 0; j < actors.length(); j++) {
+                            String nextActor = actors.getString(j);
+                            nextActor = nextActor.substring(nextActor.lastIndexOf("/") + 1);
+                            if (actorCount.containsKey(nextActor)) {
+                                Integer cnt = actorCount.get(nextActor);
+                                cnt++;
+                                actorCount.put(nextActor, cnt);
+                            }
+                            else {
+                                actorCount.put(nextActor,1);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JSONException e) {
+                // e.printStackTrace();
+            }
+        }
+        return actorCount;
+    }
+
 
     static public class climaxCompare implements Comparator {
         public int compare (Object aa, Object bb) {

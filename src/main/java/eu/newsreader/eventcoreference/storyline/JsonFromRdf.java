@@ -290,9 +290,10 @@ public class JsonFromRdf {
         ArrayList<String> esoActors = new ArrayList<String>();
         ArrayList<String> fnActors = new ArrayList<String>();
         ArrayList<String> pbActors = new ArrayList<String>();
+       // System.out.println("statements = " + statements.size());
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
-
+           // System.out.println("statement.asTriple().toString() = " + statement.asTriple().toString());
             String predicate = statement.getPredicate().getURI();
             if (predicate.toLowerCase().endsWith("time")) {
                 ///
@@ -309,7 +310,7 @@ public class JsonFromRdf {
                 }
                 String property = getNameSpaceString(predicate);
                 if (!property.isEmpty()) {
-                    System.out.println("property = " + property);
+                    //System.out.println("property = " + property);
                     if (property.equalsIgnoreCase("pb")) {
                         predicate = property + "/" + RoleLabels.normalizeProbBankValue(getValue(predicate));
                     }
@@ -344,15 +345,6 @@ public class JsonFromRdf {
                         triple.setPredicate(predicate);
                         triple.setObject(value);
                         eventTriples.add(triple);
-
-                        /*if (actorCount.containsKey(value)) {
-                            Integer cnt = actorCount.get(value);
-                            cnt++;
-                            actorCount.put(value, cnt);
-                        }
-                        else {
-                            actorCount.put(value,1);
-                        }*/
                     }
                 }
                 else {
@@ -988,6 +980,12 @@ object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_developm
         else if (value.indexOf("/sumo/") > -1) {
             property = "sumo";
         }
+        else if (value.indexOf("/ili/") > -1) {
+            property = "ili";
+        }
+        else if (value.indexOf("wordnet") > -1) {
+            property = "wn";
+        }
         else if (value.indexOf("/eso/") > -1) {
             property = "eso";
         }
@@ -1015,6 +1013,7 @@ object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_developm
         else if (value.indexOf("/non-entities/") > -1) {
             property = "ne";
         }
+
         return property;
     }
 
