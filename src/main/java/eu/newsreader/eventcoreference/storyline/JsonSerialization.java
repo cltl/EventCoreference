@@ -84,7 +84,8 @@ public class JsonSerialization {
                         e.printStackTrace();
                     }
                 }
-                OutputStream jsonOut = new FileOutputStream( "./"+query + ".timeline.json");
+               // OutputStream jsonOut = new FileOutputStream( "./"+query + ".timeline.json");
+                OutputStream jsonOut = new FileOutputStream( "./"+"contextual" + ".timeline.json");
 
                 String str = "{ \"timeline\":\n";
                 jsonOut.write(str.getBytes());

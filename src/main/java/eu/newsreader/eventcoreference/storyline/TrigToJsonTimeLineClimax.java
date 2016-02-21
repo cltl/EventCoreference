@@ -41,13 +41,15 @@ public class TrigToJsonTimeLineClimax {
     static int nStories = 0;
     static String year = "";
     static String KS = "nwr/wikinews-new";
+    static String QUERYTYPE = "entity";
+    static int EVENTLIMIT = 500;
 
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
         String project = "NewsReader storyline";
         String pathToILIfile = "";
         String query = "";
-        String kslimit = "";
+        String kslimit = "500";
         String trigfolder = "";
         String trigfile = "";
         String pathToRawTextIndexFile = "";
@@ -68,7 +70,7 @@ public class TrigToJsonTimeLineClimax {
             }
             else if (arg.equals("--query") && args.length>(i+1)) {
                 query = args[i+1];
-                entityFilter = query;
+               // entityFilter = query;
             }
             else if (arg.equals("--year") && args.length>(i+1)) {
                 year = args[i+1];
@@ -78,6 +80,13 @@ public class TrigToJsonTimeLineClimax {
             }
             else if (arg.equals("--ks-limit") && args.length>(i+1)) {
                 kslimit = args[i+1];
+            }
+            else if (arg.equals("--story-limit") && args.length>(i+1)) {
+                try {
+                    EVENTLIMIT = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    //e.printStackTrace();
+                }
             }
             else if (arg.equals("--trig-file") && args.length>(i+1)) {
                 trigfile = args[i+1];
@@ -93,6 +102,9 @@ public class TrigToJsonTimeLineClimax {
             }
             else if (arg.equals("--actor-cnt") && args.length>(i+1)) {
                 actorThreshold = Integer.parseInt(args[i+1]);
+            }
+            else if (arg.equals("--type") && args.length>(i+1)) {
+                QUERYTYPE = args[i+1];
             }
             else if (arg.equals("--all")){
                 ALL = true;
@@ -146,6 +158,8 @@ public class TrigToJsonTimeLineClimax {
         System.out.println("topicThreshold = " + topicThreshold);
         System.out.println("actor type = " + ACTORTYPE);
         System.out.println("actorThreshold = " + actorThreshold);
+        System.out.println("max events for stories = " +EVENTLIMIT);
+        System.out.println("max results for KnowledgeStore = " + kslimit);
         if (!blackListFile.isEmpty()) {
             blacklist = Util.ReadFileToStringArrayList(blackListFile);
         }
@@ -181,11 +195,20 @@ public class TrigToJsonTimeLineClimax {
             if (!kslimit.isEmpty()) {
                 TrigKSTripleReader.limit = kslimit;
             }
-            if (ALL) {
-                trigTripleData = TrigKSTripleReader.readTriplesFromKS(query, "");
+            if (QUERYTYPE.equalsIgnoreCase("entity")) {
+                entityFilter = query; ///entityFilter is set to prevent stories to be built around queried entities only
+                if (ALL) {
+                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(query);
+                }
+                else {
+                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(query, ACTORTYPE.toLowerCase());
+                }
             }
-            else {
-                trigTripleData = TrigKSTripleReader.readTriplesFromKS(query, ACTORTYPE.toLowerCase());
+            else if (QUERYTYPE.equalsIgnoreCase("event")) {
+                trigTripleData = TrigKSTripleReader.readTriplesFromKSforEventType(query);
+            }
+            else if (QUERYTYPE.equalsIgnoreCase("topic")) {
+                trigTripleData = TrigKSTripleReader.readTriplesFromKSforTopic(query);
             }
 
             long estimatedTime = System.currentTimeMillis() - startTime;
@@ -293,6 +316,7 @@ public class TrigToJsonTimeLineClimax {
                             jsonObject.put("mentions", jsonMentions.get("mentions"));
                         }
                         JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples);
+                        //JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatementSimple(otherTriples);
                         if (actors.keys().hasNext()) {
                             jsonObject.put("actors", actors);
                         }
@@ -316,13 +340,18 @@ public class TrigToJsonTimeLineClimax {
         try {
 
             System.out.println("Events in SEM-RDF files = " + jsonObjectArrayList.size());
-            jsonObjectArrayList = filterEventsForBlackList (jsonObjectArrayList, blacklist);
-            System.out.println("Events after blacklist filter= " + jsonObjectArrayList.size());
-            jsonObjectArrayList = filterEventsForActors(jsonObjectArrayList,actorThreshold);
-            System.out.println("Events after actor count filter = " + jsonObjectArrayList.size());
+            if (blacklist.size()>0) {
+                jsonObjectArrayList = filterEventsForBlackList(jsonObjectArrayList, blacklist);
+                System.out.println("Events after blacklist filter= " + jsonObjectArrayList.size());
+            }
+            if (actorThreshold>0) {
+                jsonObjectArrayList = filterEventsForActors(jsonObjectArrayList, entityFilter, actorThreshold);
+                System.out.println("Events after actor count filter = " + jsonObjectArrayList.size());
+            }
             jsonObjectArrayList = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjectArrayList,
                     topicThreshold,
                     climaxThreshold,
+                    EVENTLIMIT,
                     entityFilter);
             System.out.println("Events after storyline filter = " + jsonObjectArrayList.size());
             nEvents = jsonObjectArrayList.size();
@@ -333,6 +362,7 @@ public class TrigToJsonTimeLineClimax {
     }
 
     static ArrayList<JSONObject> filterEventsForActors(ArrayList<JSONObject> events,
+                                                       String entityFilter,
                                                        int actorThreshold) throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
         /*
@@ -353,12 +383,23 @@ public class TrigToJsonTimeLineClimax {
                         for (int j = 0; j < actors.length(); j++) {
                             String actor = actors.getString(j);
                             actor = actor.substring(actor.lastIndexOf("/") + 1);
-                            if (actorCount.containsKey(actor)) {
-                                Integer cnt = actorCount.get(actor);
-                                if (cnt>=actorThreshold) {
-                                    hasActorCount = true;
+/*                            if (entityFilter.isEmpty() ||
+                                    (actor.toLowerCase().indexOf(entityFilter.toLowerCase())==-1)) {*/
+                                if (actorCount.containsKey(actor)) {
+                                    Integer cnt = actorCount.get(actor);
+                                    if (cnt >= actorThreshold) {
+                                        hasActorCount = true;
+                                       // System.out.println("actor = " + actor);
+                                       // System.out.println("cnt = " + cnt);
+                                    } else {
+                                        /// removes actors with too low freqency
+                                        //oActorObject.remove(oKey);
+                                    }
+                                } else {
+                                    /// removes actors with too low freqency
+                                    //oActorObject.remove(oKey);
                                 }
-                            }
+                        /*    }*/
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -368,6 +409,7 @@ public class TrigToJsonTimeLineClimax {
                 // e.printStackTrace();
             }
             if (hasActorCount) {
+              //  System.out.println("Adding oEvent.toString() = " + oEvent.get("labels").toString());
                 jsonObjectArrayList.add(oEvent);
             }
             else {

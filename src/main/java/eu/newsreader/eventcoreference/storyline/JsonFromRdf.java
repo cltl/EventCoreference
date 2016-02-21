@@ -283,22 +283,18 @@ public class JsonFromRdf {
         return jsonActorsObject;
     }
 
-    static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+    static JSONObject getActorsJSONObjectFromInstanceStatementSimple (ArrayList<Statement> statements) throws JSONException {
         ArrayList<String> coveredActors = new ArrayList<String>();
         JSONObject jsonActorsObject = new JSONObject();
         ArrayList<Triple> eventTriples = new ArrayList<Triple>();
         ArrayList<String> esoActors = new ArrayList<String>();
         ArrayList<String> fnActors = new ArrayList<String>();
         ArrayList<String> pbActors = new ArrayList<String>();
-       // System.out.println("statements = " + statements.size());
+        //System.out.println("statements = " + statements.size());
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
-           // System.out.println("statement.asTriple().toString() = " + statement.asTriple().toString());
             String predicate = statement.getPredicate().getURI();
             if (predicate.toLowerCase().endsWith("time")) {
-                ///
-            }
-            else if (predicate.toLowerCase().endsWith("hasactor")) {
                 ///
             }
             else {
@@ -371,6 +367,109 @@ public class JsonFromRdf {
                 }
             }
             else if (!esoActors.contains((triple.getObject())) && !fnActors.contains((triple.getObject()))) {
+                if (!coveredActors.contains(triple.getObject())) {
+                    jsonActorsObject.append(triple.getPredicate(), triple.getObject());
+                    coveredActors.add(triple.getObject());
+                }
+            }
+        }
+        return jsonActorsObject;
+    }
+
+    static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+        ArrayList<String> coveredActors = new ArrayList<String>();
+        JSONObject jsonActorsObject = new JSONObject();
+        ArrayList<Triple> eventTriples = new ArrayList<Triple>();
+        ArrayList<String> esoActors = new ArrayList<String>();
+        ArrayList<String> fnActors = new ArrayList<String>();
+        ArrayList<String> pbActors = new ArrayList<String>();
+        //System.out.println("statements = " + statements.size());
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.toLowerCase().endsWith("time")) {
+                ///
+            }
+            else if (predicate.toLowerCase().endsWith("hasactor")) {
+                ///
+            }
+            else {
+               // System.out.println("statement.asTriple().toString() = " + statement.asTriple().toString());
+
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String property = getNameSpaceString(predicate);
+                if (!property.isEmpty()) {
+                    //System.out.println("property = " + property);
+                    if (property.equalsIgnoreCase("pb")) {
+                        predicate = property + "/" + RoleLabels.normalizeProbBankValue(getValue(predicate));
+                    }
+                    else {
+                        predicate = property + "/" + getValueWithoutFrame(getValue(predicate));
+                        // System.out.println("property = " + property);
+                    }
+                  //  System.out.println("property = " + property);
+
+                    String[] values = object.split(",");
+                    for (int j = 0; j < values.length; j++) {
+                        String value = values[j];
+                        String ns = getNameSpaceString(value);
+                        if (!ns.isEmpty()) {
+                            value = ns + ":" + getValue(value);
+                        }
+                        value = value.replace("+", "_"); //// just to make it look nicer
+                        if (property.equalsIgnoreCase("pb")) {
+                            if (!pbActors.contains(value)) {
+                                pbActors.add(value);
+                            }
+                        }
+                        else if (property.equalsIgnoreCase("fn")) {
+                            if (!fnActors.contains(value)) {
+                                fnActors.add(value);
+                            }
+                        }
+                        else if (property.equalsIgnoreCase("eso")) {
+                            if (!esoActors.contains(value)) {
+                                esoActors.add(value);
+                            }
+                        }
+                        Triple triple = new Triple();
+                        triple.setPredicate(predicate);
+                        triple.setObject(value);
+                        eventTriples.add(triple);
+                    }
+                }
+                else {
+                    System.out.println("predicate = " + predicate);
+                }
+            }
+        }
+        //// ESO takes priority, then FN then all other roles
+        /// we only add actors with pb if the object does not have a fn relation
+        /// and we add actors with fn relations only if they do not have a eso relation
+        /// finally add all others
+        for (int i = 0; i < eventTriples.size(); i++) {
+            Triple triple = eventTriples.get(i);
+           // System.out.println("triple.getPredicate() = " + triple.getPredicate());
+            if (triple.getPredicate().startsWith("eso")) {
+                if (!coveredActors.contains(triple.getObject())) {
+                    jsonActorsObject.append(triple.getPredicate(), triple.getObject());
+                    coveredActors.add(triple.getObject());
+                }
+            }
+            else if (!esoActors.contains((triple.getObject())) &&
+                     triple.getPredicate().startsWith("fn")) {
+                if (!coveredActors.contains(triple.getObject())) {
+                    jsonActorsObject.append(triple.getPredicate(), triple.getObject());
+                    coveredActors.add(triple.getObject());
+                }
+            }
+            else if (!esoActors.contains((triple.getObject())) &&
+                    !fnActors.contains((triple.getObject()))) {
                 if (!coveredActors.contains(triple.getObject())) {
                     jsonActorsObject.append(triple.getPredicate(), triple.getObject());
                     coveredActors.add(triple.getObject());

@@ -1,6 +1,5 @@
 package eu.newsreader.eventcoreference.storyline;
 
-import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.naf.CreateMicrostory;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import org.json.JSONArray;
@@ -17,6 +16,7 @@ public class JsonStoryUtil {
     static ArrayList<JSONObject> createStoryLinesForJSONArrayList (ArrayList<JSONObject> jsonObjects,
                                                                    int topicThreshold,
                                                                    int climaxThreshold,
+                                                                   int eventLimit,
                                                                    String entityFilter
                                                                    )  throws JSONException {
         String entity = "Airbus";
@@ -29,14 +29,13 @@ public class JsonStoryUtil {
         	2004-10	4-killed[t85]	10-leveled[t182]	36-charges[t803]
 	        2004-10	4-favored[t97]	31-favor[t689]
          */
-
         ArrayList<JSONObject> groupedObjects = new ArrayList<JSONObject>();
         /// We build up a climax index over all the events
         //Vector<Integer> climaxIndex = new Vector<Integer>();
-
         //1. We determine the climax score for each individual event
         // We sum the inverse sentence numbers of all mentions
         TreeSet climaxObjects = determineClimaxValues(jsonObjects, climaxThreshold);
+        //TreeSet climaxObjects = determineClimaxValuesFirstMentionOnly(jsonObjects);
         ArrayList<JSONObject> selectedEvents  = new ArrayList<JSONObject>();
         Iterator<JSONObject> sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
@@ -44,13 +43,16 @@ public class JsonStoryUtil {
             selectedEvents.add(jsonObject);
         }
 
-        //TreeSet climaxObjects = determineClimaxValuesFirstMentionOnly(jsonObjects);
 
         System.out.println("Events above climax threshold = " + climaxObjects.size());
         ArrayList<JSONObject> storyObjects = new ArrayList<JSONObject>();
         ArrayList<JSONObject> singletonObjects = new ArrayList<JSONObject>();
+        int eventCount = 0;
         sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
+            if (eventCount>eventLimit && eventLimit>-1) {
+                break;
+            }
             JSONObject jsonObject = sortedObjects.next();
             if (!hasObject(groupedObjects, jsonObject)) {
                 try {
@@ -122,6 +124,7 @@ public class JsonStoryUtil {
                     for (int i = 0; i < intersection.size(); i++) {
                         JSONObject object = intersection.get(i);
                         if (!hasObject(groupedObjects, object)) {
+                            eventCount++;
                             addObjectToGroup(
                                     storyObjects,
                                     group,
@@ -281,7 +284,7 @@ public class JsonStoryUtil {
         return groupedObjects;
     }
 
-    static ArrayList<JSONObject> createStoryLinesForJSONArrayListOrg (ArrayList<JSONObject> jsonObjects,
+ /*   static ArrayList<JSONObject> createStoryLinesForJSONArrayListOrg (ArrayList<JSONObject> jsonObjects,
                                                                       FrameNetReader frameNetReader,
                                                                       int climaxThreshold)  throws JSONException {
 
@@ -291,10 +294,10 @@ public class JsonStoryUtil {
         String debugStr = "";
         boolean PRINTEXAMPLE = false;
         boolean DEBUG = false;
-        /*
+        *//*
         	2004-10	4-killed[t85]	10-leveled[t182]	36-charges[t803]
 	        2004-10	4-favored[t97]	31-favor[t689]
-         */
+         *//*
 
         ArrayList<JSONObject> groupedObjects = new ArrayList<JSONObject>();
         /// We build up a climax index over all the events
@@ -368,18 +371,18 @@ public class JsonStoryUtil {
 
                     for (int j = 0; j < intersection.size(); j++) {
                         JSONObject object = intersection.get(j);
-                        /*
+                        *//*
                         if (!hasActorInEvent(object, coparticipantsA0)
                         &&
                         !hasActorInEvent(object, coparticipantsA1)
                         &&
                         !hasActorInEvent(object, coparticipantsA2)) {
                             continue;
-                        }*/
-                       /* String copartipation = getActorFromEvent(object, entity);
+                        }*//*
+                       *//* String copartipation = getActorFromEvent(object, entity);
                         if (copartipation.isEmpty()) {
                             continue;
-                        }*/
+                        }*//*
 
 
                         if (!hasObject(groupedObjects, object)) {
@@ -496,7 +499,7 @@ public class JsonStoryUtil {
 
         //// now we handle the singleton events
         //// we assign them to the unrelated events group and recalculate the climax score
-/*
+*//*
         climaxObjects = determineClimaxValues(singletonObjects);
         sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
@@ -507,7 +510,7 @@ public class JsonStoryUtil {
                     jsonObject,
                     10);
         }
-*/
+*//*
 
 
         if (PRINTEXAMPLE) {
@@ -517,7 +520,7 @@ public class JsonStoryUtil {
         }
 
         return groupedObjects;
-    }
+    }*/
 
 
 
@@ -535,7 +538,7 @@ public class JsonStoryUtil {
             JSONObject jsonObject = jsonObjects.get(i);
             // System.out.println("jsonObject.toString() = " + jsonObject.toString());
             try {
-                double sumClimax =0.0;
+                Double sumClimax =0.0;
                 JSONArray mentions = (JSONArray) jsonObject.get("mentions");
                 int earliestEventMention = -1;
                 for (int j = 0; j < mentions.length(); j++) {
@@ -581,22 +584,28 @@ public class JsonStoryUtil {
                         }
                     }
                 }
-                if (sumClimax>maxClimax) {
-                    maxClimax = sumClimax;
+
+                //System.out.println("sumClimax = " + sumClimax);
+                if (Double.isInfinite(sumClimax)) {
+                    jsonObject.put("climax", "0");
                 }
-                //   System.out.println("sumClimax = " + sumClimax);
-                jsonObject.put("climax", sumClimax);
+                else {
+                    if (sumClimax>maxClimax) {
+                        maxClimax = sumClimax;
+                    }
+                    jsonObject.put("climax", sumClimax);
+                }
             } catch (JSONException e) {
-                //  e.printStackTrace();
+               //   e.printStackTrace();
                 try {
                     jsonObject.put("climax", "0");
                 } catch (JSONException e1) {
-                    e1.printStackTrace();
+                 //   e1.printStackTrace();
                 }
 
             }
         }
-        // System.out.println("maxClimax = " + maxClimax);
+        //System.out.println("maxClimax = " + maxClimax);
         /// next we normalize the climax values and store it in the tree
         for (int i = 0; i < jsonObjects.size(); i++) {
             JSONObject jsonObject = jsonObjects.get(i);
@@ -605,8 +614,13 @@ public class JsonStoryUtil {
                 // Double proportion = Math.log(climax/maxClimax);
                 Double proportion = climax/maxClimax;
                 Integer climaxInteger = new Integer ((int)(100*proportion));
+                if (climaxInteger==0) {
+                    climaxInteger=1;
+                }
+/*                System.out.println("climax = " + climax);
+                System.out.println("proportion = " + proportion);
+                System.out.println("climaxInteger = " + climaxInteger);*/
                 if (climaxInteger>=climaxThreshold) {
-                    //     System.out.println("climaxInteger = " + climaxInteger);
                     jsonObject.put("climax", climaxInteger);
                     climaxObjects.add(jsonObject);
                 }
@@ -619,7 +633,7 @@ public class JsonStoryUtil {
                 System.out.println("\tclimaxInteger = " + climaxInteger);*/
 
             } catch (JSONException e) {
-                //   e.printStackTrace();
+                   e.printStackTrace();
             }
         }
         return climaxObjects;
@@ -761,7 +775,7 @@ public class JsonStoryUtil {
                 JSONArray mentions = (JSONArray) jsonObject.get("mentions");
                 nMentions+=mentions.length();
             } catch (JSONException e) {
-                e.printStackTrace();
+               // e.printStackTrace();
             }
         }
         return nMentions;
@@ -777,7 +791,7 @@ public class JsonStoryUtil {
                     groups.add(groupValue);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+             //   e.printStackTrace();
             }
         }
         return groups.size();
