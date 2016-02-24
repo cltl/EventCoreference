@@ -2,8 +2,12 @@ package eu.newsreader.eventcoreference.input;
 
 import com.hp.hpl.jena.rdf.model.Statement;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by piek on 05/02/16.
@@ -24,5 +28,19 @@ public class TrigTripleData {
         tripleMapProvenance = new HashMap<String, ArrayList<Statement>>();
         tripleMapInstances = new HashMap<String, ArrayList<Statement>>();
         tripleMapOthers = new HashMap<String, ArrayList<Statement>>();
+    }
+
+    public void dumpTriples (OutputStream fos, HashMap<String, ArrayList<Statement>> map) throws IOException {
+        Set keyset = map.keySet();
+        Iterator<String> keys = keyset.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<Statement> statements = map.get(key);
+            for (int i = 0; i < statements.size(); i++) {
+                Statement statement = statements.get(i);
+                String str = statement.toString()+"\n";
+                fos.write(str.getBytes());
+            }
+        }
     }
 }

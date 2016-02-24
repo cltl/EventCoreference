@@ -19,24 +19,18 @@ public class JsonStoryUtil {
                                                                    int eventLimit,
                                                                    String entityFilter
                                                                    )  throws JSONException {
-        String entity = "Airbus";
-        String entityTimeLine = entity+"\n";
-        String entityMatch = "";
-        String debugStr = "";
-        boolean PRINTEXAMPLE = false;
         boolean DEBUG = false;
-        /*
-        	2004-10	4-killed[t85]	10-leveled[t182]	36-charges[t803]
-	        2004-10	4-favored[t97]	31-favor[t689]
-         */
-        ArrayList<JSONObject> groupedObjects = new ArrayList<JSONObject>();
+        ArrayList<JSONObject> groupedObjects = new ArrayList<JSONObject>(); /// keeps track which events are already in a story so that the same event does not end up in multiple stories
+        ArrayList<JSONObject> singletonObjects = new ArrayList<JSONObject>(); /// keeps track of singleton stories, without bridging relations
+        ArrayList<JSONObject> selectedEvents  = new ArrayList<JSONObject>();/// set of events above the climax threshold sorted according to this threshold
+        ArrayList<JSONObject> storyObjects = new ArrayList<JSONObject>(); /// data struture for a story
+
         /// We build up a climax index over all the events
         //Vector<Integer> climaxIndex = new Vector<Integer>();
         //1. We determine the climax score for each individual event
         // We sum the inverse sentence numbers of all mentions
         TreeSet climaxObjects = determineClimaxValues(jsonObjects, climaxThreshold);
         //TreeSet climaxObjects = determineClimaxValuesFirstMentionOnly(jsonObjects);
-        ArrayList<JSONObject> selectedEvents  = new ArrayList<JSONObject>();
         Iterator<JSONObject> sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
             JSONObject jsonObject = sortedObjects.next();
@@ -45,58 +39,43 @@ public class JsonStoryUtil {
 
 
         System.out.println("Events above climax threshold = " + climaxObjects.size());
-        ArrayList<JSONObject> storyObjects = new ArrayList<JSONObject>();
-        ArrayList<JSONObject> singletonObjects = new ArrayList<JSONObject>();
         int eventCount = 0;
         sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
             if (eventCount>eventLimit && eventLimit>-1) {
+                //// the storyteller quits when it reaches the event limit. this is to prevent the visualisation to be cluttered with to many stories
                 break;
             }
             JSONObject jsonObject = sortedObjects.next();
             if (!hasObject(groupedObjects, jsonObject)) {
+                //// this event is not yet part of a story and is the next event with climax value
+                //// we use this to create a new story by adding other events with bridging relations into the storyObjects ArrayList
                 try {
-                    storyObjects = new ArrayList<JSONObject>();
+                    storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
+
+                    /// create the administrative fields in the JSON structure for a event that define story membership
                     Integer groupClimax = Integer.parseInt(jsonObject.get("climax").toString());
                     Float size = new Float(1);
                     if (groupClimax > 0) {
                         // size = 5 * Float.valueOf((float) (1.0 * groupClimax / groupClimax));
                         size = Float.valueOf((float) groupClimax / 4);
                     }
-                    //Float size = 1 + Float.valueOf((float) (10*climax / maxClimax));
                     jsonObject.put("size", size.toString());
                     String group = climaxString(groupClimax) + ":" + jsonObject.get("labels").toString();
                     String groupName = jsonObject.get("labels").toString();
                     String groupScore = climaxString(groupClimax);
                     group += getfirstActorByRoleFromEvent(jsonObject, "pb/A1"); /// for representation purposes
                     groupName += getfirstActorByRoleFromEvent(jsonObject, "pb/A1");
-                    if (DEBUG) debugStr = group+":"+groupClimax+":"+size+"\n";
-
                     jsonObject.put("group", group);
                     jsonObject.put("groupName", groupName);
                     jsonObject.put("groupScore", groupScore);
-                    storyObjects.add(jsonObject);
-                    ArrayList<String> coparticipantsA0 = getActorsByRoleFromEvent(jsonObject, "pb/A0");
-                    ArrayList<String> coparticipantsA1 = getActorsByRoleFromEvent(jsonObject, "pb/A1");
-                    ArrayList<String> coparticipantsA2 = getActorsByRoleFromEvent(jsonObject, "pb/A2");
 
-                    if (PRINTEXAMPLE) {
-                        /////// FOR EXAMPLE OUTPUT
-                        entityMatch = getActorFromEvent(jsonObject, entity);
-                        if (!entityMatch.isEmpty()) {
-                            entityTimeLine += "\n" + entityMatch + "\n";
-                            String time = jsonObject.get("time").toString();
-                            if (time.isEmpty()) {
-                                time = "NOTIMEX";
-                            }
-                            String event = jsonObject.get("labels").toString();
-                            event += getActorByRoleFromEvent(jsonObject, "pb/A0");
-                            event += getActorByRoleFromEvent(jsonObject, "pb/A1");
-                            event += getActorByRoleFromEvent(jsonObject, "pb/A2");
-                            entityTimeLine += "[C]\t" + groupClimax + "\t" + time + "\t" + event + "\n";
-                        }
-                        /////// FOR EXAMPLE OUTPUT
-                    }
+                    //// add the climax event to the story ArrayList
+                    storyObjects.add(jsonObject);
+
+
+                    //// now we look for other events with bridging relations
+                    ArrayList<JSONObject> bridgedEvents = new ArrayList<JSONObject>();
 
                     ArrayList<JSONObject> coevents =  new ArrayList<JSONObject>();
                     if (entityFilter.isEmpty()) {
@@ -105,24 +84,45 @@ public class JsonStoryUtil {
                     else {
                         coevents = CreateMicrostory.getEventsThroughCoparticipation(entityFilter, selectedEvents, jsonObject);
                     }
-                    //ArrayList<JSONObject> coevents = CreateMicrostory.getEventsThroughCoparticipation(selectedEvents, storyObjects);
-                    //  System.out.println("coevents.size() = " + coevents.size());
-                    ArrayList<JSONObject> topicevents = CreateMicrostory.getEventsThroughTopicBridging(selectedEvents, jsonObject, topicThreshold);
-                    // System.out.println("topicevents = " + topicevents.size());
-                    ArrayList<JSONObject> intersection = coevents;
+                    if (coevents.size()>0) {
+                        bridgedEvents = coevents;
+                        System.out.println("coevents.size() = " + coevents.size());
+                    }
+
+                    ArrayList<JSONObject> topicevents = new ArrayList<JSONObject>();
+                    if (topicThreshold>0) {
+                        topicevents = CreateMicrostory.getEventsThroughTopicBridging(selectedEvents, jsonObject, topicThreshold);
+                    }
+                    if (topicevents.size()>0) {
+                        System.out.println("topicevents = " + topicevents.size());
+                    }
                     if (topicevents.size()>0) {
                         if (coevents.size()==0) {
-                            intersection = topicevents;
+                            bridgedEvents = topicevents;
                         }
                         else {
-                            intersection = intersectEventObjects(coevents, topicevents);
+/*
+                            bridgedEvents = mergeEventObjects(coevents, topicevents);
+                            if (bridgedEvents.size()>0) {
+                                System.out.println("merged coevents and topicevents.size() = " + bridgedEvents.size());
+                            }
+*/
+                            bridgedEvents = intersectEventObjects(coevents, topicevents);
+                            if (bridgedEvents.size()>0) {
+                                System.out.println("intersection coevents and topicevents.size() = " + bridgedEvents.size());
+                            }
                         }
+                    }
+                    else {
+                        //// stick to coevents only
+                    }
+                    if (bridgedEvents.size()>0) {
+                        System.out.println("final set of bridged events.size() = " + bridgedEvents.size());
                     }
 
 
-
-                    for (int i = 0; i < intersection.size(); i++) {
-                        JSONObject object = intersection.get(i);
+                    for (int i = 0; i < bridgedEvents.size(); i++) {
+                        JSONObject object = bridgedEvents.get(i);
                         if (!hasObject(groupedObjects, object)) {
                             eventCount++;
                             addObjectToGroup(
@@ -134,125 +134,21 @@ public class JsonStoryUtil {
                                     8,
                                     climaxThreshold);
                         }
-                    }
-
-                    /*ArrayList<JSONObject> coevents = CreateMicrostory.getEventsThroughCoparticipation(selectedEvents, jsonObject);
-                    for (int i = 0; i < coevents.size(); i++) {
-                        JSONObject object = coevents.get(i);
-                        if (!hasObject(groupedObjects, object)) {
-                            addObjectToGroup(
-                                    storyObjects,
-                                    group,
-                                    groupName,
-                                    groupScore,
-                                    object,
-                                    8);
-                            if (PRINTEXAMPLE) {
-                                if (!entityMatch.isEmpty()) {
-                                    /////// FOR EXAMPLE OUTPUT
-                                    /// without forcing coparticipation of the target entity
-                                    Integer climax = Integer.parseInt(object.get("climax").toString());
-                                    String event = object.get("labels").toString();
-                                    event += getActorByRoleFromEvent(object, "pb/A0");
-                                    event += getActorByRoleFromEvent(object, "pb/A1");
-                                    event += getActorByRoleFromEvent(object, "pb/A2");
-                                    String time = object.get("time").toString();
-                                    if (time.isEmpty()) {
-                                        time = "NOTIMEX";
-                                    }
-                                    entityTimeLine += "\t" + climax + "\t" + time + "\t" + event + "\n";
-
-                                }
-                            }
+                        else {
+                            ///// this means that the bridged event was already consumed by another story
+                            ///// that's a pity for this story. It is already consumed
                         }
                     }
 
-
-                    if (topicThreshold>0) {
-                        coevents = CreateMicrostory.getEventsThroughTopicBridging(selectedEvents, jsonObject, topicThreshold);
-
-                        System.out.println("coevents.size() = " + coevents.size());
-                        for (int i = 0; i < coevents.size(); i++) {
-                            JSONObject object = coevents.get(i);
-                            if (!hasObject(groupedObjects, object)) {
-                                addObjectToGroup(
-                                        storyObjects,
-                                        group,
-                                        groupName,
-                                        groupScore,
-                                        object,
-                                        8);
-                            }
-                        }
-                    }*/
-                    /*
-                    ArrayList<JSONObject> fnevents = CreateMicrostory.getEventsThroughFrameNetBridging(jsonObjects, jsonObject, frameNetReader);
-                    //ArrayList<JSONObject> fnevents = CreateMicrostory.getEventsThroughEsoBridging(jsonObjects, jsonObject, frameNetReader);
-                    //  System.out.println("coevents = " + coevents.size());
-                    //  System.out.println("fnevents = " + fnevents.size());
-
-                  //  ArrayList<JSONObject> intersection = new ArrayList<JSONObject>();
-                    ArrayList<JSONObject> intersection = intersectEventObjects(coevents, fnevents);
-
-                    for (int j = 0; j < intersection.size(); j++) {
-                        JSONObject object = intersection.get(j);
-                        *//*
-                        if (!hasActorInEvent(object, coparticipantsA0)
-                        &&
-                        !hasActorInEvent(object, coparticipantsA1)
-                        &&
-                        !hasActorInEvent(object, coparticipantsA2)) {
-                            continue;
-                        }*//*
-                       *//* String copartipation = getActorFromEvent(object, entity);
-                        if (copartipation.isEmpty()) {
-                            continue;
-                        }*//*
-
-
-                        if (!hasObject(groupedObjects, object)) {
-                            addObjectToGroup(
-                                    storyObjects,
-                                    group, groupName, groupScore,
-                                    object,
-                                    6);
-                            if (PRINTEXAMPLE) {
-                                if (!entityMatch.isEmpty()) {
-                                    /////// FOR EXAMPLE OUTPUT
-
-                                    /// without forcing coparticipation of the target entity
-                                    Integer climax = Integer.parseInt(object.get("climax").toString());
-                                    String event = object.get("labels").toString();
-                                    event += getActorByRoleFromEvent(object, "pb/A0");
-                                    event += getActorByRoleFromEvent(object, "pb/A1");
-                                    event += getActorByRoleFromEvent(object, "pb/A2");
-                                    String time = object.get("time").toString();
-                                    if (time.isEmpty()) {
-                                        time = "NOTIMEX";
-                                    }
-                                    entityTimeLine += "\t" + climax + "\t" + time + "\t" + event + "\n";
-
-                                }
-                            }
-                        }
-
-                    }
-
-                    //// The less strict version continues with non-intersecting events....
-                    //// use next commented block to get more...
-                    if (intersection.size()==0) {
-
-
-                    }*/
-
-                    if (DEBUG) System.out.println(debugStr);
-
+                    //// use this code if singleton stories are represented also
+/*
                     for (int i = 0; i < storyObjects.size(); i++) {
                         JSONObject object = storyObjects.get(i);
                         groupedObjects.add(object);
                     }
+*/
 
-/*
+                    //// use this code if singletons are treated separately
                     if (storyObjects.size()>1) {
                         for (int i = 0; i < storyObjects.size(); i++) {
                             JSONObject object = storyObjects.get(i);
@@ -260,10 +156,12 @@ public class JsonStoryUtil {
                         }
                     }
                     else {
-                        //// these are now ignored
-                        singletonObjects.add(storyObjects.get(0));
+                        for (int i = 0; i < storyObjects.size(); i++) {
+                            JSONObject object = storyObjects.get(i);
+                            singletonObjects.add(object);
+                        }
                     }
-*/
+
                 } catch (JSONException e) {
                     // e.printStackTrace();
                 }
@@ -273,12 +171,26 @@ public class JsonStoryUtil {
 
         } // end of while objects in sorted climaxObjects
 
-
-
-        if (PRINTEXAMPLE) {
-            /////// FOR EXAMPLE OUTPUT
-            System.out.println("entityTimeLine = " + entityTimeLine);
-            /////// FOR EXAMPLE OUTPUT
+        //// now we handle the singleton events
+        String group = "001:unrelated events";
+        String groupName = "unrelated event";
+        String groupScore = "001";
+        climaxObjects = determineClimaxValues(singletonObjects, climaxThreshold);
+        sortedObjects = climaxObjects.iterator();
+        while (sortedObjects.hasNext()) {
+            JSONObject jsonObject = sortedObjects.next();
+            jsonObject.put("group", group);
+            jsonObject.put("groupName", groupName);
+            jsonObject.put("groupScore", groupScore);
+            eventCount++;
+            addObjectToGroup(
+                    storyObjects,
+                    group,
+                    groupName,
+                    groupScore,
+                    jsonObject,
+                    2,
+                    climaxThreshold);
         }
 
         return groupedObjects;
@@ -1132,6 +1044,22 @@ public class JsonStoryUtil {
             }
         }
         return  intersection;
+    }
+    static ArrayList<JSONObject> mergeEventObjects(ArrayList<JSONObject> set1, ArrayList<JSONObject> set2) throws JSONException {
+        ArrayList<JSONObject> merge = set2;
+        for (int i = 0; i < set1.size(); i++) {
+            JSONObject object1 = set1.get(i);
+            boolean has = false;
+            for (int j = 0; j < merge.size(); j++) {
+                JSONObject object2 = merge.get(j);
+                if (object1.get("instance").toString().equals(object2.get("instance").toString())) {
+                    has = true;
+                    break;
+                }
+            }
+            merge.add(object1);
+        }
+        return  merge;
     }
 
 

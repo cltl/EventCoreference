@@ -383,7 +383,7 @@ public class JsonFromRdf {
         ArrayList<String> esoActors = new ArrayList<String>();
         ArrayList<String> fnActors = new ArrayList<String>();
         ArrayList<String> pbActors = new ArrayList<String>();
-        //System.out.println("statements = " + statements.size());
+       // System.out.println("statements = " + statements.size());
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
             String predicate = statement.getPredicate().getURI();
@@ -394,7 +394,7 @@ public class JsonFromRdf {
                 ///
             }
             else {
-               // System.out.println("statement.asTriple().toString() = " + statement.asTriple().toString());
+              //  System.out.println("statement.asTriple().toString() = " + statement.asTriple().toString());
 
                 String object = "";
                 if (statement.getObject().isLiteral()) {

@@ -1,10 +1,10 @@
 package eu.newsreader.eventcoreference.util;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.apache.tools.bzip2.CBZip2InputStream;
+
+import java.io.*;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created by piek on 04/02/16.
@@ -16,25 +16,47 @@ public class EuroVoc {
 
     static public void readEuroVoc (String filePath, String language) {
         try {
-            FileInputStream fis = new FileInputStream(filePath);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader in = new BufferedReader(isr);
-            String inputLine;
-            while (in.ready() && (inputLine = in.readLine()) != null) {
-                // System.out.println(inputLine);
-                inputLine = inputLine.trim();
-                if (inputLine.trim().length() > 0) {
-                    String[] fields = inputLine.split("\t");
-                    if (fields.length == 3) {
-
-                        String key = fields[0];
-                        String lg = fields[1];
-                        String uri = fields[2];
-                        if (lg.equalsIgnoreCase(language)) {
-                            labelUriMap.put(key, uri);
+            InputStreamReader isr = null;
+            if (filePath.toLowerCase().endsWith(".gz")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (filePath.toLowerCase().endsWith(".bz2")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new CBZip2InputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                FileInputStream fis = new FileInputStream(filePath);
+                isr = new InputStreamReader(fis);
+            }
+            if (isr!=null) {
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                while (in.ready() && (inputLine = in.readLine()) != null) {
+                    // System.out.println(inputLine);
+                    inputLine = inputLine.trim();
+                    if (inputLine.trim().length() > 0) {
+                        String[] fields = inputLine.split("\t");
+                        if (fields.length == 3) {
+                            String key = fields[0];
+                            String lg = fields[1];
+                            String uri = fields[2];
+                            if (lg.equalsIgnoreCase(language)) {
+                                labelUriMap.put(key, uri);
+                            }
+                        } else {
+                            //  System.out.println("fields.length = " + fields.length);
                         }
-                    } else {
-                        //  System.out.println("fields.length = " + fields.length);
                     }
                 }
             }

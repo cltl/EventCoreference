@@ -78,6 +78,29 @@ public class TrigKSTripleReader {
         return readTriplesFromKSforEntity(entityLabel, "");
     }
 
+    static public TrigTripleData readTriplesFromKSforEventEntityType(String eventType, String entityType){
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event rdf:type " + eventType + " .\n" +
+                "?event sem:hasActor ?ent .\n" +
+                "?ent rdf:type " + entityType + " .\n" +
+                "} LIMIT "+limit+" }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
+                "} ORDER BY ?event";
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        return readTriplesFromKs(sparqlQuery);
+    }
 
     static public TrigTripleData readTriplesFromKSforEntity(String entityLabel, String filter){
 
@@ -241,7 +264,8 @@ public class TrigKSTripleReader {
             }
         }
 
-        readTriplesFromKSforEventType("fn:Arriving");
+        readTriplesFromKSforEventEntityType("fn:Arriving", "dbp:Company");
+       // readTriplesFromKSforEventType("fn:Arriving");
 
         //readTriplesFromKSforEntity("Airbus", "");
         long estimatedTime = System.currentTimeMillis() - startTime;

@@ -49,6 +49,7 @@ public class TrigToJsonTimeLineClimax {
         String project = "NewsReader storyline";
         String pathToILIfile = "";
         String query = "";
+        String query2 = "";
         String kslimit = "500";
         String trigfolder = "";
         String trigfile = "";
@@ -70,7 +71,12 @@ public class TrigToJsonTimeLineClimax {
             }
             else if (arg.equals("--query") && args.length>(i+1)) {
                 query = args[i+1];
-               // entityFilter = query;
+            }
+            else if (arg.equals("--event-type") && args.length>(i+1)) {
+                query = args[i+1];
+            }
+            else if (arg.equals("--entity-type") && args.length>(i+1)) {
+                query2 = args[i+1];
             }
             else if (arg.equals("--year") && args.length>(i+1)) {
                 year = args[i+1];
@@ -187,7 +193,10 @@ public class TrigToJsonTimeLineClimax {
             trigTripleData = TrigTripleReader.readTripleFromTrigFiles(trigFiles);
         }
         else if (!query.isEmpty()) {
-            System.out.println("querying KnowledgeStore for stories = " + query);
+            System.out.println("querying KnowledgeStore for event = " + query);
+            if (!query2.isEmpty()) {
+                System.out.println("and querying KnowledgeStore for entity = " + query2);
+            }
             long startTime = System.currentTimeMillis();
             if (!KS.isEmpty()) {
                 TrigKSTripleReader.setServicePoint(KS);
@@ -210,6 +219,17 @@ public class TrigToJsonTimeLineClimax {
             else if (QUERYTYPE.equalsIgnoreCase("topic")) {
                 trigTripleData = TrigKSTripleReader.readTriplesFromKSforTopic(query);
             }
+            else if (QUERYTYPE.equalsIgnoreCase("event-entity")) {
+                trigTripleData = TrigKSTripleReader.readTriplesFromKSforEventEntityType(query, query2);
+            }
+/*
+            try {
+                trigTripleData.dumpTriples(System.out, trigTripleData.tripleMapInstances);
+                trigTripleData.dumpTriples(System.out, trigTripleData.tripleMapOthers);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+*/
 
             long estimatedTime = System.currentTimeMillis() - startTime;
 
@@ -260,6 +280,7 @@ public class TrigToJsonTimeLineClimax {
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
+           // System.out.println("key = " + key);
             ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
             if (trigTripleData.tripleMapOthers.containsKey( key)) {
                 /// this means it is an instance and has semrelations

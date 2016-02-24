@@ -220,16 +220,20 @@ public class CreateMicrostory {
                                                                         JSONObject event,
                                                                       int topicThreshold) {
         ArrayList<JSONObject> topicEvents = new ArrayList<JSONObject>();
-        //System.out.println("bridging");
+        boolean DEBUG = false;
+        if (DEBUG) System.out.println("bridging");
         try {
             JSONArray topics = null;
             try {
                 topics = (JSONArray) event.get("topics");
             } catch (JSONException e) {
-               // e.printStackTrace();
+              if (DEBUG)  e.printStackTrace();
             }
             if (topics!=null) {
-               // System.out.println("topics = " + topics.length());
+                if (DEBUG) {
+                    System.out.println("topics = " + topics.length());
+                    System.out.println("topics.toString() = " + topics.toString());
+                }
                 for (int i = 0; i < events.size(); i++) {
                     JSONObject oEvent = events.get(i);
                     if (!oEvent.equals(event)) {
@@ -237,10 +241,13 @@ public class CreateMicrostory {
                         try {
                             oTopics = (JSONArray) oEvent.get("topics");
                         } catch (JSONException e) {
-                          //  e.printStackTrace();
+                            if (DEBUG)   e.printStackTrace();
                         }
                         if (oTopics!=null) {
-                           // System.out.println("otopics = " + oTopics.length());
+                            if (DEBUG) {
+                                System.out.println("otopics = " + oTopics.length());
+                                System.out.println("oTopics.toString() = " + oTopics.toString());
+                            }
                             int sharedTopics = 0;
                             for (int j = 0; j < topics.length(); j++) {
                                 String topic = (String) topics.get(j);
@@ -253,13 +260,24 @@ public class CreateMicrostory {
                             }
                             int prop1 = sharedTopics*100/topics.length();
                             int prop2 = sharedTopics*100/oTopics.length();
-                            //System.out.println("sharedTopics = " + sharedTopics);
-                            //System.out.println("prop1 = " + prop1);
-                            //System.out.println("prop2 = " + prop2);
+                            if (DEBUG) {
+                                if (sharedTopics > 0) {
+                                    System.out.println("sharedTopics = " + sharedTopics);
+                                    System.out.println("prop1 = " + prop1);
+                                    System.out.println("prop2 = " + prop2);
+                                }
+                            }
+
                             if (prop1>=topicThreshold && prop2>= topicThreshold) {
-                                //System.out.println("topicThreshold = " + topicThreshold);
+                               // System.out.println("topicThreshold = " + topicThreshold);
                                 if (!topicEvents.contains(oEvent)) {
+/*
+                                    System.out.println("prop1 = " + prop1);
+                                    System.out.println("prop2 = " + prop2);
+                                    System.out.println("oEvent = " + oEvent);
+*/
                                     topicEvents.add(oEvent);
+                                    //System.out.println("topicEvents = " + topicEvents.size());
                                 }
                             }
                         }
@@ -475,38 +493,32 @@ public class CreateMicrostory {
             String key = keys.next().toString(); //role
           //  System.out.println("key = " + key);
             if (key.toLowerCase().startsWith("pb/")
-/*
-                    || key.equalsIgnoreCase("pb/A0")
-                    || key.equalsIgnoreCase("pb/A1")
-                    || key.equalsIgnoreCase("pb/A2")
-                    || key.equalsIgnoreCase("pb/A3")
-                    || key.equalsIgnoreCase("pb/A4")
-*/
+
                     || key.toLowerCase().startsWith("fn/")
-                    || key.toLowerCase().startsWith("eso/")) {
+                    || key.toLowerCase().startsWith("eso/")
+                    ) {
                 JSONArray actors = actorObject.getJSONArray(key);
-                // System.out.println("actors.toString() = " + actors.toString());
+              //  System.out.println("actors.length() = " + actors.length());
+               // System.out.println("actors.toString() = " + actors.toString());
                 for (int i = 0; i < events.size(); i++) {
                     JSONObject oEvent = events.get(i);
                     if (!oEvent.get("instance").toString().equals(event.get("instance").toString())) {
                         ///skip event itself
                         JSONObject oActorObject = oEvent.getJSONObject("actors");
                         Iterator oKeys = oActorObject.sortedKeys();
+                        int cnt = 0;
                         while (oKeys.hasNext()) {
                             String oKey = oKeys.next().toString();
                             if (oKey.toLowerCase().startsWith("pb/")
-/*
-                                    || oKey.equalsIgnoreCase("pb/A0")
-                                    || oKey.equalsIgnoreCase("pb/A1")
-                                    || oKey.equalsIgnoreCase("pb/A2")
-                                    || oKey.equalsIgnoreCase("pb/A3")
-                                    || oKey.equalsIgnoreCase("pb/A4")
-*/
                                     || oKey.toLowerCase().startsWith("fn/")
-                                    || oKey.toLowerCase().startsWith("eso/")) {
+                                    || oKey.toLowerCase().startsWith("eso/")
+                                    ) {
                                 JSONArray oActors = oActorObject.getJSONArray(oKey);
-                                // System.out.println("oActors.toString() = " + oActors.toString());
+                              //  System.out.println("oActors.length() = " + oActors.length());
+                               // System.out.println("oActors.toString() = " + oActors.toString());
                                 if (intersectingActor(actors, oActors)) {
+                                    // System.out.println("oActors.toString() = " + oActors.toString());
+                                    cnt++;
                                     if (!coPartipantEvents.contains(oEvent)) {
                                          coPartipantEvents.add(oEvent);
                                     }
@@ -514,6 +526,13 @@ public class CreateMicrostory {
                                 }
                             }
                         }
+/*
+                        if (cnt>=2) {
+                            if (!coPartipantEvents.contains(oEvent)) {
+                                coPartipantEvents.add(oEvent);
+                            }
+                        }
+*/
                     }
                 }
             }
