@@ -215,11 +215,14 @@ public class SemObject implements Serializable {
                 if (kafTerm != null) {
                     phrase += " " + kafTerm.getLemma();
                 } else {
-                    System.out.println("no KafTerm for id = " + termId);
+                    System.err.println("no KafTerm for id = " + termId);
                 }
             }
             if (!phrase.isEmpty()) {
                 addPhraseCounts(phrase.trim());
+            }
+            else {
+                System.err.println("Empty phrase for mention = "+ nafMention.toStringFull());
             }
         }
     }
@@ -417,11 +420,15 @@ public class SemObject implements Serializable {
             if (phraseCount.getPhrase().length()>2 || label.isEmpty()) {
                 if (goodPhrase(phraseCount) || label.isEmpty()) {
                     if (phraseCount.getCount() > top) {
+                        top = phraseCount.getCount();
+                        label = phraseCount.getPhrase();
+/*
                         if (Util.hasAlphaNumeric(phraseCount.getPhrase())) {
                             top = phraseCount.getCount();
                             label = phraseCount.getPhrase();
                         } else {
                         }
+*/
                     }
                 }
             }

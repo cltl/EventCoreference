@@ -24,7 +24,7 @@ import java.util.Set;
 public class GetSemFromNaf {
 
     static public boolean POCUS = true;
-    static final int MINEVENTLABELSIZE = 3;
+    static public int MINEVENTLABELSIZE = 1;
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
     static public HashMap<String, String> eurovoc = new HashMap<String, String>();
@@ -83,7 +83,7 @@ public class GetSemFromNaf {
         processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
 
         //// THIS FIX IS NEEDED BECAUSE SOMETIMES SRL GENERATES IDENTICAL SPANS FOR PREDICATES AND ACTORS. WE REMOVE EVENTS THAT ARE IDENTICAL WITH ACTORS
-        Util.filterOverlapEventsEntities(semEvents, semActors);
+        //Util.filterOverlapEventsEntities(semEvents, semActors);
 
         processNafFileForRelations(baseUrl,
                 kafSaxParser, semEvents, semActors, semTimes, semRelations);
@@ -136,6 +136,7 @@ public class GetSemFromNaf {
                 }
             }
         }
+        System.out.println("semEvents.size() = " + semEvents.size());
     }
 
 

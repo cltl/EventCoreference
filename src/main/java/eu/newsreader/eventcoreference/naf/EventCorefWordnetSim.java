@@ -40,9 +40,11 @@ package eu.newsreader.eventcoreference.naf;
                 "   --source-frames         <List of framenet frames to be treates as source events. No coreference is applied>\n"+
                 "   --contexual-frames      <List of framenet frames to be treates as contexual events. Coreference is applied>\n"+
                 "   --grammatical-frames    <List of framenet frames to be treates as grammatical events. No coreference is applied>\n"+
-                "   --replace               <Using this flag previous output of event-coreference is removed first>\n"
+                "   --replace               <Using this flag previous output of event-coreference is removed first>\n" +
+                "   --ignore-false          <Using this flag removes srl with predicate status = \"false\">\n"
                 ;
 
+        static boolean REMOVEFALSEPREDICATES = false;
         static final String layer = "coreferences";
         static final String name = "vua-event-coref-intradoc-wn-sim";
         static final String version = "3.0";
@@ -50,6 +52,9 @@ package eu.newsreader.eventcoreference.naf;
         static Vector<String> grammaticalFrames = new Vector<String>();
         static Vector<String> contextualFrames = new Vector<String>();
         static WordnetData wordnetData = null;
+        static String pathToWNLMF = "";
+        static String folder = "";
+        static public String pathToNafFile = "";
         static String method = "";
         static int proportionalthreshold = -1;
         static double simthreshold = -1;
@@ -64,9 +69,133 @@ package eu.newsreader.eventcoreference.naf;
         static int DISTANCE = -1;
         static String extension = "";
         static String outputTag = "";
+        static boolean STREAM = true;
 
+        static public void processArgs (String [] args) {
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
+                if (arg.equals("--wn-lmf") && args.length > (i + 1)) {
+                    pathToWNLMF = args[i + 1];
+                } else if (arg.equals("--method") && args.length > (i + 1)) {
+                    method = args[i + 1];
+                } else if (arg.equals("--relations") && args.length > (i + 1)) {
+                    String[] relationString = args[i + 1].split("#");
+                    for (int j = 0; j < relationString.length; j++) {
+                        String s = relationString[j];
+                        relations.add(s);
+                    }
+                } else if (arg.equals("--naf-file") && args.length > (i + 1)) {
+                    pathToNafFile = args[i + 1];
+                    STREAM = false;
+                } else if (arg.equals("--naf-folder") && args.length > (i + 1)) {
+                    folder = args[i + 1];
+                    STREAM = false;
+                } else if (arg.equals("--extension") && args.length > (i + 1)) {
+                    extension = args[i + 1];
+                } else if (arg.equals("--output-tag") && args.length > (i + 1)) {
+                    outputTag = args[i + 1];
+                } else if (arg.equals("--distance") && args.length > (i + 1)) {
+                    try {
+                        DISTANCE = Integer.parseInt(args[i + 1]);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                } else if (arg.equals("--sim") && args.length > (i + 1)) {
+                    try {
+                        simthreshold = Double.parseDouble(args[i + 1]);
+                    } catch (NumberFormatException e) {
+                        // e.printStackTrace();
+                    }
+                } else if (arg.equals("--sim-ont") && args.length > (i + 1)) {
+                    try {
+                        simOntthreshold = Double.parseDouble(args[i + 1]);
+                    } catch (NumberFormatException e) {
+                        // e.printStackTrace();
+                    }
+                } else if (arg.equals("--drift-max") && args.length > (i + 1)) {
+                    try {
+                        DRIFTMAX = Integer.parseInt(args[i + 1]);
+                    } catch (NumberFormatException e) {
+                        // e.printStackTrace();
+                    }
+                } else if (arg.equals("--wsd") && args.length > (i + 1)) {
+                    USEWSD = true;
+                    try {
+                        BESTSENSETHRESHOLD = Double.parseDouble(args[i + 1]);
+                    } catch (NumberFormatException e) {
+                        // e.printStackTrace();
+                    }
+                } else if (arg.equals("--wn-prefix") && args.length > (i + 1)) {
+                    WNPREFIX = args[i + 1].trim();
+                } else if (arg.equals("--wn-source") && args.length > (i + 1)) {
+                    WNSOURCETAG = args[i + 1].trim().toLowerCase();
+                } else if (arg.equals("--proportion") && args.length > (i + 1)) {
+                    try {
+                        proportionalthreshold = Integer.parseInt(args[i + 1]);
+                    } catch (NumberFormatException e) {
+                        // e.printStackTrace();
+                    }
+                } else if (arg.equals("--source-frames") && args.length > (i + 1)) {
+                    String frameFilePath = args[i + 1];
+                    sourceFrames = Util.ReadFileToStringVector(frameFilePath);
+                } else if (arg.equals("--contextual-frames") && args.length > (i + 1)) {
+                    String frameFilePath = args[i + 1];
+                    contextualFrames = Util.ReadFileToStringVector(frameFilePath);
+                } else if (arg.equals("--grammatical-frames") && args.length > (i + 1)) {
+                    String frameFilePath = args[i + 1];
+                    grammaticalFrames = Util.ReadFileToStringVector(frameFilePath);
+                } else if (arg.equalsIgnoreCase("--replace")) {
+                    REMOVEEVENTCOREFS = true;
+                } else if (arg.equalsIgnoreCase("--ignore-false")) {
+                    REMOVEFALSEPREDICATES = true;
+                }
+            }
+
+            if (!pathToWNLMF.isEmpty()) {
+                WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
+                wordnetLmfSaxParser.setRelations(relations);
+                wordnetLmfSaxParser.parseFile(pathToWNLMF);
+                wordnetData = wordnetLmfSaxParser.wordnetData;
+            }
+        }
 
         static public void main (String [] args) {
+            if (args.length == 0) {
+                System.out.println("usage = " + usage);
+            }
+            else {
+                processArgs(args);
+                if (STREAM) {
+                    /// input and output stream
+                        KafSaxParser kafSaxParser = new KafSaxParser();
+                        kafSaxParser.parseFile(System.in);
+                        processNaf(kafSaxParser);
+                        kafSaxParser.writeNafToStream(System.out);
+                }
+                else {
+                        printSettings();
+                        if (!folder.isEmpty()) {
+                            processNafFolder(new File(folder), extension);
+                        } else {
+                            processNafFile(pathToNafFile);
+                        }
+                    }
+                }
+        }
+        static public void printSettings () {
+            System.out.println("wordnetData relations = " + wordnetData.hyperRelations.size());
+            System.out.println("simthreshold = " + simthreshold);
+            System.out.println("simthreshold-ont = " + simOntthreshold);
+            System.out.println("best-sense-threshold = " + BESTSENSETHRESHOLD);
+            System.out.println("REMOVEEVENTCOREFS = " + REMOVEEVENTCOREFS);
+            System.out.println("method = " + method);
+            System.out.println("wn-prefix = " + WNPREFIX);
+            System.out.println("wn-resource-tag = " + WNSOURCETAG);
+            System.out.println("DRIFTMAX = " + DRIFTMAX);
+            System.out.println("DISTANCE = " + DISTANCE);
+            System.out.println("relations = " + relations.toString());
+        }
+        static public void mainORG (String [] args) {
             if (args.length == 0) {
                 System.out.println("usage = " + usage);
             }
@@ -81,7 +210,6 @@ package eu.newsreader.eventcoreference.naf;
                 }
                 if (STREAM) {
                     /// input and output stream
-                    String pathToWNLMF = "";
                     for (int i = 0; i < args.length; i++) {
                         String arg = args[i];
                         if (arg.equals("--wn-lmf") && args.length > (i + 1)) {
@@ -168,9 +296,6 @@ package eu.newsreader.eventcoreference.naf;
 
                     }
                 } else {
-                    String pathToNafFile = "";
-                    String pathToWNLMF = "";
-                    String folder = "";
                     //String pathToNafFile = "/Users/piek/Desktop/NWR/en_pipeline2.0/v21_out-no-event-coref.naf";
                     // String pathToNafFile = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04/57WD-M601-F06S-P370.xml_9af408976df898b707d008cbe1f81372.naf.coref";
                     // String folder = "/Users/piek/Desktop/NWR/NWR-DATA/cars/2013-03-04";
@@ -269,18 +394,7 @@ package eu.newsreader.eventcoreference.naf;
                         wordnetLmfSaxParser.setRelations(relations);
                         wordnetLmfSaxParser.parseFile(pathToWNLMF);
                         wordnetData = wordnetLmfSaxParser.wordnetData;
-                        System.out.println("wordnetData relations = " + wordnetData.hyperRelations.size());
-                        System.out.println("simthreshold = " + simthreshold);
-                        System.out.println("simthreshold-ont = " + simOntthreshold);
-                        System.out.println("best-sense-threshold = " + BESTSENSETHRESHOLD);
-                        // System.out.println("proportionalthreshold = " + proportionalthreshold);
-                        System.out.println("REMOVEEVENTCOREFS = " + REMOVEEVENTCOREFS);
-                        System.out.println("method = " + method);
-                        System.out.println("wn-prefix = " + WNPREFIX);
-                        System.out.println("wn-resource = " + WNSOURCETAG);
-                        System.out.println("DRIFTMAX = " + DRIFTMAX);
-                        System.out.println("DISTANCE = " + DISTANCE);
-                        System.out.println("relations = " + relations.toString());
+
                         if (!folder.isEmpty()) {
                             processNafFolder(new File(folder), extension);
                         } else {
@@ -297,26 +411,21 @@ package eu.newsreader.eventcoreference.naf;
             if (REMOVEEVENTCOREFS) {
                 Util.removeEventCoreferences(kafSaxParser);
             }
-            process(kafSaxParser, USEWSD);
+           //process(kafSaxParser, USEWSD);
+            processContextuals(kafSaxParser, USEWSD);
         }
 
         static public void processNafStream (InputStream nafStream) {
             KafSaxParser kafSaxParser = new KafSaxParser();
             kafSaxParser.parseFile(nafStream);
-            if (REMOVEEVENTCOREFS) {
-                Util.removeEventCoreferences(kafSaxParser);
-            }
-            process(kafSaxParser, USEWSD);
+            processContextuals(kafSaxParser, USEWSD);
             kafSaxParser.writeNafToStream(System.out);
         }
 
         static public void processNafFile (String pathToNafFile) {
             KafSaxParser kafSaxParser = new KafSaxParser();
             kafSaxParser.parseFile(pathToNafFile);
-            if (REMOVEEVENTCOREFS) {
-                Util.removeEventCoreferences(kafSaxParser);
-            }
-            process(kafSaxParser, USEWSD);
+            processContextuals(kafSaxParser, USEWSD);
             try {
                 String filePath = pathToNafFile.substring(0,pathToNafFile.lastIndexOf("."));
                 FileOutputStream fos = new FileOutputStream(filePath+outputTag);
@@ -335,11 +444,6 @@ package eu.newsreader.eventcoreference.naf;
                 System.out.println("file.getName() = " + file.getName());
                 KafSaxParser kafSaxParser = new KafSaxParser();
                 kafSaxParser.parseFile(file);
-                if (REMOVEEVENTCOREFS) {
-                    Util.removeEventCoreferences(kafSaxParser);
-                }
-
-                //process(kafSaxParser, USEWSD);
                 processContextuals(kafSaxParser, USEWSD);
 
                 try {
@@ -572,6 +676,7 @@ package eu.newsreader.eventcoreference.naf;
 
 
 
+/*
         static void process(KafSaxParser kafSaxParser, boolean USEWSD) {
             String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
             String strEndDate = null;
@@ -807,6 +912,7 @@ package eu.newsreader.eventcoreference.naf;
             kafSaxParser.getKafMetaData().addLayer(layer, lp);
 
         }
+*/
 
         /**
          * Checks if predicate is valid despite the status of event detection
@@ -852,44 +958,20 @@ package eu.newsreader.eventcoreference.naf;
         static void processContextuals(KafSaxParser kafSaxParser, boolean USEWSD) {
             String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
             String strEndDate = null;
+            if (REMOVEEVENTCOREFS) {
+                Util.removeEventCoreferences(kafSaxParser);
+            }
+
+            if (REMOVEFALSEPREDICATES) {
+                Util.removeFalsePredicatesSrl(kafSaxParser);
+            }
             ArrayList<CorefResultSet> corefMatchList = new ArrayList<CorefResultSet>();
             ArrayList<CorefResultSet> grammaticalCorefMatchList = new ArrayList<CorefResultSet>();
             ArrayList<CorefResultSet> sourceCorefMatchList = new ArrayList<CorefResultSet>();
-
-
             /// we create coreference sets for lemmas
             ArrayList<String> lemmaList = new ArrayList<String>();
             for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
                 KafEvent theKafEvent = kafSaxParser.kafEventArrayList.get(i);
-                if (!Util.validPosEvent(theKafEvent, kafSaxParser)) {
-                    continue; //// we only accept predicates with valid POS
-                }
-
-                if (theKafEvent.getStatus().equals("false") &&
-                        !hasEventExternalReferences(theKafEvent)) {
-                    /// Event Detector disqualified && it is not a verb or if a verb has no EventExternalReferences
-                    continue; //// was disqualified by event detector
-                }
-                  /*
-                  String pos = "";
-                  for (int j = 0; j < theKafEvent.getSpanIds().size(); j++) {
-                      String spanId = theKafEvent.getSpanIds().get(j);
-                      KafTerm kafTerm = kafSaxParser.getTerm(spanId);
-                      if (kafTerm!=null) {
-                          pos += kafTerm.getPos();
-                      }
-                  }*/
-                  /*
-                  if (theKafEvent.getStatus().equals("false") &&
-                          (!pos.toLowerCase().startsWith("v") ||
-                           !hasEventExternalReferences(theKafEvent))) {
-                      /// Event Detector disqualified && it is not a verb or if a verb has no EventExternalReferences
-                     continue; //// was disqualified by event detector
-                  }*/
-                 /* if (theKafEvent.getStatus().equals("false")) {
-                      /// Event Detector disqualified && it is not a verb or if a verb has no EventExternalReferences
-                     continue; //// was disqualified by event detector
-                  }*/
                 Integer sentenceId = -1;
                 try {
                     KafTerm kafTerm = kafSaxParser.getTerm(theKafEvent.getSpanIds().get(0)); /// get the term from the first span

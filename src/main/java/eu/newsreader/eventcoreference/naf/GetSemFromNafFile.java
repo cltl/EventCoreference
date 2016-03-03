@@ -29,8 +29,8 @@ public class GetSemFromNafFile {
     static public int TIMEEXPRESSIONMAX = 5;
     static public boolean NONENTITIES = false;
     static public boolean ILIURI = false;
-    static public boolean VERBOSE = false;
-    static public boolean ALL = false;
+    static public boolean VERBOSE = true;
+    static public boolean ALL = true;
     static public boolean PERSPECTIVE = false;
 
 
@@ -55,8 +55,8 @@ public class GetSemFromNafFile {
         //"/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/test/4KJ5-2R90-TX51-F3C4.xml.1a0sdakjs.xml";
         ALL = true;
         pathToNafFile = "/Users/piek/Desktop/NWR/Wikinews/Cross-lingual-pip3/spanish-wikinews/corpus_apple/58772_Apple_Inc._doubled_its_profits.xml.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR/Wikinews/english-wikinews-all/naf" +
-                "enwikinews-74545_6a4899be5034ea45e47d2b19bb874057.xml.bz2_00a8f0d530c7a0724df2b76a43be30d9.naf.bz2";
+        pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/29/29_10ecb.xml.naf.fix.coref";
+        pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/33/33_1ecb.xml.naf.fix.coref";
         String sourceFrameFile = "";
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";

@@ -424,6 +424,49 @@ public class Util {
         kafSaxParser.kafCorefenceArrayList = fixedSets;
     }
 
+    /*
+               if (!Util.validPosEvent(theKafEvent, kafSaxParser)) {
+                    continue; //// we only accept predicates with valid POS
+                }
+                if (theKafEvent.getStatus().equals("false")
+                //   &&  !hasEventExternalReferences(theKafEvent)
+                ) {
+                    /// Event Detector disqualified && it is not a verb or if a verb has no EventExternalReferences
+                    continue; //// was disqualified by event detector
+                }
+
+                System.out.println("theKafEvent = " + theKafEvent.getSpanIds().toString()+":"+theKafEvent.getStatus());
+                  String pos = "";
+                  for (int j = 0; j < theKafEvent.getSpanIds().size(); j++) {
+                      String spanId = theKafEvent.getSpanIds().get(j);
+                      KafTerm kafTerm = kafSaxParser.getTerm(spanId);
+                      if (kafTerm!=null) {
+                          pos += kafTerm.getPos();
+                      }
+                  }
+                  if (theKafEvent.getStatus().equals("false") &&
+                          (!pos.toLowerCase().startsWith("v") ||
+                           !hasEventExternalReferences(theKafEvent))) {
+                      /// Event Detector disqualified && it is not a verb or if a verb has no EventExternalReferences
+                     continue; //// was disqualified by event detector
+                  }
+                 if (theKafEvent.getStatus().equals("false")) {
+                      /// Event Detector disqualified && it is not a verb or if a verb has no EventExternalReferences
+                     continue; //// was disqualified by event detector
+                  }
+     */
+
+    static public void removeFalsePredicatesSrl (KafSaxParser kafSaxParser) {
+        ArrayList<KafEvent> fixedSets = new ArrayList<KafEvent>();
+        for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
+            KafEvent kafEvent = kafSaxParser.kafEventArrayList.get(i);
+            if (!kafEvent.getStatus().equalsIgnoreCase("false")) {
+                fixedSets.add(kafEvent);
+            }
+        }
+        kafSaxParser.kafEventArrayList = fixedSets;
+    }
+
     /**
      * Required to be able to write Composite SemEvent Objects to existing object files
      */
@@ -857,11 +900,13 @@ public class Util {
         corefSet.add(eventSpan);
         for (int j = 0; j < coreferenceSets.size(); j++){
             KafCoreferenceSet kafCoreferenceSet = coreferenceSets.get(j);
-            if (matchingAtLeastOneSetOfSpans(eventSpan, kafCoreferenceSet.getSetsOfSpans())) {
-                for (int k = 0; k < kafCoreferenceSet.getSetsOfSpans().size(); k++) {
-                    ArrayList<CorefTarget> targets = kafCoreferenceSet.getSetsOfSpans().get(k);
-                    if (!hasCorefTargetArrayList(targets, corefSet)) {
-                        corefSet.add(targets);
+            if (kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {    //// check is necesarry to prevent including participant mentions
+                if (matchingAtLeastOneSetOfSpans(eventSpan, kafCoreferenceSet.getSetsOfSpans())) {
+                    for (int k = 0; k < kafCoreferenceSet.getSetsOfSpans().size(); k++) {
+                        ArrayList<CorefTarget> targets = kafCoreferenceSet.getSetsOfSpans().get(k);
+                        if (!hasCorefTargetArrayList(targets, corefSet)) {
+                            corefSet.add(targets);
+                        }
                     }
                 }
             }
