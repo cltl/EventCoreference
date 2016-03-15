@@ -43,11 +43,13 @@ public class JsonStoryUtil {
         sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
             if (eventCount>eventLimit && eventLimit>-1) {
-                //// the storyteller quits when it reaches the event limit. this is to prevent the visualisation to be cluttered with to many stories
+                //// the storyteller quits when it reaches the event limit.
+                // this is to prevent the visualisation to be cluttered with too many stories
                 break;
             }
             JSONObject jsonObject = sortedObjects.next();
-            if (!hasObject(groupedObjects, jsonObject)) {
+            if (!hasObject(groupedObjects, jsonObject) &&
+                !hasObject(singletonObjects, jsonObject)) {
                 //// this event is not yet part of a story and is the next event with climax value
                 //// we use this to create a new story by adding other events with bridging relations into the storyObjects ArrayList
                 try {
@@ -84,40 +86,48 @@ public class JsonStoryUtil {
                     else {
                         coevents = CreateMicrostory.getEventsThroughCoparticipation(entityFilter, selectedEvents, jsonObject);
                     }
-                    if (coevents.size()>0) {
-                        bridgedEvents = coevents;
-                        System.out.println("coevents.size() = " + coevents.size());
-                    }
-
                     ArrayList<JSONObject> topicevents = new ArrayList<JSONObject>();
                     if (topicThreshold>0) {
                         topicevents = CreateMicrostory.getEventsThroughTopicBridging(selectedEvents, jsonObject, topicThreshold);
                     }
-                    if (topicevents.size()>0) {
-                        System.out.println("topicevents = " + topicevents.size());
+
+
+ /*                   if (coevents.size()>0) {
+                        bridgedEvents = coevents;
+                        // System.out.println("co-participation = " + coevents.size());
                     }
+
+                    //if (topicevents.size()>0)  System.out.println("topics = " + topicevents.size());
                     if (topicevents.size()>0) {
                         if (coevents.size()==0) {
                             bridgedEvents = topicevents;
                         }
                         else {
-/*
+
                             bridgedEvents = mergeEventObjects(coevents, topicevents);
                             if (bridgedEvents.size()>0) {
-                                System.out.println("merged coevents and topicevents.size() = " + bridgedEvents.size());
+                                System.out.println("merged co-participating events and topical events = " + bridgedEvents.size());
                             }
-*/
+
+*//*
                             bridgedEvents = intersectEventObjects(coevents, topicevents);
                             if (bridgedEvents.size()>0) {
-                                System.out.println("intersection coevents and topicevents.size() = " + bridgedEvents.size());
+                                System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
                             }
+*//*
                         }
                     }
                     else {
                         //// stick to coevents only
                     }
                     if (bridgedEvents.size()>0) {
-                        System.out.println("final set of bridged events.size() = " + bridgedEvents.size());
+                      //  System.out.println("final set of bridged events.size() = " + bridgedEvents.size());
+                    }*/
+
+                    //// strict variant: there must be overlap of participants and topics
+                    bridgedEvents = intersectEventObjects(coevents, topicevents);
+                    if (bridgedEvents.size()>0) {
+                        System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
                     }
 
 
@@ -136,19 +146,19 @@ public class JsonStoryUtil {
                         }
                         else {
                             ///// this means that the bridged event was already consumed by another story
-                            ///// that's a pity for this story. It is already consumed
+                            ///// that's a pity for this story. It cannot be used anymore.
                         }
                     }
 
                     //// use this code if singleton stories are represented also
-/*
-                    for (int i = 0; i < storyObjects.size(); i++) {
+
+/*                    for (int i = 0; i < storyObjects.size(); i++) {
                         JSONObject object = storyObjects.get(i);
                         groupedObjects.add(object);
-                    }
-*/
+                    }*/
 
-                    //// use this code if singletons are treated separately
+
+                    //// use this code if singletons are grouped separately in unrelated events
                     if (storyObjects.size()>1) {
                         for (int i = 0; i < storyObjects.size(); i++) {
                             JSONObject object = storyObjects.get(i);
@@ -172,6 +182,7 @@ public class JsonStoryUtil {
         } // end of while objects in sorted climaxObjects
 
         //// now we handle the singleton events
+        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
         String group = "001:unrelated events";
         String groupName = "unrelated event";
         String groupScore = "001";
@@ -192,7 +203,10 @@ public class JsonStoryUtil {
                     2,
                     climaxThreshold);
         }
-
+        for (int i = 0; i < storyObjects.size(); i++) {
+            JSONObject object = storyObjects.get(i);
+            groupedObjects.add(object);
+        }
         return groupedObjects;
     }
 

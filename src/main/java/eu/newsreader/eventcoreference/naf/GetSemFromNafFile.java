@@ -27,11 +27,11 @@ public class GetSemFromNafFile {
     static public Vector<String> grammaticalVector = null;
     static public Vector<String> contextualVector = null;
     static public int TIMEEXPRESSIONMAX = 5;
-    static public boolean NONENTITIES = false;
+    static public boolean NONENTITIES = true;
     static public boolean ILIURI = false;
     static public boolean VERBOSE = true;
     static public boolean ALL = true;
-    static public boolean PERSPECTIVE = false;
+    static public boolean PERSPECTIVE = true;
 
 
 
@@ -57,7 +57,8 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/NWR/Wikinews/Cross-lingual-pip3/spanish-wikinews/corpus_apple/58772_Apple_Inc._doubled_its_profits.xml.naf";
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/29/29_10ecb.xml.naf.fix.coref";
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/33/33_1ecb.xml.naf.fix.coref";
-        String sourceFrameFile = "";
+        pathToNafFile = "/Users/piek/Desktop/nl.naf.xml";
+        String sourceFrameFile = "/Code/vu/newsreader/EventCoreference/resources/source.txt";
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";
         String project = "";

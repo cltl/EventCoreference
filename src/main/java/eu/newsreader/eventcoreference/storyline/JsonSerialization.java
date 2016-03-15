@@ -57,7 +57,9 @@ public class JsonSerialization {
                                               int nEvents,
                                               int nStories,
                                               int nActors,
-                                              int nMentions) {
+                                              int nMentions,
+                                              String KSuser,
+                                              String KSpass) {
         try {
             try {
                 JSONObject timeLineObject = JsonEvent.createTimeLineProperty(query, project);
@@ -71,7 +73,12 @@ public class JsonSerialization {
                     jsonObject.put("event_count", cnt);
                     timeLineObject.append("actors", jsonObject);
                 }*/
-                MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, KS);
+                if (KSuser.isEmpty()) {
+                    MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, KS);
+                }
+                else {
+                    MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, KS, KSuser, KSpass);
+                }
                 timeLineObject.append("event_cnt", nEvents);
                 timeLineObject.append("story_cnt", nStories);
                 timeLineObject.append("actor_cnt", nActors);

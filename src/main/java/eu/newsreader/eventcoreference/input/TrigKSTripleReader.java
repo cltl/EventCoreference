@@ -32,6 +32,12 @@ public class TrigKSTripleReader {
         serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
     }
 
+    static public void setServicePoint (String ks, String username, String password) {
+        serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
+        user = username;
+        pass = password;
+    }
+
     static public TrigTripleData readTriplesFromKSforEventType(String eventType){
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
@@ -249,6 +255,12 @@ public class TrigKSTripleReader {
         return relation.startsWith("http://www.newsreader-project.eu/ontologies/propbank/");
     }
     private static boolean isESORelation(String relation) {
+        if (relation.indexOf("hasPreSituation")>-1  ||
+            relation.indexOf("quantity-attribute")>-1 ||
+            relation.indexOf("hasPostSituation")>-1 ||
+            relation.indexOf("hasDuring")>-1) {
+            return false;
+        }
         return relation.startsWith("http://www.newsreader-project.eu/domain-ontology");
     }
 

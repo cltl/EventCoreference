@@ -41,6 +41,9 @@ public class TrigToJsonTimeLineClimax {
     static int nStories = 0;
     static String year = "";
     static String KS = "nwr/wikinews-new";
+    static String KSuser = "nwr/wikinews-new";
+    static String KSpass = "nwr/wikinews-new";
+
     static String QUERYTYPE = "entity";
     static int EVENTLIMIT = 500;
 
@@ -83,6 +86,12 @@ public class TrigToJsonTimeLineClimax {
             }
             else if (arg.equals("--ks") && args.length>(i+1)) {
                 KS = args[i+1];
+            }
+            else if (arg.equals("--ks-user") && args.length>(i+1)) {
+                KSuser = args[i+1];
+            }
+            else if (arg.equals("--ks-pass") && args.length>(i+1)) {
+                KSpass = args[i+1];
             }
             else if (arg.equals("--ks-limit") && args.length>(i+1)) {
                 kslimit = args[i+1];
@@ -199,7 +208,12 @@ public class TrigToJsonTimeLineClimax {
             }
             long startTime = System.currentTimeMillis();
             if (!KS.isEmpty()) {
-                TrigKSTripleReader.setServicePoint(KS);
+                if (KSuser.isEmpty()) {
+                    TrigKSTripleReader.setServicePoint(KS);
+                }
+                else {
+                    TrigKSTripleReader.setServicePoint(KS, KSuser, KSpass);
+                }
             }
             if (!kslimit.isEmpty()) {
                 TrigKSTripleReader.limit = kslimit;
@@ -246,7 +260,7 @@ public class TrigToJsonTimeLineClimax {
             nMentions = JsonStoryUtil.countMentions(jsonObjects);
             nStories = JsonStoryUtil.countGroups(jsonObjects);
             if (!query.isEmpty()) {
-                JsonSerialization.writeJsonObjectArrayForQuery(KS, query, project, jsonObjects, nEvents, nStories, nActors, nMentions);
+                JsonSerialization.writeJsonObjectArrayForQuery(KS, query, project, jsonObjects, nEvents, nStories, nActors, nMentions, KSuser, KSpass);
             }
             else {
                 if (!pathToRawTextIndexFile.isEmpty()) {

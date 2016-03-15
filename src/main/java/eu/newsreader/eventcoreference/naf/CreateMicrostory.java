@@ -516,7 +516,7 @@ public class CreateMicrostory {
                                 JSONArray oActors = oActorObject.getJSONArray(oKey);
                               //  System.out.println("oActors.length() = " + oActors.length());
                                // System.out.println("oActors.toString() = " + oActors.toString());
-                                if (intersectingActor(actors, oActors)) {
+                                if (intersectingDBpActor(actors, oActors)) {
                                     // System.out.println("oActors.toString() = " + oActors.toString());
                                     cnt++;
                                     if (!coPartipantEvents.contains(oEvent)) {
@@ -619,7 +619,7 @@ public class CreateMicrostory {
                                             || oKey.toLowerCase().startsWith("eso/")) {
                                         JSONArray oActors = oActorObject.getJSONArray(oKey);
                                         // System.out.println("oActors.toString() = " + oActors.toString());
-                                        if (intersectingActor(actors, oActors)) {
+                                        if (intersectingDBpActor(actors, oActors)) {
                                             if (!coPartipantEvents.contains(oEvent)) {
                                                 coPartipantEvents.add(oEvent);
                                             }
@@ -642,6 +642,23 @@ public class CreateMicrostory {
                 String oActor = oActors.getString(k);
                 if (actor.equals(oActor)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+        static boolean intersectingDBpActor (JSONArray actors, JSONArray oActors) throws JSONException {
+        for (int j = 0; j < actors.length(); j++) {
+            String actor = actors.getString(j);
+            //System.out.println("actor = " + actor);
+            if (actor.indexOf("dbpedia")>-1 || actor.indexOf("dbp:")>-1 || actor.indexOf("en:")>-1) {
+                for (int k = 0; k < oActors.length(); k++) {
+                    String oActor = oActors.getString(k);
+                    if (oActor.indexOf("dbpedia")>-1 || actor.indexOf("dbp:")>-1 || actor.indexOf("en:")>-1) {
+                        if (actor.equals(oActor)) {
+                            return true;
+                        }
+                    }
                 }
             }
         }
