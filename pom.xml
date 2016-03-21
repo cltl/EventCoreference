@@ -3,7 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>eu.newsreaderproject.EventCoreference</groupId>
+    <!--<groupId>eu.newsreaderproject.EventCoreference</groupId>-->
+    <groupId>com.github.cltl</groupId>
+
     <artifactId>EventCoreference</artifactId>
     <version>3.0</version>
     <packaging>jar</packaging>
@@ -45,7 +47,10 @@
             <version>3.4.10</version>
         </dependency>
         <dependency>
-            <groupId>WordnetTools</groupId>
+<!--
+            <groupId>eu.newsreaderproject.WordnetTools</groupId>
+-->
+            <groupId>com.github.cltl</groupId>
             <artifactId>WordnetTools</artifactId>
             <version>3.0</version>
             <scope>compile</scope>
@@ -67,8 +72,9 @@
             <version>20090211</version>
         </dependency>
         <dependency>
-            <groupId>eu.kyotoproject.KyotoKafSaxParser</groupId>
-            <artifactId>KyotoKafSaxParser</artifactId>
+            <!--<groupId>eu.kyotoproject.KyotoKafSaxParser</groupId>-->
+            <groupId>com.github.cltl</groupId>
+            <artifactId>KafSaxParser</artifactId>
             <version>3.0</version>
         </dependency>
         <dependency>
@@ -97,13 +103,15 @@
             <artifactId>json-io</artifactId>
             <version>3.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>EventCoreference</groupId>
-            <artifactId>EventCoreference</artifactId>
-            <version>3.0</version>
-        </dependency>
 
     </dependencies>
+
+    <repositories>
+            <repository>
+                <id>jitpack.io</id>
+                <url>https://jitpack.io</url>
+            </repository>
+    </repositories>
 
     <build>
         <plugins>
