@@ -3,11 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!--<groupId>eu.newsreaderproject.EventCoreference</groupId>-->
     <groupId>com.github.cltl</groupId>
 
     <artifactId>EventCoreference</artifactId>
-    <version>3.0</version>
+    <version>v3.0</version>
     <packaging>jar</packaging>
     <name>EventCoreference and NAF2SEM-GRASP</name>
     <description>Reads NewsReader NAF files and creates event coreference relations in NAF or RDF-TRiG according to the NewsReader SEM and GRASP model.</description>
@@ -47,12 +46,9 @@
             <version>3.4.10</version>
         </dependency>
         <dependency>
-<!--
-            <groupId>eu.newsreaderproject.WordnetTools</groupId>
--->
             <groupId>com.github.cltl</groupId>
             <artifactId>WordnetTools</artifactId>
-            <version>3.0</version>
+            <version>v3.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -72,10 +68,9 @@
             <version>20090211</version>
         </dependency>
         <dependency>
-            <!--<groupId>eu.kyotoproject.KyotoKafSaxParser</groupId>-->
             <groupId>com.github.cltl</groupId>
             <artifactId>KafSaxParser</artifactId>
-            <version>3.0</version>
+            <version>v3.0</version>
         </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
