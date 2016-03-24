@@ -96,9 +96,6 @@ public class MatchEventObjects {
                     e.printStackTrace();
                 }
             }
-            else if (arg.equals("--gz")) {
-                GZIP = true;
-            }
             else if (arg.equals("--subfolder")) {
                 SUBFOLDER = true;
             }

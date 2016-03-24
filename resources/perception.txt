@@ -1,9 +1,0 @@
-Appearance
-Categorization
-Chemical-sense_description
-Locating
-Perception_active
-Perception_body
-Perception_experience
-Seeking
-Trust

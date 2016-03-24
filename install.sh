@@ -7,7 +7,7 @@ PARENT="$( cd $DIR && cd .. && pwd)"
 echo "#1. compiling the library from source code and dependencies"
 mvn install
 echo "#2. moving binary to lib folder"
-mv "$DIR/target/eventcoreference-v3.0-jar-with-dependencies.jar" "$DIR/lib"
+mv "$DIR/target/EventCoreference-v3.0-jar-with-dependencies.jar" "$DIR/lib"
 echo "#3. installing the vua-resources"
 cd "$PARENT"
 git clone https://github.com/cltl/vua-resources.git
