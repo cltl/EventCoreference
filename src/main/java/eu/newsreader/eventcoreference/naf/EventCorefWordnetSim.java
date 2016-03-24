@@ -9,6 +9,7 @@ package eu.newsreader.eventcoreference.naf;
     import eu.newsreader.eventcoreference.objects.CorefResultSet;
     import eu.newsreader.eventcoreference.util.FrameTypes;
     import eu.newsreader.eventcoreference.util.Util;
+    import org.apache.tools.bzip2.CBZip2InputStream;
     import vu.wntools.wnsimilarity.WordnetSimilarityApi;
     import vu.wntools.wnsimilarity.measures.SimilarityPair;
     import vu.wntools.wordnet.WordnetData;
@@ -18,8 +19,9 @@ package eu.newsreader.eventcoreference.naf;
     import java.net.InetAddress;
     import java.net.UnknownHostException;
     import java.util.*;
+    import java.util.zip.GZIPInputStream;
 
-    /**
+/**
      * Created with IntelliJ IDEA.
      * User: kyoto
      * Date: 10/16/13
@@ -182,6 +184,7 @@ package eu.newsreader.eventcoreference.naf;
                     }
                 }
         }
+
         static public void printSettings () {
             System.out.println("wordnetData relations = " + wordnetData.hyperRelations.size());
             System.out.println("simthreshold = " + simthreshold);
@@ -424,7 +427,28 @@ package eu.newsreader.eventcoreference.naf;
 
         static public void processNafFile (String pathToNafFile) {
             KafSaxParser kafSaxParser = new KafSaxParser();
-            kafSaxParser.parseFile(pathToNafFile);
+            // kafSaxParser.parseFile(pathToNafFile);
+            if (pathToNafFile.toLowerCase().endsWith(".gz")) {
+                try {
+                    InputStream fileStream = new FileInputStream(pathToNafFile);
+                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                    kafSaxParser.parseFile(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (pathToNafFile.toLowerCase().endsWith(".bz2")) {
+                try {
+                    InputStream fileStream = new FileInputStream(pathToNafFile);
+                    InputStream gzipStream = new CBZip2InputStream(fileStream);
+                    kafSaxParser.parseFile(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                kafSaxParser.parseFile(pathToNafFile);
+            }
             processContextuals(kafSaxParser, USEWSD);
             try {
                 String filePath = pathToNafFile.substring(0,pathToNafFile.lastIndexOf("."));

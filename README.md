@@ -14,9 +14,13 @@ SOURCE CODE:
 
 https://github.com/cltl/EventCoreference
 
-The binaries can be built using maven and the pom.xml
+Installation:
+1. git clone https://github.com/cltl/EventCoreference
+2. cd EventCoreference
+3. chmod +wrx install.sh
+4. install.sh
 
-> mvn install
+Installation through apache-maven-2.2.1 on the basis of the pom.xml
 
 REQUIREMENTS
 EventCoreference is developed in Java 1.6 and can run on any platform that supports Java 1.6

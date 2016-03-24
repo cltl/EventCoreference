@@ -26,7 +26,7 @@ public class GetSemFromNafFile {
     static public Vector<String> sourceVector = null;
     static public Vector<String> grammaticalVector = null;
     static public Vector<String> contextualVector = null;
-    static public int TIMEEXPRESSIONMAX = 5;
+    static public int TIMEEXPRESSIONMAX = 0;
     static public boolean NONENTITIES = true;
     static public boolean ILIURI = false;
     static public boolean VERBOSE = true;
@@ -58,6 +58,7 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/29/29_10ecb.xml.naf.fix.coref";
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/33/33_1ecb.xml.naf.fix.coref";
         pathToNafFile = "/Users/piek/Desktop/nl.naf.xml";
+        pathToNafFile = "/Users/piek/Desktop/short_text.out.naf";
         String sourceFrameFile = "/Code/vu/newsreader/EventCoreference/resources/source.txt";
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";

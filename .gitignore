@@ -17,11 +17,19 @@ pom.xml
 
 .idea/
 
+EventCoreference.iws
+EventCoreference.ipr
+eventcoreference.properties
+eventcoreference.xml
+module_eventcoreference.xml
+
 carheaderexample/
 
-example/
+resources/
 
-lib/
+test-data/
+
+example/
 
 newsreader-vm/
 
