@@ -12,6 +12,13 @@ pom.xml
 *.obj
 
 *.jar
+/eventcoreference.properties
+/EventCoreference.ipr
+/eventcoreference.xml
+/.gitignore
+/EventCoreference.iws
+/EventCoreference.iml
+/example.naf
 
 *.class
 

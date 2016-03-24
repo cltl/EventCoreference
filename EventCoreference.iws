@@ -5,30 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="445384b5-3667-4928-9720-8c2fa43cd0aa" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/event-coreference-en.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/event-coreference-nl.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/naf2sem-batch-cluster.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/naf2sem-batch-nocluster.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/naf2sem-grasp.sh" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/ESO_version_0.6.owl" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/blacklist.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/cognitive.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/communication.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/contextual.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/frAllRelation.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/frRelation.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/grammatical.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/ili.ttl.gz" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/odwn_orbn_gwg-LMF_1.3.xml.gz" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/perception.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/source.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/speech-act.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/wn3-ili-synonyms.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/wneng-30.lmf.xml.xpos.gz" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects_org.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iml" afterPath="$PROJECT_DIR$/EventCoreference.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iws" afterPath="$PROJECT_DIR$/EventCoreference.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/install.sh" afterPath="$PROJECT_DIR$/install.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" />
     </list>
     <ignored path="EventCoreference.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -95,10 +74,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.8030303">
+            <state vertical-scroll-proportion="0.45945945">
               <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
               <folding />
             </state>
@@ -111,18 +90,18 @@
             <state />
           </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-13.4827585">
-              <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+            <state vertical-scroll-proportion="-18.172413">
+              <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="install.sh" pinned="false" current-in-tab="true">
+      <file leaf-file-name="install.sh" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/install.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4446154">
-              <caret line="17" column="31" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="9" column="74" selection-start-line="9" selection-start-column="74" selection-end-line="9" selection-end-column="74" />
               <folding />
             </state>
           </provider>
@@ -280,12 +259,12 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.java" />
-        <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/scripts/event-coreference.sh" />
         <option value="$PROJECT_DIR$/scripts/naf2sem-grasp.sh" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" />
         <option value="$PROJECT_DIR$/install.sh" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -972,12 +951,6 @@
       <option name="number" value="Default" />
       <updated>1382608862052</updated>
     </task>
-    <task id="LOCAL-00184" summary="-- new temporal interpretation using predicateAnchoring, durations resulting in various temporal relations and code clean-up">
-      <created>1437745614833</created>
-      <option name="number" value="00184" />
-      <option name="project" value="LOCAL" />
-      <updated>1437745614833</updated>
-    </task>
     <task id="LOCAL-00185" summary="-- pipeline v.3">
       <created>1437838475414</created>
       <option name="number" value="00185" />
@@ -1266,7 +1239,13 @@
       <option name="project" value="LOCAL" />
       <updated>1458849988352</updated>
     </task>
-    <option name="localTasksCounter" value="233" />
+    <task id="LOCAL-00233" summary="-- maven prepare">
+      <created>1458858304637</created>
+      <option name="number" value="00233" />
+      <option name="project" value="LOCAL" />
+      <updated>1458858304637</updated>
+    </task>
+    <option name="localTasksCounter" value="234" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1282,7 +1261,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.11419069" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34087238" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3368336" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2640264" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1681,25 +1660,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.4827585">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.8030303">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/run_phase1.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1756,10 +1716,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="MarkdownPreviewEditor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-18.172413">
+          <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/install.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4446154">
-          <caret line="17" column="31" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="9" column="74" selection-start-line="9" selection-start-column="74" selection-end-line="9" selection-end-column="74" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.45945945">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
           <folding />
         </state>
       </provider>
