@@ -4,6 +4,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PARENT="$( cd $DIR && cd .. && pwd)"
 
+mkdir "$DIR/lib"
 echo "#1. compiling the library from source code and dependencies"
 mvn install
 echo "#2. moving binary to lib folder"
