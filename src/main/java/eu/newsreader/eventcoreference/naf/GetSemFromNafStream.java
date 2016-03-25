@@ -105,7 +105,7 @@ public class GetSemFromNafStream {
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(System.in);
         if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
-           // System.out.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
+            System.out.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
             return;
         }
         GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);

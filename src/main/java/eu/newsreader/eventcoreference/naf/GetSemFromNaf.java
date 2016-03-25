@@ -136,7 +136,7 @@ public class GetSemFromNaf {
                 }
             }
         }
-        System.out.println("semEvents.size() = " + semEvents.size());
+       // System.out.println("semEvents.size() = " + semEvents.size());
     }
 
 
