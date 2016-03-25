@@ -44,6 +44,13 @@ public class ClusterEventObjects {
             "--contextual-frames    <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
             "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
             "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>\n" +
+            "--perspective                   <In addition to object files a spearate perspective RDF file is created for each NAF file>\n" +
+            "--eurovoc-en           <path>   <Path to the eurovoc resource for converting labels to URIs>\n" +
+            "--eurovoc-nl           <path>   <>\n" +
+            "--eurovoc-it           <path>   <>\n" +
+            "--eurovoc-es           <path>   <>\n" +
+            "--time                 <path>   <>\n" +
+            "--all                           <No restrictions are applied on the output, such as lacking participants, time-anchoring or too many time anchors.>\n" +
             "--frame-level          <integer><@DEPRECATED Depth of path for the FrameNet relations>\n" +
             "--frame-relations      <path>   <@DEPRECATED path to FrameNet file with relations>\n" +
             "--microstories         <integer><@DEPRECATED Number of sentences to restrict the analysis>\n" +

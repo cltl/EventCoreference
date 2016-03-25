@@ -58,6 +58,7 @@ public class MatchEventObjects {
             "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n"+
             "--time     <string>        <(OPTIONAL) year, month or day indicate granularity of temporal match. If empty time is not matched\n"+
             "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
+            "--subfolder                <(OPTIONAL) Processes any subfolder>\n" +
             "--debug                    <(OPTIONAL) default=0, 1=minimal, 2=max>\n";
 
 
