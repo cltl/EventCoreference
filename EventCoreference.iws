@@ -5,127 +5,119 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="445384b5-3667-4928-9720-8c2fa43cd0aa" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/eventcoreference.properties" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/eventcoreference.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/example/enPM.naf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/example/enPM.naf.coref" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/module_eventcoreference.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/newsreader-vm/INSTALL" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects_org.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/ChainCorefSets.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/ChainCorefSets.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/ComponentMatch.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/ComponentMatch.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/Scoring.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/coref/Scoring.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/evaluation/EvaluateCorefs.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/evaluation/EvaluateCorefs.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/CorefSaxParser.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/CorefSaxParser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/EsoReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/EsoReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/FrameNetReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/FrameNetReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEntityCounts.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEntityCounts.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEntityStats.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEntityStats.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEsoCounts.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEsoCounts.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEventStats.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/GetEventStats.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/NarrativeChains.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/NarrativeChains.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader$1.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader2.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/OwlReader2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/RdfReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/RdfReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SelectEntityTrig.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SelectEntityTrig.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SemDomParser.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SemDomParser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SesameTrigReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/SesameTrigReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigKSTripleReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigKSTripleReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigStatsReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigStatsReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigTripleData.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigTripleData.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigTripleReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigTripleReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigUtil.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigUtil.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ClusterEventObjects.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ClusterEventObjects.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/CreateMicrostory.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/CreateMicrostory.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefSingletonBaseline.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefSingletonBaseline.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile$PerspectiveStats.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile$PerspectiveStats.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNaf.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNaf.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/Naf2SemTest.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/Naf2SemTest.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/NafObjectToSemTest.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/NafObjectToSemTest.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ParcAttributionTask.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ParcAttributionTask.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ProcessEventObjectsStream.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ProcessEventObjectsStream.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/RawTextIndex.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/RawTextIndex.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ResourcesUri.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ResourcesUri.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/AgataMention.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/AgataMention.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CoRefSetAgata.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CoRefSetAgata.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CompositeEvent.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CompositeEvent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefMatch.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefMatch.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefResultSet.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefResultSet.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefTargetAgata.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefTargetAgata.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefTriple.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/CorefTriple.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/JsonEvent.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/JsonEvent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/NafMention.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/NafMention.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/OwlTime.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/OwlTime.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PerspectiveObject.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PerspectiveObject.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PhraseCount$Compare.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PhraseCount$Compare.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PhraseCount.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PhraseCount.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/Sem.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/Sem.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemActor.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemActor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemEvent.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemEvent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemObject.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemObject.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemPlace.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemPlace.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemRelation.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemRelation.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemTime.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SemTime.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SourceMeta.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/SourceMeta.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/TimeTypes.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/TimeTypes.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/Triple.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/Triple.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/NodeData.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/NodeData.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/OwlReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/OwlReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/RdfSense.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/RdfSense.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/Tree.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/Tree.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/TreeNode.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/ontology/thesis/TreeNode.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CombineCorefOutputPerEvent.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CombineCorefOutputPerEvent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CorefSetToSem.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CorefSetToSem.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CoreferenceBaseline.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/CoreferenceBaseline.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/DocumentToCorpusCoreferences.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/DocumentToCorpusCoreferences.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/FixSynsetReferences.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/FixSynsetReferences.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/MergeDocumentToCorpusCoreferencesByLemma.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/MergeDocumentToCorpusCoreferencesByLemma.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/pwn/ILIReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/pwn/ILIReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/pwn/PwnSaxParser.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/pwn/PwnSaxParser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/timeline/EntityTimeLine.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/timeline/EntityTimeLine.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Anaphor.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Anaphor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Clusterer.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Clusterer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/CompareTrigFiles.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/CompareTrigFiles.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/EntityTypes.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/EntityTypes.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/EuroVoc.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/EuroVoc.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/EventTypes.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/EventTypes.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FilterCorefSets.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FilterCorefSets.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FixUri.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FixUri.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FrameTypes.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FrameTypes.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/LabelCount.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/LabelCount.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/RemoveEventCoreferences.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/RemoveEventCoreferences.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/RoleLabels.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/RoleLabels.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/SemUtilObject.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/SemUtilObject.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/SplitTechCrunch.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/SplitTechCrunch.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Statistics.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Statistics.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/TimeLanguage.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/TimeLanguage.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util$AppendableObjectOutputStream.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util$AppendableObjectOutputStream.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util.class" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/readme" afterPath="$PROJECT_DIR$/scripts/event-coreference.sh" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iml" afterPath="$PROJECT_DIR$/EventCoreference.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.ipr" afterPath="$PROJECT_DIR$/EventCoreference.ipr" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iws" afterPath="$PROJECT_DIR$/EventCoreference.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-frame.html" afterPath="$PROJECT_DIR$/doc/allclasses-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-noframe.html" afterPath="$PROJECT_DIR$/doc/allclasses-noframe.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/constant-values.html" afterPath="$PROJECT_DIR$/doc/constant-values.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/deprecated-list.html" afterPath="$PROJECT_DIR$/doc/deprecated-list.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/ChainCorefSets.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/ChainCorefSets.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/ComponentMatch.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/ComponentMatch.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/EvaluateCorefs.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/EvaluateCorefs.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/CorefSaxParser.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/CorefSaxParser.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/RdfReader.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/RdfReader.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/SemDomParser.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/SemDomParser.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/SesameTrigReader.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/SesameTrigReader.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/ClusterEventObjects.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/ClusterEventObjects.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/MatchEventObjects.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/MatchEventObjects.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/ResourcesUri.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/ResourcesUri.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/AgataMention.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/AgataMention.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CoRefSetAgata.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CoRefSetAgata.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CompositeEvent.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CompositeEvent.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CorefTargetAgata.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CorefTargetAgata.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/NafMention.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/NafMention.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/OwlTime.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/OwlTime.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/PhraseCount.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/PhraseCount.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/Sem.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/Sem.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemActor.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemActor.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemEvent.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemEvent.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemObject.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemObject.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemPlace.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemPlace.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemRelation.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemRelation.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemTime.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemTime.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SourceMeta.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SourceMeta.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/Triple.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/Triple.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CombineCorefOutputPerEvent.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CombineCorefOutputPerEvent.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CorefSetToSem.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CorefSetToSem.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CoreferenceBaseline.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CoreferenceBaseline.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/DocumentToCorpusCoreferences.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/DocumentToCorpusCoreferences.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/FixSynsetReferences.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/FixSynsetReferences.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/JenaSerialization.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/JenaSerialization.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/MergeDocumentToCorpusCoreferencesByLemma.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/MergeDocumentToCorpusCoreferencesByLemma.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/PwnSaxParser.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/PwnSaxParser.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Anaphor.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Anaphor.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/EntityTypes.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/EntityTypes.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/EventTypes.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/EventTypes.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/FilterCorefSets.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/FilterCorefSets.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/LabelCount.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/LabelCount.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/RoleLabels.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/RoleLabels.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/SemUtilObject.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/SemUtilObject.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/SplitTechCrunch.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/SplitTechCrunch.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Statistics.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Statistics.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/TimeLanguage.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/TimeLanguage.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Util.AppendableObjectOutputStream.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Util.AppendableObjectOutputStream.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Util.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Util.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/help-doc.html" afterPath="$PROJECT_DIR$/doc/help-doc.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-1.html" afterPath="$PROJECT_DIR$/doc/index-files/index-1.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-10.html" afterPath="$PROJECT_DIR$/doc/index-files/index-10.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-11.html" afterPath="$PROJECT_DIR$/doc/index-files/index-11.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-12.html" afterPath="$PROJECT_DIR$/doc/index-files/index-12.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-13.html" afterPath="$PROJECT_DIR$/doc/index-files/index-13.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-14.html" afterPath="$PROJECT_DIR$/doc/index-files/index-14.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-15.html" afterPath="$PROJECT_DIR$/doc/index-files/index-15.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-16.html" afterPath="$PROJECT_DIR$/doc/index-files/index-16.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-17.html" afterPath="$PROJECT_DIR$/doc/index-files/index-17.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-18.html" afterPath="$PROJECT_DIR$/doc/index-files/index-18.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-19.html" afterPath="$PROJECT_DIR$/doc/index-files/index-19.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-2.html" afterPath="$PROJECT_DIR$/doc/index-files/index-2.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-20.html" afterPath="$PROJECT_DIR$/doc/index-files/index-20.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-3.html" afterPath="$PROJECT_DIR$/doc/index-files/index-3.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-4.html" afterPath="$PROJECT_DIR$/doc/index-files/index-4.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" afterPath="$PROJECT_DIR$/doc/index-files/index-5.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-6.html" afterPath="$PROJECT_DIR$/doc/index-files/index-6.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-7.html" afterPath="$PROJECT_DIR$/doc/index-files/index-7.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-8.html" afterPath="$PROJECT_DIR$/doc/index-files/index-8.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-9.html" afterPath="$PROJECT_DIR$/doc/index-files/index-9.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index.html" afterPath="$PROJECT_DIR$/doc/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-frame.html" afterPath="$PROJECT_DIR$/doc/overview-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-summary.html" afterPath="$PROJECT_DIR$/doc/overview-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-tree.html" afterPath="$PROJECT_DIR$/doc/overview-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/package-list" afterPath="$PROJECT_DIR$/doc/package-list" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/serialized-form.html" afterPath="$PROJECT_DIR$/doc/serialized-form.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/install.sh" afterPath="$PROJECT_DIR$/install.sh" />
     </list>
     <ignored path="EventCoreference.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -192,34 +184,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
-              <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+            <state relative-caret-position="447">
+              <caret line="43" column="7" selection-start-line="43" selection-start-column="7" selection-end-line="43" selection-end-column="7" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="36" column="0" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="MarkdownPreviewEditor">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="install.sh" pinned="false" current-in-tab="false">
+      <file leaf-file-name="install.sh" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/install.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="9" column="74" selection-start-line="9" selection-start-column="74" selection-end-line="9" selection-end-column="74" />
+            <state relative-caret-position="340">
+              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -380,9 +359,9 @@
         <option value="$PROJECT_DIR$/scripts/event-coreference.sh" />
         <option value="$PROJECT_DIR$/scripts/naf2sem-grasp.sh" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" />
-        <option value="$PROJECT_DIR$/install.sh" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/install.sh" />
       </list>
     </option>
   </component>
@@ -1065,20 +1044,6 @@
       <option name="presentableId" value="Default" />
       <updated>1382608862052</updated>
     </task>
-    <task id="LOCAL-00187" summary="-- nafv3.0">
-      <created>1438002528310</created>
-      <option name="number" value="00187" />
-      <option name="presentableId" value="LOCAL-00187" />
-      <option name="project" value="LOCAL" />
-      <updated>1438002528310</updated>
-    </task>
-    <task id="LOCAL-00188" summary="-- EventCoreference simplify output file name to &quot;.naf&quot; replacing last file extension to prevent complicating renaming. May override input file: use --replace flag">
-      <created>1438081316245</created>
-      <option name="number" value="00188" />
-      <option name="presentableId" value="LOCAL-00188" />
-      <option name="project" value="LOCAL" />
-      <updated>1438081316246</updated>
-    </task>
     <task id="LOCAL-00189" summary="-- naf3.0">
       <created>1438254116678</created>
       <option name="number" value="00189" />
@@ -1408,7 +1373,21 @@
       <option name="project" value="LOCAL" />
       <updated>1458890560894</updated>
     </task>
-    <option name="localTasksCounter" value="236" />
+    <task id="LOCAL-00236" summary="-- maven prepare">
+      <created>1458891152474</created>
+      <option name="number" value="00236" />
+      <option name="presentableId" value="LOCAL-00236" />
+      <option name="project" value="LOCAL" />
+      <updated>1458891152474</updated>
+    </task>
+    <task id="LOCAL-00237" summary="-- maven prepare">
+      <created>1458891399071</created>
+      <option name="number" value="00237" />
+      <option name="presentableId" value="LOCAL-00237" />
+      <option name="project" value="LOCAL" />
+      <updated>1458891399071</updated>
+    </task>
+    <option name="localTasksCounter" value="238" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1417,6 +1396,7 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28586498" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25783476" sideWeight="0.50104165" order="7" side_tool="true" content_ui="tabs" />
@@ -1426,7 +1406,8 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22916667" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14737654" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4963145" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2640264" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1439,10 +1420,8 @@
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293247" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1049936" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28586498" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4970588" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1530,14 +1509,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/scripts/run_naf_folder.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1820,14 +1791,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
@@ -1837,14 +1800,6 @@
       </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/install.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="74" selection-start-line="9" selection-start-column="74" selection-end-line="9" selection-end-column="74" />
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/naf2sem-grasp.sh">
@@ -1899,6 +1854,30 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/readme">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="447">
+          <caret line="43" column="7" selection-start-line="43" selection-start-column="7" selection-end-line="43" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/install.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
           <folding />
         </state>
       </provider>

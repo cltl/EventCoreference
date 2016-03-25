@@ -15,3 +15,6 @@ echo "#4. cleaning up"
 cd "$DIR"
 rm -R target
 rm -R src
+rm EventCoreference.iml
+rm EventCoreference.iws
+rm EventCoreference.ipr

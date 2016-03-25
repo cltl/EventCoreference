@@ -1,9 +1,12 @@
+
 eu.newsreader.eventcoreference.coref
 eu.newsreader.eventcoreference.evaluation
 eu.newsreader.eventcoreference.input
 eu.newsreader.eventcoreference.naf
 eu.newsreader.eventcoreference.objects
-eu.newsreader.eventcoreference.ontology
+eu.newsreader.eventcoreference.ontology.thesis
 eu.newsreader.eventcoreference.output
 eu.newsreader.eventcoreference.pwn
+eu.newsreader.eventcoreference.storyline
+eu.newsreader.eventcoreference.timeline
 eu.newsreader.eventcoreference.util
