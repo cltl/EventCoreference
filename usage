@@ -5,6 +5,12 @@ Scripts:
  - event-coreference-en.sh (for English texts)
  - event-coreference-nl.sh (for Dutch texts)
 Parameters:
+   --naf-folder            <OPTIONAL: path to folder with input files>
+   --extension             <extension of files to process when running in folder mode>
+   --naf-file              <OPTIONAL: path to specific NAF file>
+   --output-tag            <tag to label the extension of the output file. Only relevant for non-streaming output>
+   If naf-folder and naf-file are empty, we assume the input is an input stream NAF
+
    --wn-lmf                <path to wordnet file in lmf format>
    --method                <one of the following methods can be used leacock-chodorow, path, wu-palmer>
    --sim                   <similarity threshold (double, e.g. 2.5) below which no coreference is no coreference relation is determined >
@@ -27,6 +33,13 @@ Groups events on the basis of lemmas in the SRL layer
 Scripts:
     - event-coreference-lemma.sh (any language)
 Parameters:
+   --naf-folder            <OPTIONAL: path to folder with input files>
+   --extension             <extension of files to process when running in folder mode>
+   --naf-file              <OPTIONAL: path to specific NAF file>
+   --output-tag            <tag to label the extension of the output file. Only relevant for non-streaming output>
+   If naf-folder and naf-file are empty, we assume the input is an input stream NAF
+
+   --replace               <Using this flag previous output of event-coreference is removed first>
 
 
 Class: EventCorefSingletonBaseline
@@ -34,7 +47,13 @@ Every predicate in the SRL layer becomes a singleton set in the event coreferenc
 Scripts:
       - event-coreference-singleton.sh (any language)
 Parameters:
+   --naf-folder            <OPTIONAL: path to folder with input files>
+   --extension             <extension of files to process when running in folder mode>
+   --naf-file              <OPTIONAL: path to specific NAF file>
+   --output-tag            <tag to label the extension of the output file. Only relevant for non-streaming output>
+   If naf-folder and naf-file are empty, we assume the input is an input stream NAF
 
+   --replace               <Using this flag previous output of event-coreference is removed first>
 
 Class: GetSemFromNafStream
 Reads NAF stream and creates RDF-TRiG stream with SEm and GRasP
