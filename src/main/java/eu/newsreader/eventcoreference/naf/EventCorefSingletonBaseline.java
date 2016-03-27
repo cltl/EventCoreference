@@ -24,6 +24,7 @@ public class EventCorefSingletonBaseline {
     static final String version = "1.0";
     static boolean REMOVEEVENTCOREFS = false;
     static String outputTag = ".coref";
+    static boolean REMOVEFALSEPREDICATES = false;
 
 
     static public void main (String [] args) {
@@ -51,6 +52,9 @@ public class EventCorefSingletonBaseline {
                       else if (arg.equalsIgnoreCase("--replace")) {
                           REMOVEEVENTCOREFS = true;
                       }
+                      else if (arg.equalsIgnoreCase("--ignore-false")) {
+                          REMOVEFALSEPREDICATES = true;
+                      }
                   }
                   if (!folder.isEmpty()) {
                       processNafFolder (new File (folder), extension);
@@ -67,6 +71,10 @@ public class EventCorefSingletonBaseline {
               if (REMOVEEVENTCOREFS) {
                   Util.removeEventCoreferences(kafSaxParser);
               }
+
+              if (REMOVEFALSEPREDICATES) {
+                  Util.removeFalsePredicatesSrl(kafSaxParser);
+              }
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
           }
@@ -76,6 +84,10 @@ public class EventCorefSingletonBaseline {
               kafSaxParser.parseFile(pathToNafFile);
               if (REMOVEEVENTCOREFS) {
                   Util.removeEventCoreferences(kafSaxParser);
+              }
+
+              if (REMOVEFALSEPREDICATES) {
+                  Util.removeFalsePredicatesSrl(kafSaxParser);
               }
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
@@ -89,6 +101,10 @@ public class EventCorefSingletonBaseline {
                   kafSaxParser.parseFile(file);
                   if (REMOVEEVENTCOREFS) {
                       Util.removeEventCoreferences(kafSaxParser);
+                  }
+
+                  if (REMOVEFALSEPREDICATES) {
+                      Util.removeFalsePredicatesSrl(kafSaxParser);
                   }
                   process(kafSaxParser);
                   try {

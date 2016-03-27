@@ -40,7 +40,7 @@ Parameters:
    If naf-folder and naf-file are empty, we assume the input is an input stream NAF
 
    --replace               <Using this flag previous output of event-coreference is removed first>
-
+   --ignore-false          <Using this flag removes srl with predicate status = \"false\">
 
 Class: EventCorefSingletonBaseline
 Every predicate in the SRL layer becomes a singleton set in the event coreference layer. No coreference.
@@ -54,6 +54,7 @@ Parameters:
    If naf-folder and naf-file are empty, we assume the input is an input stream NAF
 
    --replace               <Using this flag previous output of event-coreference is removed first>
+   --ignore-false          <Using this flag removes srl with predicate status = \"false\">
 
 Class: GetSemFromNafStream
 Reads NAF stream and creates RDF-TRiG stream with SEm and GRasP

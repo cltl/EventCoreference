@@ -30,6 +30,8 @@ import java.util.*;
     static Vector<String> contextualFrames = new Vector<String>();
     static int SOURCEDISTANCE = -1;
     static boolean REMOVEEVENTCOREFS = false;
+    static boolean REMOVEFALSEPREDICATES = false;
+
 
 
     static public void main (String [] args) {
@@ -75,7 +77,11 @@ import java.util.*;
                       }
                       else if (arg.equalsIgnoreCase("--replace")) {
                           REMOVEEVENTCOREFS = true;
+
+                      } else if (arg.equalsIgnoreCase("--ignore-false")) {
+                          REMOVEFALSEPREDICATES = true;
                       }
+
                   }
                   if (!folder.isEmpty()) {
                       processNafFolder (new File (folder), extension);
@@ -92,6 +98,9 @@ import java.util.*;
               if (REMOVEEVENTCOREFS) {
                   Util.removeEventCoreferences(kafSaxParser);
               }
+              if (REMOVEFALSEPREDICATES) {
+                  Util.removeFalsePredicatesSrl(kafSaxParser);
+              }
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
           }
@@ -101,6 +110,9 @@ import java.util.*;
               kafSaxParser.parseFile(pathToNafFile);
               if (REMOVEEVENTCOREFS) {
                   Util.removeEventCoreferences(kafSaxParser);
+              }
+              if (REMOVEFALSEPREDICATES) {
+                  Util.removeFalsePredicatesSrl(kafSaxParser);
               }
               process(kafSaxParser);
               kafSaxParser.writeNafToStream(System.out);
@@ -114,6 +126,9 @@ import java.util.*;
                   kafSaxParser.parseFile(file);
                   if (REMOVEEVENTCOREFS) {
                       Util.removeEventCoreferences(kafSaxParser);
+                  }
+                  if (REMOVEFALSEPREDICATES) {
+                      Util.removeFalsePredicatesSrl(kafSaxParser);
                   }
                   if (SOURCEDISTANCE ==-1) {
                       process(kafSaxParser);
