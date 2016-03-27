@@ -51,6 +51,7 @@ public class MatchEventObjects {
             "--phrase-match  <int>      <threshold for phrase matches of events, default is 50>\n" +
             "--hypers                   <(OPTIONAL) use hypernyms to match events\n"+
             "--lcs                      <(OPTIONAL) use lowest-common-subsumers to match events\n"+
+            "--chaining                 <Determines the chaining function used: 1, 2, 3, 4. Default value is 3\n"+
             "--match-type    <string>   <(OPTIONAL) Indicates what is used to match events across resources. Default value is \"LEMMA\". Values:\"LEMMA\", \"ILI\", \"ILILEMMA\">\n" +
             "--ili                      <(OPTIONAL) Path to ILI.ttl file to convert wordnet-synsets identifiers to ILI identifiers>\n" +
             "--source-data   <path>     <(OPTIONAL, Deprecated) Path to LexisNexis meta data on owners and authors to enrich the provenance>\n" +
