@@ -251,25 +251,29 @@ public class OwlTime implements Serializable {
         if (!time.getYear().equals(this.getYear())) {
             return false;
         }
-        if (!time.getMonth().equals(this.getMonth())) {
-            return false;
-        }
-        if (!time.getDay().equals(this.getDay())) {
-           return false;
-        }
+
         //// at this point year, month and day are the same but some fields may be empty
-        if (time.getYear().isEmpty()) {
+        if (time.getYear().isEmpty() || this.getYear().isEmpty()) {
             //empty years are not acceptable
             return false;
         }
-        if (time.getMonth().isEmpty()) {
+        if (time.getMonth().isEmpty() || this.getMonth().isEmpty()) {
             // empty month is acceptable given a matching year, underspecified date or period
             // at this point we ignore the day???
             return true;
         }
-        if (time.getDay().isEmpty()) {
+
+        if (!time.getMonth().equals(this.getMonth())) {
+            return false;
+        }
+
+        if (time.getDay().isEmpty() || this.getDay().isEmpty()) {
             // empty day is acceptable given matching year and month
             return true;
+        }
+
+        if (!time.getDay().equals(this.getDay())) {
+            return false;
         }
       //  System.out.println("this.getDateStringURI() = " + this.getDateStringURI());
       //  System.out.println();

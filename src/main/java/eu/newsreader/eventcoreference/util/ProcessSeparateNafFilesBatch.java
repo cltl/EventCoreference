@@ -19,6 +19,9 @@ public class ProcessSeparateNafFilesBatch {
 
     static boolean ADDITIONALROLES = true;
 
+    static boolean DOCTIME = true;
+    static boolean CONTEXTTIME = true;
+
     static public void main (String [] args) {
         try {
             String pathToNafFolder = "/Users/piek/Desktop/NWR-DATA/techcrunch/1_3000";
@@ -35,6 +38,13 @@ public class ProcessSeparateNafFilesBatch {
                 else if (arg.equals("--extension") && args.length>(i+1)) {
                     extension = args[i+1];
                 }
+
+                else if (arg.equals("--no-doc-time")) {
+                    DOCTIME = false;
+                }
+                else if (arg.equals("--no-context-time")) {
+                    CONTEXTTIME = false;
+                }
             }
             ArrayList<File> nafFiles = Util.makeRecursiveFileList(new File(pathToNafFolder), extension);
             KafSaxParser kafSaxParser = new KafSaxParser();
@@ -46,7 +56,8 @@ public class ProcessSeparateNafFilesBatch {
                 ArrayList<SemObject> semActors = new ArrayList<SemObject>();
                 ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
                 ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-                GetSemFromNaf.processNafFile(projectName, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
+                GetSemFromNaf.processNafFile(projectName, kafSaxParser, semEvents, semActors, semTimes,
+                        semRelations, ADDITIONALROLES, DOCTIME, CONTEXTTIME);
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");
                 JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, false, false);
                 fos.close();

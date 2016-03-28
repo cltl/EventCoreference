@@ -33,6 +33,8 @@ public class GetSemFromNafFolder {
     static public boolean ALL = false;
     static public boolean PERSPECTIVE = false;
 
+    static boolean DOCTIME = true;
+    static boolean CONTEXTTIME = true;
 
     static final String USAGE = "This program processes a single NAF file and generates SEM RDF-TRiG results" +
             "The program has the following arguments:\n" +
@@ -88,6 +90,13 @@ public class GetSemFromNafFolder {
             }
             else if (arg.equals("--perspective")) {
                 PERSPECTIVE = true;
+            }
+
+            else if (arg.equals("--no-doc-time")) {
+                DOCTIME = false;
+            }
+            else if (arg.equals("--no-context-time")) {
+                CONTEXTTIME = false;
             }
             else if (arg.equals("--eurovoc-en") && args.length > (i + 1)) {
                 String pathToEurovocFile = args[i+1];
@@ -177,7 +186,8 @@ public class GetSemFromNafFolder {
                 kafSaxParser.getKafMetaData().setUrl(file.getName());
                 System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
             }
-            GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
+            GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations,
+                    NONENTITIES, DOCTIME, CONTEXTTIME);
             try {
 
                 ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();

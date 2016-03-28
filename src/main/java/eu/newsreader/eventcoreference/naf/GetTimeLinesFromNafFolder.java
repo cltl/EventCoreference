@@ -36,6 +36,9 @@ public class GetTimeLinesFromNafFolder {
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
 
+    static boolean DOCTIME = true;
+    static boolean CONTEXTTIME = true;
+
     static public void main (String [] args) {
         String processType = "";
         processType = "event";
@@ -74,6 +77,12 @@ public class GetTimeLinesFromNafFolder {
             }
             else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
                 contextualFrameFile = args[i+1];
+            }
+            else if (arg.equals("--no-doc-time")) {
+                DOCTIME = false;
+            }
+            else if (arg.equals("--no-context-time")) {
+                CONTEXTTIME = false;
             }
         }
 
@@ -196,7 +205,9 @@ public class GetTimeLinesFromNafFolder {
                 semActors,
                 semTimes,
                 semRelations,
-                true);
+                true,
+                DOCTIME,
+                CONTEXTTIME);
 
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");

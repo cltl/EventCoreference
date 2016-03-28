@@ -23,6 +23,8 @@ import java.util.Set;
  */
 public class GetSemFromNaf {
 
+    static public boolean DOCTIME = true;
+    static public boolean CONTEXTTIME = true;
     static public boolean POCUS = true;
     static public int MINEVENTLABELSIZE = 1;
     static final public String ID_SEPARATOR = "#";
@@ -49,9 +51,13 @@ public class GetSemFromNaf {
                                       ArrayList<SemObject> semActors,
                                       ArrayList<SemTime> semTimes,
                                       ArrayList<SemRelation> semRelations,
-                                      boolean ADDITIONALROLES
+                                      boolean ADDITIONALROLES,
+                                      boolean doctime,
+                                      boolean contexttime
     ) {
 
+        DOCTIME = doctime;
+        CONTEXTTIME = contexttime;
         /// @deprecated since it is included in the event-coref module for NAF
         //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
         //fixEventCoreferenceSets(kafSaxParser);
@@ -681,6 +687,9 @@ public class GetSemFromNaf {
         if (kafSaxParser.kafTimexLayer.size()>0) {
             for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
                 KafTimex timex = kafSaxParser.kafTimexLayer.get(i);
+                if (timex.getFunctionInDocument().equals(KafTimex.functionInDocumentCreationTime) && !DOCTIME) {
+                    continue;
+                }
                 if (!timex.getValue().trim().isEmpty() &&
                         (!timex.getValue().startsWith("XXXX-"))  /// year unknown
                          &&
@@ -844,14 +853,17 @@ public class GetSemFromNaf {
             docSemTime = Util.getDocumentCreationTimeFromNafHeader(baseUrl,kafSaxParser);
            // System.out.println("header docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateStringURI());
         }
-        if (docSemTime!=null) {
-            semTimes.add(docSemTime);
-        }
-        else {
+        if (DOCTIME) {
+            if (docSemTime != null) {
+                semTimes.add(docSemTime);
+            } else {
+/*
             docSemTime = Util.getBirthOfJC(baseUrl);
           //  System.out.println("BJC docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateLabel());
             if (docSemTime!=null) {
                 semTimes.add(docSemTime);
+            }
+*/
             }
         }
 
@@ -897,7 +909,7 @@ public class GetSemFromNaf {
                 }
             }
 
-            if (!timeAnchor) {
+            if (!timeAnchor && DOCTIME) {
                 /// we assume that events without an explicit time anchor and having nwr:AttributionTime value FUTURE are timeless events
                 KafFactuality kafFactuality = Util.futureEvent(semEvent);
                 if (kafFactuality!=null) {
@@ -909,58 +921,59 @@ public class GetSemFromNaf {
                     timeAnchor = true;
                 }
             }
-
-            if (!timeAnchor) {
-                for (int l = 0; l < semTimes.size(); l++) {
-                    SemTime semTime = (SemTime) semTimes.get(l);
-                    if (semTime !=null && semTime.getNafMentions()!=null) {
-                        ArrayList<String> termIds = Util.sameSentenceRange(semEvent, semTime);
-                        if (termIds.size() > 0) {
-                            /// create sem relations
-                            timexRelationCount++;
-                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                            SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
-                            semRelations.add(semRelation);
-                            timeAnchor = true;
-                            //  break;*/
+            if (CONTEXTTIME) {
+                if (!timeAnchor) {
+                    for (int l = 0; l < semTimes.size(); l++) {
+                        SemTime semTime = (SemTime) semTimes.get(l);
+                        if (semTime != null && semTime.getNafMentions() != null) {
+                            ArrayList<String> termIds = Util.sameSentenceRange(semEvent, semTime);
+                            if (termIds.size() > 0) {
+                                /// create sem relations
+                                timexRelationCount++;
+                                NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
+                                SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
+                                        timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
+                                semRelations.add(semRelation);
+                                timeAnchor = true;
+                                //  break;*//*
+                            }
                         }
                     }
                 }
-            }
 
-            if (!timeAnchor) {
-                for (int l = 0; l < semTimes.size(); l++) {
-                    SemTime semTime = (SemTime) semTimes.get(l);
-                    if (semTime !=null && semTime.getNafMentions()!=null) {
-                        ArrayList<String> termIds = Util.range1SentenceRange(semEvent, semTime);
-                        if (termIds.size() > 0) {
-                            /// create sem relations
-                            timexRelationCount++;
-                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                            SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
-                            semRelations.add(semRelation);
-                            timeAnchor = true;
-                            //  break;*/
+                if (!timeAnchor) {
+                    for (int l = 0; l < semTimes.size(); l++) {
+                        SemTime semTime = (SemTime) semTimes.get(l);
+                        if (semTime != null && semTime.getNafMentions() != null) {
+                            ArrayList<String> termIds = Util.range1SentenceRange(semEvent, semTime);
+                            if (termIds.size() > 0) {
+                                /// create sem relations
+                                timexRelationCount++;
+                                NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
+                                SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
+                                        timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
+                                semRelations.add(semRelation);
+                                timeAnchor = true;
+                                //  break;*//*
+                            }
                         }
                     }
                 }
-            }
-            if (!timeAnchor) {
-                for (int l = 0; l < semTimes.size(); l++) {
-                    SemTime semTime = (SemTime) semTimes.get(l);
-                    if (semTime !=null && semTime.getNafMentions()!=null) {
-                        ArrayList<String> termIds = Util.rangemin2plus1SentenceRange(semEvent, semTime);
-                        if (termIds.size() > 0) {
-                            /// create sem relations
-                            timexRelationCount++;
-                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
-                            SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
-                                    timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
-                            semRelations.add(semRelation);
-                            timeAnchor = true;
-                            // break;
+                if (!timeAnchor) {
+                    for (int l = 0; l < semTimes.size(); l++) {
+                        SemTime semTime = (SemTime) semTimes.get(l);
+                        if (semTime != null && semTime.getNafMentions() != null) {
+                            ArrayList<String> termIds = Util.rangemin2plus1SentenceRange(semEvent, semTime);
+                            if (termIds.size() > 0) {
+                                /// create sem relations
+                                timexRelationCount++;
+                                NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termIds);
+                                SemRelation semRelation = semTime.createSemTimeRelation(baseUrl,
+                                        timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
+                                semRelations.add(semRelation);
+                                timeAnchor = true;
+                                // break;
+                            }
                         }
                     }
                 }
@@ -971,7 +984,7 @@ public class GetSemFromNaf {
                module which creates the tmx0 for the default anchoring of the document
                
              */
-            if (!timeAnchor) {
+            if (!timeAnchor && DOCTIME) {
                 /// timeless event
                 /// in all cases that there is no time relations we link it to the docTime
                // System.out.println("docSemTime.toString() = " + docSemTime.toString());

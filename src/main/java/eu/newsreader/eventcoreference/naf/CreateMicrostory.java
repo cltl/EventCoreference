@@ -42,6 +42,9 @@ public class CreateMicrostory {
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/example/razni11-01.event-coref.naf";
         //String pathToNafFile = "/Projects/NewsReader/collaboration/bulgarian/fifa.naf";
         String project = "cars";
+
+        boolean DOCTIME = true;
+        boolean CONTEXTTIME = true;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-file") && args.length>(i+1)) {
@@ -49,6 +52,13 @@ public class CreateMicrostory {
             }
             else if (arg.equals("--project") && args.length>(i+1)) {
                 project = args[i+1];
+            }
+
+            else if (arg.equals("--no-doc-time")) {
+                DOCTIME = false;
+            }
+            else if (arg.equals("--no-context-time")) {
+                CONTEXTTIME = false;
             }
         }
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
@@ -58,7 +68,7 @@ public class CreateMicrostory {
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(pathToNafFile);
         boolean ADDITIONALROLES = true;
-        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
+        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES, DOCTIME, CONTEXTTIME);
         try {
             // System.out.println("semEvents = " + semEvents.size());
             String pathToTrigFile = pathToNafFile+".trig";

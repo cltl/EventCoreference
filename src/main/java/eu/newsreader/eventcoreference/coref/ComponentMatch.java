@@ -65,6 +65,55 @@ public class ComponentMatch {
         return actors;
     }
 
+
+    public static boolean phraseMatch (SemActor semActor1, ArrayList<SemActor> actors2) {
+        String topPhrase = semActor1.getTopPhraseAsLabel();
+        for (int j = 0; j < actors2.size(); j++) {
+            SemActor semActor2 = actors2.get(j);
+            for (int l = 0; l < semActor2.getPhraseCounts().size(); l++) {
+                PhraseCount phraseCount2 = semActor2.getPhraseCounts().get(l);
+                if (topPhrase.equalsIgnoreCase(phraseCount2.getPhrase())) {
+                   // System.out.println("topPhrase = " + topPhrase);
+                    return true;
+                }
+            }
+        }
+        int idx = topPhrase.lastIndexOf(" ");
+        if (idx>-1) {
+            String lastPhrase = topPhrase.substring(idx).trim();
+            if (lastPhrase.length()>2) {
+                for (int j = 0; j < actors2.size(); j++) {
+                    SemActor semActor2 = actors2.get(j);
+                    for (int l = 0; l < semActor2.getPhraseCounts().size(); l++) {
+                        PhraseCount phraseCount2 = semActor2.getPhraseCounts().get(l);
+                        if (lastPhrase.equalsIgnoreCase(phraseCount2.getPhrase())) {
+                          //  System.out.println("top subPhrase = " + topPhrase);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        idx = topPhrase.lastIndexOf("'s");
+        if (idx>-1 && topPhrase.endsWith("'s")) {
+            String lastPhrase = topPhrase.substring(0, idx-1).trim();
+            if (lastPhrase.length()>2) {
+                for (int j = 0; j < actors2.size(); j++) {
+                    SemActor semActor2 = actors2.get(j);
+                    for (int l = 0; l < semActor2.getPhraseCounts().size(); l++) {
+                        PhraseCount phraseCount2 = semActor2.getPhraseCounts().get(l);
+                        if (lastPhrase.equalsIgnoreCase(phraseCount2.getPhrase())) {
+                            // System.out.println("topPhrase's = " + topPhrase);
+
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean compareActorPrefLabelReference(CompositeEvent compositeEvent1,
                                                          CompositeEvent compositeEvent2,
                                                         ArrayList<String> roleObjects1,
@@ -73,28 +122,14 @@ public class ComponentMatch {
             ArrayList<SemActor> actors2 = getSemActorsFromCompositeEvent(compositeEvent2, roleObjects2);
             for (int i = 0; i < actors1.size(); i++) {
                 SemActor semActor1 = actors1.get(i);
-                String topPhrase = semActor1.getTopPhraseAsLabel();
-                for (int j = 0; j < actors2.size(); j++) {
-                    SemActor semActor2 = actors2.get(j);
-                    for (int l = 0; l < semActor2.getPhraseCounts().size(); l++) {
-                        PhraseCount phraseCount2 = semActor2.getPhraseCounts().get(l);
-                        if (topPhrase.equalsIgnoreCase(phraseCount2.getPhrase())) {
-                            return true;
-                        }
-                    }
+                if (phraseMatch(semActor1, actors2)) {
+                    return true;
                 }
             }
             for (int i = 0; i < actors2.size(); i++) {
                 SemActor semActor2 = actors2.get(i);
-                String topPhrase = semActor2.getTopPhraseAsLabel();
-                for (int j = 0; j < actors1.size(); j++) {
-                    SemActor semActor1 = actors1.get(j);
-                    for (int l = 0; l < semActor1.getPhraseCounts().size(); l++) {
-                        PhraseCount phraseCount1 = semActor1.getPhraseCounts().get(l);
-                        if (topPhrase.equalsIgnoreCase(phraseCount1.getPhrase())) {
-                            return true;
-                        }
-                    }
+                if (phraseMatch(semActor2, actors1)) {
+                    return true;
                 }
             }
         return false;
@@ -247,7 +282,7 @@ public class ComponentMatch {
             return true;
         }
         if (compositeEvent1.getMySemActors().size() == 0 || compositeEvent2.getMySemActors().size() == 0) {
-            return false;
+            return true;
         }
        // System.out.println("minimallyRequiredRoles = " + minimallyRequiredRoles.toString());
         if (minimallyRequiredRoles.contains("all")) {
@@ -280,12 +315,20 @@ public class ComponentMatch {
         }
         else if (minimallyRequiredRoles.contains("anyrole")) {
             /// IF NO SPECIFIC ROLES NEED TO BE PRESENT, WE GET ALL ROLES EXCEPT TIME AND CHECK IF THERE IS ANY MATCH
-            ArrayList roleObjects1 = Util.getObjectsForPredicate(compositeEvent1.getMySemRelations());
-            ArrayList roleObjects2 = Util.getObjectsForPredicate(compositeEvent2.getMySemRelations());
+            ArrayList<String> roleObjects1 = Util.getObjectsForPredicate(compositeEvent1.getMySemRelations());
+            ArrayList<String> roleObjects2 = Util.getObjectsForPredicate(compositeEvent2.getMySemRelations());
          //   System.out.println("roleObjects1 = " + roleObjects1.size());
          //   System.out.println("roleObjects2 = " + roleObjects2.size());
             if (!Collections.disjoint(roleObjects1, roleObjects2)) {
                 //// URI MATCH
+               // System.out.println("roleObjects1 = " + roleObjects1.toString());
+               // System.out.println("roleObjects2 = " + roleObjects2.toString());
+/*                for (int i = 0; i < roleObjects1.size(); i++) {
+                    String s = roleObjects1.get(i);
+                    if (roleObjects2.contains(s)) {
+                        System.out.println("s = " + s);
+                    }
+                }*/
                 return true;
             }
             else if (compareActorPrefLabelReference(compositeEvent1, compositeEvent2, roleObjects1, roleObjects2)) {
@@ -468,22 +511,26 @@ public class ComponentMatch {
 
         for (int i = 0; i < mySemTimes.size(); i++) {
             SemTime mySemTime = mySemTimes.get(i);
+           // System.out.println("myOwlTime.getDateStringURI() = " + mySemTime.getOwlTime().getDateStringURI());
+
             for (int j = 0; j < semTimes.size(); j++) {
                 SemTime semTime = semTimes.get(j);
+               // System.out.println("owlTime.getDateStringURI() = " + semTime.getOwlTime().getDateStringURI());
+
                 /// replace this by exact time matches....
                 if (mySemTime.getOwlTime().matchTimeEmbedded(semTime.getOwlTime())) {
-                    //  System.out.println("myOwlTime.getDateStringURI() = " + myOwlTime.getDateStringURI());
-                    //  System.out.println("owlTime.getDateStringURI() = " + owlTime.getDateStringURI());
+                    //  System.out.println("myOwlTime.getDateStringURI() = " + mySemTime.getOwlTime().getDateStringURI());
+                    //  System.out.println("owlTime.getDateStringURI() = " + semTime.getOwlTime().getDateStringURI());
 
                     return true;
                 } else if (mySemTime.getOwlTimeBegin().matchTimeEmbedded(semTime.getOwlTimeBegin())) {
-                    //  System.out.println("myOwlTime.getDateStringURI() = " + myOwlTime.getDateStringURI());
-                    //  System.out.println("owlTime.getDateStringURI() = " + owlTime.getDateStringURI());
+                    //  System.out.println("begin myOwlTime.getDateStringURI() = " + mySemTime.getOwlTime().getDateStringURI());
+                    //  System.out.println("end owlTime.getDateStringURI() = " + semTime.getOwlTime().getDateStringURI());
 
                     return true;
                 } else if (mySemTime.getOwlTimeEnd().matchTimeEmbedded(semTime.getOwlTimeEnd())) {
-                    //  System.out.println("myOwlTime.getDateStringURI() = " + myOwlTime.getDateStringURI());
-                    //  System.out.println("owlTime.getDateStringURI() = " + owlTime.getDateStringURI());
+                    //  System.out.println("end myOwlTime.getDateStringURI() = " + mySemTime.getOwlTime().getDateStringURI());
+                    //  System.out.println("end owlTime.getDateStringURI() = " + semTime.getOwlTime().getDateStringURI());
 
                     return true;
                 }
@@ -512,7 +559,6 @@ public class ComponentMatch {
                 } else if (mySemTime.getOwlTimeBegin().getYear().equals(semTime.getOwlTimeBegin().getYear())) {
                     return true;
                 } else if (mySemTime.getOwlTimeEnd().getYear().equals(semTime.getOwlTimeEnd().getYear())) {
-
                     return true;
                 }
             }

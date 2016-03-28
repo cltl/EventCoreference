@@ -31,6 +31,8 @@ public class GetSemAndPerspectiveFromNafFile {
     static public boolean ILIURI = false;
     static public boolean VERBOSE = false;
 
+    static boolean DOCTIME = true;
+    static boolean CONTEXTTIME = true;
 
     static final String USAGE = "This program processes a single NAF file and generates SEM RDF-TRiG results" +
             "The program has the following arguments:\n" +
@@ -66,6 +68,12 @@ public class GetSemAndPerspectiveFromNafFile {
                 VERBOSE = true;
             }
 
+            else if (arg.equals("--no-doc-time")) {
+                DOCTIME = false;
+            }
+            else if (arg.equals("--no-context-time")) {
+                CONTEXTTIME = false;
+            }
             else if (arg.equals("--ili") && args.length > (i + 1)) {
                 String pathToILIFile = args[i+1];
                 JenaSerialization.initILI(pathToILIFile);
@@ -114,7 +122,8 @@ public class GetSemAndPerspectiveFromNafFile {
             kafSaxParser.getKafMetaData().setUrl(new File (pathToNafFile).getName());
             System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
         }
-        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
+        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations,
+                NONENTITIES, DOCTIME, CONTEXTTIME);
         try {
 
             ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();

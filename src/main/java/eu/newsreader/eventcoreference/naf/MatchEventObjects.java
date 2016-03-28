@@ -889,7 +889,8 @@ public class MatchEventObjects {
                             swallowedEvents.add(targetEvent.getEvent().getId());
                         }
                     }
-                    else {  myCompositeEvent.getEvent().mergeSemObject(targetEvent.getEvent());
+                    else {
+                        myCompositeEvent.getEvent().mergeSemObject(targetEvent.getEvent());
                         myCompositeEvent.mergeObjects(targetEvent);
                         myCompositeEvent.mergeRelations(targetEvent);
                         allCompositeEvents.remove(targetEvent.getEvent().getId());

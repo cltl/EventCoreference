@@ -33,6 +33,8 @@ public class GetSemFromNafFile {
     static public boolean ALL = true;
     static public boolean PERSPECTIVE = true;
 
+    static boolean DOCTIME = true;
+    static boolean CONTEXTTIME = true;
 
 
     static final String USAGE = "This program processes a single NAF file and generates SEM RDF-TRiG results" +
@@ -56,9 +58,9 @@ public class GetSemFromNafFile {
         ALL = true;
         pathToNafFile = "/Users/piek/Desktop/NWR/Wikinews/Cross-lingual-pip3/spanish-wikinews/corpus_apple/58772_Apple_Inc._doubled_its_profits.xml.naf";
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/29/29_10ecb.xml.naf.fix.coref";
-        pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/33/33_1ecb.xml.naf.fix.coref";
         pathToNafFile = "/Users/piek/Desktop/nl.naf.xml";
         pathToNafFile = "/Users/piek/Desktop/short_text.out.naf";
+        pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.v6/45/45_1ecb.xml.naf.fix.xml.newpred.coref";
         String sourceFrameFile = "/Code/vu/newsreader/EventCoreference/resources/source.txt";
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";
@@ -105,6 +107,13 @@ public class GetSemFromNafFile {
             }
             else if (arg.equals("--ili-uri")) {
                 ILIURI = true;
+            }
+
+            else if (arg.equals("--no-doc-time")) {
+                DOCTIME = false;
+            }
+            else if (arg.equals("--no-context-time")) {
+                CONTEXTTIME = false;
             }
             else if (arg.equals("--time-max")  && args.length > (i + 1)) {
                 try {
@@ -160,7 +169,8 @@ public class GetSemFromNafFile {
             kafSaxParser.getKafMetaData().setUrl(new File (pathToNafFile).getName());
             System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
         }
-        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
+        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes,
+                semRelations, NONENTITIES, DOCTIME, CONTEXTTIME);
         try {
            // System.out.println("semEvents = " + semEvents.size());
            // System.out.println("semActors = " + semActors.size());

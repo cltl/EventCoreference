@@ -71,6 +71,8 @@ public class ClusterEventObjects {
     static public boolean RAWTEXTINDEX = false;
     static public String TIME = "";
 
+    static boolean DOCTIME = true;
+    static boolean CONTEXTTIME = true;
 
 
     static public void main (String [] args) {
@@ -128,6 +130,13 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--all")) {
                 ALL = true;
+            }
+
+            else if (arg.equals("--no-doc-time")) {
+                DOCTIME = false;
+            }
+            else if (arg.equals("--no-context-time")) {
+                CONTEXTTIME = false;
             }
             else if (arg.equals("--raw-text")) {
                 RAWTEXTINDEX = true;
@@ -334,7 +343,8 @@ public class ClusterEventObjects {
         ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
       //  System.out.println("nafFileName = " + nafFileName);
-        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES);
+        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes,
+                semRelations, ADDITIONALROLES, DOCTIME, CONTEXTTIME);
 
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date

@@ -38,6 +38,9 @@ public class GetSemFromNafStream {
     static public boolean VERBOSE = false;
     static public boolean PERSPECTIVE = false;
 
+    static boolean DOCTIME = true;
+    static boolean CONTEXTTIME = true;
+
     static public void main(String[] args) {
         Log.setLog4j("jena-log4j.properties");
         String sourceFrameFile = "";
@@ -56,6 +59,12 @@ public class GetSemFromNafStream {
             }
             else if (arg.equals("--perspective")) {
                 PERSPECTIVE = true;
+            }
+            else if (arg.equals("--no-doc-time")) {
+                DOCTIME = false;
+            }
+            else if (arg.equals("--no-context-time")) {
+                CONTEXTTIME = false;
             }
             else if (arg.equals("--eurovoc-en") && args.length > (i + 1)) {
                 String pathToEurovocFile = args[i+1];
@@ -108,7 +117,8 @@ public class GetSemFromNafStream {
             System.out.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
             return;
         }
-        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, NONENTITIES);
+        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations,
+                NONENTITIES, DOCTIME, CONTEXTTIME);
         ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
         for (int j = 0; j < semEvents.size(); j++) {
             SemEvent mySemEvent = (SemEvent) semEvents.get(j);
