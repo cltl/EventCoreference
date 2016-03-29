@@ -2010,6 +2010,25 @@ public class Util {
         return mentionURIs;
     }
 
+    static public ArrayList<NafMention> getNafMentionArrayListFromEntitiesAndCoreferenceSet (String baseUri,
+                                                                                           KafSaxParser kafSaxParser,
+                                                                                           ArrayList<KafEntity> kafEntities,
+                                                                                             KafCoreferenceSet kafCoreferenceSet) {
+        ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
+        for (int i = 0; i < kafEntities.size(); i++) {
+            KafEntity kafEntity = kafEntities.get(i);
+            for (int j = 0; j < kafCoreferenceSet.getSetsOfSpans().size(); j++) {
+                ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(j);
+                NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
+                if (!hasMention(mentionURIs, mention)) {
+                    // System.out.println("corefTargets.toString() = " + corefTargets.toString());
+                    mentionURIs.add(mention);
+                }
+            }
+        }
+        return mentionURIs;
+    }
+
     static public ArrayList<NafMention> getNafMentionArrayListFromEntitiesAndCoreferences (String baseUri,
                                                                                            KafSaxParser kafSaxParser,
                                                                                            ArrayList<KafEntity> kafEntities) {

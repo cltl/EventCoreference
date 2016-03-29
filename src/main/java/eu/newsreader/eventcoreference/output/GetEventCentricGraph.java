@@ -22,8 +22,9 @@ public class GetEventCentricGraph {
 
     static public void main (String[]args) {
         try {
-            //String pathToTrigFile = args[0];
-            String pathToTrigFile = "/Users/piek/Desktop/CICLing/sem.trig";
+            String pathToTrigFile = "";
+            pathToTrigFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.v6/45/events/all/sem.trig";
+            //pathToTrigFile = "/Users/piek/Desktop/CICLing/gold.sem.trig";
             TrigTripleData trigTripleData = TrigTripleReader.readTripleFromTrigFile (new File(pathToTrigFile));
             OutputStream fos = new FileOutputStream(pathToTrigFile+".eckg");
 

@@ -61,6 +61,7 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/nl.naf.xml";
         pathToNafFile = "/Users/piek/Desktop/short_text.out.naf";
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.v6/45/45_1ecb.xml.naf.fix.xml.newpred.coref";
+        //pathToNafFile = "/Users/piek/Desktop/ISO-WG5/more-than-two_sentences.out.naf.xml";
         String sourceFrameFile = "/Code/vu/newsreader/EventCoreference/resources/source.txt";
         String contextualFrameFile = "";
         String grammaticalFrameFile = "";

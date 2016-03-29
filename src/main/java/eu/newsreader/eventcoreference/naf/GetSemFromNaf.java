@@ -202,6 +202,7 @@ public class GetSemFromNaf {
          */
 
         HashMap<String, ArrayList<KafEntity>> kafEntityActorUriMap = new HashMap<String, ArrayList<KafEntity>>();
+        HashMap<String, ArrayList<KafCoreferenceSet>> kafCoreferenceUriMap = new HashMap<String, ArrayList<KafCoreferenceSet>>();
 
         for (int j = 0; j < kafSaxParser.kafEntityArrayList.size(); j++) {
             KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
@@ -258,9 +259,11 @@ public class GetSemFromNaf {
 
         /**
          * Next we iterate over all the coreference sets that are not events
+         * WE then select the entity which has most overlap with the spans.
+         * We add the coreference set to the mentions of the entity
          */
 
-        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+/*        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
             if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
                 //// this is an entity coreference set
@@ -287,7 +290,8 @@ public class GetSemFromNaf {
                 if (!topEntity.isEmpty()) {
                     coveredEntities.add(topEntity);
                     ArrayList<KafEntity> entities = kafEntityActorUriMap.get(topEntity);
-                    ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferences(baseUrl, kafSaxParser, entities);
+                    ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferenceSet(baseUrl, kafSaxParser, entities, kafCoreferenceSet);
+                    //ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferences(baseUrl, kafSaxParser, entities);
                     String entityId = "";
                     entityId = Util.getEntityLabelUriFromEntities(kafSaxParser, entities);
                     if (entityId.isEmpty()) {
@@ -336,6 +340,88 @@ public class GetSemFromNaf {
                 Util.addObject(semActors, semActor);
             }
         }
+
+        */
+
+        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+            if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                //// this is an entity coreference set
+                //// no we get all the entities for this set.
+                int topMatches = 0;
+                String topEntity = "";
+
+                //// we first decide which entity has the highest number of span overlap with the coreference targets
+                Set keySet = kafEntityActorUriMap.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    ArrayList<KafEntity> entities = kafEntityActorUriMap.get(key);
+                    int nMatches = 0;
+                    for (int j = 0; j < entities.size(); j++) {
+                        KafEntity kafEntity = entities.get(j);
+                        nMatches += Util.countIntersectingSetOfSpans(kafEntity.getSetsOfSpans(), kafCoreferenceSet.getSetsOfSpans());
+                    }
+                    if (nMatches > topMatches) {
+                        topMatches = nMatches;
+                        topEntity = key;
+                    }
+                }
+                if (!topEntity.isEmpty()) {
+                    if (kafCoreferenceUriMap.containsKey(topEntity)) {
+                        ArrayList<KafCoreferenceSet> set = kafCoreferenceUriMap.get(topEntity);
+                        set.add(kafCoreferenceSet);
+                        kafCoreferenceUriMap.put(topEntity, set);
+                    } else {
+                        ArrayList<KafCoreferenceSet> set = new ArrayList<KafCoreferenceSet>();
+                        set.add(kafCoreferenceSet);
+                        kafCoreferenceUriMap.put(topEntity, set);
+                    }
+                }
+            }
+        }
+
+        Set keySet = kafEntityActorUriMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String uri = keys.next();
+            //  System.out.println("uri = " + uri);
+                ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
+                ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntities(baseUrl, kafSaxParser, entities);
+                if (kafCoreferenceUriMap.containsKey(uri)) {
+                    ArrayList<KafCoreferenceSet> coreferenceSets = kafCoreferenceUriMap.get(uri);
+                    for (int i = 0; i < coreferenceSets.size(); i++) {
+                        KafCoreferenceSet kafCoreferenceSet = coreferenceSets.get(i);
+                        for (int j = 0; j < kafCoreferenceSet.getSetsOfSpans().size(); j++) {
+                            ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(j);
+                            if (corefTargets.size()<=Util.SPANMAXCOREFERENTSET) {
+                                NafMention mention = Util.getNafMentionForCorefTargets(baseUrl, kafSaxParser, corefTargets);
+                                if (!Util.hasMention(mentionArrayList, mention)) {
+                                    // System.out.println("corefTargets.toString() = " + corefTargets.toString());
+                                    mentionArrayList.add(mention);
+                                }
+                            }
+                        }
+
+                    }
+                }
+                String entityId = "";
+                entityId = Util.getEntityLabelUriFromEntities(kafSaxParser, entities);
+                if (entityId.isEmpty()) {
+                    entityId = baseUrl+"e"+semActors.size();
+                }
+                else {
+                    entityId = entityUri+entityId;
+                }
+                SemActor semActor = new SemActor(SemObject.ENTITY);
+                semActor.setId(entityId);
+                semActor.setNafMentions(mentionArrayList);
+                semActor.addPhraseCountsForMentions(kafSaxParser);
+                semActor.addConcepts(Util.getExternalReferences(entities));
+                semActor.setIdByDBpediaReference();
+                Util.addObject(semActors, semActor);
+        }
+
 
 /*
         for (int i = 0; i < semActors.size(); i++) {
