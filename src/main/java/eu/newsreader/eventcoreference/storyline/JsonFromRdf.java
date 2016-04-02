@@ -688,7 +688,6 @@ public class JsonFromRdf {
 
     static JSONObject getMentionsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
         JSONObject jsonClassesObject = new JSONObject();
-        ArrayList<String> coveredValues = new ArrayList<String>();
 
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
@@ -701,64 +700,41 @@ public class JsonFromRdf {
                 } else if (statement.getObject().isURIResource()) {
                     object = statement.getObject().asResource().getURI();
                 }
-                // System.out.println("object = " + object);
-                /*
-                object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=20,28&word=w3&term=t3&sentence=1
-object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=2227,2235&word=w391&term=t391&sentence=18
-object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=135,143&word=w22&term=t22&sentence=3
-object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=20,28&word=w3&term=t3&sentence=1
-object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=2227,2235&word=w391&term=t391&sentence=18
-object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=135,143&word=w22&term=t22&sentence=3
-object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=217,228&word=w36&term=t36&sentence=3
-object = http://en.wikinews.org/wiki/Aeroflot_negotiates_purchase_of_22_new_Boeing_787_Dreamliner_aircraft#char=217,228&word=w36&term=t36&sentence=3
-object = http://en.wikinews.org/wiki/Boeing_rolls_out_first_787_Dreamliner_to_go_into_service#char=744,750&word=w144&term=t144&sentence=10
-object = http://en.wikinews.org/wiki/Boeing_rolls_out_first_787_Dreamliner_to_go_into_service#char=775,779&word=w149&term=t149&sentence=10
-object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_development#char=659,667&word=w111&term=t111&sentence=6
-                 */
-/*
-                "http://en.wikinews.org/wiki/Indonesia's_transport_minister_tells_airlines_not_to_buy_European_aircraft_due_to_EU_ban#char=85",
-"88&word=w15&term=t15&sentence=1",
-"http://en.wikinews.org/wiki/Indonesia's_transport_minister_tells_airlines_not_to_buy_European_aircraft_due_to_EU_ban#char=462",
-"465&word=w88&term=t88&sentence=5",
-"http://en.wikinews.org/wiki/Indonesia's_transport_minister_tells_airlines_not_to_buy_European_aircraft_due_to_EU_ban#char=415",
-"421&word=w77&term=t77&sentence=4",
-"http://en.wikinews.org/wiki/Indonesia's_transport_minister_tells_airlines_not_to_buy_European_aircraft_due_to_EU_ban#char=1122",
-"1128&word=w222&term=t222&sentence=7"
-                 */
-
-                //object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_development#char=659,667&word=w111&term=t111&sentence=6
-                int idx = object.lastIndexOf("#");
-                if (idx >-1) {
-                    String uri = object.substring(0, idx);
-                    String mentionString = object.substring(idx+1);
-                    String[] values = object.split("&");
-                    if (values.length==4) {
-                        JSONObject mObject = new JSONObject();
-                        String charOffset = values[0];
-                        String tokens = values[1];
-                        String terms = values[2];
-                        String sentence = values[3];
-                        mObject.append("uri", uri);
-                        addValuesFromMention(mObject, "char", charOffset);
-                        addValuesFromMention(mObject, "tokens", tokens);
-                        addValuesFromMention(mObject, "terms", terms);
-                        addValuesFromMention(mObject, "sentence", sentence);
-                        jsonClassesObject.append("mentions", mObject);
-                    }
-                    else if (values.length==1) {
-                        JSONObject mObject = new JSONObject();
-                        String charOffset = values[0];
-                        mObject.append("uri", uri);
-                        addValuesFromMention(mObject, "char", charOffset);
-                        jsonClassesObject.append("mentions", mObject);
-                    }
-                }
-                //  jsonClassesObject.append("mentions", object);
-
+                jsonClassesObject.append("mentions", getMentionObjectFromMentionURI(object));
             }
         }
         return jsonClassesObject;
     }
+
+    static JSONObject getMentionObjectFromMentionURI (String mentionUri) {
+        JSONObject mObject = new JSONObject();
+        try {
+            int idx = mentionUri.lastIndexOf("#");
+            if (idx > -1) {
+                String uri = mentionUri.substring(0, idx);
+                String[] values = mentionUri.split("&");
+                if (values.length == 4) {
+                    String charOffset = values[0];
+                    String tokens = values[1];
+                    String terms = values[2];
+                    String sentence = values[3];
+                    mObject.append("uri", uri);
+                    addValuesFromMention(mObject, "char", charOffset);
+                    addValuesFromMention(mObject, "tokens", tokens);
+                    addValuesFromMention(mObject, "terms", terms);
+                    addValuesFromMention(mObject, "sentence", sentence);
+                } else if (values.length == 1) {
+                    String charOffset = values[0];
+                    mObject.append("uri", uri);
+                    addValuesFromMention(mObject, "char", charOffset);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return mObject;
+    }
+
 
     static public ArrayList<JSONObject> getJSONObjectArrayRDF(TrigTripleData trigTripleData) throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
@@ -888,7 +864,7 @@ object = http://en.wikinews.org/wiki/Boeing_pushes_back_737_replacement_developm
         return jsonClassesObject;
     }
 
-    static JSONObject getTopicsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+static JSONObject getTopicsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
 
         // skos:related    "air transport" , "aeronautical industry" , "transport regulations" , "air law" , "carrier" , "air safety" .
         JSONObject jsonClassesObject = new JSONObject();
