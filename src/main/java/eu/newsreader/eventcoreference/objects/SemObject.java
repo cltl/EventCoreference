@@ -350,8 +350,9 @@ public class SemObject implements Serializable {
 
             }
             else {
-                if ((topSense.getResource().equalsIgnoreCase("spotlight_v1")) ||
-                        (topSense.getSensecode().indexOf("dbpedia.org/") > -1)) {
+                if ((topSense.getResource().equalsIgnoreCase("spotlight_v1"))
+                        || (topSense.getSensecode().indexOf("dbpedia.org/") > -1)
+                        ) {
                 /*
                 (5) DBpedia resources are used as classes via rdf:type triples, while
                     they should be treated as instances, by either:
@@ -602,6 +603,12 @@ public class SemObject implements Serializable {
             }
             if (this.getURI().indexOf("entities/")==-1) {
                 if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
+                    continue;
+                }
+                if (kafSense.getResource().toLowerCase().startsWith("doublelinkentities")) {
+                    continue;
+                }
+                if (kafSense.getResource().toLowerCase().startsWith("dominantentities")) {
                     continue;
                 }
                 if (kafSense.getResource().isEmpty() && this.getURI().startsWith("http://dbpedia.org")) {

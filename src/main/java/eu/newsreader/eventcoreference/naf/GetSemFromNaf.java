@@ -209,7 +209,10 @@ public class GetSemFromNaf {
             KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
             String uri = "";
             if (DOMINANTURI) {
-                uri = Util.getDominantUri(kafEntity).getSensecode();
+                KafSense domSense = Util.getDominantUri(kafEntity);
+                if (domSense!=null) {
+                   uri = domSense.getSensecode();
+                }
             }
             if (uri.isEmpty() && POCUS) {
                 if (!Util.hasPocusUri(kafEntity) && Util.supersededByPocus(kafSaxParser, kafEntity)) {
@@ -219,7 +222,7 @@ public class GetSemFromNaf {
                     uri = Util.getBestEntityUriPreferPocus(kafEntity);
                 }
             }
-            else {
+            else if (uri.isEmpty()) {
                 uri = Util.getBestEntityUri(kafEntity);
             }
             if (uri.isEmpty()) {
