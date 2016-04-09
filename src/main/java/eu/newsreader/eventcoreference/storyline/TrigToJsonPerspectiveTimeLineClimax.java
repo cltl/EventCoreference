@@ -26,6 +26,12 @@ public class TrigToJsonPerspectiveTimeLineClimax {
     static ArrayList<String> blacklist = new ArrayList<String>();
     static String ACTORTYPE = "";
     static boolean ALL = false; /// if true we do not filter events
+    static boolean MERGE = false;
+    static String timeGran = "D";
+    static String actionOnt = "";
+    static int actionSim = 1;
+    static int interSect = 1;
+    static boolean PERSPECTIVE = false;
     static EsoReader esoReader = new EsoReader();
     static FrameNetReader frameNetReader = new FrameNetReader();
     static ArrayList<String> topFrames = new ArrayList<String>();
@@ -83,6 +89,32 @@ public class TrigToJsonPerspectiveTimeLineClimax {
             }
             else if (arg.equals("--year") && args.length>(i+1)) {
                 year = args[i+1];
+            }
+            else if (arg.equals("--time") && args.length>(i+1)) {
+                timeGran = args[i+1];
+            }
+            else if (arg.equals("--action-sim") && args.length>(i+1)) {
+                try {
+                    actionSim = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (arg.equals("--actor-intersect") && args.length>(i+1)) {
+                try {
+                    interSect = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (arg.equals("--action-ont") && args.length>(i+1)) {
+                actionOnt = args[i+1];
+            }
+            else if (arg.equals("--merge")) {
+                MERGE = true;
+            }
+            else if (arg.equals("--perspective") && args.length>(i+1)) {
+                PERSPECTIVE = true;
             }
             else if (arg.equals("--ks") && args.length>(i+1)) {
                 KS = args[i+1];
@@ -177,6 +209,7 @@ public class TrigToJsonPerspectiveTimeLineClimax {
         System.out.println("max events for stories = " +EVENTLIMIT);
         System.out.println("max results for KnowledgeStore = " + kslimit);
         System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
+        System.out.println("MERGE = " + MERGE);
         if (!blackListFile.isEmpty()) {
             blacklist = Util.ReadFileToStringArrayList(blackListFile);
         }
@@ -398,12 +431,17 @@ public class TrigToJsonPerspectiveTimeLineClimax {
                     topicThreshold,
                     climaxThreshold,
                     EVENTLIMIT,
-                    entityFilter);
-
-            ArrayList<JSONObject> perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjectArrayList);
-            for (int i = 0; i < perspectiveEvents.size(); i++) {
-                JSONObject jsonObject = perspectiveEvents.get(i);
-                jsonObjectArrayList.add(jsonObject);
+                    entityFilter, MERGE,
+                    timeGran,
+                    actionOnt,
+                    actionSim,
+                    interSect);
+            if (PERSPECTIVE) {
+                ArrayList<JSONObject> perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjectArrayList);
+                for (int i = 0; i < perspectiveEvents.size(); i++) {
+                    JSONObject jsonObject = perspectiveEvents.get(i);
+                    jsonObjectArrayList.add(jsonObject);
+                }
             }
             System.out.println("Events after storyline filter = " + jsonObjectArrayList.size());
             nEvents = jsonObjectArrayList.size();

@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by piek on 01/02/16.
@@ -20,7 +21,7 @@ public class RawTextIndex {
         String pathToNafFolder = "";
         String extension = "";
         String project = "";
-
+        java.util.Locale usLocale = new Locale("en", "US");
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-folder") && args.length > (i + 1)) {
@@ -58,8 +59,8 @@ public class RawTextIndex {
 
         String rawText = kafSaxParser.rawText;
         // System.out.println("rawText = " + rawText);
-        rawText = rawText.replaceAll("\n", "_");
-        rawText = rawText.replaceAll("\"", "^");
+        //rawText = rawText.replaceAll("\n", "_");
+        //rawText = rawText.replaceAll("\"", "^");
 
         String uri = kafSaxParser.getKafMetaData().getUrl();
         if (!uri.toLowerCase().startsWith("http")) {

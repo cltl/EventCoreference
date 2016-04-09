@@ -26,6 +26,7 @@ public class GetSemFromNaf {
     static public boolean DOCTIME = true;
     static public boolean CONTEXTTIME = true;
     static public boolean POCUS = true;
+    static public boolean DOMINANTURI = true;
     static public int MINEVENTLABELSIZE = 1;
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
@@ -207,7 +208,10 @@ public class GetSemFromNaf {
         for (int j = 0; j < kafSaxParser.kafEntityArrayList.size(); j++) {
             KafEntity kafEntity = kafSaxParser.kafEntityArrayList.get(j);
             String uri = "";
-            if (POCUS) {
+            if (DOMINANTURI) {
+                uri = Util.getDominantUri(kafEntity).getSensecode();
+            }
+            if (uri.isEmpty() && POCUS) {
                 if (!Util.hasPocusUri(kafEntity) && Util.supersededByPocus(kafSaxParser, kafEntity)) {
                     continue;
                 }

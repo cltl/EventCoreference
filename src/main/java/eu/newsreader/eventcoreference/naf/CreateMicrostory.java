@@ -494,7 +494,7 @@ public class CreateMicrostory {
 
 
     public static ArrayList<JSONObject> getEventsThroughCoparticipation(ArrayList<JSONObject> events,
-                                                                 JSONObject event)
+                                                                 JSONObject event, int intersection)
             throws JSONException {
         ArrayList<JSONObject> coPartipantEvents = new ArrayList<JSONObject>();
         JSONObject actorObject = event.getJSONObject("actors");
@@ -526,14 +526,22 @@ public class CreateMicrostory {
                                 JSONArray oActors = oActorObject.getJSONArray(oKey);
                               //  System.out.println("oActors.length() = " + oActors.length());
                                // System.out.println("oActors.toString() = " + oActors.toString());
-                                if (intersectingDBpActor(actors, oActors)) {
+                                if (countIntersectingDBpActor(actors,oActors)>=intersection) {
+                                    cnt++;
+                                    if (!coPartipantEvents.contains(oEvent)) {
+                                        coPartipantEvents.add(oEvent);
+                                    }
+                                    break;
+                                }
+
+  /*                              if (intersectingDBpActor(actors, oActors)) {
                                     // System.out.println("oActors.toString() = " + oActors.toString());
                                     cnt++;
                                     if (!coPartipantEvents.contains(oEvent)) {
                                          coPartipantEvents.add(oEvent);
                                     }
                                     break;
-                                }
+                                }*/
                             }
                         }
 /*
@@ -657,7 +665,35 @@ public class CreateMicrostory {
         }
         return false;
     }
-        static boolean intersectingDBpActor (JSONArray actors, JSONArray oActors) throws JSONException {
+
+    static int countIntersectingDBpActor (JSONArray actors, JSONArray oActors) throws JSONException {
+        int cnt = 0;
+        for (int j = 0; j < actors.length(); j++) {
+            String actor = actors.getString(j);
+            //System.out.println("actor = " + actor);
+            for (int k = 0; k < oActors.length(); k++) {
+                String oActor = oActors.getString(k);
+                if (actor.equals(oActor)) {
+                    cnt++;
+                }
+            }
+/*
+            if (actor.indexOf("dbpedia")>-1 || actor.indexOf("dbp:")>-1 || actor.indexOf("en:")>-1) {
+                for (int k = 0; k < oActors.length(); k++) {
+                    String oActor = oActors.getString(k);
+                    if (oActor.indexOf("dbpedia")>-1 || actor.indexOf("dbp:")>-1 || actor.indexOf("en:")>-1) {
+                        if (actor.equals(oActor)) {
+                            cnt++;
+                        }
+                    }
+                }
+            }
+*/
+        }
+        return cnt;
+    }
+
+    static boolean intersectingDBpActor (JSONArray actors, JSONArray oActors) throws JSONException {
         for (int j = 0; j < actors.length(); j++) {
             String actor = actors.getString(j);
             //System.out.println("actor = " + actor);

@@ -18,20 +18,21 @@ import java.util.Set;
 /**
  * Created by piek on 1/3/14.
  */
-public class TrigToJsonTimeLineClimax {
+public class TrigToJsonPerspectiveStoriesFT {
 
     static TrigTripleData trigTripleData = new TrigTripleData();
     static Dataset dataset = TDBFactory.createDataset();
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static ArrayList<String> blacklist = new ArrayList<String>();
     static String ACTORTYPE = "";
+    static boolean ALL = false; /// if true we do not filter events
     static boolean MERGE = false;
-
     static String timeGran = "D";
     static String actionOnt = "";
     static int actionSim = 1;
     static int interSect = 1;
-    static boolean ALL = false; /// if true we do not filter events
+    static boolean PERSPECTIVE = false;
+    static boolean COMBINE = false;
     static EsoReader esoReader = new EsoReader();
     static FrameNetReader frameNetReader = new FrameNetReader();
     static ArrayList<String> topFrames = new ArrayList<String>();
@@ -63,6 +64,7 @@ public class TrigToJsonTimeLineClimax {
         String trigfolder = "";
         String trigfile = "";
         String pathToRawTextIndexFile = "";
+        String pathToFtDataFile = "";
         String blackListFile = "";
         String fnFile = "";
         String esoFile = "";
@@ -90,11 +92,12 @@ public class TrigToJsonTimeLineClimax {
             else if (arg.equals("--year") && args.length>(i+1)) {
                 year = args[i+1];
             }
-
+            else if (arg.equals("--ft") && args.length>(i+1)) {
+                pathToFtDataFile = args[i+1];
+            }
             else if (arg.equals("--time") && args.length>(i+1)) {
                 timeGran = args[i+1];
             }
-
             else if (arg.equals("--actor-intersect") && args.length>(i+1)) {
                 try {
                     interSect = Integer.parseInt(args[i+1]);
@@ -110,13 +113,19 @@ public class TrigToJsonTimeLineClimax {
                 }
             }
             else if (arg.equals("--action-ont") && args.length>(i+1)) {
-                    actionOnt = args[i+1];
+                actionOnt = args[i+1];
+            }
+            else if (arg.equals("--merge")) {
+                MERGE = true;
+            }
+            else if (arg.equals("--perspective")) {
+                PERSPECTIVE = true;
+            }
+            else if (arg.equals("--combine-with-sem")) {
+                COMBINE = true;
             }
             else if (arg.equals("--ks") && args.length>(i+1)) {
                 KS = args[i+1];
-            }
-            else if (arg.equals("--merge") && args.length>(i+1)) {
-                MERGE = true;
             }
             else if (arg.equals("--ks-user") && args.length>(i+1)) {
                 KSuser = args[i+1];
@@ -200,12 +209,19 @@ public class TrigToJsonTimeLineClimax {
         }
         //trigfolder = "/tmp/naf2jsonWulzvC/events/contextual";
         //System.out.println("fnFile = " + fnFile);
+        System.out.println("query = " + query);
         System.out.println("climaxThreshold = " + climaxThreshold);
         System.out.println("topicThreshold = " + topicThreshold);
+        System.out.println("actionOnt = " + actionOnt);
+        System.out.println("actionSim = " + actionSim);
         System.out.println("actor type = " + ACTORTYPE);
         System.out.println("actorThreshold = " + actorThreshold);
+        System.out.println("actor interSect = " + interSect);
         System.out.println("max events for stories = " +EVENTLIMIT);
         System.out.println("max results for KnowledgeStore = " + kslimit);
+        System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
+        System.out.println("MERGE = " + MERGE);
+        System.out.println("PERSPECTIVE = " + PERSPECTIVE);
         if (!blackListFile.isEmpty()) {
             blacklist = Util.ReadFileToStringArrayList(blackListFile);
         }
@@ -250,7 +266,7 @@ public class TrigToJsonTimeLineClimax {
                 TrigKSTripleReader.limit = kslimit;
             }
             if (QUERYTYPE.equalsIgnoreCase("entity")) {
-                entityFilter = query; ///entityFilter is set to prevent stories to be built around queried entities only
+               // entityFilter = query; ///entityFilter is set to prevent stories to be built around queried entities only
                 if (ALL) {
                     trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(query);
                 }
@@ -286,26 +302,63 @@ public class TrigToJsonTimeLineClimax {
         }
         try {
             ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
+            JsonStoryUtil.minimalizeActors(jsonObjects);
 
             nActors = JsonStoryUtil.countActors(jsonObjects);
             nMentions = JsonStoryUtil.countMentions(jsonObjects);
             nStories = JsonStoryUtil.countGroups(jsonObjects);
-            if (!query.isEmpty()) {
-                JsonSerialization.writeJsonObjectArrayForQuery(KS, query, project, jsonObjects, nEvents, nStories, nActors, nMentions, KSuser, KSpass);
+            ArrayList<JSONObject> perspectiveEvents = null;
+            ArrayList<JSONObject> structuredEvents = null;
+            if (PERSPECTIVE) {
+                perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);
+                if (COMBINE) {
+                    for (int i = 0; i < perspectiveEvents.size(); i++) {
+                        JSONObject jsonObject = perspectiveEvents.get(i);
+                        jsonObjects.add(jsonObject);
+                    }
+                }
+            }
+
+
+            if (!pathToFtDataFile.isEmpty()) {
+                HashMap<String, ArrayList<ReadFtData.DataFt>> dataFtMap = ReadFtData.readData(pathToFtDataFile);
+                structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
+/*                if (COMBINE) {
+                    for (int i = 0; i < structuredEvents.size(); i++) {
+                        JSONObject jsonObject = structuredEvents.get(i);
+                        jsonObjects.add(jsonObject);
+                    }
+                  }*/
+            }
+
+
+            if (!pathToRawTextIndexFile.isEmpty()) {
+                ArrayList<String> rawTextArrayList = Util.ReadFileToStringArrayList(pathToRawTextIndexFile);
+                JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects, rawTextArrayList,
+                        nEvents, nStories, nActors, nMentions);
+
             }
             else {
-                if (!pathToRawTextIndexFile.isEmpty()) {
-                    ArrayList<String> rawTextArrayList = Util.ReadFileToStringArrayList(pathToRawTextIndexFile);
-                    JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions);
-
+                if (!query.isEmpty()) {
+                    JsonSerialization.writeJsonObjectArrayForQuery(KS, query, project, jsonObjects,
+                            nEvents, nStories, nActors, nMentions, KSuser, KSpass);
                 }
                 else {
                     if (trigfile.isEmpty()) {
-                        JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects, nEvents, nStories, nActors, nMentions);
+                        JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects,
+                                nEvents, nStories, nActors, nMentions);
                     } else {
-                        JsonSerialization.writeJsonObjectArray(trigfile, project, jsonObjects, nEvents, nStories, nActors, nMentions);
+                        JsonSerialization.writeJsonObjectArray(trigfile, project, jsonObjects,
+                                nEvents, nStories, nActors, nMentions);
                     }
                 }
+            }
+            if (PERSPECTIVE) {
+                JsonSerialization.writeJsonPerspectiveArray(trigfolder, project, perspectiveEvents);
+            }
+            if (!pathToFtDataFile.isEmpty()) {
+                JsonSerialization.writeJsonStructuredArray(trigfolder, project, structuredEvents);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -354,7 +407,8 @@ public class TrigToJsonTimeLineClimax {
                         continue;
                     }
                     ///skipping historic events
-                    if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
+                   // if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
+                    if (timeAnchor.startsWith("20")) {
                         jsonObject.put("time", timeAnchor);
 
                         JSONObject jsonClasses = JsonFromRdf.getClassesJSONObjectFromInstanceStatement(instanceTriples);
@@ -392,8 +446,8 @@ public class TrigToJsonTimeLineClimax {
                             jsonObject.put("topics", topics.get("topics"));
                         }
                         jsonObjectArrayList.add(jsonObject);
-                    }
 
+                    }
                 }
                 else {
                   //  System.out.println("no actor relations in otherTriples.size() = " + otherTriples.size());
@@ -414,11 +468,16 @@ public class TrigToJsonTimeLineClimax {
                 jsonObjectArrayList = filterEventsForActors(jsonObjectArrayList, entityFilter, actorThreshold);
                 System.out.println("Events after actor count filter = " + jsonObjectArrayList.size());
             }
+
             jsonObjectArrayList = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjectArrayList,
                     topicThreshold,
                     climaxThreshold,
                     EVENTLIMIT,
-                    entityFilter, MERGE, timeGran, actionOnt, actionSim,interSect);
+                    entityFilter, MERGE,
+                    timeGran,
+                    actionOnt,
+                    actionSim,
+                    interSect);
             System.out.println("Events after storyline filter = " + jsonObjectArrayList.size());
             nEvents = jsonObjectArrayList.size();
         } catch (JSONException e) {
@@ -459,11 +518,11 @@ public class TrigToJsonTimeLineClimax {
                                        // System.out.println("cnt = " + cnt);
                                     } else {
                                         /// removes actors with too low freqency
-                                        //oActorObject.remove(oKey);
+                                        oActorObject.remove(oKey);
                                     }
                                 } else {
                                     /// removes actors with too low freqency
-                                    //oActorObject.remove(oKey);
+                                    oActorObject.remove(oKey);
                                 }
                         /*    }*/
                         }

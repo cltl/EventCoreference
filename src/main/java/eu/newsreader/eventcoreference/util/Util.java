@@ -1197,6 +1197,23 @@ public class Util {
         }
         return false;
     }
+    /*
+    <externalRef resource="DominantEntities"
+    reference="http://dbpedia.org/resource/George_Osborne"
+    confidence="1.0”/>
+
+     */
+    static public KafSense getDominantUri (KafEntity kafEntity) {
+        KafSense domSense = null;
+        for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
+            KafSense kafSense = kafEntity.getExternalReferences().get(i);
+            if (kafSense.getResource().equalsIgnoreCase("DominantEntities")) {
+                domSense =kafSense;
+                break;
+            }
+        }
+        return domSense;
+    }
 
     static public boolean hasPocusOnlyUri (KafEntity kafEntity) {
         for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
@@ -1285,8 +1302,13 @@ public class Util {
             if (topSense.getChildren().size()>0) {
                 //// Crosslingual mapping
 /*
-                <externalRef confidence="1.0" reference="http://es.dbpedia.org/resource/Fuerza_Aérea_de_los_Estados_Unidos" reftype="es" resource="spotlight_v1" source="es">
-                <externalRef confidence="1.0" reference="http://dbpedia.org/resource/United_States_Air_Force" reftype="en" resource="wikipedia-db-esEn" source="es"/>
+                <externalRef confidence="1.0"
+                reference="http://es.dbpedia.org/resource/Fuerza_Aérea_de_los_Estados_Unidos"
+                reftype="es" resource="spotlight_v1" source="es">
+                <externalRef confidence="1.0"
+                reference="http://dbpedia.org/resource/United_States_Air_Force"
+                reftype="en" resource="wikipedia-db-esEn"
+                source="es"/>
                 </externalRef>
 */
                 for (int i = 0; i < topSense.getChildren().size(); i++) {
