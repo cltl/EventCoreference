@@ -308,10 +308,10 @@ doc-uri
                 }
                 if (targetResource!=null) {
                     Resource attributionSubject = model.createResource(attrId);
-                    Property property = model.createProperty(ResourcesUri.gaf,"hasAttribution" );
+                    Property property = model.createProperty(ResourcesUri.grasp,"hasAttribution" );
                     mentionSubject.addProperty(property, attributionSubject);
                     if (!cueMention.toString().isEmpty()) {
-                        property = model.createProperty(ResourcesUri.gaf, "generatedBy");
+                        property = model.createProperty(ResourcesUri.grasp, "generatedBy");
                         //Resource object = ds.getDefaultModel().createResource(this.cueMention.toString());
                         Resource object = model.createResource(this.cueMention.toString());
                         mentionSubject.addProperty(property, object);
