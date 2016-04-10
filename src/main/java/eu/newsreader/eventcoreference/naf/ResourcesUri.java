@@ -30,6 +30,9 @@ public class ResourcesUri {
     final static public String gaf = "http://groundedannotationframework.org/gaf#";
     final static public String gafAttribution = "http://groundedannotationframework.org/gaf/attribution#";
     final static public String gafSentiment = "http://groundedannotationframework.org/gaf/sentiment#";
+    final static public String grasp = "http://groundedannotationframework.org/grasp#";
+    final static public String graspAttribution = "http://groundedannotationframework.org/grasp/attribution#";
+    final static public String graspSentiment = "http://groundedannotationframework.org/grasp/sentiment#";
     final static public String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
     final static public String dbp = "http://dbpedia.org/resource/";
     final static public String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -79,6 +82,9 @@ public class ResourcesUri {
         model.setNsPrefix("gaf", ResourcesUri.gaf);
         model.setNsPrefix("gafAttribution", ResourcesUri.gafAttribution);
         model.setNsPrefix("gafSentiment", ResourcesUri.gafSentiment);
+        model.setNsPrefix("grasp", ResourcesUri.grasp);
+        model.setNsPrefix("graspAttribution", ResourcesUri.graspAttribution);
+        model.setNsPrefix("graspSentiment", ResourcesUri.graspSentiment);
         model.setNsPrefix("prov", ResourcesUri.prov);
     }
 

@@ -323,14 +323,14 @@ doc-uri
                     if (mention.getFactuality().size() == 0) {
                         //// default perspective
                         property = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
-                        Resource factualityValue = model.createResource(KafFactuality.defaultAttribution);
+                        Resource factualityValue = model.createResource(ResourcesUri.grasp+KafFactuality.defaultAttribution);
                         attributionSubject.addProperty(property, factualityValue);
                     }
                     else {
                         for (int j = 0; j < mention.getFactuality().size(); j++) {
                             KafFactuality kafFactuality = mention.getFactuality().get(j);
                             property = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
-                            Resource factualityValue = model.createResource(kafFactuality.getPrediction());
+                            Resource factualityValue = model.createResource(ResourcesUri.grasp+kafFactuality.getPrediction());
                             attributionSubject.addProperty(property, factualityValue);
                         }
                     }
@@ -345,7 +345,7 @@ doc-uri
                             else if (sentiment.equals("-")) {
                                 sentiment ="negative";
                             }
-                            Resource sentimentValue = model.createResource(sentiment);
+                            Resource sentimentValue = model.createResource(ResourcesUri.grasp+sentiment);
                             //System.out.println("sentiment = " + sentiment);
                             attributionSubject.addProperty(property, sentimentValue); /// creates the literal as value
                         }
@@ -356,88 +356,5 @@ doc-uri
 
     }
 
-    public void addToJenaDataSetOrg (Dataset ds) {
-        /*
-        mentionId2      hasAttribution         attributionId1
-                        gaf:generatedBy        mentionId3
-        attributionId1  rdf:value              CERTAIN_POS_FUTURE
-                        rdf:value              POSITIVE
-                        prov:wasAttributedTo   doc-uri
-                        gaf:wasAttributedTo    dbp:Zetsche
-
-         */
-        /*
-http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=254,261
-	gafAttribution:CERTAIN,NON_FUTURE
-		http://dbpedia.org/resource/Caesars_Entertainment_Corporation ;
-		gaf:generatedBy http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=201,209.
-
-
-http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=201,209
-			gafAttribution:CERTAIN,NON_FUTURE
-				doc-uri;
-
-doc-uri
-	prov:wasAttributedTo author;
-	prov:wasAttributedTo journal.
-         */
-
-        if ((targetEventMentions.size()>0)) {
-
-            Model model = ds.getDefaultModel();
-            for (int i = 0; i < targetEventMentions.size(); i++) {
-                NafMention mention = targetEventMentions.get(i);
-                /// the mention of the target event is the subject
-                Resource subject = model.createResource(mention.toString());
-                subject.addProperty(RDFS.label, model.createLiteral(mention.getSentenceText()));
-
-                Resource targetResource = null;
-                if (sourceEntity.getURI().isEmpty()) {
-                    String uri = "";
-                    try {
-                        uri = URLEncoder.encode(source.getTokenString(), "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        //  e.printStackTrace();
-                    }
-                    if (!uri.isEmpty()) {
-                        targetResource = ds.getDefaultModel().createResource(uri);
-                    }
-                }
-                else {
-                    targetResource = ds.getDefaultModel().createResource(sourceEntity.getURI());
-                }
-                if (targetResource!=null) {
-                    if (mention.getFactuality().size() == 0) {
-                        //// default perspective
-                        Property property = model.createProperty(ResourcesUri.gafAttribution, KafFactuality.defaultAttribution);
-                        subject.addProperty(property, targetResource); /// creates the literal as value
-                    }
-                    else {
-                        for (int j = 0; j < mention.getFactuality().size(); j++) {
-                            KafFactuality kafFactuality = mention.getFactuality().get(j);
-                            Property property = model.createProperty(ResourcesUri.gafAttribution, kafFactuality.getPrediction());
-                            subject.addProperty(property, targetResource); /// creates the literal as value
-                        }
-                    }
-                    if (mention.getOpinions().size()>0) {
-                        for (int j = 0; j < mention.getOpinions().size(); j++) {
-                            KafOpinion kafOpinion = mention.getOpinions().get(j);
-                            Property property = model.createProperty(ResourcesUri.gafSentiment, kafOpinion.getOpinionSentiment().getPolarity());
-                            subject.addProperty(property, targetResource); /// creat
-                        }
-                    }
-                }
-                if (!cueMention.toString().isEmpty()) {
-                    Property property = model.createProperty(ResourcesUri.gaf, "generatedBy");
-                    Resource object = ds.getDefaultModel().createResource(this.cueMention.toString());
-                    subject.addProperty(property, object);
-                    subject.addProperty(RDFS.comment, model.createLiteral(cueMention.getSentenceText()));
-
-
-                }
-            }
-        }
-
-    }
 
 }

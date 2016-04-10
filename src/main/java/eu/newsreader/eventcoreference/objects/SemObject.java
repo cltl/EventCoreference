@@ -565,7 +565,10 @@ public class SemObject implements Serializable {
             if (!kafTopic.getUri().isEmpty()) {
                 Property property = model.createProperty(ResourcesUri.skos + SKOS.RELATED_MATCH.getLocalName());
                 // resource.addProperty(property, model.createLiteral(kafTopic.getUri()));
-                resource.addProperty(property, model.createResource(kafTopic.getUri()));
+                Resource topicResource = model.createResource(kafTopic.getUri());
+                if (!topicResource.getURI().isEmpty() && !topicResource.getURI().equals("<>")) {
+                    resource.addProperty(property, topicResource);
+                }
             }
         }
 
