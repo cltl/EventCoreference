@@ -383,7 +383,7 @@ public class JenaSerialization {
             addJenaCompositeEvents(semEvents, null, false, false);
             addDocMetaData(kafSaxParser);
             String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
-            addJenaPerspectiveObjects(attrBase, ResourcesUri.gaf, sourcePerspectiveObjects);
+            addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, sourcePerspectiveObjects);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
             addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, authorPerspectiveObjects);
         try {

@@ -61,6 +61,7 @@ public class ResourcesUri {
         model.setNsPrefix("pb", ResourcesUri.pb);
         model.setNsPrefix("nb", ResourcesUri.nb);
 */
+        model.setNsPrefix("gaf", ResourcesUri.gaf);
         model.setNsPrefix("sem", ResourcesUri.sem);
         model.setNsPrefix("owl", ResourcesUri.owl);
         model.setNsPrefix("time", ResourcesUri.owltime);
@@ -79,10 +80,7 @@ public class ResourcesUri {
     }
 
     static public void prefixModelGaf (Model model) {
-        model.setNsPrefix("gaf", ResourcesUri.gaf);
-        model.setNsPrefix("gafAttribution", ResourcesUri.gafAttribution);
-        model.setNsPrefix("gafSentiment", ResourcesUri.gafSentiment);
-        model.setNsPrefix("grasp", ResourcesUri.grasp);
+         model.setNsPrefix("grasp", ResourcesUri.grasp);
         model.setNsPrefix("graspAttribution", ResourcesUri.graspAttribution);
         model.setNsPrefix("graspSentiment", ResourcesUri.graspSentiment);
         model.setNsPrefix("prov", ResourcesUri.prov);
