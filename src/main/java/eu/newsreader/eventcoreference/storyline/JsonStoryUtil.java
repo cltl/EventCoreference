@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.storyline;
 
 import com.hp.hpl.jena.rdf.model.Statement;
+import eu.newsreader.eventcoreference.input.TrigKSTripleReader;
 import eu.newsreader.eventcoreference.input.TrigTripleData;
 import eu.newsreader.eventcoreference.naf.CreateMicrostory;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
@@ -9,6 +10,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
+
+import static eu.newsreader.eventcoreference.input.TrigKSTripleReader.makeTripleQuery;
 
 /**
  * Created by piek on 17/02/16.
@@ -1197,7 +1200,7 @@ public class JsonStoryUtil {
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
-            // System.out.println("key = " + key);
+           // System.out.println("key = " + key);
             JSONObject mObject = JsonFromRdf.getMentionObjectFromMentionURI(key);
             String source = "";
             String speechactLabel = "";
@@ -1217,7 +1220,7 @@ public class JsonStoryUtil {
                             Statement statement1 = perspectiveValues.get(j);
                             //ttp://www.w3.org/ns/prov#wasAttributedTo,
                             if (statement1.getPredicate().getURI().endsWith("#wasAttributedTo")) {
-                                // System.out.println("statement1.getObject().toString() = " + statement1.getObject().toString());
+                               //  System.out.println("statement1.getObject().toString() = " + statement1.getObject().toString());
                                 if (trigTripleData.tripleMapGrasp.containsKey(statement1.getObject().toString())) {
                                     ArrayList<Statement> provStatements = trigTripleData.tripleMapGrasp.get(statement1.getObject().toString());
                                     for (int k = 0; k < provStatements.size(); k++) {
@@ -1227,7 +1230,7 @@ public class JsonStoryUtil {
                                         if (idx>-1) {
                                             source = "auth:"+source.substring(idx+1);
                                         }
-                                        // System.out.println("author source = " + source);
+                                       //  System.out.println("author source = " + source);
                                     }
                                 }
                                 else {
@@ -1236,26 +1239,34 @@ public class JsonStoryUtil {
                                     if (idx>-1) {
                                         source = "cite:"+source.substring(idx+1);
                                     }
-                                    // System.out.println("quote source = " + source);
+                                   //  System.out.println("quote source = " + source);
 
                                 }
                             }
                             else if (statement1.getPredicate().getURI().endsWith("#value")) {
                                 String perspective = "";
                                 String str = statement1.getObject().toString();
-                                int idx = str.lastIndexOf("/");
+                             //   System.out.println("str = " + str);
+                                int idx = str.lastIndexOf("#");
                                 if (idx>-1) {
                                     perspective = str.substring(idx+1);
                                 }
                                 else {
-                                    perspective = str;
+                                    idx = str.lastIndexOf("/");
+                                    if (idx>-1) {
+                                        perspective = str.substring(idx+1);
+                                    }
+                                    else {
+                                        perspective = str;
+                                    }
                                 }
                                 if (!perspective.isEmpty() && !perspectives.contains(perspective)) {
+                                    System.out.println("perspective = " + perspective);
                                     perspectives.add(perspective);
                                 }
                             }
                             else {
-                                // System.out.println("statement1.getPredicate().getURI() = " + statement1.getPredicate().getURI());
+                             //    System.out.println("statement1.getPredicate().getURI() = " + statement1.getPredicate().getURI());
                             }
                         }
                     }
@@ -1292,18 +1303,21 @@ public class JsonStoryUtil {
             }
             if (newPerspectives.size()>0) {
                 Collections.sort(newPerspectives);
-                // System.out.println("newPerspectives.toString() = " + newPerspectives.toString());
+                System.out.println("newPerspectives.toString() = " + newPerspectives.toString());
                 boolean MATCH = false;
                 JSONObject targetObject = null;
                 for (int j = 0; j < jsonObjects.size(); j++) {
                     JSONObject jsonObject = jsonObjects.get(j);
-                    // System.out.println("jsonObject.toString() = " + jsonObject.toString());
+                  //  System.out.println("jsonObject.toString() = " + jsonObject.toString());
                     try {
                         JSONArray mentions = (JSONArray) jsonObject.get("mentions");
                         for (int m = 0; m < mentions.length(); m++) {
                             JSONObject mentionObject = (JSONObject) mentions.get(m);
+                            //System.out.println("mentionObject.toString() = " + mentionObject.toString());
+                            //System.out.println("mObject.toString() = " + mObject.toString());
                             if (mentionObject.toString().equals(mObject.toString())) {
                                 MATCH = true;
+                                //System.out.println("mentionObject.toString() = " + mentionObject.toString());
                                 targetObject = jsonObject;
                                 break;
                             }
@@ -1318,10 +1332,130 @@ public class JsonStoryUtil {
                         perspectiveEvent = createSourcePerspectiveEvent(key,speechactLabel, targetLabel, source,
                                 newPerspectives, mObject, targetObject, speechActMention);
                     } catch (JSONException e) {
-                        //  e.printStackTrace();
+                          e.printStackTrace();
                     }
                     pEvents.add(perspectiveEvent);
                 }
+            }
+        }
+        System.out.println("pEvents = " + pEvents.size());
+        return pEvents;
+    }
+
+    static private String getURIforMention (JSONArray uriValue, JSONArray charOffset) throws JSONException {
+        String uri = "<"+uriValue.getString(0)+"#char="+charOffset.getString(0)+","+charOffset.getString(1)+">";
+        //<http://www.ft.com/thing/05fc83c6-1b5c-11e5-8201-cbdb03d71480#char=19,28>
+        //{"char":["1699","1706"],"uri":["http://www.ft.com/thing/03de44c8-2f96-11e5-8873-775ba7c2ea3d"]}
+        return uri;
+    }
+
+    static ArrayList<JSONObject> getPerspectiveEventsFromKS (ArrayList<JSONObject> jsonObjects) throws JSONException {
+        ArrayList<JSONObject> pEvents = new ArrayList<JSONObject>();
+        for (int i = 0; i < jsonObjects.size(); i++) {
+            JSONObject jsonObject = jsonObjects.get(i);
+            try {
+                JSONArray mentions = (JSONArray) jsonObject.get("mentions");
+                for (int m = 0; m < mentions.length(); m++) {
+                    JSONObject mentionObject = (JSONObject) mentions.get(m);
+                    JSONObject speechActMention = null;
+                    ArrayList<String> perspectives = new ArrayList<String>();
+                    String source = "";
+                    String speechactLabel = "";
+                    String targetLabel = "";
+                    JSONArray uriObject = mentionObject.getJSONArray("uri");
+                    JSONArray offsetArray = mentionObject.getJSONArray("char");
+                    String mention = getURIforMention(uriObject, offsetArray);
+                    ArrayList<Statement> perspectiveTriples = TrigKSTripleReader.getSubjectProperties(mention);
+                    for (int p = 0; p < perspectiveTriples.size(); p++) {
+                        Statement statement = perspectiveTriples.get(p);
+                        String relString = statement.getPredicate().toString();
+                        String objUri = statement.getObject().toString();
+                        if (TrigKSTripleReader.isAttributionRelation(relString)) {
+                            String sparqlQuery = makeTripleQuery(objUri);
+                            ArrayList<Statement> attrTriples = TrigKSTripleReader.readTriplesFromKs(objUri, sparqlQuery);
+                            boolean hasPerspective = false;
+                            for (int j = 0; j < attrTriples.size(); j++) {
+                                Statement attrStatement = attrTriples.get(j);
+                                if (attrStatement.getPredicate().getURI().endsWith("#value")) {
+                                    String perspective = "";
+                                    String str = attrStatement.getObject().toString();
+                                    //   System.out.println("str = " + str);
+                                    int idx = str.lastIndexOf("#");
+                                    if (idx>-1) {  perspective = str.substring(idx+1); }
+                                    else {
+                                        idx = str.lastIndexOf("/");
+                                        if (idx>-1) { perspective = str.substring(idx+1);  }
+                                        else {  perspective = str;  }
+                                    }
+                                    perspective = normalizePerspectiveValue(perspective);
+                                    if (!perspective.isEmpty() && !perspectives.contains(perspective)) {
+                                        System.out.println("perspective = " + perspective);
+                                        hasPerspective = true;
+                                        perspectives.add(perspective);
+                                    }
+                                }
+                            }
+                            if (hasPerspective) {
+                                for (int j = 0; j < attrTriples.size(); j++) {
+                                    Statement attrStatement = attrTriples.get(j);
+                                    if (attrStatement.getPredicate().getURI().endsWith("#wasAttributedTo")) {
+                                        //  System.out.println("statement1.getObject().toString() = " + statement1.getObject().toString());
+                                        String attrObj = attrStatement.getObject().toString();
+                                        sparqlQuery = makeTripleQuery(attrObj);
+                                        ArrayList<Statement> docTriples = TrigKSTripleReader.readTriplesFromKs(objUri, sparqlQuery);
+                                        if (docTriples.size() > 0) {
+                                            for (int d = 0; d < docTriples.size(); d++) {
+                                                Statement docStatement = docTriples.get(d);
+                                                source = docStatement.getObject().toString();
+                                                int idx = source.lastIndexOf("/");
+                                                if (idx > -1) {
+                                                    source = "auth:" + source.substring(idx + 1);
+                                                }
+                                            }
+                                        } else {
+                                            source = attrStatement.getObject().toString();
+                                            int idx = source.lastIndexOf("/");
+                                            if (idx > -1) {
+                                                source = "cite:" + source.substring(idx + 1);
+                                            }
+                                            //  System.out.println("quote source = " + source);
+
+                                        }
+                                    }
+                                }
+                            }
+                            else {
+                                break;
+                            }
+                        } else if (relString.endsWith("#comment")) {
+                            //rdfs:comment
+                            speechactLabel = objUri;
+                            int idx = speechactLabel.lastIndexOf("/");
+                            if (idx > -1) {
+                                speechactLabel = speechactLabel.substring(idx + 1);
+                            }
+                        } else if (relString.endsWith("#label")) {
+                            //rdfs:label
+                            targetLabel = objUri;
+                            int idx = targetLabel.lastIndexOf("/");
+                            if (idx > -1) {
+                                targetLabel = targetLabel.substring(idx + 1);
+                            }
+                        } else if (relString.endsWith("generatedBy")) {
+                            speechActMention = JsonFromRdf.getMentionObjectFromMentionURI(objUri);
+                        }
+                    }
+                    if (perspectives.size() > 0) {
+                        Collections.sort(perspectives);
+                        System.out.println("perspectives.toString() = " + perspectives.toString());
+                        JSONObject perspectiveEvent = createSourcePerspectiveEvent(mention, speechactLabel, targetLabel, source,
+                                perspectives, mentionObject, jsonObject, speechActMention);
+                        pEvents.add(perspectiveEvent);
+
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
         System.out.println("pEvents = " + pEvents.size());
@@ -1368,17 +1502,18 @@ public class JsonStoryUtil {
         // System.out.println("normValue = " + normValue);
         return normValue;
     }
+
     static String normalizePerspectiveValue (String value) {
         String normValue = "";
 
         // if (!value.equals("u_u_u") && !value.equals("CERTAIN_NON_FUTURE_POS")) {
 
         // System.out.println("value = " + value);
-        if (value.equals("negative")) {
+        if (value.indexOf("negative")>-1) {
             // normValue="-";
             normValue=":(";
         }
-        else if (value.equals("positive")) {
+        else if (value.indexOf("positive")>-1) {
             // normValue="+";
             normValue=":)";
         }

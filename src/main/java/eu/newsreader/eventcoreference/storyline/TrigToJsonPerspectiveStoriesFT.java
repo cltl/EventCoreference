@@ -50,16 +50,14 @@ public class TrigToJsonPerspectiveStoriesFT {
     static String KS = "nwr/wikinews-new";
     static String KSuser = "nwr/wikinews-new";
     static String KSpass = "nwr/wikinews-new";
-
-    static String QUERYTYPE = "entity";
     static int EVENTLIMIT = 500;
 
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
         String project = "NewsReader storyline";
         String pathToILIfile = "";
-        String query = "";
-        String query2 = "";
+        String eventQuery = "";
+        String entityQuery = "";
         String kslimit = "500";
         String trigfolder = "";
         String trigfile = "";
@@ -80,14 +78,11 @@ public class TrigToJsonPerspectiveStoriesFT {
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
                 trigfolder = args[i+1];
             }
-            else if (arg.equals("--query") && args.length>(i+1)) {
-                query = args[i+1];
+            else if (arg.equals("--event") && args.length>(i+1)) {
+                eventQuery = args[i+1];
             }
-            else if (arg.equals("--event-type") && args.length>(i+1)) {
-                query = args[i+1];
-            }
-            else if (arg.equals("--entity-type") && args.length>(i+1)) {
-                query2 = args[i+1];
+            else if (arg.equals("--entity") && args.length>(i+1)) {
+                entityQuery = args[i+1];
             }
             else if (arg.equals("--year") && args.length>(i+1)) {
                 year = args[i+1];
@@ -158,19 +153,12 @@ public class TrigToJsonPerspectiveStoriesFT {
             else if (arg.equals("--actor-cnt") && args.length>(i+1)) {
                 actorThreshold = Integer.parseInt(args[i+1]);
             }
-            else if (arg.equals("--type") && args.length>(i+1)) {
-                QUERYTYPE = args[i+1];
-            }
             else if (arg.equals("--all")){
                 ALL = true;
             }
             else if (arg.equals("--actors") && args.length>(i+1)) {
                 ACTORTYPE = args[i+1];
                // System.out.println("ACTORNAMESPACES = " + ACTORNAMESPACES);
-            }
-
-            else if (arg.equals("--entity") && args.length>(i+1)) {
-                entityFilter = args[i+1];
             }
             else if (arg.equals("--frame-relations") && args.length>(i+1)) {
                 fnFile = args[i+1];
@@ -209,7 +197,6 @@ public class TrigToJsonPerspectiveStoriesFT {
         }
         //trigfolder = "/tmp/naf2jsonWulzvC/events/contextual";
         //System.out.println("fnFile = " + fnFile);
-        System.out.println("query = " + query);
         System.out.println("climaxThreshold = " + climaxThreshold);
         System.out.println("topicThreshold = " + topicThreshold);
         System.out.println("actionOnt = " + actionOnt);
@@ -248,10 +235,12 @@ public class TrigToJsonPerspectiveStoriesFT {
             System.out.println("trigFiles.size() = " + trigFiles.size());
             trigTripleData = TrigTripleReader.readTripleFromTrigFiles(trigFiles);
         }
-        else if (!query.isEmpty()) {
-            System.out.println("querying KnowledgeStore for event = " + query);
-            if (!query2.isEmpty()) {
-                System.out.println("and querying KnowledgeStore for entity = " + query2);
+        else if (!eventQuery.isEmpty() || !entityQuery.isEmpty()) {
+            if (!eventQuery.isEmpty()) {
+                System.out.println("querying KnowledgeStore for event = " + eventQuery);
+            }
+            if (!entityQuery.isEmpty()) {
+                System.out.println("querying KnowledgeStore for entity = " + entityQuery);
             }
             long startTime = System.currentTimeMillis();
             if (!KS.isEmpty()) {
@@ -265,33 +254,20 @@ public class TrigToJsonPerspectiveStoriesFT {
             if (!kslimit.isEmpty()) {
                 TrigKSTripleReader.limit = kslimit;
             }
-            if (QUERYTYPE.equalsIgnoreCase("entity")) {
-               // entityFilter = query; ///entityFilter is set to prevent stories to be built around queried entities only
+            if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
                 if (ALL) {
-                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(query);
+                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
                 }
                 else {
-                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(query, ACTORTYPE.toLowerCase());
+                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery, ACTORTYPE.toLowerCase());
                 }
             }
-            else if (QUERYTYPE.equalsIgnoreCase("event")) {
-                trigTripleData = TrigKSTripleReader.readTriplesFromKSforEventType(query);
+            else if (entityQuery.isEmpty() && !eventQuery.isEmpty()) {
+                trigTripleData = TrigKSTripleReader.readTriplesFromKSforEventType(eventQuery);
             }
-            else if (QUERYTYPE.equalsIgnoreCase("topic")) {
-                trigTripleData = TrigKSTripleReader.readTriplesFromKSforTopic(query);
+            else if (!entityQuery.isEmpty() && !eventQuery.isEmpty()) {
+                trigTripleData = TrigKSTripleReader.readTriplesFromKSforEventEntityType(eventQuery, entityQuery);
             }
-            else if (QUERYTYPE.equalsIgnoreCase("event-entity")) {
-                trigTripleData = TrigKSTripleReader.readTriplesFromKSforEventEntityType(query, query2);
-            }
-/*
-            try {
-                trigTripleData.dumpTriples(System.out, trigTripleData.tripleMapInstances);
-                trigTripleData.dumpTriples(System.out, trigTripleData.tripleMapOthers);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-*/
-
             long estimatedTime = System.currentTimeMillis() - startTime;
 
             System.out.println("Time elapsed:");
@@ -310,7 +286,13 @@ public class TrigToJsonPerspectiveStoriesFT {
             ArrayList<JSONObject> perspectiveEvents = null;
             ArrayList<JSONObject> structuredEvents = null;
             if (PERSPECTIVE) {
-                perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);
+                if (!entityQuery.isEmpty() || !eventQuery.isEmpty()) {
+                    System.out.println("Getting perspectives for: " + jsonObjects.size() + " events");
+                    perspectiveEvents = JsonStoryUtil.getPerspectiveEventsFromKS(jsonObjects);
+                }
+                else {
+                    perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);
+                }
                 if (COMBINE) {
                     for (int i = 0; i < perspectiveEvents.size(); i++) {
                         JSONObject jsonObject = perspectiveEvents.get(i);
@@ -339,8 +321,8 @@ public class TrigToJsonPerspectiveStoriesFT {
 
             }
             else {
-                if (!query.isEmpty()) {
-                    JsonSerialization.writeJsonObjectArrayForQuery(KS, query, project, jsonObjects,
+                if (!eventQuery.isEmpty() || !entityQuery.isEmpty()) {
+                    JsonSerialization.writeJsonObjectArrayForQuery(KS, eventQuery+entityQuery, project, jsonObjects,
                             nEvents, nStories, nActors, nMentions, KSuser, KSpass);
                 }
                 else {

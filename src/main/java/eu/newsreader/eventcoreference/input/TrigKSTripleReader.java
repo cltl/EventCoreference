@@ -38,6 +38,76 @@ public class TrigKSTripleReader {
         pass = password;
     }
 
+
+    static public ArrayList<Statement> getSubjectProperties (String subjectUri) {
+        //SELECT ?s ?rel ?obj WHERE {<http://www.ft.com/thing/0013db8a-e6db-11e5-a09b-1f8b0d268c39#char=18,24> ?rel ?obj} LIMIT 50
+        //SELECT ?s ?rel ?obj WHERE {<http://www.ft.com/thing/0013db8a-e6db-11e5-a09b-1f8b0d268c39/doc_attribution/Attr0> ?rel ?obj} LIMIT 50
+        ArrayList<Statement> triples = new ArrayList<Statement>();
+
+      //  System.out.println("subject = " + subject);
+        String sparqlQuery = makeTripleQuery(subjectUri);
+        triples = readTriplesFromKs (subjectUri, sparqlQuery);
+        for (int i = 0; i < triples.size(); i++) {
+            Statement statement = triples.get(i);
+            String relString = statement.getPredicate().toString();
+            String objUri = statement.getObject().toString();
+            if (isAttributionRelation(relString)) {
+                sparqlQuery = makeTripleQuery(objUri);
+                ArrayList<Statement> attrTriples = readTriplesFromKs(objUri, sparqlQuery);
+                for (int j = 0; j < attrTriples.size(); j++) {
+                    Statement attrStatement =  attrTriples.get(j);
+                    triples.add(attrStatement);
+                }
+            }
+            else if (isProvRelation(relString)) {
+                /// in this case the object is a document URI
+                sparqlQuery = makeTripleQuery(objUri);
+                ArrayList<Statement> docTriples = readTriplesFromKs(objUri, sparqlQuery);
+                for (int j = 0; j < docTriples.size(); j++) {
+                    Statement docStatement =  docTriples.get(j);
+                    triples.add(docStatement);
+                }
+            }
+        }
+        return triples;
+    }
+
+    static public String makeTripleQuery (String subjectUri) {
+        String subject = subjectUri;
+        if (!subjectUri.startsWith("<")) subject = "<"+subject+">";
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?subject ?predicate ?object WHERE { "+subject+" ?predicate ?object} LIMIT 10";
+        return sparqlQuery;
+    }
+
+
+    public static ArrayList<Statement> readTriplesFromKs(String subjectUri, String sparqlQuery){
+
+        ArrayList<Statement> triples = new ArrayList<Statement>();
+        HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
+        try {
+            QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
+            ResultSet resultset = x.execSelect();
+            while (resultset.hasNext()) {
+                QuerySolution solution = resultset.nextSolution();
+                String relString = solution.get("predicate").toString();
+                RDFNode obj = solution.get("object");
+                Model model = ModelFactory.createDefaultModel();
+                Resource subj = model.createResource(subjectUri);
+                Statement s = createStatement(subj, ResourceFactory.createProperty(relString), obj);
+                triples.add(s);
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return triples;
+    }
+
+
+
     static public TrigTripleData readTriplesFromKSforEventType(String eventType){
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
@@ -137,7 +207,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        System.out.println("sparqlQuery = " + sparqlQuery);
+        //System.out.println("sparqlQuery = " + sparqlQuery);
         return readTriplesFromKs(sparqlQuery);
     }
 
@@ -162,8 +232,8 @@ public class TrigKSTripleReader {
             String relString = solution.get("relation").toString();
             String currentEvent = solution.get("event").toString();
             RDFNode obj = solution.get("object");
+            String objUri = obj.toString();
             Statement s = createStatement((Resource) solution.get("event"), ResourceFactory.createProperty(relString), obj);
-           // if (isSemRelation(relString))
             if (isSemRelation(relString) || isESORelation(relString) || isFNRelation(relString) || isPBRelation(relString))
             {
                 otherRelations.add(s);
@@ -217,6 +287,17 @@ public class TrigKSTripleReader {
             else // Instances
             {
                 instanceRelations.add(s);
+/*
+                if (isEventUri(currentEvent)) {
+                    if (isDenotedByRelation(relString)) {
+                        getTenSubjectProperties(objUri, trigTripleData);
+                    }
+                }
+                else {
+                   // System.out.println("currentEvent = " + currentEvent);
+                }
+*/
+
             }
 
             if (!oldEvent.equals("")) {
@@ -240,12 +321,32 @@ public class TrigKSTripleReader {
 
     }
 
+    private static boolean isEventUri (String subject) {
+        String name = subject;
+        int idx = subject.lastIndexOf("#");
+        if (idx>-1) name = name.substring(idx);
+        return name.toLowerCase().startsWith("#ev");
+    }
+
     private static boolean isSemRelation(String relation) {
         return relation.startsWith("http://semanticweb.cs.vu.nl/2009/11/sem/");
     }
 
     private static boolean isSemTimeRelation(String relation) {
         return relation.startsWith("http://semanticweb.cs.vu.nl/2009/11/sem/hasTime");
+    }
+
+    private static boolean isDenotedByRelation(String relation) {
+        //http://groundedannotationframework.org/gaf#denotedBy
+        return relation.endsWith("denotedBy");
+    }
+
+    public static boolean isAttributionRelation(String relation) {
+        return relation.endsWith("hasAttribution");
+    }
+
+    public static boolean isProvRelation(String relation) {
+        return relation.equals("http://www.w3.org/ns/prov#wasAttributedTo");
     }
 
     private static boolean isFNRelation(String relation) {
