@@ -17,7 +17,7 @@ import static com.hp.hpl.jena.rdf.model.ResourceFactory.createStatement;
  */
 public class TrigKSTripleReader {
 
-
+    public static int qCount = 0;
     //final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
     public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
     //public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/sparql";
@@ -39,7 +39,7 @@ public class TrigKSTripleReader {
     }
 
 
-    static public ArrayList<Statement> getSubjectProperties (String subjectUri) {
+/*    static public ArrayList<Statement> getSubjectProperties (String subjectUri) {
         //SELECT ?s ?rel ?obj WHERE {<http://www.ft.com/thing/0013db8a-e6db-11e5-a09b-1f8b0d268c39#char=18,24> ?rel ?obj} LIMIT 50
         //SELECT ?s ?rel ?obj WHERE {<http://www.ft.com/thing/0013db8a-e6db-11e5-a09b-1f8b0d268c39/doc_attribution/Attr0> ?rel ?obj} LIMIT 50
         ArrayList<Statement> triples = new ArrayList<Statement>();
@@ -70,7 +70,7 @@ public class TrigKSTripleReader {
             }
         }
         return triples;
-    }
+    }*/
 
     static public String makeTripleQuery (String subjectUri) {
         String subject = subjectUri;
@@ -89,6 +89,7 @@ public class TrigKSTripleReader {
         ArrayList<Statement> triples = new ArrayList<Statement>();
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
         try {
+            qCount++;
             QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
             ResultSet resultset = x.execSelect();
             while (resultset.hasNext()) {

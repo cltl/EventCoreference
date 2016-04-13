@@ -1351,10 +1351,14 @@ public class JsonStoryUtil {
 
     static ArrayList<JSONObject> getPerspectiveEventsFromKS (ArrayList<JSONObject> jsonObjects) throws JSONException {
         ArrayList<JSONObject> pEvents = new ArrayList<JSONObject>();
+        int totalMentions = 0;
         for (int i = 0; i < jsonObjects.size(); i++) {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
                 JSONArray mentions = (JSONArray) jsonObject.get("mentions");
+                totalMentions += mentions.length();
+                System.out.println("mentions.length() = " + mentions.length());
+                /// for each metion of an event, we check if there is a perspective on it.
                 for (int m = 0; m < mentions.length(); m++) {
                     JSONObject mentionObject = (JSONObject) mentions.get(m);
                     JSONObject speechActMention = null;
@@ -1365,14 +1369,18 @@ public class JsonStoryUtil {
                     JSONArray uriObject = mentionObject.getJSONArray("uri");
                     JSONArray offsetArray = mentionObject.getJSONArray("char");
                     String mention = getURIforMention(uriObject, offsetArray);
-                    ArrayList<Statement> perspectiveTriples = TrigKSTripleReader.getSubjectProperties(mention);
+                    System.out.println("event mention = " + mention);
+                    String sparqlQuery = makeTripleQuery(mention);
+                    ArrayList<Statement> perspectiveTriples = TrigKSTripleReader.readTriplesFromKs(mention, sparqlQuery);
+                    System.out.println("perspectiveTriples.size() = " + perspectiveTriples.size());
                     for (int p = 0; p < perspectiveTriples.size(); p++) {
                         Statement statement = perspectiveTriples.get(p);
                         String relString = statement.getPredicate().toString();
                         String objUri = statement.getObject().toString();
                         if (TrigKSTripleReader.isAttributionRelation(relString)) {
-                            String sparqlQuery = makeTripleQuery(objUri);
+                            sparqlQuery = makeTripleQuery(objUri);
                             ArrayList<Statement> attrTriples = TrigKSTripleReader.readTriplesFromKs(objUri, sparqlQuery);
+                            System.out.println("attrTriples.size() = " + attrTriples.size());
                             boolean hasPerspective = false;
                             for (int j = 0; j < attrTriples.size(); j++) {
                                 Statement attrStatement = attrTriples.get(j);
@@ -1444,6 +1452,9 @@ public class JsonStoryUtil {
                         } else if (relString.endsWith("generatedBy")) {
                             speechActMention = JsonFromRdf.getMentionObjectFromMentionURI(objUri);
                         }
+                        else {
+                            /// WE IGNORE THIS TRIPLE
+                        }
                     }
                     if (perspectives.size() > 0) {
                         Collections.sort(perspectives);
@@ -1458,6 +1469,7 @@ public class JsonStoryUtil {
                 e.printStackTrace();
             }
         }
+        System.out.println("totalMentions = " + totalMentions);
         System.out.println("pEvents = " + pEvents.size());
         return pEvents;
     }
@@ -1521,10 +1533,19 @@ public class JsonStoryUtil {
             if (value.indexOf("UNCERTAIN")>-1) {
                 normValue+= "Uncertain";
             }
+            else if (value.indexOf("CERTAIN")>-1) {
+                normValue+= "Certain";
+            }
             if (value.indexOf("NEG")>-1) {
                 normValue+= "Denial";
             }
-            if (value.indexOf("FUTURE")>-1 && value.indexOf("NON_FUTURE")==-1) {
+            else if (value.indexOf("POS")>-1) {
+                normValue+= "Confirm";
+            }
+            if (value.indexOf("NON_FUTURE")>-1) {
+                normValue+= "Now";
+            }
+            else if (value.indexOf("FUTURE")>-1) {
                 normValue+= "Future";
             }
         }
