@@ -289,8 +289,8 @@ public class TrigToJsonPerspectiveStoriesFT {
                 if (!entityQuery.isEmpty() || !eventQuery.isEmpty()) {
                     System.out.println("Getting perspectives for: " + jsonObjects.size() + " events");
                     TrigKSTripleReader.qCount= 0;
-                    perspectiveEvents = JsonStoryUtil.getPerspectiveEventsFromKS(jsonObjects);
-                    System.out.println("TrigKSTripleReader.qCount = " + TrigKSTripleReader.qCount);
+                   // perspectiveEvents = JsonStoryUtil.getPerspectiveEventsFromKS(jsonObjects);
+                    perspectiveEvents = TrigKSTripleReader.readAttributionFromKs(jsonObjects);
                 }
                 else {
                     perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);

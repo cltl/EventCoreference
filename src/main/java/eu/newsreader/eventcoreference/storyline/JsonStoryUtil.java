@@ -1294,10 +1294,13 @@ public class JsonStoryUtil {
             ArrayList<String> newPerspectives = new ArrayList<String>();
             for (int j = 0; j < perspectives.size(); j++) {
                 String perspective =  perspectives.get(j);
-                perspective = normalizePerspectiveValue(perspective);
-                if (!perspective.isEmpty()) {
-                    if (!newPerspectives.contains(perspective)) {
-                        newPerspectives.add(perspective);
+                ArrayList<String> normValues = normalizePerspectiveValue(perspective);
+                if (!normValues.isEmpty()) {
+                    for (int i = 0; i < normValues.size(); i++) {
+                        String nv =  normValues.get(i);
+                        if (!newPerspectives.contains(nv)) {
+                            newPerspectives.add(nv);
+                        }
                     }
                 }
             }
@@ -1342,7 +1345,7 @@ public class JsonStoryUtil {
         return pEvents;
     }
 
-    static private String getURIforMention (JSONArray uriValue, JSONArray charOffset) throws JSONException {
+    static public String getURIforMention (JSONArray uriValue, JSONArray charOffset) throws JSONException {
         String uri = "<"+uriValue.getString(0)+"#char="+charOffset.getString(0)+","+charOffset.getString(1)+">";
         //<http://www.ft.com/thing/05fc83c6-1b5c-11e5-8201-cbdb03d71480#char=19,28>
         //{"char":["1699","1706"],"uri":["http://www.ft.com/thing/03de44c8-2f96-11e5-8873-775ba7c2ea3d"]}
@@ -1395,11 +1398,13 @@ public class JsonStoryUtil {
                                         if (idx>-1) { perspective = str.substring(idx+1);  }
                                         else {  perspective = str;  }
                                     }
-                                    perspective = normalizePerspectiveValue(perspective);
-                                    if (!perspective.isEmpty() && !perspectives.contains(perspective)) {
-                                        System.out.println("perspective = " + perspective);
-                                        hasPerspective = true;
-                                        perspectives.add(perspective);
+                                    ArrayList<String> normValues = normalizePerspectiveValue(perspective);
+                                    if (!normValues.isEmpty()) {
+                                        for (int k = 0; k < normValues.size(); k++) {
+                                            String nv = normValues.get(k);
+                                            hasPerspective = true;
+                                            perspectives.add(nv);
+                                        }
                                     }
                                 }
                             }
@@ -1474,7 +1479,7 @@ public class JsonStoryUtil {
         return pEvents;
     }
 
-    static String normalizeSourceValue (String value) {
+    static public String normalizeSourceValue (String value) {
         String normValue = "";
         for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
@@ -1515,7 +1520,8 @@ public class JsonStoryUtil {
         return normValue;
     }
 
-    static String normalizePerspectiveValue (String value) {
+    static public ArrayList<String> normalizePerspectiveValue (String value) {
+        ArrayList<String> normValues = new ArrayList<String>();
         String normValue = "";
 
         // if (!value.equals("u_u_u") && !value.equals("CERTAIN_NON_FUTURE_POS")) {
@@ -1524,56 +1530,56 @@ public class JsonStoryUtil {
         if (value.indexOf("negative")>-1) {
             // normValue="-";
             normValue=":(";
+            normValues.add(normValue);
         }
         else if (value.indexOf("positive")>-1) {
             // normValue="+";
             normValue=":)";
+            normValues.add(normValue);
         }
         else {
             if (value.indexOf("UNCERTAIN")>-1) {
-                normValue+= "Uncertain";
+                normValue= "Uncertain";
+                normValues.add(normValue);
             }
             else if (value.indexOf("CERTAIN")>-1) {
-                normValue+= "Certain";
+                normValue= "Certain";
+                normValues.add(normValue);
             }
             if (value.indexOf("NEG")>-1) {
-                normValue+= "Denial";
+                normValue= "Denial";
+                normValues.add(normValue);
             }
             else if (value.indexOf("POS")>-1) {
-                normValue+= "Confirm";
+                normValue= "Confirm";
+                normValues.add(normValue);
             }
             if (value.indexOf("NON_FUTURE")>-1) {
-                normValue+= "Now";
+                normValue= "Now";
+                normValues.add(normValue);
             }
             else if (value.indexOf("FUTURE")>-1) {
-                normValue+= "Future";
+                normValue= "Future";
+                normValues.add(normValue);
+            }
+            if (value.indexOf("PROBABLE")>-1) {
+                normValue= "Likely";
+                normValues.add(normValue);
+            }
+            if (value.indexOf("IMPROBABLE")>-1) {
+                normValue= "Unlikely";
+                normValues.add(normValue);
+            }
+            else if (value.indexOf("PROBABLE")>-1) {
+                normValue= "Likely";
+                normValues.add(normValue);
             }
         }
-/*        else if (!value.equals("u_u_u") && !value.equals("CERTAIN_NON_FUTURE_POS")) {
-            /// Do not change the order.....
 
-
-            if (!value.startsWith("CERTAIN") && value.indexOf("_POS_")==-1 && value.indexOf("_NON_FUTURE")==-1)  {
-                /// Do not change the order.....
-                //normValue = normValue.replace("u", "");
-                normValue = value.replace("UNCERTAIN", "NCert");
-                normValue = normValue.replace("CERTAIN", "Cert");
-                normValue = normValue.replace("NON_FUTURE", "NFut");
-                normValue = normValue.replace("FUTURE", "Fut");
-                normValue = normValue.replace("PSIBLE", "NProb");
-                normValue = normValue.replace("SIBLE", "NProb");
-                normValue = normValue.replace("PROBABLE", "Prob");
-                normValue = normValue.replace("POS", "True");
-                normValue = normValue.replace("NEG", "NTrue");
-                // normValue = normValue.replace("_", "");
-                normValue = value;
-            }
-
-        }*/
-        return normValue;
+        return normValues;
     }
 
-    static JSONObject createSourcePerspectiveEvent (String key,
+    static public JSONObject createSourcePerspectiveEvent (String key,
                                                     String speechActLabel,
                                                     String targetLabel,
                                                     String source,
@@ -1648,6 +1654,75 @@ public class JsonStoryUtil {
 
 
         sourcePerspectiveEvent.put("instance", key);
+        sourcePerspectiveEvent.put("climax", climax);
+        sourcePerspectiveEvent.put("time", time);
+        sourcePerspectiveEvent.put("group", group);
+        sourcePerspectiveEvent.put("groupName", groupName);
+        sourcePerspectiveEvent.put("groupScore", groupScore);
+        return sourcePerspectiveEvent;
+    }
+
+
+    static public JSONObject createSourcePerspectiveEvent (PerspectiveJsonObject perspectiveJsonObject) throws JSONException {
+        JSONObject sourcePerspectiveEvent = new JSONObject();
+        String prefLabel = "";
+        String factualityLabel = "";
+        String time = "";
+        String climax = "";
+        String group = "";
+        String groupName="";
+        String groupScore="";
+
+
+        sourcePerspectiveEvent.append("mentions", perspectiveJsonObject.getMention());
+
+        sourcePerspectiveEvent.put("instance", perspectiveJsonObject.getMention());
+
+        /// labels
+        for (int i = 0; i < perspectiveJsonObject.getAttribution().size(); i++) {
+            String s =  perspectiveJsonObject.getAttribution().get(i);
+            if (s.equals(":(")) {
+                prefLabel += s;
+            }
+            else if (s.equals(":)")) {
+                prefLabel += s;
+            }
+            else {
+                factualityLabel+=s;
+            }
+        }
+        if (prefLabel.isEmpty()) {
+            prefLabel = ":|";
+        }
+        prefLabel += "-"+perspectiveJsonObject.getComment()+"-"+perspectiveJsonObject.getLabel()+"-"+factualityLabel;
+        sourcePerspectiveEvent.append("prefLabel", prefLabel);
+        sourcePerspectiveEvent.append("labels", prefLabel);
+        JSONObject targetEvent = perspectiveJsonObject.getTargeEvent();
+        time = targetEvent.getString("time");
+
+        String source = normalizeSourceValue(perspectiveJsonObject.getSource());
+        JSONObject jsonActorsObject = new JSONObject();
+        jsonActorsObject.append("", source);
+        sourcePerspectiveEvent.put("actors", jsonActorsObject);
+
+        climax = targetEvent.getString("climax");
+        group = targetEvent.getString("group");
+        groupName = targetEvent.getString("groupName");
+        groupScore=targetEvent.getString("groupScore");
+
+        climax = "1";
+
+/*        String targetGroupName = targetEvent.getString("groupName");
+        int idx = targetGroupName.lastIndexOf("]");
+        if (idx>-1) {
+            targetGroupName = targetGroupName.substring(0, idx+1);
+        }
+        String storyName = "[p]"+targetGroupName+":"+source;
+        storyName = targetGroupName+":"+source;
+
+        group = targetEvent.getString("groupScore")+":"+storyName;
+        groupName=storyName;*/
+
         sourcePerspectiveEvent.put("climax", climax);
         sourcePerspectiveEvent.put("time", time);
         sourcePerspectiveEvent.put("group", group);

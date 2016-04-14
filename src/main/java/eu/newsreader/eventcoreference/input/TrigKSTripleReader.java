@@ -5,10 +5,17 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.*;
+import eu.newsreader.eventcoreference.storyline.JsonStoryUtil;
+import eu.newsreader.eventcoreference.storyline.PerspectiveJsonObject;
 import org.apache.jena.atlas.web.auth.HttpAuthenticator;
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import static com.hp.hpl.jena.rdf.model.ResourceFactory.createStatement;
 
@@ -71,6 +78,174 @@ public class TrigKSTripleReader {
         }
         return triples;
     }*/
+
+
+    static public String makeMentionQuery(ArrayList<String> uris) {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT distinct ?mention ?object WHERE { VALUES ?event {";
+        for (int i = 0; i < uris.size(); i++) {
+            String uri = uris.get(i);
+            if (!uri.startsWith("<")) uri = "<"+uri+">";
+            sparqlQuery +=  uri+" ";
+
+        }
+        sparqlQuery += "}\n" +
+                "    ?event gaf:denotedBy ?mention\n" +
+                "}";
+        return sparqlQuery;
+    }
+
+    /**
+     PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/>
+     PREFIX owltime: <http://www.w3.org/TR/owl-time#>
+     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+     SELECT distinct ?event ?mention ?attribution ?author ?cite ?label ?comment WHERE { VALUES ?event {<http://www.ft.com/thing/b0d8195c-eb8d-11e5-888e-2eadd5fbc4a4#ev101> <http://www.ft.com/thing/bb5a999a-c67b-11e5-808f-8231cd71622e#ev129> <http://www.ft.com/thing/e5c73d14-92cd-11e5-94e6-c5413829caa5#ev57>}
+     ?event <http://groundedannotationframework.org/gaf#denotedBy> ?mention
+     OPTIONAL { ?mention rdfs:label ?label}
+     OPTIONAL { ?mention rdfs:comment ?comment}
+     OPTIONAL { ?mention <http://groundedannotationframework.org/grasp#hasAttribution> [ rdf:value ?attribution]}
+     OPTIONAL { ?mention <http://groundedannotationframework.org/grasp#hasAttribution> [ <http://groundedannotationframework.org/grasp#wasAttributedTo> ?cite ]}
+     OPTIONAL { ?mention <http://groundedannotationframework.org/grasp#hasAttribution> [ <http://www.w3.org/ns/prov#wasAttributedTo> [<http://www.w3.org/ns/prov#wasAttributedTo> ?author] ]}
+     }
+     <http://www.ft.com/thing/00937ca4-cffd-11e5-92a1-c5e23ef99c77#char=1207,1211>
+     rdfs:comment          "said" ;
+     rdfs:label            "loan" ;
+     grasp:generatedBy     <http://www.ft.com/thing/00937ca4-cffd-11e5-92a1-c5e23ef99c77#char=1097,1101> ;
+     grasp:hasAttribution  <http://www.ft.com/thing/00937ca4-cffd-11e5-92a1-c5e23ef99c77/source_attribution/Attr1> .
+
+     <http://www.ft.com/thing/00937ca4-cffd-11e5-92a1-c5e23ef99c77/source_attribution/Attr1>
+     rdf:value              grasp:CERTAIN_FUTURE_POS , grasp:u_u_u , grasp:CERTAIN_u_POS ,
+     grasp:CERTAIN_NON_FUTURE_POS , grasp:PROBABLE_u_POS ;
+     grasp:wasAttributedTo  <http://dbpedia.org/resource/Institute_for_Fiscal_Studies> .
+
+     <http://www.ft.com/thing/00937ca4-cffd-11e5-92a1-c5e23ef99c77/doc_attribution/Attr0>
+     rdf:value             grasp:u_NON_FUTURE_u ;
+     prov:wasAttributedTo  <http://www.ft.com/thing/00937ca4-cffd-11e5-92a1-c5e23ef99c77> .
+
+     <http://www.ft.com/thing/00937ca4-cffd-11e5-92a1-c5e23ef99c77>
+     prov:wasAttributedTo  <http://www.newsreader-project.eu/provenance/author/Gonzalo+Vi%C3%B1a%2C+Public+Policy+Reporter> .
+
+     * @param uris
+     * @return
+     */
+    static public String makeAttributionQuery(ArrayList<String> uris) {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT distinct ?event ?mention ?attribution ?author ?cite ?label ?comment" +
+                " WHERE { VALUES ?event {";
+        for (int i = 0; i < uris.size(); i++) {
+            sparqlQuery += uris.get(i);
+        }
+        sparqlQuery += "}\n" +
+                "    ?event <http://groundedannotationframework.org/gaf#denotedBy> ?mention\n" +
+                "     OPTIONAL { ?mention rdfs:label ?label}\n" +
+                "     OPTIONAL { ?mention rdfs:comment ?comment}\n" +
+                "     OPTIONAL { ?mention <http://groundedannotationframework.org/grasp#hasAttribution> [rdf:value  ?attribution]}\n" +
+                "     OPTIONAL { ?mention <http://groundedannotationframework.org/grasp#hasAttribution> [<http://groundedannotationframework.org/grasp#wasAttributedTo> ?cite]}\n" +
+                "     OPTIONAL { ?mention <http://groundedannotationframework.org/grasp#hasAttribution> [<http://www.w3.org/ns/prov#wasAttributedTo>  [<http://www.w3.org/ns/prov#wasAttributedTo> ?author]]}\n" +
+                "}";
+        return sparqlQuery;
+    }
+
+
+    public static ArrayList<JSONObject> readAttributionFromKs(ArrayList<JSONObject> targetEvents){
+        long startTime = System.currentTimeMillis();
+        HashMap<String, PerspectiveJsonObject> perspectiveMap = new HashMap<String, PerspectiveJsonObject>();
+
+        ArrayList<JSONObject> pEvents = new ArrayList<JSONObject>();
+        ArrayList<String> uris = new ArrayList<String>();
+        HashMap<String, JSONObject> eventMap = new HashMap<String, JSONObject>();
+        for (int i = 0; i < targetEvents.size(); i++) {
+            JSONObject targetEvent = targetEvents.get(i);
+            try {
+                String eventUri = targetEvent.getString("instance");
+                eventMap.put(eventUri, targetEvent);
+                if (!eventUri.startsWith("<")) eventUri = "<"+eventUri+">";
+                uris.add(eventUri);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        String sparqlQuery = makeAttributionQuery(uris);
+      //  System.out.println("sparqlQuery = " + sparqlQuery);
+        HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
+        try {
+            QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
+            ResultSet resultset = x.execSelect();
+            while (resultset.hasNext()) {
+                QuerySolution solution = resultset.nextSolution();
+                String event = "";
+                String mention = "";
+                String attribution = "";
+                String cite = "";
+                String author = "";
+                String label = "";
+                String comment = "";
+                try { event = solution.get("event").toString(); } catch (Exception e) { }
+                try { mention = solution.get("mention").toString(); } catch (Exception e) { }
+                try { attribution = solution.get("attribution").toString(); } catch (Exception e) { }
+                try { cite = solution.get("cite").toString(); } catch (Exception e) { }
+                try { author = solution.get("author").toString(); } catch (Exception e) { }
+                try { label = solution.get("label").toString(); } catch (Exception e) { }
+                try { comment = solution.get("comment").toString(); } catch (Exception e) { }
+/*                System.out.println("mention = " + mention);
+                System.out.println("attribution = " + attribution);
+                System.out.println("cite = " + cite);
+                System.out.println("author = " + author);
+                System.out.println("label = " + label);
+                System.out.println("comment = " + comment);*/
+
+                ArrayList<String> perspectives = JsonStoryUtil.normalizePerspectiveValue(attribution);
+                if (!perspectives.isEmpty()) {
+                    JSONObject targetEvent = eventMap.get(event);
+                    if (targetEvent != null) {
+                        if (perspectiveMap.containsKey(mention)) {
+                            PerspectiveJsonObject perspectiveJsonObject = perspectiveMap.get(mention);
+                            perspectiveJsonObject.addAttribution(perspectives);
+                            perspectiveMap.put(mention, perspectiveJsonObject);
+                        }
+                        else {
+                            PerspectiveJsonObject perspectiveJsonObject = new PerspectiveJsonObject(perspectives, author, cite, comment, event, label, mention, targetEvent);
+                            perspectiveMap.put(mention, perspectiveJsonObject);
+                        }
+
+                    } else {
+                        System.out.println("mention no target event = " + mention);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Set keySet = perspectiveMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            PerspectiveJsonObject perspectiveJsonObject = perspectiveMap.get(key);
+            try {
+                JSONObject perspectiveEvent = JsonStoryUtil.createSourcePerspectiveEvent(perspectiveJsonObject);
+                pEvents.add(perspectiveEvent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        System.out.println("Perspective Time elapsed:");
+        System.out.println(estimatedTime/1000.0);
+        System.out.println("pEvents = " + pEvents.size());
+        return pEvents;
+    }
+
+
+
+
 
     static public String makeTripleQuery (String subjectUri) {
         String subject = subjectUri;
@@ -341,7 +516,7 @@ public class TrigKSTripleReader {
         //http://groundedannotationframework.org/gaf#denotedBy
         return relation.endsWith("denotedBy");
     }
-
+    //<http://groundedannotationframework.org/grasp#hasAttribution>
     public static boolean isAttributionRelation(String relation) {
         return relation.endsWith("hasAttribution");
     }
