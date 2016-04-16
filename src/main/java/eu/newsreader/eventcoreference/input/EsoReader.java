@@ -31,7 +31,7 @@ public class EsoReader extends DefaultHandler {
         String esoPath = "";
       //  esoPath = "/Users/piek/Desktop/NWR/NWR-ontology/version-0.6/ESO_version_0.6.owl";
        // esoPath = "/Users/piek/Desktop/ESO_extended_June17.owl";
-        esoPath = "/Users/piek/Desktop/ESO/ESO_V2_Final.owl";
+        esoPath = "/Users/piek/Desktop/NWR/eso/ESO.v2/ESO_V2_Final.owl";
         EsoReader esoReader = new EsoReader();
         esoReader.parseFile(esoPath);
 /*
@@ -130,6 +130,120 @@ public class EsoReader extends DefaultHandler {
             }
         }
     }
+
+    public void printTree (ArrayList<String> tops, int level, HashMap<String, Integer> eventCounts) {
+        level++;
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            Integer cnt = 0;
+            if (eventCounts.containsKey(top)) {
+                cnt = eventCounts.get(top);
+            }
+            String str = "";
+            for (int j = 0; j < level; j++) {
+                str += "  ";
+
+            }
+            if (superToSub.containsKey(top)) {
+                ArrayList<String> children = superToSub.get(top);
+                str += top + ":" + cnt;
+                System.out.println(str);
+                printTree(children, level, eventCounts);
+            }
+            else {
+                str += top;
+                System.out.println(str);
+            }
+        }
+    }
+
+
+    /*
+    <div class="Row">
+        <div class="Cell">
+            <p>Row 1 Column 1</p>
+        </div>
+        <div class="Cell">
+            <p>Row 1 Column 2</p>
+        </div>
+        <div class="Cell">
+            <p>Row 1 Column 3</p>
+        </div>
+    </div>
+     */
+    public String  htmlTableTree (String ns, ArrayList<String> tops,
+                                  int level,
+                                  HashMap<String, Integer> eventCounts,
+                                  int maxDepth) {
+        String str = "";
+        level++;
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            if (top.startsWith(ns)) {
+                str += "<div id=\"row\">";
+                Integer cnt = 0;
+                if (eventCounts.containsKey(top)) {
+                    cnt = eventCounts.get(top);
+                }
+                for (int j = 0; j < level; j++) {
+                    str += "<div id=\"cell\"></div>";
+
+                }
+                if (cnt > 0) {
+                    str += "<div id=\"cell\"><p>" + top + ":" + cnt + "</p></div>";
+                } else {
+                    str += "<div id=\"cell\"><p>" + top + "</p></div>";
+
+                    //str += "<div id=\"cell\">" + "</div>";
+                }
+                for (int j = level; j < maxDepth; j++) {
+                    str += "<div id=\"cell\"></div>";
+
+                }
+                str += "</div>\n";
+                if (superToSub.containsKey(top)) {
+                    ArrayList<String> children = superToSub.get(top);
+                    str += htmlTableTree(ns, children, level, eventCounts, maxDepth);
+                }
+            }
+        }
+        return str;
+    }
+
+    public int getMaxDepth (ArrayList<String> tops, int level) {
+        int maxDepth = 0;
+        level++;
+        maxDepth = level;
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            if (superToSub.containsKey(top)) {
+                ArrayList<String> children = superToSub.get(top);
+                int depth = getMaxDepth(children, level);
+                if (depth>maxDepth) {
+                    maxDepth = depth;
+                }
+            }
+        }
+        return maxDepth;
+    }
+
+    /*
+    <div class="Table">
+    <div class="Title">
+        <p>This is a Table</p>
+    </div>
+    <div class="Heading">
+        <div class="Cell">
+            <p>Heading 1</p>
+        </div>
+        <div class="Cell">
+            <p>Heading 2</p>
+        </div>
+        <div class="Cell">
+            <p>Heading 3</p>
+        </div>
+    </div>
+     */
 
 
     public void parseFile(String filePath) {

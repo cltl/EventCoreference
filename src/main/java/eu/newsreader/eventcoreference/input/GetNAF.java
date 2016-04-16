@@ -67,6 +67,20 @@ public class GetNAF {
         return rawText;
     }
 
+    public static String getText(String stringUrl) throws Exception {
+        //stringUrl = "https://knowledgestore2.fbk.eu/nwr/cars3/files?id=%3Chttp%3A%2F%2Fwww.newsreader-project.eu%2Fdata%2Fcars%2F2004%2F10%2F18%2F4DKT-30W0-00S0-W39B.xml.naf%3E";
+
+        URL url = new URL(stringUrl);
+        HttpURLConnection connection =
+                (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+      // connection.setRequestProperty("Accept", "application/xml");
+        connection.setRequestProperty("Accept", "application/octet-stream");
+        InputStream xml = connection.getInputStream();
+        String rawText =  xml.toString();
+        return rawText;
+    }
+
 
     public static String getStringFromDocument(Document doc) throws TransformerException {
         DOMSource domSource = new DOMSource(doc);

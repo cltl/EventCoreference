@@ -40,6 +40,16 @@ public class MentionResolver {
         return str;
     }
 
+    public static String makeTextRequestUrl (String knowledgeStore, String mentionUri) {
+        //https://knowledgestore2.fbk.eu/nwr/wikinews-new/files?id=<
+        //knowledgestore2.fbk.eu/nwr/wikinews-new
+       // knowledgeStore = "nwr/wikinews-new";
+        String str = serviceBase + knowledgeStore+"/files?id=<"+mentionUri+">";
+        return str;
+    }
+
+
+
 
 
     static void createRawTextIndexFromMentions (ArrayList<JSONObject> objects, JSONObject timeLineObject, String KS) {
@@ -71,8 +81,10 @@ public class MentionResolver {
         for (int i = 0; i < sourceUriList.size(); i++) {
             String sourceUri = sourceUriList.get(i);
             try {
-                String nafURI = makeRequestUrl(KS, sourceUri);
-                String text = GetNAF.getFile(nafURI);
+                String nafURI = makeTextRequestUrl(KS, sourceUri);
+                //String nafURI = makeRequestUrl(KS, sourceUri);
+                //String text = GetNAF.getFile(nafURI);
+                String text = GetNAF.getText(nafURI);
                 JSONObject jsonSnippetObject = new JSONObject();
                 jsonSnippetObject.put("uri", sourceUri);
                 jsonSnippetObject.put("text", text);
