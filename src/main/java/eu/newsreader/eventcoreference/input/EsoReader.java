@@ -210,6 +210,34 @@ public class EsoReader extends DefaultHandler {
         return str;
     }
 
+    public void cumulateScores (String ns, ArrayList<String> tops,
+                                  HashMap<String, Integer> eventCounts ) {
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            if (top.startsWith(ns)) {
+                if (superToSub.containsKey(top)) {
+                    ArrayList<String> children = superToSub.get(top);
+                    cumulateScores(ns, children, eventCounts);
+                    int cCount = 0;
+                    for (int j = 0; j < children.size(); j++) {
+                        String child =  children.get(j);
+                        if (eventCounts.containsKey(child)) {
+                            cCount += eventCounts.get(child);
+                        }
+                    }
+                    if (eventCounts.containsKey(top)) {
+                        Integer cnt = eventCounts.get(top);
+                        cnt+= cCount;
+                        eventCounts.put(top, cnt);
+                    }
+                    else {
+                        eventCounts.put(top, cCount);
+                    }
+                }
+            }
+        }
+    }
+
     public int getMaxDepth (ArrayList<String> tops, int level) {
         int maxDepth = 0;
         level++;

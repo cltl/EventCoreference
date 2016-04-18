@@ -22,7 +22,9 @@ public class DataSetEventHierarchy {
         EsoReader esoReader = new EsoReader();
         esoReader.parseFile(esoPath);
         HashMap<String, Integer> cnt = readEventCount(cntPath, "eso");
+
         ArrayList<String> tops = esoReader.getTops();
+        esoReader.cumulateScores("eso:", tops, cnt);
         int maxDepth = esoReader.getMaxDepth(tops, 1);
         String str = EsoTreeStaticHtml.header+EsoTreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";

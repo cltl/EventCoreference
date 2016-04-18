@@ -1595,7 +1595,7 @@ public class JsonStoryUtil {
         String group = "";
         String groupName="";
         String groupScore="";
-
+        String targetEventId = "";
 
         if (speechActMention!=null) {
             sourcePerspectiveEvent.append("mentions", speechActMention);
@@ -1651,7 +1651,7 @@ public class JsonStoryUtil {
 
         group = targetEvent.getString("groupScore")+":"+storyName;
         groupName=storyName;*/
-
+        targetEventId = targetEvent.getString("instance");
 
         sourcePerspectiveEvent.put("instance", key);
         sourcePerspectiveEvent.put("climax", climax);
@@ -1659,6 +1659,7 @@ public class JsonStoryUtil {
         sourcePerspectiveEvent.put("group", group);
         sourcePerspectiveEvent.put("groupName", groupName);
         sourcePerspectiveEvent.put("groupScore", groupScore);
+        sourcePerspectiveEvent.put("target", targetEventId);
         return sourcePerspectiveEvent;
     }
 
