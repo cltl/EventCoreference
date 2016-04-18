@@ -1527,14 +1527,21 @@ public class JsonStoryUtil {
         // if (!value.equals("u_u_u") && !value.equals("CERTAIN_NON_FUTURE_POS")) {
 
         // System.out.println("value = " + value);
-        if (value.indexOf("negative")>-1) {
+        if (value.equals("u_u_u") || (value.equals("u_u_u_u"))) {
+            normValues.add("Certain");
+            normValues.add("Confirm");
+            normValues.add("Now");
+        }
+        else if (value.indexOf("negative")>-1) {
             // normValue="-";
-            normValue=":(";
+           // normValue=":(";
+            normValue="Negative";
             normValues.add(normValue);
         }
         else if (value.indexOf("positive")>-1) {
             // normValue="+";
-            normValue=":)";
+          //  normValue=":)";
+            normValue="Positive";
             normValues.add(normValue);
         }
         else {
@@ -1560,10 +1567,6 @@ public class JsonStoryUtil {
             }
             else if (value.indexOf("FUTURE")>-1) {
                 normValue= "Future";
-                normValues.add(normValue);
-            }
-            if (value.indexOf("PROBABLE")>-1) {
-                normValue= "Likely";
                 normValues.add(normValue);
             }
             if (value.indexOf("IMPROBABLE")>-1) {

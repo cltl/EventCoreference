@@ -9,6 +9,7 @@ import eu.newsreader.eventcoreference.storyline.JsonStoryUtil;
 import eu.newsreader.eventcoreference.storyline.PerspectiveJsonObject;
 import org.apache.jena.atlas.web.auth.HttpAuthenticator;
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,40 +45,6 @@ public class TrigKSTripleReader {
         user = username;
         pass = password;
     }
-
-
-/*    static public ArrayList<Statement> getSubjectProperties (String subjectUri) {
-        //SELECT ?s ?rel ?obj WHERE {<http://www.ft.com/thing/0013db8a-e6db-11e5-a09b-1f8b0d268c39#char=18,24> ?rel ?obj} LIMIT 50
-        //SELECT ?s ?rel ?obj WHERE {<http://www.ft.com/thing/0013db8a-e6db-11e5-a09b-1f8b0d268c39/doc_attribution/Attr0> ?rel ?obj} LIMIT 50
-        ArrayList<Statement> triples = new ArrayList<Statement>();
-
-      //  System.out.println("subject = " + subject);
-        String sparqlQuery = makeTripleQuery(subjectUri);
-        triples = readTriplesFromKs (subjectUri, sparqlQuery);
-        for (int i = 0; i < triples.size(); i++) {
-            Statement statement = triples.get(i);
-            String relString = statement.getPredicate().toString();
-            String objUri = statement.getObject().toString();
-            if (isAttributionRelation(relString)) {
-                sparqlQuery = makeTripleQuery(objUri);
-                ArrayList<Statement> attrTriples = readTriplesFromKs(objUri, sparqlQuery);
-                for (int j = 0; j < attrTriples.size(); j++) {
-                    Statement attrStatement =  attrTriples.get(j);
-                    triples.add(attrStatement);
-                }
-            }
-            else if (isProvRelation(relString)) {
-                /// in this case the object is a document URI
-                sparqlQuery = makeTripleQuery(objUri);
-                ArrayList<Statement> docTriples = readTriplesFromKs(objUri, sparqlQuery);
-                for (int j = 0; j < docTriples.size(); j++) {
-                    Statement docStatement =  docTriples.get(j);
-                    triples.add(docStatement);
-                }
-            }
-        }
-        return triples;
-    }*/
 
 
     static public String makeMentionQuery(ArrayList<String> uris) {
@@ -195,12 +162,6 @@ public class TrigKSTripleReader {
                 try { author = solution.get("author").toString(); } catch (Exception e) { }
                 try { label = solution.get("label").toString(); } catch (Exception e) { }
                 try { comment = solution.get("comment").toString(); } catch (Exception e) { }
-/*                System.out.println("mention = " + mention);
-                System.out.println("attribution = " + attribution);
-                System.out.println("cite = " + cite);
-                System.out.println("author = " + author);
-                System.out.println("label = " + label);
-                System.out.println("comment = " + comment);*/
 
                 ArrayList<String> perspectives = JsonStoryUtil.normalizePerspectiveValue(attribution);
                 if (!perspectives.isEmpty()) {
@@ -241,6 +202,112 @@ public class TrigKSTripleReader {
         System.out.println(estimatedTime/1000.0);
         System.out.println("pEvents = " + pEvents.size());
         return pEvents;
+    }
+
+
+    public static void integrateAttributionFromKs(ArrayList<JSONObject> targetEvents){
+        long startTime = System.currentTimeMillis();
+        HashMap<String, PerspectiveJsonObject> perspectiveMap = new HashMap<String, PerspectiveJsonObject>();
+
+        ArrayList<JSONObject> pEvents = new ArrayList<JSONObject>();
+        ArrayList<String> uris = new ArrayList<String>();
+        HashMap<String, JSONObject> eventMap = new HashMap<String, JSONObject>();
+        for (int i = 0; i < targetEvents.size(); i++) {
+            JSONObject targetEvent = targetEvents.get(i);
+            try {
+                String eventUri = targetEvent.getString("instance");
+                eventMap.put(eventUri, targetEvent);
+                if (!eventUri.startsWith("<")) eventUri = "<"+eventUri+">";
+                uris.add(eventUri);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        String sparqlQuery = makeAttributionQuery(uris);
+      //  System.out.println("sparqlQuery = " + sparqlQuery);
+        HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
+        try {
+            QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
+            ResultSet resultset = x.execSelect();
+            while (resultset.hasNext()) {
+                QuerySolution solution = resultset.nextSolution();
+                String event = "";
+                String mention = "";
+                String attribution = "";
+                String cite = "";
+                String author = "";
+                String label = "";
+                String comment = "";
+                try { event = solution.get("event").toString(); } catch (Exception e) { }
+                try { mention = "<"+solution.get("mention").toString()+">"; } catch (Exception e) { }
+                try { attribution = solution.get("attribution").toString(); } catch (Exception e) { }
+                try { cite = solution.get("cite").toString(); } catch (Exception e) { }
+                try { author = solution.get("author").toString(); } catch (Exception e) { }
+                try { label = solution.get("label").toString(); } catch (Exception e) { }
+                try { comment = solution.get("comment").toString(); } catch (Exception e) { }
+
+                ArrayList<String> perspectives = JsonStoryUtil.normalizePerspectiveValue(attribution);
+                if (!perspectives.isEmpty()) {
+                    JSONObject targetEvent = eventMap.get(event);
+                    if (targetEvent != null) {
+                       // System.out.println("mention input = " + mention);
+                        if (perspectiveMap.containsKey(mention)) {
+                            PerspectiveJsonObject perspectiveJsonObject = perspectiveMap.get(mention);
+                            perspectiveJsonObject.addAttribution(perspectives);
+                            perspectiveMap.put(mention, perspectiveJsonObject);
+                        }
+                        else {
+                            PerspectiveJsonObject perspectiveJsonObject = new PerspectiveJsonObject(perspectives, author, cite, comment, event, label, mention, targetEvent);
+                            perspectiveMap.put(mention, perspectiveJsonObject);
+                        }
+
+                    } else {
+                        System.out.println("mention no target event = " + mention);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < targetEvents.size(); i++) {
+            JSONObject mEvent = targetEvents.get(i);
+            JSONArray mMentions = null;
+            try {
+                mMentions = (JSONArray) mEvent.get("mentions");
+            } catch (JSONException e) {
+            }
+            if (mMentions!=null) {
+                for (int m = 0; m < mMentions.length(); m++) {
+                    try {
+                        JSONObject mentionObject = (JSONObject) mMentions.get(m);
+                        JSONArray uriObject = mentionObject.getJSONArray("uri");
+                        JSONArray offsetArray = mentionObject.getJSONArray("char");
+                        String mention = JsonStoryUtil.getURIforMention(uriObject, offsetArray);
+                        //System.out.println("mention event = " + mention);
+                        if (perspectiveMap.containsKey(mention)) {
+                            JSONObject perpective = new JSONObject();
+                            PerspectiveJsonObject perspectiveJsonObject = perspectiveMap.get(mention);
+                            for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
+                                String a =  perspectiveJsonObject.getAttribution().get(n);
+                               // System.out.println("a = " + a);
+                                perpective.append("attribution", a);
+                            }
+                            String source = JsonStoryUtil.normalizeSourceValue(perspectiveJsonObject.getSource());
+                            if (!source.isEmpty()) {
+                                perpective.put("source", source);
+                                mentionObject.put("perspective", perpective);
+                            }
+                        }
+                    } catch (JSONException e) {
+                       // e.printStackTrace();
+                    }
+                }
+            }
+        }
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        System.out.println("Perspective Time elapsed:");
+        System.out.println(estimatedTime/1000.0);
     }
 
 
@@ -563,4 +630,19 @@ public class TrigKSTripleReader {
         System.out.println(estimatedTime/1000.0);
     }
 
+
+/*    static public HashMap<String, Integer> getStats(String type) {
+        //SELECT (COUNT (?label) AS ?no_labels) WHERE {?s rdf:type eso:Motion. ?s rdfs:label ?label } LIMIT 1000
+    }*/
+
+   /*SELECT ?label (COUNT(?label) AS ?count) where
+    {?s rdf:type eso:Motion. ?s rdfs:label ?label }
+    GROUP BY ?label LIMIT 200
+    */
+
+    /*
+    SELECT ?label (COUNT(?label) AS ?count) where
+ {?s rdf:type eso:Motion. ?s rdfs:label ?label }
+GROUP BY ?label ORDER BY DESC(?count) LIMIT 1000
+     */
 }

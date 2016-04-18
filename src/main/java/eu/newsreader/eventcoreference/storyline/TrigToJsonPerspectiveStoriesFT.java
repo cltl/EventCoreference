@@ -288,18 +288,15 @@ public class TrigToJsonPerspectiveStoriesFT {
             if (PERSPECTIVE) {
                 if (!entityQuery.isEmpty() || !eventQuery.isEmpty()) {
                     System.out.println("Getting perspectives for: " + jsonObjects.size() + " events");
-                    TrigKSTripleReader.qCount= 0;
-                   // perspectiveEvents = JsonStoryUtil.getPerspectiveEventsFromKS(jsonObjects);
-                    perspectiveEvents = TrigKSTripleReader.readAttributionFromKs(jsonObjects);
+                    if (COMBINE) {
+                        TrigKSTripleReader.integrateAttributionFromKs(jsonObjects);
+                    }
+                    else {
+                        perspectiveEvents = TrigKSTripleReader.readAttributionFromKs(jsonObjects);
+                    }
                 }
                 else {
                     perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);
-                }
-                if (COMBINE) {
-                    for (int i = 0; i < perspectiveEvents.size(); i++) {
-                        JSONObject jsonObject = perspectiveEvents.get(i);
-                        jsonObjects.add(jsonObject);
-                    }
                 }
             }
 
@@ -307,12 +304,6 @@ public class TrigToJsonPerspectiveStoriesFT {
             if (!pathToFtDataFile.isEmpty()) {
                 HashMap<String, ArrayList<ReadFtData.DataFt>> dataFtMap = ReadFtData.readData(pathToFtDataFile);
                 structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
-/*                if (COMBINE) {
-                    for (int i = 0; i < structuredEvents.size(); i++) {
-                        JSONObject jsonObject = structuredEvents.get(i);
-                        jsonObjects.add(jsonObject);
-                    }
-                  }*/
             }
 
 
@@ -337,7 +328,7 @@ public class TrigToJsonPerspectiveStoriesFT {
                     }
                 }
             }
-            if (PERSPECTIVE) {
+            if (PERSPECTIVE && perspectiveEvents!=null) {
                 JsonSerialization.writeJsonPerspectiveArray(trigfolder, project, perspectiveEvents);
             }
             if (!pathToFtDataFile.isEmpty()) {
