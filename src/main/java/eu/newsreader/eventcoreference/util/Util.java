@@ -2,6 +2,8 @@ package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -2699,6 +2701,45 @@ public class Util {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        return vector;
+    }
+
+    static public ArrayList<JSONObject> ReadFileToUriTextArrayList(String fileName) {
+        ArrayList<JSONObject> vector = new ArrayList<JSONObject>();
+        if (new File(fileName).exists() ) {
+            try {
+                FileInputStream fis = new FileInputStream(fileName);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                while (in.ready()&&(inputLine = in.readLine()) != null) {
+                    //System.out.println(inputLine);
+                    if (inputLine.trim().length()>0) {
+                      //  System.out.println("inputLine = " + inputLine);
+                        String[] fields = inputLine.split("\t");
+                        if (fields.length > 1) {
+                            String uri = fields[0];
+                            String text = fields[1];
+                            //System.out.println("string = " + string);
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("uri", uri);
+                                jsonObject.put("text", text);
+                                vector.add(jsonObject);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            System.out.println("Cannot find fileName = " + fileName);
         }
         return vector;
     }

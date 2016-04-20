@@ -1,19 +1,15 @@
 package eu.newsreader.eventcoreference.storyline;
 
 import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.newsreader.eventcoreference.input.*;
 import eu.newsreader.eventcoreference.util.Util;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Created by piek on 1/3/14.
@@ -277,14 +273,38 @@ public class TrigToJsonPerspectiveStoriesFT {
             System.out.println("NO INPUT. NOTHING TO TELL");
         }
         try {
-            ArrayList<JSONObject> jsonObjects = getJSONObjectArray();
+            ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(trigTripleData,
+                    ALL,iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
+            System.out.println("Events in SEM-RDF files = " + jsonObjects.size());
+            if (blacklist.size()>0) {
+                jsonObjects = JsonStoryUtil.filterEventsForBlackList(jsonObjects, blacklist);
+                System.out.println("Events after blacklist filter= " + jsonObjects.size());
+            }
+            if (actorThreshold>0) {
+                jsonObjects = JsonStoryUtil.filterEventsForActors(jsonObjects, entityFilter, actorThreshold);
+                System.out.println("Events after actor count filter = " + jsonObjects.size());
+            }
+
+            jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
+                    topicThreshold,
+                    climaxThreshold,
+                    EVENTLIMIT,
+                    entityFilter, MERGE,
+                    timeGran,
+                    actionOnt,
+                    actionSim,
+                    interSect);
+            System.out.println("Events after storyline filter = " + jsonObjects.size());
+            nEvents = jsonObjects.size();
+
             JsonStoryUtil.minimalizeActors(jsonObjects);
 
             nActors = JsonStoryUtil.countActors(jsonObjects);
             nMentions = JsonStoryUtil.countMentions(jsonObjects);
             nStories = JsonStoryUtil.countGroups(jsonObjects);
-            ArrayList<JSONObject> perspectiveEvents = null;
-            ArrayList<JSONObject> structuredEvents = null;
+            ArrayList<JSONObject> rawTextArrayList = new ArrayList<JSONObject>();
+            ArrayList<JSONObject> perspectiveEvents = new ArrayList<JSONObject>();
+            ArrayList<JSONObject> structuredEvents = new ArrayList<JSONObject>();
             if (PERSPECTIVE) {
                 if (!entityQuery.isEmpty() || !eventQuery.isEmpty()) {
                     System.out.println("Getting perspectives for: " + jsonObjects.size() + " events");
@@ -296,7 +316,12 @@ public class TrigToJsonPerspectiveStoriesFT {
                     }
                 }
                 else {
-                    perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);
+                    if (COMBINE) {
+                        JsonStoryUtil.integratePerspectivesInEventObjects(trigTripleData, jsonObjects);
+                    }
+                    else {
+                        perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);
+                    }
                 }
             }
 
@@ -308,33 +333,55 @@ public class TrigToJsonPerspectiveStoriesFT {
 
 
             if (!pathToRawTextIndexFile.isEmpty()) {
-                ArrayList<String> rawTextArrayList = Util.ReadFileToStringArrayList(pathToRawTextIndexFile);
-                JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects, rawTextArrayList,
-                        nEvents, nStories, nActors, nMentions);
-
+                rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
+/*                JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects, rawTextArrayList,
+                        nEvents, nStories, nActors, nMentions);*/
             }
             else {
                 if (!eventQuery.isEmpty() || !entityQuery.isEmpty()) {
+                    rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
+/*
                     JsonSerialization.writeJsonObjectArrayForQuery(KS, eventQuery+entityQuery, project, jsonObjects,
                             nEvents, nStories, nActors, nMentions, KSuser, KSpass);
+*/
                 }
-                else {
-                    if (trigfile.isEmpty()) {
-                        JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects,
-                                nEvents, nStories, nActors, nMentions);
-                    } else {
-                        JsonSerialization.writeJsonObjectArray(trigfile, project, jsonObjects,
-                                nEvents, nStories, nActors, nMentions);
-                    }
-                }
-            }
-            if (PERSPECTIVE && perspectiveEvents!=null) {
-                JsonSerialization.writeJsonPerspectiveArray(trigfolder, project, perspectiveEvents);
-            }
-            if (!pathToFtDataFile.isEmpty()) {
-                JsonSerialization.writeJsonStructuredArray(trigfolder, project, structuredEvents);
 
             }
+
+            System.out.println("jsonObjects = " + jsonObjects.size());
+            System.out.println("rawTextArrayList = " + rawTextArrayList.size());
+            System.out.println("structuredEvents.size() = " + structuredEvents.size());
+            JsonSerialization.writeJsonObjectArrayWithStructuredData(trigfolder, project,
+                    jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
+
+
+            if (!COMBINE) {
+                if (PERSPECTIVE && perspectiveEvents.size()>0) {
+                    JsonSerialization.writeJsonPerspectiveArray(trigfolder, project, perspectiveEvents);
+                }
+                if (!pathToFtDataFile.isEmpty() && structuredEvents.size()>0) {
+                    JsonSerialization.writeJsonStructuredArray(trigfolder, project, structuredEvents);
+                }
+            }
+/*            if (rawTextArrayList.size()==0) {
+                if (trigfile.isEmpty()) {
+                    JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects,
+                            nEvents, nStories, nActors, nMentions);
+                } else {
+                    JsonSerialization.writeJsonObjectArray(trigfile, project, jsonObjects,
+                            nEvents, nStories, nActors, nMentions);
+                }
+            }
+            else {
+                if (COMBINE && structuredEvents!=null && structuredEvents.size()>0) {
+                    JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects,
+                            rawTextArrayList,
+                            nEvents, nStories, nActors, nMentions);
+                }
+            }*/
+
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -344,206 +391,6 @@ public class TrigToJsonPerspectiveStoriesFT {
         System.out.println("actor_cnt = " + nActors);
     }
 
-
-
-    static ArrayList<JSONObject> getJSONObjectArray() throws JSONException {
-        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
-
-        Set keySet = trigTripleData.tripleMapInstances.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = keys.next(); //// this is the subject of the triple which should point to an event
-           // System.out.println("key = " + key);
-            ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
-            if (trigTripleData.tripleMapOthers.containsKey( key)) {
-                /// this means it is an instance and has semrelations
-                ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
-                if (JsonFromRdf.hasActor(otherTriples) || ALL) {
-                    /// we ignore events without actors.....
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("event", JsonFromRdf.getValue(JsonFromRdf.getSynsetsFromIli(key, iliMap)));
-                    // jsonObject.put("instance", getValue(key));
-                    jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
-                    String timeAnchor = JsonFromRdf.getTimeAnchor(trigTripleData.tripleMapInstances, otherTriples);
-                    //System.out.println("timeAnchor = " + timeAnchor);
-                    int idx = timeAnchor.lastIndexOf("/");
-                    if (idx>-1) {
-                        timeAnchor = timeAnchor.substring(idx+1);
-                    }
-                    if (timeAnchor.length()==6) {
-                        //// this is a month so we pick the first day of the month
-                        timeAnchor+= "01";
-                    }if (timeAnchor.length()==4) {
-                        //// this is a year so we pick the first day of the year
-                        timeAnchor+= "0101";
-                    }
-                    if (timeAnchor.length()==3 || timeAnchor.length()==5 || timeAnchor.length()==7) {
-                        ///date error, e.g. 12-07-198"
-                        continue;
-                    }
-                    ///skipping historic events
-                   // if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
-                    if (timeAnchor.startsWith("20")) {
-                        jsonObject.put("time", timeAnchor);
-
-                        JSONObject jsonClasses = JsonFromRdf.getClassesJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonClasses.keys().hasNext()) {
-                            /// TAKE THIS OUT TO SAVE SPACE
-                            jsonObject.put("classes", jsonClasses);
-                        }
-
-                        if (fnLevel > 0) {
-                            JsonFromRdf.getFrameNetSuperFramesJSONObjectFromInstanceStatement(frameNetReader, topFrames, jsonObject, instanceTriples);
-                        } else if (esoLevel > 0) {
-                            JsonFromRdf.getEsoSuperClassesJSONObjectFromInstanceStatement(esoReader, esoLevel, jsonObject, instanceTriples);
-                        }
-
-                        JSONObject jsonLabels = JsonFromRdf.getLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonLabels.keys().hasNext()) {
-                            jsonObject.put("labels", jsonLabels.get("labels"));
-                        }
-                        JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonprefLabels.keys().hasNext()) {
-                            jsonObject.put("prefLabel", jsonprefLabels.get("prefLabel"));
-                        }
-                        JSONObject jsonMentions = JsonFromRdf.getMentionsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonMentions.keys().hasNext()) {
-                            jsonObject.put("mentions", jsonMentions.get("mentions"));
-                        }
-                        JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples);
-                        //JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatementSimple(otherTriples);
-                        if (actors.keys().hasNext()) {
-                            jsonObject.put("actors", actors);
-                        }
-                        JSONObject topics = JsonFromRdf.getTopicsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (topics.keys().hasNext()) {
-                            //  System.out.println("topics.length() = " + topics.length());
-                            jsonObject.put("topics", topics.get("topics"));
-                        }
-                        jsonObjectArrayList.add(jsonObject);
-
-                    }
-                }
-                else {
-                  //  System.out.println("no actor relations in otherTriples.size() = " + otherTriples.size());
-                }
-            }
-            else {
-              //  System.out.println("No sem relations for = " + key);
-            }
-        }
-        try {
-
-            System.out.println("Events in SEM-RDF files = " + jsonObjectArrayList.size());
-            if (blacklist.size()>0) {
-                jsonObjectArrayList = filterEventsForBlackList(jsonObjectArrayList, blacklist);
-                System.out.println("Events after blacklist filter= " + jsonObjectArrayList.size());
-            }
-            if (actorThreshold>0) {
-                jsonObjectArrayList = filterEventsForActors(jsonObjectArrayList, entityFilter, actorThreshold);
-                System.out.println("Events after actor count filter = " + jsonObjectArrayList.size());
-            }
-
-            jsonObjectArrayList = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjectArrayList,
-                    topicThreshold,
-                    climaxThreshold,
-                    EVENTLIMIT,
-                    entityFilter, MERGE,
-                    timeGran,
-                    actionOnt,
-                    actionSim,
-                    interSect);
-            System.out.println("Events after storyline filter = " + jsonObjectArrayList.size());
-            nEvents = jsonObjectArrayList.size();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObjectArrayList;
-    }
-
-    static ArrayList<JSONObject> filterEventsForActors(ArrayList<JSONObject> events,
-                                                       String entityFilter,
-                                                       int actorThreshold) throws JSONException {
-        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
-        /*
-        "actors":{"pb/A0":["http://www.newsreader-project.eu/data/timeline/non-entities/to_a_single_defense_contractor"]}
-         */
-        HashMap <String, Integer> actorCount  = JsonStoryUtil.createActorCount(events);
-        for (int i = 0; i < events.size(); i++) {
-            JSONObject oEvent = events.get(i);
-            boolean hasActorCount = false;
-            JSONObject oActorObject = null;
-            try {
-                oActorObject = oEvent.getJSONObject("actors");
-                Iterator oKeys = oActorObject.sortedKeys();
-                while (oKeys.hasNext()) {
-                    String oKey = oKeys.next().toString();
-                    try {
-                        JSONArray actors = oActorObject.getJSONArray(oKey);
-                        for (int j = 0; j < actors.length(); j++) {
-                            String actor = actors.getString(j);
-                            actor = actor.substring(actor.lastIndexOf("/") + 1);
-/*                            if (entityFilter.isEmpty() ||
-                                    (actor.toLowerCase().indexOf(entityFilter.toLowerCase())==-1)) {*/
-                                if (actorCount.containsKey(actor)) {
-                                    Integer cnt = actorCount.get(actor);
-                                    if (cnt >= actorThreshold) {
-                                        hasActorCount = true;
-                                       // System.out.println("actor = " + actor);
-                                       // System.out.println("cnt = " + cnt);
-                                    } else {
-                                        /// removes actors with too low freqency
-                                        oActorObject.remove(oKey);
-                                    }
-                                } else {
-                                    /// removes actors with too low freqency
-                                    oActorObject.remove(oKey);
-                                }
-                        /*    }*/
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (JSONException e) {
-                // e.printStackTrace();
-            }
-            if (hasActorCount) {
-              //  System.out.println("Adding oEvent.toString() = " + oEvent.get("labels").toString());
-                jsonObjectArrayList.add(oEvent);
-            }
-            else {
-            }
-        }
-        return jsonObjectArrayList;
-    }
-
-    static ArrayList<JSONObject> filterEventsForBlackList(ArrayList<JSONObject> events, ArrayList<String> blacklist) throws JSONException {
-        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
-        for (int i = 0; i < events.size(); i++) {
-            JSONObject jsonObject = events.get(i);
-            JSONArray labels = null;
-            try {
-                labels = (JSONArray) jsonObject.get("labels");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (labels != null) {
-                    for (int j = 0; j < labels.length(); j++) {
-                        String label = labels.getString(j);
-                       // System.out.println("label = " + label);
-                        if (!blacklist.contains(label)) {
-                            jsonObjectArrayList.add(jsonObject);
-                            break;
-                        }
-                    }
-
-            } else {
-
-            }
-        }
-        return jsonObjectArrayList;
-    }
 
 
 

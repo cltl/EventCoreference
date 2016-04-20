@@ -645,4 +645,11 @@ public class TrigKSTripleReader {
  {?s rdf:type eso:Motion. ?s rdfs:label ?label }
 GROUP BY ?label ORDER BY DESC(?count) LIMIT 1000
      */
+
+    /*
+    SELECT ?label (COUNT(?label) AS ?count) where
+ {?s rdf:type eso:ChangeOfPossession .
+  ?s rdfs:label ?label }
+GROUP BY ?label ORDER BY DESC(?count)
+     */
 }

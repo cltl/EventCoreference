@@ -300,7 +300,7 @@ public class TrigToJsonPerspectiveTimeLineClimax {
             }
             else {
                 if (!pathToRawTextIndexFile.isEmpty()) {
-                    ArrayList<String> rawTextArrayList = Util.ReadFileToStringArrayList(pathToRawTextIndexFile);
+                    ArrayList<JSONObject> rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
                     JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects, rawTextArrayList,
                             nEvents, nStories, nActors, nMentions);
 

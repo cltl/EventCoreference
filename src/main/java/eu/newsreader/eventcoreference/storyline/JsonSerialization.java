@@ -110,11 +110,10 @@ public class JsonSerialization {
         }
     }
 
-
     static void writeJsonObjectArray (String pathToFolder,
                                       String project,
                                       ArrayList<JSONObject> objects,
-                                      ArrayList<String> rawTextArrayList,
+                                      ArrayList<JSONObject> rawTextArrayList,
                                       int nEvents,
                                       int nStories,
                                       int nActors,
@@ -142,19 +141,9 @@ public class JsonSerialization {
                     timeLineObject.append("events", jsonObject);
                 }
                 if (rawTextArrayList.size()>0) {
-
                     for (int i = 0; i < rawTextArrayList.size(); i++) {
-                        String string = rawTextArrayList.get(i);
-                        String[] fields = string.split("\t");
-                        if (fields.length > 1) {
-                            String uri = fields[0];
-                            String text = fields[1];
-                            //System.out.println("string = " + string);
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("uri", uri);
-                            jsonObject.put("text", text);
-                            timeLineObject.append("sources", jsonObject);
-                        }
+                        JSONObject jsonObject = rawTextArrayList.get(i);
+                        timeLineObject.append("sources", jsonObject);
                     }
                 }
                 File folder = new File(pathToFolder);
@@ -292,4 +281,67 @@ public class JsonSerialization {
             e.printStackTrace();
         }
     }
+
+
+    static void writeJsonObjectArrayWithStructuredData (String pathToFolder,
+                                                        String project,
+                                                        ArrayList<JSONObject> objects,
+                                                        ArrayList<JSONObject> mentions,
+                                                        int nEvents, int nStories, int nActors, int nMentions,
+                                                        String structuredName,
+                                                        ArrayList<JSONObject> structured) {
+        try {
+            try {
+                // OutputStream jsonOut = new FileOutputStream(folder.getParentFile() + "/" + folder.getName()+".timeline.json");
+                JSONObject timeLineObject = JsonEvent.createTimeLineProperty(new File(pathToFolder).getName(), project);
+                /*Set keySet = actorCount.keySet();
+                Iterator<String> keys = keySet.iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    Integer cnt = actorCount.get(key);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("name", key);
+                    jsonObject.put("event_count", cnt);
+                    timeLineObject.append("actors", jsonObject);
+                }*/
+                timeLineObject.append("event_cnt", nEvents);
+                timeLineObject.append("story_cnt", nStories);
+                timeLineObject.append("actor_cnt", nActors);
+                timeLineObject.append("mention_cnt", nMentions);
+
+
+                for (int j = 0; j < structured.size(); j++) {
+                    JSONObject jsonObject = structured.get(j);
+                    timeLineObject.append(structuredName, jsonObject);
+                }
+
+                for (int j = 0; j < objects.size(); j++) {
+                    JSONObject jsonObject = objects.get(j);
+                    timeLineObject.append("events", jsonObject);
+                }
+
+                for (int j = 0; j < mentions.size(); j++) {
+                    JSONObject jsonObject = mentions.get(j);
+                    timeLineObject.append("sources", jsonObject);
+                }
+
+                File folder = new File(pathToFolder);
+                OutputStream jsonOut = new FileOutputStream(folder.getAbsolutePath() + "/" + "contextual.timeline.json");
+
+                String str = "{ \"timeline\":\n";
+                jsonOut.write(str.getBytes());
+                jsonOut.write(timeLineObject.toString(0).getBytes());
+                str ="}\n";
+                jsonOut.write(str.getBytes());
+                //// OR simply
+                // jsonOut.write(timeLineObject.toString().getBytes());
+                jsonOut.close();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

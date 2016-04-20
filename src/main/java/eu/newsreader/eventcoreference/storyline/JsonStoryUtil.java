@@ -1,6 +1,8 @@
 package eu.newsreader.eventcoreference.storyline;
 
 import com.hp.hpl.jena.rdf.model.Statement;
+import eu.newsreader.eventcoreference.input.EsoReader;
+import eu.newsreader.eventcoreference.input.FrameNetReader;
 import eu.newsreader.eventcoreference.input.TrigKSTripleReader;
 import eu.newsreader.eventcoreference.input.TrigTripleData;
 import eu.newsreader.eventcoreference.naf.CreateMicrostory;
@@ -17,6 +19,192 @@ import static eu.newsreader.eventcoreference.input.TrigKSTripleReader.makeTriple
  * Created by piek on 17/02/16.
  */
 public class JsonStoryUtil {
+
+
+    static ArrayList<JSONObject> getJSONObjectArray(TrigTripleData trigTripleData,
+                                                    boolean ALL,
+                                                    HashMap<String, ArrayList<String>> iliMap,
+                                                    int fnLevel,
+                                                    FrameNetReader frameNetReader,
+                                                    ArrayList<String> topFrames,
+                                                    int esoLevel,
+                                                    EsoReader esoReader) throws JSONException {
+        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
+
+        Set keySet = trigTripleData.tripleMapInstances.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next(); //// this is the subject of the triple which should point to an event
+            // System.out.println("key = " + key);
+            ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
+            if (trigTripleData.tripleMapOthers.containsKey( key)) {
+                /// this means it is an instance and has semrelations
+                ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
+                if (JsonFromRdf.hasActor(otherTriples) || ALL) {
+                    /// we ignore events without actors.....
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("event", JsonFromRdf.getValue(JsonFromRdf.getSynsetsFromIli(key, iliMap)));
+                    // jsonObject.put("instance", getValue(key));
+                    jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
+                    String timeAnchor = JsonFromRdf.getTimeAnchor(trigTripleData.tripleMapInstances, otherTriples);
+                    //System.out.println("timeAnchor = " + timeAnchor);
+                    int idx = timeAnchor.lastIndexOf("/");
+                    if (idx>-1) {
+                        timeAnchor = timeAnchor.substring(idx+1);
+                    }
+                    if (timeAnchor.length()==6) {
+                        //// this is a month so we pick the first day of the month
+                        timeAnchor+= "01";
+                    }if (timeAnchor.length()==4) {
+                        //// this is a year so we pick the first day of the year
+                        timeAnchor+= "0101";
+                    }
+                    if (timeAnchor.length()==3 || timeAnchor.length()==5 || timeAnchor.length()==7) {
+                        ///date error, e.g. 12-07-198"
+                        continue;
+                    }
+                    ///skipping historic events
+                    // if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
+                    if (timeAnchor.startsWith("20")) {
+                        jsonObject.put("time", timeAnchor);
+
+                        JSONObject jsonClasses = JsonFromRdf.getClassesJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonClasses.keys().hasNext()) {
+                            /// TAKE THIS OUT TO SAVE SPACE
+                            if (jsonClasses.toString().indexOf("eso:")==-1) {
+                                continue;
+                            }
+                            jsonObject.put("classes", jsonClasses);
+                        }
+
+                        if (fnLevel > 0) {
+                            JsonFromRdf.getFrameNetSuperFramesJSONObjectFromInstanceStatement(frameNetReader, topFrames, jsonObject, instanceTriples);
+                        } else if (esoLevel > 0) {
+                            JsonFromRdf.getEsoSuperClassesJSONObjectFromInstanceStatement(esoReader, esoLevel, jsonObject, instanceTriples);
+                        }
+
+                        JSONObject jsonLabels = JsonFromRdf.getLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonLabels.keys().hasNext()) {
+                            jsonObject.put("labels", jsonLabels.get("labels"));
+                        }
+                        JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonprefLabels.keys().hasNext()) {
+                            jsonObject.put("prefLabel", jsonprefLabels.get("prefLabel"));
+                        }
+                        JSONObject jsonMentions = JsonFromRdf.getMentionsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (jsonMentions.keys().hasNext()) {
+                            jsonObject.put("mentions", jsonMentions.get("mentions"));
+                        }
+                        JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples);
+                        //JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatementSimple(otherTriples);
+                        if (actors.keys().hasNext()) {
+                            jsonObject.put("actors", actors);
+                        }
+                        JSONObject topics = JsonFromRdf.getTopicsJSONObjectFromInstanceStatement(instanceTriples);
+                        if (topics.keys().hasNext()) {
+                            //  System.out.println("topics.length() = " + topics.length());
+                            jsonObject.put("topics", topics.get("topics"));
+                        }
+                        jsonObjectArrayList.add(jsonObject);
+
+                    }
+                }
+                else {
+                    //  System.out.println("no actor relations in otherTriples.size() = " + otherTriples.size());
+                }
+            }
+            else {
+                //  System.out.println("No sem relations for = " + key);
+            }
+        }
+        return jsonObjectArrayList;
+    }
+
+
+    static ArrayList<JSONObject> filterEventsForActors(ArrayList<JSONObject> events,
+                                                       String entityFilter,
+                                                       int actorThreshold) throws JSONException {
+        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
+        /*
+        "actors":{"pb/A0":["http://www.newsreader-project.eu/data/timeline/non-entities/to_a_single_defense_contractor"]}
+         */
+        HashMap <String, Integer> actorCount  = JsonStoryUtil.createActorCount(events);
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject oEvent = events.get(i);
+            boolean hasActorCount = false;
+            JSONObject oActorObject = null;
+            try {
+                oActorObject = oEvent.getJSONObject("actors");
+                Iterator oKeys = oActorObject.sortedKeys();
+                while (oKeys.hasNext()) {
+                    String oKey = oKeys.next().toString();
+                    try {
+                        JSONArray actors = oActorObject.getJSONArray(oKey);
+                        for (int j = 0; j < actors.length(); j++) {
+                            String actor = actors.getString(j);
+                            actor = actor.substring(actor.lastIndexOf("/") + 1);
+/*                            if (entityFilter.isEmpty() ||
+                                    (actor.toLowerCase().indexOf(entityFilter.toLowerCase())==-1)) {*/
+                            if (actorCount.containsKey(actor)) {
+                                Integer cnt = actorCount.get(actor);
+                                if (cnt >= actorThreshold) {
+                                    hasActorCount = true;
+                                    // System.out.println("actor = " + actor);
+                                    // System.out.println("cnt = " + cnt);
+                                } else {
+                                    /// removes actors with too low freqency
+                                    oActorObject.remove(oKey);
+                                }
+                            } else {
+                                /// removes actors with too low freqency
+                                oActorObject.remove(oKey);
+                            }
+                        /*    }*/
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JSONException e) {
+                // e.printStackTrace();
+            }
+            if (hasActorCount) {
+                //  System.out.println("Adding oEvent.toString() = " + oEvent.get("labels").toString());
+                jsonObjectArrayList.add(oEvent);
+            }
+            else {
+            }
+        }
+        return jsonObjectArrayList;
+    }
+
+    static ArrayList<JSONObject> filterEventsForBlackList(ArrayList<JSONObject> events, ArrayList<String> blacklist) throws JSONException {
+        ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject jsonObject = events.get(i);
+            JSONArray labels = null;
+            try {
+                labels = (JSONArray) jsonObject.get("labels");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (labels != null) {
+                for (int j = 0; j < labels.length(); j++) {
+                    String label = labels.getString(j);
+                    // System.out.println("label = " + label);
+                    if (!blacklist.contains(label)) {
+                        jsonObjectArrayList.add(jsonObject);
+                        break;
+                    }
+                }
+
+            } else {
+
+            }
+        }
+        return jsonObjectArrayList;
+    }
+
 
     static ArrayList<JSONObject> createStoryLinesForJSONArrayList (ArrayList<JSONObject> jsonObjects,
                                                                    int topicThreshold,
@@ -46,8 +234,6 @@ public class JsonStoryUtil {
             JSONObject jsonObject = sortedObjects.next();
             selectedEvents.add(jsonObject);
         }
-
-
         System.out.println("Events above climax threshold = " + climaxObjects.size());
         int eventCount = 0;
         sortedObjects = climaxObjects.iterator();
@@ -1194,12 +1380,136 @@ public class JsonStoryUtil {
         }
     }
 
+
+    static PerspectiveJsonObject getPerspectiveObjectForEvent (TrigTripleData trigTripleData, String mentionUri) {
+        PerspectiveJsonObject perspectiveJsonObject = new PerspectiveJsonObject();
+        String author = "";
+        String cite = "";
+        ArrayList<String> perspectives = new ArrayList<String>();
+        if (trigTripleData.tripleMapGrasp.containsKey(mentionUri)) {
+            ArrayList<Statement> perspectiveTriples = trigTripleData.tripleMapGrasp.get(mentionUri);
+           // System.out.println("perspectiveTriples.size() = " + perspectiveTriples.size());
+            for (int i = 0; i < perspectiveTriples.size(); i++) {
+                Statement statement = perspectiveTriples.get(i);
+                String subject = statement.getSubject().getURI();
+                String predicate = statement.getPredicate().getURI();
+                String object = statement.getObject().toString();
+                if (predicate.endsWith("#hasAttribution")) {
+                    if (trigTripleData.tripleMapGrasp.containsKey(object)) {
+                        ArrayList<Statement> perspectiveValues = trigTripleData.tripleMapGrasp.get(object);
+                        for (int j = 0; j < perspectiveValues.size(); j++) {
+                            Statement statement1 = perspectiveValues.get(j);
+                            //ttp://www.w3.org/ns/prov#wasAttributedTo,
+                            if (statement1.getPredicate().getURI().endsWith("#wasAttributedTo")) {
+                                //  System.out.println("statement1.getObject().toString() = " + statement1.getObject().toString());
+                                if (trigTripleData.tripleMapGrasp.containsKey(statement1.getObject().toString())) {
+                                    //// this means the source has properties so it is likely to be the document with an author
+                                    ArrayList<Statement> provStatements = trigTripleData.tripleMapGrasp.get(statement1.getObject().toString());
+                                    for (int k = 0; k < provStatements.size(); k++) {
+                                        Statement statement2 = provStatements.get(k);
+                                        author = statement2.getObject().toString();
+                                        int idx = author.lastIndexOf("/");
+                                        if (idx > -1) {
+                                            author = author.substring(idx + 1);
+                                        }
+                                        //  System.out.println("author source = " + source);
+                                    }
+                                } else {
+                                    //// it is not the document so a cited source
+                                    cite = statement1.getObject().toString();
+                                    int idx = cite.lastIndexOf("/");
+                                    if (idx > -1) {
+                                        cite = cite.substring(idx + 1);
+                                    }
+                                    //  System.out.println("quote source = " + source);
+
+                                }
+                            } else if (statement1.getPredicate().getURI().endsWith("#value")) {
+                                String perspective = "";
+                                String str = statement1.getObject().toString();
+                                //   System.out.println("str = " + str);
+                                int idx = str.lastIndexOf("#");
+                                if (idx > -1) {
+                                    perspective = str.substring(idx + 1);
+                                } else {
+                                    idx = str.lastIndexOf("/");
+                                    if (idx > -1) {
+                                        perspective = str.substring(idx + 1);
+                                    } else {
+                                        perspective = str;
+                                    }
+                                }
+                                ArrayList<String> myPerspectives = JsonStoryUtil.normalizePerspectiveValue(perspective);
+                                for (int k = 0; k < myPerspectives.size(); k++) {
+                                    String myPerspective = myPerspectives.get(k);
+                                    if (!perspectives.contains(myPerspective)) {
+                                      //  System.out.println("myPerspective = " + myPerspective);
+                                        perspectives.add(myPerspective);
+                                    }
+
+                                }
+                            } else {
+                                //    System.out.println("statement1.getPredicate().getURI() = " + statement1.getPredicate().getURI());
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (perspectives.size() > 0) {
+                perspectiveJsonObject = new PerspectiveJsonObject(perspectives, author, cite, "", "", "", mentionUri, null);
+            }
+        }
+        return perspectiveJsonObject;
+    }
+
+    static void integratePerspectivesInEventObjects (TrigTripleData trigTripleData, ArrayList<JSONObject> targetEvents) {
+        for (int i = 0; i < targetEvents.size(); i++) {
+            JSONObject mEvent = targetEvents.get(i);
+            JSONArray mMentions = null;
+            try {
+                mMentions = (JSONArray) mEvent.get("mentions");
+            } catch (JSONException e) {
+            }
+            if (mMentions != null) {
+                for (int m = 0; m < mMentions.length(); m++) {
+                    try {
+                        JSONObject mentionObject = (JSONObject) mMentions.get(m);
+                        JSONArray uriObject = mentionObject.getJSONArray("uri");
+                        JSONArray offsetArray = mentionObject.getJSONArray("char");
+                        String mention = JsonStoryUtil.getStringValueforMention(uriObject, offsetArray);
+                        PerspectiveJsonObject perspectiveJsonObject = getPerspectiveObjectForEvent(trigTripleData, mention);
+
+                        //System.out.println("mention event = " + mention);
+                        if (perspectiveJsonObject!=null) {
+                            JSONObject perspective = new JSONObject();
+                            for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
+                                String a = perspectiveJsonObject.getAttribution().get(n);
+                              //  System.out.println("a = " + a);
+                                perspective.append("attribution", a);
+                            }
+                            String source = JsonStoryUtil.normalizeSourceValue(perspectiveJsonObject.getSource());
+                            if (!source.isEmpty()) {
+                                perspective.put("source", source);
+                              //  System.out.println("source = " + source);
+                                mentionObject.put("perspective", perspective);
+                            }
+
+                        }
+                    } catch (JSONException e) {
+                        // e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
     static ArrayList<JSONObject> getPerspectiveEvents (TrigTripleData trigTripleData, ArrayList<JSONObject> jsonObjects) throws JSONException {
         ArrayList<JSONObject> pEvents = new ArrayList<JSONObject>();
         Set keySet = trigTripleData.tripleMapGrasp.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
-            String key = keys.next(); //// this is the subject of the triple which should point to an event
+            String key = keys.next(); //// this is the subject of the triple which should point to an event mention
            // System.out.println("key = " + key);
             JSONObject mObject = JsonFromRdf.getMentionObjectFromMentionURI(key);
             String source = "";
@@ -1261,7 +1571,7 @@ public class JsonStoryUtil {
                                     }
                                 }
                                 if (!perspective.isEmpty() && !perspectives.contains(perspective)) {
-                                    System.out.println("perspective = " + perspective);
+                                   // System.out.println("perspective = " + perspective);
                                     perspectives.add(perspective);
                                 }
                             }
@@ -1306,7 +1616,7 @@ public class JsonStoryUtil {
             }
             if (newPerspectives.size()>0) {
                 Collections.sort(newPerspectives);
-                System.out.println("newPerspectives.toString() = " + newPerspectives.toString());
+               // System.out.println("newPerspectives.toString() = " + newPerspectives.toString());
                 boolean MATCH = false;
                 JSONObject targetObject = null;
                 for (int j = 0; j < jsonObjects.size(); j++) {
@@ -1347,6 +1657,13 @@ public class JsonStoryUtil {
 
     static public String getURIforMention (JSONArray uriValue, JSONArray charOffset) throws JSONException {
         String uri = "<"+uriValue.getString(0)+"#char="+charOffset.getString(0)+","+charOffset.getString(1)+">";
+        //<http://www.ft.com/thing/05fc83c6-1b5c-11e5-8201-cbdb03d71480#char=19,28>
+        //{"char":["1699","1706"],"uri":["http://www.ft.com/thing/03de44c8-2f96-11e5-8873-775ba7c2ea3d"]}
+        return uri;
+    }
+    
+    static public String getStringValueforMention (JSONArray uriValue, JSONArray charOffset) throws JSONException {
+        String uri = uriValue.getString(0)+"#char="+charOffset.getString(0)+","+charOffset.getString(1);
         //<http://www.ft.com/thing/05fc83c6-1b5c-11e5-8201-cbdb03d71480#char=19,28>
         //{"char":["1699","1706"],"uri":["http://www.ft.com/thing/03de44c8-2f96-11e5-8873-775ba7c2ea3d"]}
         return uri;
