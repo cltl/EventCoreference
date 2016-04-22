@@ -4,10 +4,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by piek on 05/02/16.
@@ -22,12 +19,14 @@ public class TrigTripleData {
     public HashMap<String, ArrayList<Statement>> tripleMapProvenance = new HashMap<String, ArrayList<Statement>>();
     public HashMap<String, ArrayList<Statement>> tripleMapInstances = new HashMap<String, ArrayList<Statement>>();
     public HashMap<String, ArrayList<Statement>> tripleMapOthers = new HashMap<String, ArrayList<Statement>>();
+    public Vector<String> perspectiveMentions = new Vector<String>();
 
     public TrigTripleData() {
         tripleMapGrasp = new HashMap<String, ArrayList<Statement>>();
         tripleMapProvenance = new HashMap<String, ArrayList<Statement>>();
         tripleMapInstances = new HashMap<String, ArrayList<Statement>>();
         tripleMapOthers = new HashMap<String, ArrayList<Statement>>();
+        perspectiveMentions = new Vector<String>();
     }
 
     public void dumpTriples (OutputStream fos, HashMap<String, ArrayList<Statement>> map) throws IOException {

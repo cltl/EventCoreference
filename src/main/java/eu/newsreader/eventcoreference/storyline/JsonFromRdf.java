@@ -15,6 +15,8 @@ import org.json.JSONObject;
 
 import java.util.*;
 
+import static eu.newsreader.eventcoreference.storyline.JsonStoryUtil.normalizeSourceValue;
+
 /**
  * Created by piek on 17/02/16.
  */
@@ -479,25 +481,28 @@ public class JsonFromRdf {
         /// finally add all others
         for (int i = 0; i < eventTriples.size(); i++) {
             Triple triple = eventTriples.get(i);
-           // System.out.println("triple.getPredicate() = " + triple.getPredicate());
+            String actor = triple.getObject();
+            actor = normalizeSourceValue(actor);
+
+            // System.out.println("triple.getPredicate() = " + triple.getPredicate());
             if (triple.getPredicate().startsWith("eso")) {
-                if (!coveredActors.contains(triple.getObject())) {
-                    jsonActorsObject.append(triple.getPredicate(), triple.getObject());
-                    coveredActors.add(triple.getObject());
+                if (!coveredActors.contains(actor)) {
+                    jsonActorsObject.append(triple.getPredicate(),actor);
+                    coveredActors.add(actor);
                 }
             }
-            else if (!esoActors.contains((triple.getObject())) &&
+            else if (!esoActors.contains((actor)) &&
                      triple.getPredicate().startsWith("fn")) {
-                if (!coveredActors.contains(triple.getObject())) {
-                    jsonActorsObject.append(triple.getPredicate(), triple.getObject());
-                    coveredActors.add(triple.getObject());
+                if (!coveredActors.contains(actor)) {
+                    jsonActorsObject.append(triple.getPredicate(), actor);
+                    coveredActors.add(actor);
                 }
             }
-            else if (!esoActors.contains((triple.getObject())) &&
-                    !fnActors.contains((triple.getObject()))) {
-                if (!coveredActors.contains(triple.getObject())) {
-                    jsonActorsObject.append(triple.getPredicate(), triple.getObject());
-                    coveredActors.add(triple.getObject());
+            else if (!esoActors.contains((actor)) &&
+                    !fnActors.contains((actor))) {
+                if (!coveredActors.contains(actor)) {
+                    jsonActorsObject.append(triple.getPredicate(), actor);
+                    coveredActors.add(actor);
                 }
             }
         }
@@ -890,13 +895,13 @@ public class JsonFromRdf {
     }
 
     static boolean prefLabelInList (ArrayList<Statement> statements, ArrayList<String> blacklist) throws JSONException {
-        JSONObject jsonClassesObject = new JSONObject();
-        ArrayList<String> coveredValues = new ArrayList<String>();
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
 
             String predicate = statement.getPredicate().getURI();
-            if (predicate.endsWith("#prefLabel")) {
+            //System.out.println("predicate = " + predicate);
+           // http://www.w3.org/2004/02/skos/core#prefLabel
+            if (predicate.toLowerCase().endsWith("#preflabel")) {
                 String object = "";
                 if (statement.getObject().isLiteral()) {
                     object = statement.getObject().asLiteral().toString();
@@ -906,9 +911,30 @@ public class JsonFromRdf {
                 String [] values = object.split(",");
                 for (int j = 0; j < values.length; j++) {
                     String value = values[j];
+                    //System.out.println("value = " + value);
                     if (blacklist.contains(value)) {
                         return true;
                     }
+                }
+            }
+        }
+        return false;
+    }
+
+    static boolean mentionInList (ArrayList<Statement> statements, Vector<String> perspectiveVector) throws JSONException {
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#denotedBy")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                if (perspectiveVector.contains(object)) {
+                    return true;
                 }
             }
         }

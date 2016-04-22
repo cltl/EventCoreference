@@ -32,7 +32,7 @@ public class JsonStoryUtil {
                                                     int esoLevel,
                                                     EsoReader esoReader) throws JSONException {
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
-
+        int nSkip = 0;
         Set keySet = trigTripleData.tripleMapInstances.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -41,6 +41,10 @@ public class JsonStoryUtil {
                 // System.out.println("key = " + key);
                     ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
                     if (JsonFromRdf.prefLabelInList(instanceTriples, blacklist)) {
+                       continue;
+                    }
+                    if (JsonFromRdf.mentionInList(instanceTriples, trigTripleData.perspectiveMentions)) {
+                        nSkip++;
                        continue;
                     }
                     if (eventTypes.isEmpty() ||
@@ -132,6 +136,7 @@ public class JsonStoryUtil {
                 //  System.out.println("No sem relations for = " + key);
             }
         }
+        System.out.println("nSkip = " + nSkip);
         return jsonObjectArrayList;
     }
 
@@ -331,7 +336,7 @@ public class JsonStoryUtil {
                     //// strict variant: there must be overlap of participants and topics
                     if (topicThreshold>0) {
                         bridgedEvents = intersectEventObjects(coevents, topicevents);
-                        if (bridgedEvents.size() > 1) {
+                        if (bridgedEvents.size() > 5) {
                             System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
                             System.out.println("coveredEvents = " + coveredEvents.size());
                         }
@@ -393,7 +398,22 @@ public class JsonStoryUtil {
         String group = "001:unrelated events";
         String groupName = "unrelated event";
         String groupScore = "001";
-        climaxObjects = determineClimaxValues(singletonObjects, climaxThreshold);
+        for (int i = 0; i < singletonObjects.size(); i++) {
+            JSONObject jsonObject = singletonObjects.get(i);
+            jsonObject.put("group", group);
+            jsonObject.put("groupName", groupName);
+            jsonObject.put("groupScore", groupScore);
+            eventCount++;
+            addObjectToGroup(
+                    storyObjects,
+                    group,
+                    groupName,
+                    groupScore,
+                    jsonObject,
+                    2,
+                    climaxThreshold);
+        }
+        /*climaxObjects = determineClimaxValues(singletonObjects, climaxThreshold);
         sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
             JSONObject jsonObject = sortedObjects.next();
@@ -409,7 +429,7 @@ public class JsonStoryUtil {
                     jsonObject,
                     2,
                     climaxThreshold);
-        }
+        }*/
         //System.out.println("storyObjects = " + storyObjects.size());
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
@@ -481,8 +501,8 @@ public class JsonStoryUtil {
                         }
                     }
                 }
-
-                //System.out.println("sumClimax = " + sumClimax);
+                sumClimax = Math.abs(Math.log10(sumClimax));
+              //  System.out.println("sumClimax = " + sumClimax);
                 if (Double.isInfinite(sumClimax)) {
                     jsonObject.put("climax", "0");
                 }
@@ -730,7 +750,6 @@ public class JsonStoryUtil {
                         JSONArray actors = oActorObject.getJSONArray(oKey);
                         for (int j = 0; j < actors.length(); j++) {
                             String nextActor = actors.getString(j);
-                            nextActor = normalizeSourceValue(nextActor);
                             if (!actorNames.contains(nextActor)) {
                                 nActorObject.append("actor:", nextActor);
                                 actorNames.add(nextActor);
@@ -1150,6 +1169,19 @@ public class JsonStoryUtil {
                         time = time.substring(0, 3);
                     } else if (timeGran.equalsIgnoreCase("M")) {
                         time = time.substring(0, 5);
+                    } else if (timeGran.equalsIgnoreCase("W")) {
+                        if (time.length()<7)  {
+                            time = time.substring(0, 5);
+                            time += "w0";
+                        }
+                        else {
+                            Integer d = Integer.parseInt(time.substring(6));
+                            time = time.substring(0, 5);
+                            if (d < 8) time += "w1";
+                            else if (d < 15) time += "w2";
+                            else if (d < 22) time += "w3";
+                            else time += "w4";
+                        }
                     } else if (timeGran.equalsIgnoreCase("N")) {
                         time = "anytime";
                     }
@@ -1806,7 +1838,7 @@ public class JsonStoryUtil {
                 normValue+=c;
             }
         }
-        int idx = normValue.indexOf("_(disambiguation)");
+        int idx = normValue.toLowerCase().indexOf("_(disambiguation)");
         if (idx>-1) {
             normValue = normValue.substring(0, idx).trim();
         }

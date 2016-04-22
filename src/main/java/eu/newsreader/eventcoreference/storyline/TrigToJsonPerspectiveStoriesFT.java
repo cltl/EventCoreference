@@ -47,6 +47,7 @@ public class TrigToJsonPerspectiveStoriesFT {
     static String KSuser = "nwr/wikinews-new";
     static String KSpass = "nwr/wikinews-new";
     static int EVENTLIMIT = 500;
+    static String EVENTSCHEMA = "";
 
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
@@ -105,6 +106,9 @@ public class TrigToJsonPerspectiveStoriesFT {
             }
             else if (arg.equals("--action-ont") && args.length>(i+1)) {
                 actionOnt = args[i+1];
+            }
+            else if (arg.equals("--action-schema") && args.length>(i+1)) {
+                EVENTSCHEMA = args[i+1];
             }
             else if (arg.equals("--merge")) {
                 MERGE = true;
@@ -274,7 +278,7 @@ public class TrigToJsonPerspectiveStoriesFT {
         }
         try {
             ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(trigTripleData,
-                    ALL,actionOnt, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
+                    ALL,EVENTSCHEMA, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
             System.out.println("Events in SEM-RDF files = " + jsonObjects.size());
             if (blacklist.size()>0) {
                 jsonObjects = JsonStoryUtil.filterEventsForBlackList(jsonObjects, blacklist);
@@ -295,9 +299,10 @@ public class TrigToJsonPerspectiveStoriesFT {
                     actionSim,
                     interSect);
             System.out.println("Events after storyline filter = " + jsonObjects.size());
-            nEvents = jsonObjects.size();
 
             JsonStoryUtil.minimalizeActors(jsonObjects);
+
+            nEvents = jsonObjects.size();
 
             nActors = JsonStoryUtil.countActors(jsonObjects);
             nMentions = JsonStoryUtil.countMentions(jsonObjects);

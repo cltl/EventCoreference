@@ -70,6 +70,16 @@ public class TrigTripleReader {
                     while (siter.hasNext()) {
                         Statement s = siter.nextStatement();
                         String subject = s.getSubject().getURI();
+                        String predicate = s.getPredicate().toString();
+                       // System.out.println("predicate = " + predicate);
+                        //http://groundedannotationframework.org/grasp#generatedBy
+                        if (predicate.toLowerCase().endsWith("generatedby")) {
+                            String object = s.getObject().toString();
+                            if (!trigTripleData.perspectiveMentions.contains(object)) {
+                             //   System.out.println("object = " + object);
+                                trigTripleData.perspectiveMentions.add(object);
+                            }
+                        }
                         if (trigTripleData.tripleMapGrasp.containsKey(subject)) {
                             ArrayList<Statement> triples = trigTripleData.tripleMapGrasp.get(subject);
                             triples.add(s);
