@@ -23,6 +23,8 @@ public class JsonStoryUtil {
 
     static ArrayList<JSONObject> getJSONObjectArray(TrigTripleData trigTripleData,
                                                     boolean ALL,
+                                                    String eventTypes,
+                                                    ArrayList<String> blacklist,
                                                     HashMap<String, ArrayList<String>> iliMap,
                                                     int fnLevel,
                                                     FrameNetReader frameNetReader,
@@ -35,85 +37,98 @@ public class JsonStoryUtil {
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
-            // System.out.println("key = " + key);
-            ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
-            if (trigTripleData.tripleMapOthers.containsKey( key)) {
-                /// this means it is an instance and has semrelations
-                ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
-                if (JsonFromRdf.hasActor(otherTriples) || ALL) {
-                    /// we ignore events without actors.....
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("event", JsonFromRdf.getValue(JsonFromRdf.getSynsetsFromIli(key, iliMap)));
-                    // jsonObject.put("instance", getValue(key));
-                    jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
-                    String timeAnchor = JsonFromRdf.getTimeAnchor(trigTripleData.tripleMapInstances, otherTriples);
-                    //System.out.println("timeAnchor = " + timeAnchor);
-                    int idx = timeAnchor.lastIndexOf("/");
-                    if (idx>-1) {
-                        timeAnchor = timeAnchor.substring(idx+1);
+            if (trigTripleData.tripleMapOthers.containsKey(key)) {
+                // System.out.println("key = " + key);
+                    ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
+                    if (JsonFromRdf.prefLabelInList(instanceTriples, blacklist)) {
+                       continue;
                     }
-                    if (timeAnchor.length()==6) {
-                        //// this is a month so we pick the first day of the month
-                        timeAnchor+= "01";
-                    }if (timeAnchor.length()==4) {
-                        //// this is a year so we pick the first day of the year
-                        timeAnchor+= "0101";
-                    }
-                    if (timeAnchor.length()==3 || timeAnchor.length()==5 || timeAnchor.length()==7) {
-                        ///date error, e.g. 12-07-198"
-                        continue;
-                    }
-                    ///skipping historic events
-                    // if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
-                    if (timeAnchor.startsWith("20")) {
-                        jsonObject.put("time", timeAnchor);
-
-                        JSONObject jsonClasses = JsonFromRdf.getClassesJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonClasses.keys().hasNext()) {
-                            /// TAKE THIS OUT TO SAVE SPACE
-                            if (jsonClasses.toString().indexOf("eso:")==-1) {
+                    if (eventTypes.isEmpty() ||
+                        eventTypes.equalsIgnoreCase("N") ||
+                        eventTypes.equalsIgnoreCase("any") ||
+                        JsonFromRdf.matchEventType(instanceTriples, eventTypes)) {
+                        /// this means it is an instance and has semrelations
+                        ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
+                        if (JsonFromRdf.hasActor(otherTriples) || ALL) {
+                            /// we ignore events without actors.....
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("event", JsonFromRdf.getValue(JsonFromRdf.getSynsetsFromIli(key, iliMap)));
+                            // jsonObject.put("instance", getValue(key));
+                            jsonObject.put("instance", key); /// needs to be the full key otherwise not unique
+                            String timeAnchor = JsonFromRdf.getTimeAnchor(trigTripleData.tripleMapInstances, otherTriples);
+                            //System.out.println("timeAnchor = " + timeAnchor);
+                            int idx = timeAnchor.lastIndexOf("/");
+                            if (idx > -1) {
+                                timeAnchor = timeAnchor.substring(idx + 1);
+                            }
+                            if (timeAnchor.length() == 6) {
+                                //// this is a month so we pick the first day of the month
+                                timeAnchor += "01";
+                            }
+                            if (timeAnchor.length() == 4) {
+                                //// this is a year so we pick the first day of the year
+                                timeAnchor += "0101";
+                            }
+                            if (timeAnchor.length() == 3 || timeAnchor.length() == 5 || timeAnchor.length() == 7) {
+                                ///date error, e.g. 12-07-198"
                                 continue;
                             }
-                            jsonObject.put("classes", jsonClasses);
-                        }
+                            ///skipping historic events
+                            // if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
+                            if (timeAnchor.startsWith("20")) {
+                                jsonObject.put("time", timeAnchor);
 
-                        if (fnLevel > 0) {
-                            JsonFromRdf.getFrameNetSuperFramesJSONObjectFromInstanceStatement(frameNetReader, topFrames, jsonObject, instanceTriples);
-                        } else if (esoLevel > 0) {
-                            JsonFromRdf.getEsoSuperClassesJSONObjectFromInstanceStatement(esoReader, esoLevel, jsonObject, instanceTriples);
-                        }
+                                JSONObject jsonClasses = JsonFromRdf.getClassesJSONObjectFromInstanceStatement(instanceTriples);
+                                if (jsonClasses.keys().hasNext()) {
+                                    /// TO SAVE SPACE
+    /*                            if (jsonClasses.toString().indexOf("eso:")==-1) {
+                                    continue;
+                                }*/
+                                    jsonObject.put("classes", jsonClasses);
+                                }
 
-                        JSONObject jsonLabels = JsonFromRdf.getLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonLabels.keys().hasNext()) {
-                            jsonObject.put("labels", jsonLabels.get("labels"));
-                        }
-                        JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonprefLabels.keys().hasNext()) {
-                            jsonObject.put("prefLabel", jsonprefLabels.get("prefLabel"));
-                        }
-                        JSONObject jsonMentions = JsonFromRdf.getMentionsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (jsonMentions.keys().hasNext()) {
-                            jsonObject.put("mentions", jsonMentions.get("mentions"));
-                        }
-                        JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples);
-                        //JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatementSimple(otherTriples);
-                        if (actors.keys().hasNext()) {
-                            jsonObject.put("actors", actors);
-                        }
-                        JSONObject topics = JsonFromRdf.getTopicsJSONObjectFromInstanceStatement(instanceTriples);
-                        if (topics.keys().hasNext()) {
-                            //  System.out.println("topics.length() = " + topics.length());
-                            jsonObject.put("topics", topics.get("topics"));
-                        }
-                        jsonObjectArrayList.add(jsonObject);
+                                if (fnLevel > 0) {
+                                    JsonFromRdf.getFrameNetSuperFramesJSONObjectFromInstanceStatement(frameNetReader, topFrames, jsonObject, instanceTriples);
+                                } else if (esoLevel > 0) {
+                                    JsonFromRdf.getEsoSuperClassesJSONObjectFromInstanceStatement(esoReader, esoLevel, jsonObject, instanceTriples);
+                                }
 
-                    }
+                                JSONObject jsonLabels = JsonFromRdf.getLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                                if (jsonLabels.keys().hasNext()) {
+                                    jsonObject.put("labels", jsonLabels.get("labels"));
+                                }
+                                JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                                if (jsonprefLabels.keys().hasNext()) {
+                                    jsonObject.put("prefLabel", jsonprefLabels.get("prefLabel"));
+                                }
+                                JSONObject jsonMentions = JsonFromRdf.getMentionsJSONObjectFromInstanceStatement(instanceTriples);
+                                if (jsonMentions.keys().hasNext()) {
+                                    jsonObject.put("mentions", jsonMentions.get("mentions"));
+                                }
+                                JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples);
+                                //JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatementSimple(otherTriples);
+                                if (actors.keys().hasNext()) {
+                                    jsonObject.put("actors", actors);
+                                }
+                                JSONObject topics = JsonFromRdf.getTopicsJSONObjectFromInstanceStatement(instanceTriples);
+                                if (topics.keys().hasNext()) {
+                                    //  System.out.println("topics.length() = " + topics.length());
+                                    jsonObject.put("topics", topics.get("topics"));
+                                }
+                                jsonObjectArrayList.add(jsonObject);
+
+                            }
+                        } else {
+                            //  System.out.println("no actor relations in otherTriples.size() = " + otherTriples.size());
+                        }
+                } else {
+                    //// wrong event types
+                    // System.out.println("key = " + key);
+                    //JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                    //System.out.println("jsonprefLabels.toString() = " + jsonprefLabels.toString());
+
                 }
-                else {
-                    //  System.out.println("no actor relations in otherTriples.size() = " + otherTriples.size());
-                }
-            }
-            else {
+            } else {
                 //  System.out.println("No sem relations for = " + key);
             }
         }
@@ -281,8 +296,15 @@ public class JsonStoryUtil {
 
                     String groupName = labels;
                     String groupScore = climaxString(groupClimax);
-                    group += getfirstActorByRoleFromEvent(jsonObject, "pb/A1"); /// for representation purposes
-                    groupName += getfirstActorByRoleFromEvent(jsonObject, "pb/A1");
+                    String mainActor = getfirstActorByRoleFromEvent(jsonObject, "pb/A1"); /// for representation purposes
+                    if (mainActor.isEmpty()) {
+                        mainActor = getfirstActorByRoleFromEvent(jsonObject, "pb/A0");
+                    }
+                    if (mainActor.isEmpty()) {
+                        mainActor = getfirstActorByRoleFromEvent(jsonObject, "pb/A2");
+                    }
+                    group += mainActor;
+                    groupName += mainActor;
                     jsonObject.put("group", group);
                     jsonObject.put("groupName", groupName);
                     jsonObject.put("groupScore", groupScore);
@@ -309,8 +331,9 @@ public class JsonStoryUtil {
                     //// strict variant: there must be overlap of participants and topics
                     if (topicThreshold>0) {
                         bridgedEvents = intersectEventObjects(coevents, topicevents);
-                        if (bridgedEvents.size() > 0) {
+                        if (bridgedEvents.size() > 1) {
                             System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
+                            System.out.println("coveredEvents = " + coveredEvents.size());
                         }
                     }
                     else {
@@ -320,7 +343,9 @@ public class JsonStoryUtil {
 
                     for (int i = 0; i < bridgedEvents.size(); i++) {
                         JSONObject object = bridgedEvents.get(i);
-                        if (!hasObject(groupedObjects, object)) {
+                        String eventInstance = object.getString("instance");
+                        if (!coveredEvents.contains(eventInstance)) {
+                        //if (!hasObject(groupedObjects, object)) {
                             eventCount++;
                             addObjectToGroup(
                                     storyObjects,
@@ -330,6 +355,7 @@ public class JsonStoryUtil {
                                     object,
                                     8,
                                     climaxThreshold);
+                            coveredEvents.add(eventInstance);
                         }
                         else {
                             ///// this means that the bridged event was already consumed by another story
@@ -337,33 +363,6 @@ public class JsonStoryUtil {
                         }
                     }
 
-                    //// use this code if singleton stories are represented also
-
-/*                    for (int i = 0; i < storyObjects.size(); i++) {
-                        JSONObject object = storyObjects.get(i);
-                        groupedObjects.add(object);
-                    }*/
-
-                    //// use this code if singletons are grouped separately in unrelated events
-/*
-                    if (storyObjects.size()>1) {
-                        for (int i = 0; i < storyObjects.size(); i++) {
-                            JSONObject object = storyObjects.get(i);
-                            groupedObjects.add(object);
-                        }
-                    }
-                    else {
-                        for (int i = 0; i < storyObjects.size(); i++) {
-                            JSONObject object = storyObjects.get(i);
-                            singletonObjects.add(object);
-                        }
-                    }
-*/
-                    for (int i = 0; i < storyObjects.size(); i++) {
-                        JSONObject object = storyObjects.get(i);
-                        String eventInstance = object.getString("instance");
-                        coveredEvents.add(eventInstance);
-                    }
 
                     if (storyObjects.size()>1) {
                         if (MERGE) storyObjects = JsonStoryUtil.mergeEvents(storyObjects, timeGran, actionOnt, actionSim);
@@ -371,16 +370,12 @@ public class JsonStoryUtil {
                             JSONObject object = storyObjects.get(i);
                             groupedObjects.add(object);
                         }
-/*
-                        JsonStoryUtil.mergeEventArrayWithEvent(storyObjects, jsonObject);
-                        groupedObjects.add(jsonObject);
-*/
                     }
                     else {
                         for (int i = 0; i < storyObjects.size(); i++) {
                             JSONObject object = storyObjects.get(i);
-                            groupedObjects.add(object);
-                          //  singletonObjects.add(object);
+                            //groupedObjects.add(object);
+                            singletonObjects.add(object);
                         }
                     }
 
@@ -394,10 +389,10 @@ public class JsonStoryUtil {
         } // end of while objects in sorted climaxObjects
 
         //// now we handle the singleton events
- /*       storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
-        String group = "002:unrelated events";
+        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
+        String group = "001:unrelated events";
         String groupName = "unrelated event";
-        String groupScore = "002";
+        String groupScore = "001";
         climaxObjects = determineClimaxValues(singletonObjects, climaxThreshold);
         sortedObjects = climaxObjects.iterator();
         while (sortedObjects.hasNext()) {
@@ -419,7 +414,7 @@ public class JsonStoryUtil {
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
             groupedObjects.add(object);
-        }*/
+        }
 
         return groupedObjects;
     }
@@ -1257,22 +1252,26 @@ public class JsonStoryUtil {
                                 }
                             }
                             else {
-                                try {
-                                    types1 = classData1.getJSONArray(ont);
-                                    types2 = classData2.getJSONArray(ont);
-                                } catch (JSONException e) {
-                                    // e.printStackTrace();
-                                }
-                                if (types1!=null && types2!=null) {
-                                    for (int k = 0; k < types1.length(); k++) {
-                                        String t1 = (String) types2.get(k);
-                                        if (types2.toString().indexOf(t1) > -1) {
-                                            // match
-                                            event1MatchEvents.add(event2);
-                                            mergedEvents.add(eventId2);
-                                            break;
-                                        }
+                                String [] ontFields = ont.split(";");
+                                for (int l = 0; l < ontFields.length; l++) {
+                                    String ontField = ontFields[l];
+                                    try {
+                                        types1 = classData1.getJSONArray(ontField);
+                                        types2 = classData2.getJSONArray(ontField);
+                                    } catch (JSONException e) {
+                                        // e.printStackTrace();
+                                    }
+                                    if (types1!=null && types2!=null) {
+                                        for (int k = 0; k < types1.length(); k++) {
+                                            String t1 = (String) types2.get(k);
+                                            if (types2.toString().indexOf(t1) > -1) {
+                                                // match
+                                                event1MatchEvents.add(event2);
+                                                mergedEvents.add(eventId2);
+                                                break;
+                                            }
 
+                                        }
                                     }
                                 }
                             }

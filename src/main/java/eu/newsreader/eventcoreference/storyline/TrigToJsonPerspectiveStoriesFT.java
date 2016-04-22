@@ -274,7 +274,7 @@ public class TrigToJsonPerspectiveStoriesFT {
         }
         try {
             ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(trigTripleData,
-                    ALL,iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
+                    ALL,actionOnt, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
             System.out.println("Events in SEM-RDF files = " + jsonObjects.size());
             if (blacklist.size()>0) {
                 jsonObjects = JsonStoryUtil.filterEventsForBlackList(jsonObjects, blacklist);

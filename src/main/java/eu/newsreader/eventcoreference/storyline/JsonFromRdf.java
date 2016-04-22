@@ -13,10 +13,7 @@ import eu.newsreader.eventcoreference.util.RoleLabels;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by piek on 17/02/16.
@@ -151,6 +148,34 @@ public class JsonFromRdf {
             }
         }
         return jsonClassesObject;
+    }
+
+    static boolean matchEventType (ArrayList<Statement> statements, String eventTypes) throws JSONException {
+
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#type")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String [] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    String property = getNameSpaceString(value);
+                    if (!property.isEmpty() && !property.equalsIgnoreCase("sem")) {
+                        if (eventTypes.toLowerCase().indexOf(property)>-1) {
+                           return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -862,6 +887,32 @@ public class JsonFromRdf {
             }
         }
         return jsonClassesObject;
+    }
+
+    static boolean prefLabelInList (ArrayList<Statement> statements, ArrayList<String> blacklist) throws JSONException {
+        JSONObject jsonClassesObject = new JSONObject();
+        ArrayList<String> coveredValues = new ArrayList<String>();
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#prefLabel")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String [] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    if (blacklist.contains(value)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 static JSONObject getTopicsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
