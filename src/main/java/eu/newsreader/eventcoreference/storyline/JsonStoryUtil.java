@@ -32,26 +32,29 @@ public class JsonStoryUtil {
                                                     ArrayList<String> topFrames,
                                                     int esoLevel,
                                                     EsoReader esoReader) throws JSONException {
+        Vector<String> coveredEventInstances = new Vector<String>();
         ArrayList<JSONObject> jsonObjectArrayList = new ArrayList<JSONObject>();
         int nSkip = 0;
         Set keySet = trigTripleData.tripleMapInstances.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
-            if (trigTripleData.tripleMapOthers.containsKey(key)) {
-                // System.out.println("key = " + key);
+            if (!coveredEventInstances.contains(key)) {
+                coveredEventInstances.add(key);
+                if (trigTripleData.tripleMapOthers.containsKey(key)) {
+                    // System.out.println("key = " + key);
                     ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
                     if (JsonFromRdf.prefLabelInList(instanceTriples, blacklist)) {
-                       continue;
+                        continue;
                     }
                     if (JsonFromRdf.mentionInList(instanceTriples, trigTripleData.perspectiveMentions)) {
                         nSkip++;
-                       continue;
+                        continue;
                     }
                     if (eventTypes.isEmpty() ||
-                        eventTypes.equalsIgnoreCase("N") ||
-                        eventTypes.equalsIgnoreCase("any") ||
-                        JsonFromRdf.matchEventType(instanceTriples, eventTypes)) {
+                            eventTypes.equalsIgnoreCase("N") ||
+                            eventTypes.equalsIgnoreCase("any") ||
+                            JsonFromRdf.matchEventType(instanceTriples, eventTypes)) {
                         /// this means it is an instance and has semrelations
                         ArrayList<Statement> otherTriples = trigTripleData.tripleMapOthers.get(key);
                         if (JsonFromRdf.hasActor(otherTriples) || ALL) {
@@ -86,9 +89,9 @@ public class JsonStoryUtil {
                                 JSONObject jsonClasses = JsonFromRdf.getClassesJSONObjectFromInstanceStatement(instanceTriples);
                                 if (jsonClasses.keys().hasNext()) {
                                     /// TO SAVE SPACE
-    /*                            if (jsonClasses.toString().indexOf("eso:")==-1) {
-                                    continue;
-                                }*/
+        /*                            if (jsonClasses.toString().indexOf("eso:")==-1) {
+                                        continue;
+                                    }*/
                                     jsonObject.put("classes", jsonClasses);
                                 }
 
@@ -126,15 +129,16 @@ public class JsonStoryUtil {
                         } else {
                             //  System.out.println("no actor relations in otherTriples.size() = " + otherTriples.size());
                         }
-                } else {
-                    //// wrong event types
-                    // System.out.println("key = " + key);
-                    //JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                    //System.out.println("jsonprefLabels.toString() = " + jsonprefLabels.toString());
+                    } else {
+                        //// wrong event types
+                        // System.out.println("key = " + key);
+                        //JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                        //System.out.println("jsonprefLabels.toString() = " + jsonprefLabels.toString());
 
+                    }
+                } else {
+                    //  System.out.println("No sem relations for = " + key);
                 }
-            } else {
-                //  System.out.println("No sem relations for = " + key);
             }
         }
         System.out.println("nSkip = " + nSkip);
@@ -257,13 +261,11 @@ public class JsonStoryUtil {
         System.out.println("Events above climax threshold = " + climaxObjects.size());
         sortedObjects = climaxObjects.iterator();
         ArrayList<String> coveredEvents = new ArrayList<String>();
+        int eventCounter = 0;
         while (sortedObjects.hasNext()) {
             JSONObject jsonObject = sortedObjects.next();
+            eventCounter++;
             String instance = jsonObject.getString("instance");
-/*
-            if (!hasObject(groupedObjects, jsonObject) &&
-                !hasObject(singletonObjects, jsonObject)) {
-*/
             if (!coveredEvents.contains(instance)) {
                 coveredEvents.add(instance);
                 //// this event is not yet part of a story and is the next event with climax value
@@ -289,7 +291,7 @@ public class JsonStoryUtil {
                         } catch (JSONException e1) {
                            // e1.printStackTrace();
                         }
-                        // e.printStackTrace();
+                       //  e.printStackTrace();
                     }
                     group = climaxString(groupClimax) + ":" + labels;
 
@@ -309,7 +311,7 @@ public class JsonStoryUtil {
                     jsonObject.put("groupScore", groupScore);
 
                     //// add the climax event to the story ArrayList
-                    //storyObjects.add(jsonObject);
+                    storyObjects.add(jsonObject);
 
 
                     //// now we look for other events with bridging relations
@@ -330,10 +332,10 @@ public class JsonStoryUtil {
                     //// strict variant: there must be overlap of participants and topics
                     if (topicThreshold>0) {
                         bridgedEvents = intersectEventObjects(coevents, topicevents);
-                        if (bridgedEvents.size() > 5) {
+/*                        if (bridgedEvents.size() > 5) {
                             System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
                             System.out.println("coveredEvents = " + coveredEvents.size());
-                        }
+                        }*/
                     }
                     else {
                         bridgedEvents = coevents;
@@ -380,10 +382,9 @@ public class JsonStoryUtil {
                 } catch (JSONException e) {
                      e.printStackTrace();
                 }
-
             }
             else {
-                System.out.println("duplicate instance = " + instance);
+            //    System.out.println("duplicate instance = " + instance);
             }
             //  break;
 
@@ -408,11 +409,14 @@ public class JsonStoryUtil {
                     2,
                     climaxThreshold);
         }
+        System.out.println("groupedObjects.size() = " + groupedObjects.size());
+        System.out.println("singleObjects.size() = " + storyObjects.size());
         //// we add the singleton events to the other grouped events
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
             groupedObjects.add(object);
         }
+        System.out.println("eventCounter = " + eventCounter);
         return groupedObjects;
     }
 
