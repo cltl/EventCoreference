@@ -51,5 +51,6 @@
     <orderEntry type="library" name="Maven: org.openrdf.sesame:sesame-rio-trig:2.7.9" level="project" />
     <orderEntry type="library" name="Maven: org.jdom:jdom:1.1" level="project" />
     <orderEntry type="library" name="Maven: com.cedarsoftware:json-io:3.0.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
   </component>
 </module>

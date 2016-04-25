@@ -11,6 +11,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class EuroVoc {
     static public HashMap<String, String> labelUriMap = new HashMap<String, String>();
+    static public HashMap<String, String> uriLabelMap = new HashMap<String, String>();
 
     //market gardening	en	http://eurovoc.europa.eu/219401
 
@@ -53,6 +54,7 @@ public class EuroVoc {
                             String uri = fields[2];
                             if (lg.equalsIgnoreCase(language)) {
                                 labelUriMap.put(key, uri);
+                                uriLabelMap.put(uri, key);
                             }
                         } else {
                             //  System.out.println("fields.length = " + fields.length);

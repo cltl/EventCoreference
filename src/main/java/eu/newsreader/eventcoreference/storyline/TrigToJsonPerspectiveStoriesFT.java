@@ -3,6 +3,7 @@ package eu.newsreader.eventcoreference.storyline;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.newsreader.eventcoreference.input.*;
+import eu.newsreader.eventcoreference.util.EuroVoc;
 import eu.newsreader.eventcoreference.util.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,8 +47,8 @@ public class TrigToJsonPerspectiveStoriesFT {
     static String KS = "nwr/wikinews-new";
     static String KSuser = "nwr/wikinews-new";
     static String KSpass = "nwr/wikinews-new";
-    static int EVENTLIMIT = 500;
     static String EVENTSCHEMA = "";
+    static EuroVoc euroVoc;
 
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
@@ -63,6 +64,7 @@ public class TrigToJsonPerspectiveStoriesFT {
         String blackListFile = "";
         String fnFile = "";
         String esoFile = "";
+        String euroVocFile = "";
         fnLevel = 0;
         esoLevel = 0;
         //pathToILIfile = "/Users/piek/Desktop/NWR/timeline/vua-naf2jsontimeline_2015/resources/wn3-ili-synonyms.txt";
@@ -116,6 +118,10 @@ public class TrigToJsonPerspectiveStoriesFT {
             else if (arg.equals("--perspective")) {
                 PERSPECTIVE = true;
             }
+            else if (arg.equals("--eurovoc") && args.length>(i+1)) {
+                euroVocFile = args[i+1];
+                euroVoc.readEuroVoc(euroVocFile,"en");
+            }
             else if (arg.equals("--combine-with-sem")) {
                 COMBINE = true;
             }
@@ -130,13 +136,6 @@ public class TrigToJsonPerspectiveStoriesFT {
             }
             else if (arg.equals("--ks-limit") && args.length>(i+1)) {
                 kslimit = args[i+1];
-            }
-            else if (arg.equals("--story-limit") && args.length>(i+1)) {
-                try {
-                    EVENTLIMIT = Integer.parseInt(args[i+1]);
-                } catch (NumberFormatException e) {
-                    //e.printStackTrace();
-                }
             }
             else if (arg.equals("--trig-file") && args.length>(i+1)) {
                 trigfile = args[i+1];
@@ -204,7 +203,6 @@ public class TrigToJsonPerspectiveStoriesFT {
         System.out.println("actor type = " + ACTORTYPE);
         System.out.println("actorThreshold = " + actorThreshold);
         System.out.println("actor interSect = " + interSect);
-        System.out.println("max events for stories = " +EVENTLIMIT);
         System.out.println("max results for KnowledgeStore = " + kslimit);
         System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
         System.out.println("MERGE = " + MERGE);
@@ -292,7 +290,6 @@ public class TrigToJsonPerspectiveStoriesFT {
             jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
                     topicThreshold,
                     climaxThreshold,
-                    EVENTLIMIT,
                     entityFilter, MERGE,
                     timeGran,
                     actionOnt,
@@ -301,7 +298,10 @@ public class TrigToJsonPerspectiveStoriesFT {
             System.out.println("Events after storyline filter = " + jsonObjects.size());
 
             JsonStoryUtil.minimalizeActors(jsonObjects);
-
+            System.out.println("eurovoc = " + euroVoc.uriLabelMap.size());
+            if (euroVoc.uriLabelMap.size()>0) {
+                JsonStoryUtil.renameStories(jsonObjects, euroVoc);
+            }
             nEvents = jsonObjects.size();
 
             nActors = JsonStoryUtil.countActors(jsonObjects);

@@ -7,6 +7,7 @@ import eu.newsreader.eventcoreference.input.TrigKSTripleReader;
 import eu.newsreader.eventcoreference.input.TrigTripleData;
 import eu.newsreader.eventcoreference.naf.CreateMicrostory;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
+import eu.newsreader.eventcoreference.util.EuroVoc;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -229,7 +230,6 @@ public class JsonStoryUtil {
     static ArrayList<JSONObject> createStoryLinesForJSONArrayList (ArrayList<JSONObject> jsonObjects,
                                                                    int topicThreshold,
                                                                    int climaxThreshold,
-                                                                   int eventLimit,
                                                                    String entityFilter,
                                                                    boolean MERGE,
                                                                    String timeGran,
@@ -255,15 +255,9 @@ public class JsonStoryUtil {
             selectedEvents.add(jsonObject);
         }
         System.out.println("Events above climax threshold = " + climaxObjects.size());
-        int eventCount = 0;
         sortedObjects = climaxObjects.iterator();
         ArrayList<String> coveredEvents = new ArrayList<String>();
         while (sortedObjects.hasNext()) {
-            if (eventCount>eventLimit && eventLimit>-1) {
-                //// the storyteller quits when it reaches the event limit.
-                // this is to prevent the visualisation to be cluttered with too many stories
-                break;
-            }
             JSONObject jsonObject = sortedObjects.next();
             String instance = jsonObject.getString("instance");
 /*
@@ -351,7 +345,6 @@ public class JsonStoryUtil {
                         String eventInstance = object.getString("instance");
                         if (!coveredEvents.contains(eventInstance)) {
                         //if (!hasObject(groupedObjects, object)) {
-                            eventCount++;
                             addObjectToGroup(
                                     storyObjects,
                                     group,
@@ -389,6 +382,9 @@ public class JsonStoryUtil {
                 }
 
             }
+            else {
+                System.out.println("duplicate instance = " + instance);
+            }
             //  break;
 
         } // end of while objects in sorted climaxObjects
@@ -396,14 +392,13 @@ public class JsonStoryUtil {
         //// now we handle the singleton events
         storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
         String group = "001:unrelated events";
-        String groupName = "unrelated event";
+        String groupName = "unrelated events";
         String groupScore = "001";
         for (int i = 0; i < singletonObjects.size(); i++) {
             JSONObject jsonObject = singletonObjects.get(i);
             jsonObject.put("group", group);
             jsonObject.put("groupName", groupName);
             jsonObject.put("groupScore", groupScore);
-            eventCount++;
             addObjectToGroup(
                     storyObjects,
                     group,
@@ -413,29 +408,11 @@ public class JsonStoryUtil {
                     2,
                     climaxThreshold);
         }
-        /*climaxObjects = determineClimaxValues(singletonObjects, climaxThreshold);
-        sortedObjects = climaxObjects.iterator();
-        while (sortedObjects.hasNext()) {
-            JSONObject jsonObject = sortedObjects.next();
-            jsonObject.put("group", group);
-            jsonObject.put("groupName", groupName);
-            jsonObject.put("groupScore", groupScore);
-            eventCount++;
-            addObjectToGroup(
-                    storyObjects,
-                    group,
-                    groupName,
-                    groupScore,
-                    jsonObject,
-                    2,
-                    climaxThreshold);
-        }*/
-        //System.out.println("storyObjects = " + storyObjects.size());
+        //// we add the singleton events to the other grouped events
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
             groupedObjects.add(object);
         }
-
         return groupedObjects;
     }
 
@@ -806,6 +783,140 @@ public class JsonStoryUtil {
             }
         }
         return actorCount;
+    }
+
+    static void count (HashMap<String, Integer> count, String topic) {
+         if (count.containsKey(topic)) {
+             Integer cnt = count.get(topic);
+             cnt++;
+             count.put(topic, cnt);
+         }
+        else {
+             count.put(topic, 1);
+         }
+    }
+
+    static double informationValue (HashMap<String, Integer> count, String topic, int cnt) {
+        double score = 0;
+        if (count.containsKey(topic)) {
+            Integer tot = count.get(topic);
+            score = Math.abs(Math.log(cnt/tot));
+        }
+        return score;
+    }
+
+    public static void renameStories(ArrayList<JSONObject> jsonObjects, EuroVoc euroVoc) {
+        HashMap<String, String> renameMap = new HashMap<String, String>();
+        HashMap<String, Integer> totalTopicCount = new HashMap<String, Integer>();
+        HashMap<String, ArrayList<String>> storyTopicMap = new HashMap<String, ArrayList<String>>();
+        for (int i = 0; i < jsonObjects.size(); i++) {
+            JSONObject jsonObject = jsonObjects.get(i);
+            try {
+                JSONArray topics = jsonObject.getJSONArray("topics");
+                String groupName = jsonObject.getString("groupName");
+                if (storyTopicMap.containsKey(groupName)) {
+                    ArrayList<String> givenTopics = storyTopicMap.get(groupName);
+                    for (int j = 0; j < topics.length(); j++) {
+                        String topic = (String) topics.get(j).toString();
+                        count(totalTopicCount, topic);
+                        givenTopics.add(topic);
+                    }
+                    storyTopicMap.put(groupName,givenTopics);
+                }
+                else {
+                    ArrayList<String> givenTopics = new ArrayList<String>();
+                    for (int j = 0; j < topics.length(); j++) {
+                        String topic = (String) topics.get(j).toString();
+                        count(totalTopicCount, topic);
+                        givenTopics.add(topic);
+                    }
+                    storyTopicMap.put(groupName,givenTopics);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        Set keySet = storyTopicMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String groupName = keys.next();
+            double max = 0;
+            String maxTopic = "";
+            ArrayList<String> topics = storyTopicMap.get(groupName);
+            HashMap<String, Integer> topicCount = new HashMap<String, Integer>();
+            for (int i = 0; i < topics.size(); i++) {
+                String topic = topics.get(i);
+                count(topicCount, topic);
+            }
+            Set cntSet = topicCount.keySet();
+            Iterator<String> cntKeys = cntSet.iterator();
+            while (cntKeys.hasNext()) {
+                String topic = cntKeys.next();
+                Integer cnt = topicCount.get(topic);
+                double score = informationValue(totalTopicCount, topic, cnt);
+                if (score>max) {
+                    max = score;
+                    maxTopic = topic;
+                }
+            }
+           // System.out.println("maxTopic = " + maxTopic);
+            if (euroVoc.uriLabelMap.containsKey(maxTopic)) {
+                String label = euroVoc.uriLabelMap.get(maxTopic);
+                //System.out.println("label = " + label);
+                renameMap.put(groupName, label);
+            }
+        }
+        HashMap<String, Integer> topicScore = new HashMap<String, Integer>();
+        for (int i = 0; i < jsonObjects.size(); i++) {
+            JSONObject jsonObject = jsonObjects.get(i);
+            String group = null;
+            String groupName = null;
+            String groupScore = null;
+            try {
+                groupName = jsonObject.getString("groupName");
+                groupScore = jsonObject.getString("groupScore");
+                if (renameMap.containsKey(groupName)) {
+                    String label = renameMap.get(groupName);
+                   // String topicGroup = groupScore+":"+"["+label+"]"+groupName;
+                   // String topicGroupName = "["+label+"]"+groupName;
+                    String topicGroup = groupScore+":"+"["+label+"]";
+                    String topicGroupName = "["+label+"]";
+                   // System.out.println("topicGroupName = " + topicGroupName);
+                    jsonObject.put("group", topicGroup);
+                    jsonObject.put("groupName", topicGroupName);
+
+                    Integer currentScore = Integer.parseInt(groupScore);
+                    if (topicScore.containsKey(topicGroupName)) {
+                        Integer score = topicScore.get(topicGroupName);
+                        if (currentScore>score) {
+                            topicScore.put(topicGroupName,currentScore);
+                        }
+                    }
+                    else {
+                        topicScore.put(topicGroupName,currentScore);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < jsonObjects.size(); i++) {
+            JSONObject jsonObject = jsonObjects.get(i);
+            try {
+                String groupName = jsonObject.getString("groupName");
+                if (topicScore.containsKey(groupName)) {
+                    Integer score = topicScore.get(groupName);
+                    String topicGroup = score+":"+groupName;
+                    jsonObject.put("group", topicGroup);
+                    String scoreString = score.toString();
+                    if (scoreString.length()==1) scoreString = "00"+scoreString;
+                    if (scoreString.length()==2) scoreString = "0"+scoreString;
+                    jsonObject.put("groupScore", scoreString);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

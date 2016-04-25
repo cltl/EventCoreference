@@ -6,6 +6,7 @@ PARENT="$( cd $DIR && cd .. && pwd)"
 
 mkdir "$DIR/lib"
 echo "#1. compiling the library from source code and dependencies"
+mvn clean
 mvn install
 echo "#2. moving binary to lib folder"
 mv "$DIR/target/EventCoreference-v3.0-jar-with-dependencies.jar" "$DIR/lib"

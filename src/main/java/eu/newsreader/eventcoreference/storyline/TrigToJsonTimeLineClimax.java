@@ -51,7 +51,6 @@ public class TrigToJsonTimeLineClimax {
     static String KSpass = "nwr/wikinews-new";
 
     static String QUERYTYPE = "entity";
-    static int EVENTLIMIT = 500;
 
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
@@ -127,13 +126,6 @@ public class TrigToJsonTimeLineClimax {
             else if (arg.equals("--ks-limit") && args.length>(i+1)) {
                 kslimit = args[i+1];
             }
-            else if (arg.equals("--story-limit") && args.length>(i+1)) {
-                try {
-                    EVENTLIMIT = Integer.parseInt(args[i+1]);
-                } catch (NumberFormatException e) {
-                    //e.printStackTrace();
-                }
-            }
             else if (arg.equals("--trig-file") && args.length>(i+1)) {
                 trigfile = args[i+1];
             }
@@ -204,7 +196,6 @@ public class TrigToJsonTimeLineClimax {
         System.out.println("topicThreshold = " + topicThreshold);
         System.out.println("actor type = " + ACTORTYPE);
         System.out.println("actorThreshold = " + actorThreshold);
-        System.out.println("max events for stories = " +EVENTLIMIT);
         System.out.println("max results for KnowledgeStore = " + kslimit);
         if (!blackListFile.isEmpty()) {
             blacklist = Util.ReadFileToStringArrayList(blackListFile);
@@ -417,7 +408,6 @@ public class TrigToJsonTimeLineClimax {
             jsonObjectArrayList = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjectArrayList,
                     topicThreshold,
                     climaxThreshold,
-                    EVENTLIMIT,
                     entityFilter, MERGE, timeGran, actionOnt, actionSim,interSect);
             System.out.println("Events after storyline filter = " + jsonObjectArrayList.size());
             nEvents = jsonObjectArrayList.size();
