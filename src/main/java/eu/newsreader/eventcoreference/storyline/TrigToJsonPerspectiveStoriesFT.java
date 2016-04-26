@@ -336,19 +336,12 @@ public class TrigToJsonPerspectiveStoriesFT {
                 structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
             }
 
-
             if (!pathToRawTextIndexFile.isEmpty()) {
                 rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
-/*                JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects, rawTextArrayList,
-                        nEvents, nStories, nActors, nMentions);*/
             }
             else {
                 if (!eventQuery.isEmpty() || !entityQuery.isEmpty()) {
                     rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
-/*
-                    JsonSerialization.writeJsonObjectArrayForQuery(KS, eventQuery+entityQuery, project, jsonObjects,
-                            nEvents, nStories, nActors, nMentions, KSuser, KSpass);
-*/
                 }
 
             }

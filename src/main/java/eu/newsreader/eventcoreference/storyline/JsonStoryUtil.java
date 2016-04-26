@@ -391,7 +391,7 @@ public class JsonStoryUtil {
         } // end of while objects in sorted climaxObjects
 
         //// now we handle the singleton events
-        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
+/*        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
         String group = "001:unrelated events";
         String groupName = "unrelated events";
         String groupScore = "001";
@@ -415,7 +415,7 @@ public class JsonStoryUtil {
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
             groupedObjects.add(object);
-        }
+        }*/
         System.out.println("eventCounter = " + eventCounter);
         return groupedObjects;
     }
@@ -910,11 +910,11 @@ public class JsonStoryUtil {
                 String groupName = jsonObject.getString("groupName");
                 if (topicScore.containsKey(groupName)) {
                     Integer score = topicScore.get(groupName);
-                    String topicGroup = score+":"+groupName;
-                    jsonObject.put("group", topicGroup);
                     String scoreString = score.toString();
                     if (scoreString.length()==1) scoreString = "00"+scoreString;
                     if (scoreString.length()==2) scoreString = "0"+scoreString;
+                    String topicGroup = scoreString+":"+groupName;
+                    jsonObject.put("group", topicGroup);
                     jsonObject.put("groupScore", scoreString);
                 }
             } catch (JSONException e) {

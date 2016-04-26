@@ -2,6 +2,8 @@ package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
+import org.apache.jena.atlas.json.JsonArray;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -2705,12 +2707,173 @@ public class Util {
         return vector;
     }
 
+    static public ArrayList<JSONObject> ReadFileToUriTextArrayList(String fileName, ArrayList<JSONObject> events) {
+        ArrayList<JSONObject> vector = new ArrayList<JSONObject>();
+        HashMap<String, String> rawTextMap = new HashMap<String, String>();
+        if (new File(fileName).exists() ) {
+            try {
+                InputStream fis = new FileInputStream(fileName);
+                InputStreamReader isr = new InputStreamReader(fis, "UTF8");
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                String uri = "";
+                String text = "";
+
+                while (in.ready()&&(inputLine = in.readLine()) != null) {
+                    //System.out.println(inputLine);
+                    if (inputLine.trim().length()>0) {
+                        if (inputLine.startsWith("http:")) {
+                            //  System.out.println("inputLine = " + inputLine);
+                            String[] fields = inputLine.split("\t");
+                            if (fields.length > 1) {
+                                if (!uri.isEmpty() && !text.isEmpty()) {
+                                    rawTextMap.put(uri, text);
+                                    uri = ""; text = "";
+                                }
+                                uri = fields[0];
+                                text = fields[1];
+                            }
+                        }
+                        else {
+                            text += "\n"+inputLine;
+                        }
+                    }
+                }
+                if (!uri.isEmpty() && !text.isEmpty()) {
+                    rawTextMap.put(uri, text);
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            for (int i = 0; i < events.size(); i++) {
+                JSONObject jsonObject = events.get(i);
+
+                try {
+                    JSONArray mMentions = jsonObject.getJSONArray("mentions");
+                    for (int m = 0; m < mMentions.length(); m++) {
+                        JSONObject mentionObject = (JSONObject) mMentions.get(m);
+                        JSONArray uriObject = mentionObject.getJSONArray("uri");
+                        JSONArray offsetArray = mentionObject.getJSONArray("char");
+                        String uri = uriObject.getString(0);
+                        Integer offsetBegin =  Integer.parseInt(offsetArray.getString(0));
+                        Integer offsetEnd = Integer.parseInt(offsetArray.getString(1));
+                        if (rawTextMap.containsKey(uri)) {
+                            String text = rawTextMap.get(uri);
+                            String newUri = uri+offsetBegin;
+                            String newText = text;
+                            int textStart = 0;
+                            int offsetLength = (offsetBegin-offsetEnd)+1;
+                            int textEnd = offsetEnd+50;
+                            if (offsetBegin>50) {
+                                textStart = offsetBegin-50;
+                                offsetBegin = 50;
+                                offsetEnd = 50+offsetLength;
+                            }
+                            if (text.length()>offsetEnd+50) {
+                                textEnd = offsetEnd + 50;
+                            }
+                            else {
+                                textEnd = text.length()-1;
+                            }
+                            newText = text.substring(textStart, textEnd);
+                            try {
+                                mentionObject.put("uri", newUri);
+                                mentionObject.put("char", new JsonArray());
+                                JSONObject sourceObject = new JSONObject();
+                                sourceObject.put("uri", newUri);
+                                sourceObject.put("text", newText);
+                                vector.add(sourceObject);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        else {
+            System.out.println("Cannot find fileName = " + fileName);
+        }
+        return vector;
+    }
+
     static public ArrayList<JSONObject> ReadFileToUriTextArrayList(String fileName) {
         ArrayList<JSONObject> vector = new ArrayList<JSONObject>();
         if (new File(fileName).exists() ) {
             try {
-                FileInputStream fis = new FileInputStream(fileName);
-                InputStreamReader isr = new InputStreamReader(fis);
+                InputStream fis = new FileInputStream(fileName);
+                InputStreamReader isr = new InputStreamReader(fis, "UTF8");
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                String uri = "";
+                String text = "";
+
+                while (in.ready()&&(inputLine = in.readLine()) != null) {
+                    //System.out.println(inputLine);
+                    if (inputLine.trim().length()>0) {
+                        if (inputLine.startsWith("http:")) {
+                            //  System.out.println("inputLine = " + inputLine);
+                            String[] fields = inputLine.split("\t");
+                            if (fields.length > 1) {
+                                if (!uri.isEmpty() && !text.isEmpty()) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject();
+                                        jsonObject.put("uri", uri);
+                                        jsonObject.put("text", text);
+                                        vector.add(jsonObject);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    uri = ""; text = "";
+                                }
+                                uri = fields[0];
+                                text = fields[1];
+                                //System.out.println("string = " + string);
+
+                            }
+                        }
+                        else {
+                            text += "\n"+inputLine;
+                        }
+                    }
+                }
+                if (!uri.isEmpty() && !text.isEmpty()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("uri", uri);
+                        jsonObject.put("text", text);
+                        vector.add(jsonObject);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    uri = ""; text = "";
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            System.out.println("Cannot find fileName = " + fileName);
+        }
+        return vector;
+    }
+
+    static public ArrayList<JSONObject> ReadFileToUriTextArrayListOrg(String fileName) {
+        ArrayList<JSONObject> vector = new ArrayList<JSONObject>();
+        if (new File(fileName).exists() ) {
+            try {
+/*                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(
+                                new FileInputStream(fileName), "UTF8"));*/
+
+                InputStream fis = new FileInputStream(fileName);
+                InputStreamReader isr = new InputStreamReader(fis, "UTF8");
                 BufferedReader in = new BufferedReader(isr);
                 String inputLine;
                 while (in.ready()&&(inputLine = in.readLine()) != null) {
