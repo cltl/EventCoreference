@@ -834,7 +834,7 @@ public class JsonStoryUtil {
                             givenTopics.add(topic);
                         }
                         else {
-                            System.out.println("topic = " + topic);
+                          //  System.out.println("topic = " + topic);
                         }
                     }
                     storyTopicMap.put(groupName,givenTopics);
@@ -848,7 +848,7 @@ public class JsonStoryUtil {
                             givenTopics.add(topic);
                         }
                         else {
-                            System.out.println("topic = " + topic);
+                          //  System.out.println("topic = " + topic);
                         }
                     }
                     storyTopicMap.put(groupName,givenTopics);
@@ -861,7 +861,7 @@ public class JsonStoryUtil {
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String groupName = keys.next();
-            double max = 0;
+            double max = -1;
             String maxTopic = "";
             ArrayList<String> topics = storyTopicMap.get(groupName);
             HashMap<String, Integer> topicCount = new HashMap<String, Integer>();
@@ -916,6 +916,9 @@ public class JsonStoryUtil {
                     else {
                         topicScore.put(topicGroupName,currentScore);
                     }
+                }
+                else {
+                    System.out.println("groupName did not got a topic to rename = " + groupName);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

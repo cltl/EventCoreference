@@ -356,10 +356,6 @@ public class TrigToJsonPerspectiveStoriesFT {
 
             }
 
-          //  System.out.println("jsonObjects = " + jsonObjects.size());
-          //  System.out.println("rawTextArrayList = " + rawTextArrayList.size());
-          //  System.out.println("structuredEvents.size() = " + structuredEvents.size());
-
             JsonSerialization.writeJsonObjectArrayWithStructuredData(trigfolder, "", project,
                     jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
 
@@ -374,25 +370,6 @@ public class TrigToJsonPerspectiveStoriesFT {
                     JsonSerialization.writeJsonStructuredArray(trigfolder, project, structuredEvents);
                 }
             }
-/*            if (rawTextArrayList.size()==0) {
-                if (trigfile.isEmpty()) {
-                    JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects,
-                            nEvents, nStories, nActors, nMentions);
-                } else {
-                    JsonSerialization.writeJsonObjectArray(trigfile, project, jsonObjects,
-                            nEvents, nStories, nActors, nMentions);
-                }
-            }
-            else {
-                if (COMBINE && structuredEvents!=null && structuredEvents.size()>0) {
-                    JsonSerialization.writeJsonObjectArray(trigfolder, project, jsonObjects,
-                            rawTextArrayList,
-                            nEvents, nStories, nActors, nMentions);
-                }
-            }*/
-
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

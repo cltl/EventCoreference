@@ -2760,25 +2760,48 @@ public class Util {
                         if (rawTextMap.containsKey(uri)) {
                             String text = rawTextMap.get(uri);
                             String newText = text;
-                            int textStart = 0;
                             int offsetLength = (offsetEnd-offsetBegin);
+                            int textStart = 0;
+                            int textEnd = offsetBegin+offsetLength+nContext;
                             //System.out.println("offsetBegin = " + offsetBegin);
                             //System.out.println("offsetEnd = " + offsetEnd);
                             //System.out.println("offsetLength = " + offsetLength);
                             if (offsetBegin>nContext) {
                                 textStart = offsetBegin-nContext;
-                                offsetBegin = nContext;
+                                int idx = text.lastIndexOf(" ",textStart);
+                                if (idx>-1 && idx<textStart) {
+                                  //  System.out.println("idx = " + idx);
+                                  //  System.out.println("textStart = " + textStart);
+                                    if (offsetBegin>(textStart-idx)+nContext) {
+                                        offsetBegin = (textStart-idx)+nContext;
+                                        textStart = idx;
+                                    }
+                                    else {
+                                        textStart = 0;
+                                    }
+                                }
+                                else {
+                                    offsetBegin = nContext;
+                                }
                                 offsetEnd = offsetBegin+offsetLength;
                             }
-                            //System.out.println("NEW offsetBegin = " + offsetBegin);
-                            //System.out.println("NEW offsetEnd = " + offsetEnd);
-                            //System.out.println("textStart = " + textStart);
-                            int textEnd = textStart+offsetLength+nContext+nContext;
+                            int idx = text.indexOf(" ", textEnd);
+                            if (idx>-1) textEnd = idx;
                             if (text.length()<=textEnd) {
                                 textEnd = text.length()-1;
                             }
-                            //System.out.println("textEnd = " + textEnd);
+
                             newText = text.substring(textStart, textEnd);
+                            if (offsetEnd>=newText.length()) {
+                                offsetBegin = newText.length()-offsetLength;
+                                offsetEnd = newText.length()-1;
+                            }
+/*
+                            System.out.println("newText = " + newText);
+                            System.out.println("offsetBegin = " + offsetBegin);
+                            System.out.println("offsetEnd = " + offsetEnd);
+*/
+                           // System.out.println("mention = " + newText.substring(offsetBegin, offsetEnd));
                             //System.out.println("newText = " + newText);
                             try {
                                 mentionObject.append("snippet", newText);
