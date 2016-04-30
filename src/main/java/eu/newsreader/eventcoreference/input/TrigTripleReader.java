@@ -22,7 +22,7 @@ public class TrigTripleReader {
         Dataset dataset = TDBFactory.createDataset();
 
         for (int i = 0; i < trigFiles.size(); i++) {
-            if (i==50) break;
+           // if (i==200) break;
             File file = trigFiles.get(i);
             //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
             dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());

@@ -163,7 +163,7 @@ public class TrigKSTripleReader {
                 try { label = solution.get("label").toString(); } catch (Exception e) { }
                 try { comment = solution.get("comment").toString(); } catch (Exception e) { }
 
-                ArrayList<String> perspectives = JsonStoryUtil.normalizePerspectiveValue(attribution);
+                ArrayList<String> perspectives = PerspectiveJsonObject.normalizePerspectiveValue(attribution);
                 if (!perspectives.isEmpty()) {
                     JSONObject targetEvent = eventMap.get(event);
                     if (targetEvent != null) {
@@ -247,7 +247,7 @@ public class TrigKSTripleReader {
                 try { label = solution.get("label").toString(); } catch (Exception e) { }
                 try { comment = solution.get("comment").toString(); } catch (Exception e) { }
 
-                ArrayList<String> perspectives = JsonStoryUtil.normalizePerspectiveValue(attribution);
+                ArrayList<String> perspectives = PerspectiveJsonObject.normalizePerspectiveValue(attribution);
                 if (!perspectives.isEmpty()) {
                     JSONObject targetEvent = eventMap.get(event);
                     if (targetEvent != null) {

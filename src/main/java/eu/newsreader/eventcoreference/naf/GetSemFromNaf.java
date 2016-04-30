@@ -33,8 +33,9 @@ public class GetSemFromNaf {
     static public HashMap<String, String> eurovoc = new HashMap<String, String>();
 
     static public void initEurovoc (String path, String lang) {
-        EuroVoc.readEuroVoc(path, lang);
-        eurovoc = EuroVoc.labelUriMap;
+        EuroVoc euroVoc = new EuroVoc();
+        euroVoc.readEuroVoc(path, lang);
+        eurovoc = euroVoc.labelUriMap;
     }
 
 

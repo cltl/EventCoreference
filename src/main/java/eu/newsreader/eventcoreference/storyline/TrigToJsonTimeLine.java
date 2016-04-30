@@ -483,7 +483,6 @@ public class TrigToJsonTimeLine {
 /*                  
                     String combinedKey = pcount.getPhrase()+"."+climax.toString();
                     jsonObject.put("climax", combinedKey);*/
-                    jsonObject.put("size", size.toString());
                     jsonObject.put("climax", climax.toString());
                     jsonObject.put("group", pcount.getPhrase());
                     if (!groupedObjects.contains(jsonObject)) {

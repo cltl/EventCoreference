@@ -284,6 +284,7 @@ public class JsonSerialization {
 
 
     static void writeJsonObjectArrayWithStructuredData (String pathToFolder,
+                                                        String name,
                                                         String project,
                                                         ArrayList<JSONObject> objects,
                                                         ArrayList<JSONObject> mentions,
@@ -326,7 +327,7 @@ public class JsonSerialization {
                 }
 
                 File folder = new File(pathToFolder);
-                OutputStream jsonOut = new FileOutputStream(folder.getAbsolutePath() + "/" + "contextual.timeline.json");
+                OutputStream jsonOut = new FileOutputStream(folder.getAbsolutePath() + "/" + name+ "contextual.timeline.json");
 
                 String str = "{ \"timeline\":\n";
                 jsonOut.write(str.getBytes());

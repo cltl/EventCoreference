@@ -2,7 +2,6 @@ package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.*;
 import eu.newsreader.eventcoreference.objects.*;
-import org.apache.jena.atlas.json.JsonArray;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -2707,8 +2706,8 @@ public class Util {
         return vector;
     }
 
-    static public ArrayList<JSONObject> ReadFileToUriTextArrayList(String fileName, ArrayList<JSONObject> events) {
-        ArrayList<JSONObject> vector = new ArrayList<JSONObject>();
+    static public void ReadFileToUriTextArrayList(String fileName, ArrayList<JSONObject> events) {
+        final int nContext = 75;
         HashMap<String, String> rawTextMap = new HashMap<String, String>();
         if (new File(fileName).exists() ) {
             try {
@@ -2750,9 +2749,9 @@ public class Util {
                 JSONObject jsonObject = events.get(i);
 
                 try {
-                    JSONArray mMentions = jsonObject.getJSONArray("mentions");
-                    for (int m = 0; m < mMentions.length(); m++) {
-                        JSONObject mentionObject = (JSONObject) mMentions.get(m);
+                    JSONArray myMentions = jsonObject.getJSONArray("mentions");
+                    for (int m = 0; m < myMentions.length(); m++) {
+                        JSONObject mentionObject = (JSONObject) myMentions.get(m);
                         JSONArray uriObject = mentionObject.getJSONArray("uri");
                         JSONArray offsetArray = mentionObject.getJSONArray("char");
                         String uri = uriObject.getString(0);
@@ -2760,35 +2759,41 @@ public class Util {
                         Integer offsetEnd = Integer.parseInt(offsetArray.getString(1));
                         if (rawTextMap.containsKey(uri)) {
                             String text = rawTextMap.get(uri);
-                            String newUri = uri+offsetBegin;
                             String newText = text;
                             int textStart = 0;
-                            int offsetLength = (offsetBegin-offsetEnd)+1;
-                            int textEnd = offsetEnd+50;
-                            if (offsetBegin>50) {
-                                textStart = offsetBegin-50;
-                                offsetBegin = 50;
-                                offsetEnd = 50+offsetLength;
+                            int offsetLength = (offsetEnd-offsetBegin);
+                            //System.out.println("offsetBegin = " + offsetBegin);
+                            //System.out.println("offsetEnd = " + offsetEnd);
+                            //System.out.println("offsetLength = " + offsetLength);
+                            if (offsetBegin>nContext) {
+                                textStart = offsetBegin-nContext;
+                                offsetBegin = nContext;
+                                offsetEnd = offsetBegin+offsetLength;
                             }
-                            if (text.length()>offsetEnd+50) {
-                                textEnd = offsetEnd + 50;
-                            }
-                            else {
+                            //System.out.println("NEW offsetBegin = " + offsetBegin);
+                            //System.out.println("NEW offsetEnd = " + offsetEnd);
+                            //System.out.println("textStart = " + textStart);
+                            int textEnd = textStart+offsetLength+nContext+nContext;
+                            if (text.length()<=textEnd) {
                                 textEnd = text.length()-1;
                             }
+                            //System.out.println("textEnd = " + textEnd);
                             newText = text.substring(textStart, textEnd);
+                            //System.out.println("newText = " + newText);
                             try {
-                                mentionObject.put("uri", newUri);
-                                mentionObject.put("char", new JsonArray());
-                                JSONObject sourceObject = new JSONObject();
-                                sourceObject.put("uri", newUri);
-                                sourceObject.put("text", newText);
-                                vector.add(sourceObject);
+                                mentionObject.append("snippet", newText);
+                                mentionObject.append("snippet_char", offsetBegin);
+                                mentionObject.append("snippet_char", offsetEnd);
+                                //jsonObject.append("mentions", newMentionObject);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
+                        else {
+                           // jsonObject.append("mentions", mentionObject);
+                        }
                     }
+                   // jsonObject.put("mentions", newMentions);
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -2799,7 +2804,6 @@ public class Util {
         else {
             System.out.println("Cannot find fileName = " + fileName);
         }
-        return vector;
     }
 
     static public ArrayList<JSONObject> ReadFileToUriTextArrayList(String fileName) {
@@ -2932,6 +2936,8 @@ public class Util {
         }
         return vector;
     }
+
+
 
     static public ArrayList<String> getDifference (ArrayList<String> l1, ArrayList<String> l2) {
         ArrayList<String> l3 = new ArrayList<String>();

@@ -10,12 +10,17 @@ import java.util.zip.GZIPInputStream;
  * Created by piek on 04/02/16.
  */
 public class EuroVoc {
-    static public HashMap<String, String> labelUriMap = new HashMap<String, String>();
-    static public HashMap<String, String> uriLabelMap = new HashMap<String, String>();
+     public HashMap<String, String> labelUriMap = new HashMap<String, String>();
+     public HashMap<String, String> uriLabelMap = new HashMap<String, String>();
 
     //market gardening	en	http://eurovoc.europa.eu/219401
 
-    static public void readEuroVoc (String filePath, String language) {
+    public EuroVoc () {
+        labelUriMap = new HashMap<String, String>();
+        uriLabelMap = new HashMap<String, String>();
+
+    }
+    public void readEuroVoc (String filePath, String language) {
         try {
             InputStreamReader isr = null;
             if (filePath.toLowerCase().endsWith(".gz")) {

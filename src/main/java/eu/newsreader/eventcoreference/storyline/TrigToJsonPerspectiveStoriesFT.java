@@ -9,8 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by piek on 1/3/14.
@@ -48,7 +47,8 @@ public class TrigToJsonPerspectiveStoriesFT {
     static String KSuser = "nwr/wikinews-new";
     static String KSpass = "nwr/wikinews-new";
     static String EVENTSCHEMA = "";
-    static EuroVoc euroVoc;
+    static EuroVoc euroVoc = new EuroVoc();
+    static EuroVoc euroVocBlackList = new EuroVoc();
 
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
@@ -65,6 +65,7 @@ public class TrigToJsonPerspectiveStoriesFT {
         String fnFile = "";
         String esoFile = "";
         String euroVocFile = "";
+        String euroVocBlackListFile = "";
         fnLevel = 0;
         esoLevel = 0;
         //pathToILIfile = "/Users/piek/Desktop/NWR/timeline/vua-naf2jsontimeline_2015/resources/wn3-ili-synonyms.txt";
@@ -122,6 +123,11 @@ public class TrigToJsonPerspectiveStoriesFT {
                 euroVocFile = args[i+1];
                 euroVoc.readEuroVoc(euroVocFile,"en");
             }
+            else if (arg.equals("--eurovoc-blacklist") && args.length>(i+1)) {
+                euroVocBlackListFile = args[i+1];
+                euroVocBlackList.readEuroVoc(euroVocBlackListFile, "en");
+                System.out.println("euroVocBlackList = " + euroVocBlackList.uriLabelMap.size());
+            }
             else if (arg.equals("--combine-with-sem")) {
                 COMBINE = true;
             }
@@ -136,6 +142,9 @@ public class TrigToJsonPerspectiveStoriesFT {
             }
             else if (arg.equals("--ks-limit") && args.length>(i+1)) {
                 kslimit = args[i+1];
+            }
+            else if (arg.equals("--project") && args.length>(i+1)) {
+                project = args[i+1];
             }
             else if (arg.equals("--trig-file") && args.length>(i+1)) {
                 trigfile = args[i+1];
@@ -298,9 +307,9 @@ public class TrigToJsonPerspectiveStoriesFT {
             System.out.println("Events after storyline filter = " + jsonObjects.size());
 
             JsonStoryUtil.minimalizeActors(jsonObjects);
-            System.out.println("eurovoc = " + euroVoc.uriLabelMap.size());
+           // System.out.println("eurovoc = " + euroVoc.uriLabelMap.size());
             if (euroVoc.uriLabelMap.size()>0) {
-                JsonStoryUtil.renameStories(jsonObjects, euroVoc);
+                JsonStoryUtil.renameStories(jsonObjects, euroVoc, euroVocBlackList);
             }
             nEvents = jsonObjects.size();
 
@@ -322,7 +331,7 @@ public class TrigToJsonPerspectiveStoriesFT {
                 }
                 else {
                     if (COMBINE) {
-                        JsonStoryUtil.integratePerspectivesInEventObjects(trigTripleData, jsonObjects);
+                        JsonStoryUtil.integratePerspectivesInEventObjects(trigTripleData, jsonObjects, project);
                     }
                     else {
                         perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);
@@ -337,7 +346,8 @@ public class TrigToJsonPerspectiveStoriesFT {
             }
 
             if (!pathToRawTextIndexFile.isEmpty()) {
-                rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
+               // rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
+                Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile, jsonObjects);
             }
             else {
                 if (!eventQuery.isEmpty() || !entityQuery.isEmpty()) {
@@ -346,12 +356,15 @@ public class TrigToJsonPerspectiveStoriesFT {
 
             }
 
-            System.out.println("jsonObjects = " + jsonObjects.size());
-            System.out.println("rawTextArrayList = " + rawTextArrayList.size());
-            System.out.println("structuredEvents.size() = " + structuredEvents.size());
-            JsonSerialization.writeJsonObjectArrayWithStructuredData(trigfolder, project,
+          //  System.out.println("jsonObjects = " + jsonObjects.size());
+          //  System.out.println("rawTextArrayList = " + rawTextArrayList.size());
+          //  System.out.println("structuredEvents.size() = " + structuredEvents.size());
+
+            JsonSerialization.writeJsonObjectArrayWithStructuredData(trigfolder, "", project,
                     jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
 
+
+            splitStories(jsonObjects,rawTextArrayList,structuredEvents,project,trigfolder);
 
             if (!COMBINE) {
                 if (PERSPECTIVE && perspectiveEvents.size()>0) {
@@ -389,7 +402,44 @@ public class TrigToJsonPerspectiveStoriesFT {
         System.out.println("actor_cnt = " + nActors);
     }
 
+    static void splitStories (ArrayList<JSONObject> events,
+                              ArrayList<JSONObject> rawTextArrayList,
+                              ArrayList<JSONObject> structuredEvents,
+                              String project,
+                              String trigFolder
+    ) {
 
+        HashMap<String, ArrayList<JSONObject>> storyMap = new HashMap<String, ArrayList<JSONObject>>();
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject event = events.get(i);
+            try {
+                String group = event.getString("group");
+                if (storyMap.containsKey(group)) {
+                    ArrayList<JSONObject> groupEvents = storyMap.get(group);
+                    groupEvents.add(event);
+                    storyMap.put(group,groupEvents);
+                }
+                else {
+                    ArrayList<JSONObject> groupEvents = new ArrayList<JSONObject>();
+                    groupEvents.add(event);
+                    storyMap.put(group,groupEvents);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        Set keySet = storyMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while ((keys.hasNext())) {
+            String group = keys.next();
+            ArrayList<JSONObject> groupEvents = storyMap.get(group);
+            int nActors = JsonStoryUtil.countActors(groupEvents);
+            int nMentions = JsonStoryUtil.countMentions(groupEvents);
+            JsonSerialization.writeJsonObjectArrayWithStructuredData(trigFolder, group, project,
+                    groupEvents, rawTextArrayList, groupEvents.size(), 1, nActors, nMentions, "polls", structuredEvents);
+
+        }
+    }
 
 
 }
