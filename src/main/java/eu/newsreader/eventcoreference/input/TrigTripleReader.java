@@ -119,6 +119,39 @@ public class TrigTripleReader {
         return trigTripleData;
     }
 
+    static public TrigTripleData readInstanceTripleFromTrigFiles (ArrayList<File> trigFiles) {
+        TrigTripleData trigTripleData = new TrigTripleData();
+        Dataset dataset = TDBFactory.createDataset();
+
+        for (int i = 0; i < trigFiles.size(); i++) {
+           // if (i==200) break;
+            File file = trigFiles.get(i);
+            //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
+            dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
+
+            Model namedModel = dataset.getNamedModel(TrigTripleData.instanceGraph);
+            StmtIterator siter = namedModel.listStatements();
+            while (siter.hasNext()) {
+                Statement s = siter.nextStatement();
+                String subject = s.getSubject().getURI();
+                if (trigTripleData.tripleMapInstances.containsKey(subject)) {
+                    ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(subject);
+                    triples.add(s);
+                    trigTripleData.tripleMapInstances.put(subject, triples);
+                } else {
+
+                    ArrayList<Statement> triples = new ArrayList<Statement>();
+                    triples.add(s);
+                    trigTripleData.tripleMapInstances.put(subject, triples);
+                }
+            }
+            dataset.close();
+            dataset = null;
+        }
+        System.out.println("trigTripleData instances = " + trigTripleData.tripleMapInstances.size());
+        return trigTripleData;
+    }
+
     static public TrigTripleData readTripleFromTrigFile (File file) {
         TrigTripleData trigTripleData = new TrigTripleData();
         Dataset dataset = TDBFactory.createDataset();

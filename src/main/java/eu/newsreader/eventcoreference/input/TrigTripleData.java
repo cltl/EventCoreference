@@ -12,9 +12,9 @@ import java.util.*;
 public class TrigTripleData {
 
 
-    static final String provenanceGraph = "http://www.newsreader-project.eu/provenance";
-    static final String instanceGraph = "http://www.newsreader-project.eu/instances";
-    static final String graspGraph = "http://www.newsreader-project.eu/grasp";
+    static final public String provenanceGraph = "http://www.newsreader-project.eu/provenance";
+    static final public String instanceGraph = "http://www.newsreader-project.eu/instances";
+    static final public String graspGraph = "http://www.newsreader-project.eu/grasp";
     public HashMap<String, ArrayList<Statement>> tripleMapGrasp = new HashMap<String, ArrayList<Statement>>();
     public HashMap<String, ArrayList<Statement>> tripleMapProvenance = new HashMap<String, ArrayList<Statement>>();
     public HashMap<String, ArrayList<Statement>> tripleMapInstances = new HashMap<String, ArrayList<Statement>>();
