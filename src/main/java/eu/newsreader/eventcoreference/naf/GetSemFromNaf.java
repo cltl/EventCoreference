@@ -1009,10 +1009,12 @@ public class GetSemFromNaf {
                 if (kafFactuality!=null) {
                     timexRelationCount++;
                     NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, kafFactuality.getSpans());
-                    SemRelation semRelation = docSemTime.createSemTimeRelation(baseUrl,
-                            timexRelationCount, Sem.hasFutureTime.getLocalName(), semEvent.getId(), mention);
-                    semRelations.add(semRelation);
-                    timeAnchor = true;
+                    if (mention==null) {
+                        SemRelation semRelation = docSemTime.createSemTimeRelation(baseUrl,
+                                timexRelationCount, Sem.hasFutureTime.getLocalName(), semEvent.getId(), mention);
+                        semRelations.add(semRelation);
+                        timeAnchor = true;
+                    }
                 }
             }
             if (CONTEXTTIME) {

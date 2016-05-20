@@ -1165,7 +1165,6 @@ static JSONObject getTopicsJSONObjectFromInstanceStatement (ArrayList<Statement>
         else if (value.indexOf("/non-entities/") > -1) {
             property = "ne";
         }
-
         return property;
     }
 

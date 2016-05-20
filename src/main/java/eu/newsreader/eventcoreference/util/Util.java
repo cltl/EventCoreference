@@ -2565,6 +2565,7 @@ public class Util {
                         acceptedFileList.add(newFile);
                     }
                 }
+               // break;
             }
         } else {
             System.out.println("Cannot access file:" + inputFile + "#");

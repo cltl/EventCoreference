@@ -305,6 +305,7 @@ public class TrigToJsonPerspectiveStoriesFT {
                     actionSim,
                     interSect);
             System.out.println("Events after storyline filter = " + jsonObjects.size());
+            //JsonStoryUtil.augmentEventLabelsWithArguments(jsonObjects);
 
             JsonStoryUtil.minimalizeActors(jsonObjects);
            // System.out.println("eurovoc = " + euroVoc.uriLabelMap.size());

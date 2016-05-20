@@ -206,53 +206,56 @@ public class PerspectiveJsonObject {
         // if (!value.equals("u_u_u") && !value.equals("CERTAIN_NON_FUTURE_POS")) {
 
         // System.out.println("value = " + value);
-        if (value.equals("u_u_u") || (value.equals("u_u_u_u"))) {
+        if (value.toLowerCase().equals("u_u_u") || (value.equals("u_u_u_u"))) {
             normValues.add("certain");
             normValues.add("confirm");
             normValues.add("now");
         }
-        else if (value.indexOf("negative")>-1) {
+        else if (value.toLowerCase().indexOf("negative")>-1) {
             // normValue="-";
             // normValue=":(";
             normValue="negative";
             normValues.add(normValue);
         }
-        else if (value.indexOf("positive")>-1) {
+        else if (value.toLowerCase().indexOf("positive")>-1) {
             // normValue="+";
             //  normValue=":)";
             normValue="positive";
             normValues.add(normValue);
         }
         else {
-            if (value.indexOf("UNCERTAIN")>-1) {
+            if (value.toLowerCase().indexOf("uncertain")>-1) {
                 normValue= "uncertain";
                 normValues.add(normValue);
             }
-            else if (value.indexOf("CERTAIN")>-1) {
+            else if (value.toLowerCase().indexOf("certain")>-1) {
                 normValue= "certain";
                 normValues.add(normValue);
             }
-            if (value.indexOf("NEG")>-1) {
+
+            if (value.toLowerCase().indexOf("neg")>-1) {
                 normValue= "denial";
                 normValues.add(normValue);
             }
-            else if (value.indexOf("POS")>-1) {
+            else if (value.toLowerCase().indexOf("pos")>-1) {
                 normValue= "confirm";
                 normValues.add(normValue);
             }
-            if (value.indexOf("NON_FUTURE")>-1) {
+
+            if (value.toLowerCase().indexOf("non_future")>-1) {
                 normValue= "now";
                 normValues.add(normValue);
             }
-            else if (value.indexOf("FUTURE")>-1) {
+            else if (value.toLowerCase().indexOf("future")>-1) {
                 normValue= "future";
                 normValues.add(normValue);
             }
-            if (value.indexOf("IMPROBABLE")>-1) {
+
+            if (value.toLowerCase().indexOf("improbable")>-1) {
                 normValue= "unlikely";
                 normValues.add(normValue);
             }
-            else if (value.indexOf("PROBABLE")>-1) {
+            else if (value.toLowerCase().indexOf("propable")>-1) {
                 normValue= "likely";
                 normValues.add(normValue);
             }

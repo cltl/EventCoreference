@@ -95,10 +95,12 @@ public class TrigStats {
 
     static public void main (String[] args) {
         String folderpath = "";
-       // folderpath = args[0];
-        folderpath = "/Users/piek/Desktop/NWR-INC/financialtimes/brexit4";
+        folderpath = args[0];
+        //folderpath = "/Users/piek/Desktop/NWR-INC/financialtimes/brexit4-ne";
         File inputFolder = new File(folderpath);
+        System.out.println("inputFolder = " + inputFolder);
         ArrayList<File> files = Util.makeRecursiveFileList(inputFolder, ".trig");
+        System.out.println(".trig files size() = " + files.size());
         TrigTripleData trigTripleData = TrigTripleReader.readInstanceTripleFromTrigFiles(files);
         Set keySet = trigTripleData.tripleMapInstances.keySet();
         Iterator<String> keys = keySet.iterator();
@@ -107,7 +109,7 @@ public class TrigStats {
             ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
             int m = countMentions(instanceTriples);
             String type = getInstanceType(key);
-            if (type.equalsIgnoreCase("dbp")) {
+            if (type.equalsIgnoreCase("dbp") || type.toLowerCase().endsWith(".dbp")) {
                 updateMap(key, m, dbpMap);
             }
             else if (type.equalsIgnoreCase("en")) {
@@ -173,28 +175,28 @@ public class TrigStats {
                 }
             }
         }
-        String folderParent = inputFolder.getParent();
-        String outputFile = folderParent+"/"+inputFolder.getName()+".entities.xls";
+        File folderParent = inputFolder.getParentFile();
+        String outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".entities.xls";
         dumpSortedMap(enMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".nonentities.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".nonentities.xls";
         dumpSortedMap(neMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".dbp.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".dbp.xls";
         dumpSortedMap(dbpMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".eventlabels.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabels.xls";
         dumpSortedMap(eventLabelMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".eventlabelsNOeso.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOeso.xls";
         dumpSortedMap(eventLabelWithoutESOMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".eventlabelsNOfn.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOfn.xls";
         dumpSortedMap(eventLabelWithoutFNMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".eventlabelsNOili.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOili.xls";
         dumpSortedMap(eventLabelWithoutILIMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".eso.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eso.xls";
         dumpSortedMap(esoMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".fn.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".fn.xls";
         dumpSortedMap(fnMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".ili.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".ili.xls";
         dumpSortedMap(iliMap, outputFile);
-        outputFile = folderParent+"/"+inputFolder.getName()+".event.xls";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event.xls";
         dumpTypeMap(eventMap, eventLabelMap, outputFile);
     }
 
@@ -212,8 +214,8 @@ public class TrigStats {
 
     static String getInstanceType (String key) {
         String type = JsonFromRdf.getNameSpaceString(key);
-        if (key.isEmpty()) {
-            key = "event";
+        if (type.isEmpty()) {
+            type = "event";
         }
         return type;
     }

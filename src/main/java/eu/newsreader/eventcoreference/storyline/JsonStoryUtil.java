@@ -143,9 +143,10 @@ public class JsonStoryUtil {
                         }
                     } else {
                         //// wrong event types
-                        // System.out.println("key = " + key);
-                        //JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                        //System.out.println("jsonprefLabels.toString() = " + jsonprefLabels.toString());
+                        System.out.println("eventTypes = " + eventTypes);
+                        System.out.println("key = " + key);
+                        JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
+                        System.out.println("jsonprefLabels.toString() = " + jsonprefLabels.toString());
 
                     }
                 } else {
@@ -315,6 +316,8 @@ public class JsonStoryUtil {
                     jsonObject.put("group", group);
                     jsonObject.put("groupName", groupName);
                     jsonObject.put("groupScore", groupScore);
+/*                    labels += mainActor;
+                    jsonObject.put("prefLabel", labels);*/
 
                     //// add the climax event to the story ArrayList
                     storyObjects.add(jsonObject);
@@ -2223,6 +2226,33 @@ public class JsonStoryUtil {
         sourcePerspectiveEvent.put("groupName", groupName);
         sourcePerspectiveEvent.put("groupScore", groupScore);
         return sourcePerspectiveEvent;
+    }
+
+    static public void augmentEventLabelsWithArguments (ArrayList<JSONObject> events) throws JSONException {
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject jsonObject = events.get(i);
+            String mainActor = getfirstActorByRoleFromEvent(jsonObject, "pb/A1"); /// for representation purposes
+            if (mainActor.isEmpty()) {
+                mainActor = getfirstActorByRoleFromEvent(jsonObject, "pb/A0");
+            }
+            if (mainActor.isEmpty()) {
+                mainActor = getfirstActorByRoleFromEvent(jsonObject, "pb/A2");
+            }
+            System.out.println("mainActor = " + mainActor);
+            if (!mainActor.isEmpty()) {
+                JSONObject jsonLabelObject = new JSONObject();
+
+                JSONArray labelArray = jsonObject.getJSONArray("labels");
+                for (int j = 0; j < labelArray.length(); j++) {
+                    String label = labelArray.getString(j);
+                    if (i==0) {
+                        label+=mainActor;
+                    }
+                    jsonLabelObject.append("labels",label);
+                }
+                jsonObject.put("labels", jsonLabelObject.get("labels"));
+            }
+        }
     }
 
 }
