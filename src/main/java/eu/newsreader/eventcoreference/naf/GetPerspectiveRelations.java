@@ -166,7 +166,8 @@ public class GetPerspectiveRelations {
             for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
                 KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
                 kafEvent.setTokenStrings(kafSaxParser);
-                String eventType = FrameTypes.getEventTypeString(kafEvent.getExternalReferences(), contextualVector, communicationVector, grammaticalVector);
+                String lemma = kafSaxParser.getLemma(kafEvent.getSpanIds());
+                String eventType = FrameTypes.getEventTypeString(lemma, kafEvent.getExternalReferences(), contextualVector, communicationVector, grammaticalVector);
                 if (!eventType.isEmpty()) {
                     if (eventType.equalsIgnoreCase(FrameTypes.SOURCE)) {
                         KafParticipant sourceParticipant = new KafParticipant();
@@ -230,7 +231,8 @@ public class GetPerspectiveRelations {
             for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
                 KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
                 kafEvent.setTokenStrings(kafSaxParser);
-                String eventType = FrameTypes.getEventTypeString(kafEvent.getExternalReferences(), contextualVector, communicationVector, grammaticalVector);
+                String lemma = kafSaxParser.getLemma(kafEvent.getSpanIds());
+                String eventType = FrameTypes.getEventTypeString(lemma,kafEvent.getExternalReferences(), contextualVector, communicationVector, grammaticalVector);
                 if (!eventType.isEmpty()) {
                     if (eventType.equalsIgnoreCase(FrameTypes.SOURCE)) {
                         KafParticipant sourceParticipant = new KafParticipant();

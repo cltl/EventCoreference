@@ -61,10 +61,12 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/nl.naf.xml";
         pathToNafFile = "/Users/piek/Desktop/short_text.out.naf";
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.v6/45/45_1ecb.xml.naf.fix.xml.newpred.coref";
+        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/100095.naf";
+        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/118719.naf";
         //pathToNafFile = "/Users/piek/Desktop/ISO-WG5/more-than-two_sentences.out.naf.xml";
-        String sourceFrameFile = "/Code/vu/newsreader/EventCoreference/resources/source.txt";
+        String sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
         String contextualFrameFile = "";
-        String grammaticalFrameFile = "";
+        String grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical-nl.txt";
         String project = "";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -176,18 +178,18 @@ public class GetSemFromNafFile {
            // System.out.println("semEvents = " + semEvents.size());
            // System.out.println("semActors = " + semActors.size());
           //  System.out.println("semRelations = " + semRelations.size());
-/*
-            for (int i = 0; i < semActors.size(); i++) {
+
+/*            for (int i = 0; i < semActors.size(); i++) {
                 SemObject semObject = semActors.get(i);
                 System.out.println("semObject.getId() = " + semObject.getId());
                 System.out.println("semObject.getURI() = " + semObject.getURI());
-            }
-            for (int i = 0; i < semRelations.size(); i++) {
+            }*/
+/*            for (int i = 0; i < semRelations.size(); i++) {
                 SemRelation semRelation = semRelations.get(i);
                 if (semRelation.getObject().indexOf("#tmx")==-1 && semRelation.getObject().indexOf("#mdct")==-1)
                     System.out.println("semRelation.getObject() = " + semRelation.getObject());
-            }
-*/
+            }*/
+
             ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
             for (int j = 0; j < semEvents.size(); j++) {
                 SemEvent mySemEvent = (SemEvent) semEvents.get(j);

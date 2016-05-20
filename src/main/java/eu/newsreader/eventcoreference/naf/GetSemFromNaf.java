@@ -229,7 +229,6 @@ public class GetSemFromNaf {
             if (uri.isEmpty()) {
                 KafMarkable kafMarkable = Util.getBestMatchingMarkable(kafSaxParser, kafEntity.getTermIds());
                 if (kafMarkable != null) {
-                    //  System.out.println("kafMarkable.getId() = " + kafMarkable.getId());
                     uri = Util.getBestMarkableUri(kafMarkable);
                 }
                 if (uri.isEmpty()) {
@@ -244,15 +243,16 @@ public class GetSemFromNaf {
                         }
                     }
                 }
+               // System.out.println("uri = " + uri);
             }
             if (!uri.isEmpty()) {
-                if (uri.toLowerCase().indexOf("/dbpedia")>-1) {
+/*                if (uri.toLowerCase().indexOf("/dbpedia")>-1) {
                   //  System.out.println("dbpedia uri = " + uri);
                 }
                 else {
-                   // System.out.println("other uri = " + uri);
-                    continue;
-                }
+                    System.out.println("other uri = " + uri);
+                   // continue;
+                }*/
                 if (kafEntityActorUriMap.containsKey(uri)) {
                     ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
                     entities.add(kafEntity);

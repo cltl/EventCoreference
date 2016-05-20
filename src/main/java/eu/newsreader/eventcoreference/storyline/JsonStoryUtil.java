@@ -143,10 +143,10 @@ public class JsonStoryUtil {
                         }
                     } else {
                         //// wrong event types
-                        System.out.println("eventTypes = " + eventTypes);
-                        System.out.println("key = " + key);
+                    //    System.out.println("eventTypes = " + eventTypes);
+                    //    System.out.println("key = " + key);
                         JSONObject jsonprefLabels = JsonFromRdf.getPrefLabelsJSONObjectFromInstanceStatement(instanceTriples);
-                        System.out.println("jsonprefLabels.toString() = " + jsonprefLabels.toString());
+                     //   System.out.println("jsonprefLabels.toString() = " + jsonprefLabels.toString());
 
                     }
                 } else {
@@ -479,12 +479,18 @@ public class JsonStoryUtil {
                         if (charValues!=null ) {
                             String charValue = charValues.get(0).toString();
                            // System.out.println("charValue = " + charValue);
-                            int sentenceNr = Integer.parseInt(charValue);
-                            if (sentenceNr < earliestEventMention || earliestEventMention == -1) {
-                                earliestEventMention = sentenceNr;
-                                jsonObject.put("sentence", charValue);
+                            int sentenceNr = 0;
+                            try {
+                                sentenceNr = Integer.parseInt(charValue);
+                                if (sentenceNr < earliestEventMention || earliestEventMention == -1) {
+                                    earliestEventMention = sentenceNr;
+                                    jsonObject.put("sentence", charValue);
+                                }
+                                sumClimax += 1.0 / sentenceNr;
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace();
                             }
-                            sumClimax += 1.0 / sentenceNr;
+
                         }
                         else {
                             //   System.out.println("charValues = null");

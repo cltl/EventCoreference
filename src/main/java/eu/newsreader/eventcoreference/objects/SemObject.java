@@ -730,18 +730,22 @@ public class SemObject implements Serializable {
             ref = ResourcesUri.pb + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
             ref = ResourcesUri.nb + kafSense.getSensecode();
-        } else if (kafSense.getResource().toLowerCase().startsWith("spotlight")
+        } else if (kafSense.getResource().toLowerCase().startsWith("spotlight") ||
+                   kafSense.getSource().toLowerCase().startsWith("spotlight")
                    ||
-                   kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")
+                   kafSense.getResource().toLowerCase().startsWith("vua-type-reranker") ||
+                   kafSense.getSource().toLowerCase().startsWith("vua-type-reranker")
                    ||
-                   kafSense.getResource().toLowerCase().startsWith("wikipedia")
+                   kafSense.getResource().toLowerCase().startsWith("wikipedia") ||
+                   kafSense.getSource().toLowerCase().startsWith("wikipedia")
                   ) {
             ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
          // ref = Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
         }
         //// checking the senseCode
 
-        else if (kafSense.getSensecode().indexOf(ResourcesUri.dbp) > -1) {
+       // else if (kafSense.getSensecode().indexOf(ResourcesUri.dbp) > -1) {
+        else if (kafSense.getSensecode().indexOf("dbpedia.org") > -1) {
             ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
           //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
         }
