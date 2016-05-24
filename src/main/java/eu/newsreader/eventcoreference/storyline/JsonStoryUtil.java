@@ -21,6 +21,7 @@ import static eu.newsreader.eventcoreference.input.TrigKSTripleReader.makeTriple
  */
 public class JsonStoryUtil {
 
+    static public int nMergedEvents = 0;
 
     static ArrayList<JSONObject> getJSONObjectArray(TrigTripleData trigTripleData,
                                                     boolean ALL,
@@ -47,10 +48,12 @@ public class JsonStoryUtil {
                     if (JsonFromRdf.prefLabelInList(instanceTriples, blacklist)) {
                         continue;
                     }
+                    /// we skip events that are objects of the generatedBy property in the grasp layer
                     if (JsonFromRdf.mentionInList(instanceTriples, trigTripleData.perspectiveMentions)) {
                         nSkip++;
                         continue;
                     }
+
                     if (eventTypes.isEmpty() ||
                             eventTypes.equalsIgnoreCase("N") ||
                             eventTypes.equalsIgnoreCase("any") ||
@@ -154,7 +157,7 @@ public class JsonStoryUtil {
                 }
             }
         }
-        System.out.println("nSkip = " + nSkip);
+        System.out.println("Nr. of perspective generatedBy Events skipped = " + nSkip);
         return jsonObjectArrayList;
     }
 
@@ -224,7 +227,7 @@ public class JsonStoryUtil {
             try {
                 labels = (JSONArray) jsonObject.get("labels");
             } catch (JSONException e) {
-                e.printStackTrace();
+              //  e.printStackTrace();
             }
             if (labels != null) {
                 for (int j = 0; j < labels.length(); j++) {
@@ -237,7 +240,7 @@ public class JsonStoryUtil {
                 }
 
             } else {
-
+              /////
             }
         }
         return jsonObjectArrayList;
@@ -348,6 +351,10 @@ public class JsonStoryUtil {
                     }
                     else {
                         bridgedEvents = coevents;
+                        if (bridgedEvents.size() > 5) {
+                            System.out.println("intersection co-participating events = " + bridgedEvents.size());
+                            System.out.println("coveredEvents = " + coveredEvents.size());
+                        }
                     }
 
 
@@ -374,7 +381,11 @@ public class JsonStoryUtil {
 
 
                     if (storyObjects.size()>1) {
-                        if (MERGE) storyObjects = JsonStoryUtil.mergeEvents(storyObjects, timeGran, actionOnt, actionSim);
+                        if (MERGE) {
+                            JsonStoryUtil.nMergedEvents = 0;
+                            storyObjects = JsonStoryUtil.mergeEvents(storyObjects, timeGran, actionOnt, actionSim);
+                            System.out.println("Nr. of merged events (proportional ontologology match: " + actionSim+", time: "+timeGran+") = " + JsonStoryUtil.nMergedEvents);
+                        }
                         for (int i = 0; i < storyObjects.size(); i++) {
                             JSONObject object = storyObjects.get(i);
                             groupedObjects.add(object);
@@ -400,7 +411,7 @@ public class JsonStoryUtil {
         } // end of while objects in sorted climaxObjects
 
         //// now we handle the singleton events
-/*        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
+        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
         String group = "001:unrelated events";
         String groupName = "unrelated events";
         String groupScore = "001";
@@ -424,7 +435,7 @@ public class JsonStoryUtil {
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
             groupedObjects.add(object);
-        }*/
+        }
         System.out.println("eventCounter = " + eventCounter);
         return groupedObjects;
     }
@@ -832,38 +843,42 @@ public class JsonStoryUtil {
         for (int i = 0; i < jsonObjects.size(); i++) {
             JSONObject jsonObject = jsonObjects.get(i);
             try {
-                JSONArray topics = jsonObject.getJSONArray("topics");
-                String groupName = jsonObject.getString("groupName");
-                if (storyTopicMap.containsKey(groupName)) {
-                    ArrayList<String> givenTopics = storyTopicMap.get(groupName);
-                    for (int j = 0; j < topics.length(); j++) {
-                        String topic = topics.get(j).toString();
-                        if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
-                            count(totalTopicCount, topic);
-                            givenTopics.add(topic);
-                        }
-                        else {
-                          //  System.out.println("topic = " + topic);
-                        }
-                    }
-                    storyTopicMap.put(groupName,givenTopics);
+                JSONArray topics = null;
+                try {
+                    topics = jsonObject.getJSONArray("topics");
+                } catch (JSONException e) {
+                   // e.printStackTrace();
                 }
-                else {
-                    ArrayList<String> givenTopics = new ArrayList<String>();
-                    for (int j = 0; j < topics.length(); j++) {
-                        String topic = topics.get(j).toString();
-                        if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
-                            count(totalTopicCount, topic);
-                            givenTopics.add(topic);
+                if (topics!=null) {
+                    String groupName = jsonObject.getString("groupName");
+                    if (storyTopicMap.containsKey(groupName)) {
+                        ArrayList<String> givenTopics = storyTopicMap.get(groupName);
+                        for (int j = 0; j < topics.length(); j++) {
+                            String topic = topics.get(j).toString();
+                            if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
+                                count(totalTopicCount, topic);
+                                givenTopics.add(topic);
+                            } else {
+                                //  System.out.println("topic = " + topic);
+                            }
                         }
-                        else {
-                          //  System.out.println("topic = " + topic);
+                        storyTopicMap.put(groupName, givenTopics);
+                    } else {
+                        ArrayList<String> givenTopics = new ArrayList<String>();
+                        for (int j = 0; j < topics.length(); j++) {
+                            String topic = topics.get(j).toString();
+                            if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
+                                count(totalTopicCount, topic);
+                                givenTopics.add(topic);
+                            } else {
+                                //  System.out.println("topic = " + topic);
+                            }
                         }
+                        storyTopicMap.put(groupName, givenTopics);
                     }
-                    storyTopicMap.put(groupName,givenTopics);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+              //  e.printStackTrace();
             }
         }
         Set keySet = storyTopicMap.keySet();
@@ -1390,6 +1405,96 @@ public class JsonStoryUtil {
                         JSONObject event2 = events.get(j);
                         String eventId2 = event2.getString("instance");
                         if (!mergedEvents.contains(eventId2)) {
+                            int nMatches = 0;
+                            JSONObject classData2 = event2.getJSONObject("classes");
+                            JSONArray types1 = null;
+                            JSONArray types2 = null;
+                            if (ont.equalsIgnoreCase("any")) {
+                                Iterator keys = classData1.keys();
+                                while (keys.hasNext()) {
+                                    String key = keys.next().toString();
+                                    JSONArray concepts1 = classData1.getJSONArray(key);
+                                    JSONArray concepts2 = classData2.getJSONArray(key);
+                                    for (int c = 0; c < concepts1.length(); c++) {
+                                        String concept = concepts1.getString(c);
+                                        if (concepts2.toString().indexOf(concept)>-1) {
+                                            // match
+                                            nMatches++;
+                                        }
+                                    }
+                                    int prop1 = (100*nMatches)/concepts1.length();
+                                    int prop2 = (100*nMatches)/concepts2.length();
+                                    if (prop1>=sim & prop2>=sim) {
+                                        event1MatchEvents.add(event2);
+                                        mergedEvents.add(eventId2);
+                                        nMergedEvents++;
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                String [] ontFields = ont.split(";");
+                                for (int l = 0; l < ontFields.length; l++) {
+                                    String ontField = ontFields[l];
+                                    try {
+                                        types1 = classData1.getJSONArray(ontField);
+                                        types2 = classData2.getJSONArray(ontField);
+                                    } catch (JSONException e) {
+                                        // e.printStackTrace();
+                                    }
+                                    if (types1!=null && types2!=null) {
+                                        for (int k = 0; k < types1.length(); k++) {
+                                            String t1 = (String) types1.get(k);
+                                            if (types2.toString().indexOf(t1) > -1) {
+                                                // match
+                                                nMatches++;
+                                            }
+
+                                        }
+                                        int prop1 = (100*nMatches)/types1.length();
+                                        int prop2 = (100*nMatches)/types2.length();
+                                        if (prop1>=sim & prop2>=sim) {
+                                            event1MatchEvents.add(event2);
+                                            mergedEvents.add(eventId2);
+                                            nMergedEvents++;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (event1MatchEvents.size()>0) {
+                    mergeEventArrayWithEvent(event1MatchEvents, event1);
+                }
+                finalEvents.add(event1);
+            }
+        }
+        return finalEvents;
+    }
+
+
+    static ArrayList<JSONObject> mergeEventArrayRecursive (ArrayList<JSONObject> events, String ont) throws JSONException {
+        ArrayList<JSONObject> finalEvents = new ArrayList<JSONObject>();
+        ArrayList<String> mergedEvents = new ArrayList<String>();
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject event1 = events.get(i);
+            String eventId1 = event1.getString("instance");
+            if (!mergedEvents.contains(eventId1)) {
+                mergedEvents.add(eventId1);
+                ArrayList<JSONObject> event1MatchEvents = new ArrayList<JSONObject>();
+                JSONObject classData1 = null;
+                try {
+                    classData1 = event1.getJSONObject("classes");
+                } catch (JSONException e) {
+                   // e.printStackTrace();
+                }
+                if (classData1!=null) {
+                    for (int j = i = 1; j < events.size(); j++) {
+                        JSONObject event2 = events.get(j);
+                        String eventId2 = event2.getString("instance");
+                        if (!mergedEvents.contains(eventId2)) {
                             JSONObject classData2 = event1.getJSONObject("classes");
                             JSONArray types1 = null;
                             JSONArray types2 = null;
@@ -1632,6 +1737,46 @@ public class JsonStoryUtil {
             }
         }
         return perspectiveJsonObject;
+    }
+
+    static ArrayList<JSONObject> removePerspectiveEvents (TrigTripleData trigTripleData,
+                                         ArrayList<JSONObject> targetEvents) {
+        Set keySet = trigTripleData.tripleMapGrasp.keySet();
+        ArrayList<JSONObject> realEvents = new ArrayList<JSONObject>();
+        for (int i = 0; i < targetEvents.size(); i++) {
+            JSONObject mEvent = targetEvents.get(i);
+            JSONArray mMentions = null;
+            try {
+                mMentions = (JSONArray) mEvent.get("mentions");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (mMentions != null) {
+                boolean pEvent = false;
+                for (int m = 0; m < mMentions.length(); m++) {
+                    try {
+                        JSONObject mentionObject = (JSONObject) mMentions.get(m);
+                        JSONArray uriObject = mentionObject.getJSONArray("uri");
+                        JSONArray offsetArray = mentionObject.getJSONArray("char");
+                        String mention = JsonStoryUtil.getStringValueforMention(uriObject, offsetArray);
+                        System.out.println("mention = " + mention);
+                        if (trigTripleData.tripleMapGrasp.containsKey(mention)) {
+                            /// we remove the events from the story line!!!!!
+                            pEvent=true;
+                            break;
+                        }
+                        else {
+                        }
+                    } catch (JSONException e) {
+                       e.printStackTrace();
+                    }
+                }
+                if (!pEvent) {
+                    realEvents.add(mEvent);
+                }
+            }
+        }
+        return realEvents;
     }
 
     static void integratePerspectivesInEventObjects (TrigTripleData trigTripleData, ArrayList<JSONObject> targetEvents, String meta) {

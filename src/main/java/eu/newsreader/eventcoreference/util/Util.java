@@ -2756,9 +2756,19 @@ public class Util {
                         JSONArray uriObject = mentionObject.getJSONArray("uri");
                         JSONArray offsetArray = mentionObject.getJSONArray("char");
                         String uri = uriObject.getString(0);
-                        Integer offsetBegin =  Integer.parseInt(offsetArray.getString(0));
-                        Integer offsetEnd = Integer.parseInt(offsetArray.getString(1));
-                        if (rawTextMap.containsKey(uri)) {
+                        Integer offsetBegin =  null;
+                        try {
+                            offsetBegin = Integer.parseInt(offsetArray.getString(0));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                        Integer offsetEnd = null;
+                        try {
+                            offsetEnd = Integer.parseInt(offsetArray.getString(1));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                        if (rawTextMap.containsKey(uri) && offsetBegin!=null && offsetEnd!=null) {
                             String text = rawTextMap.get(uri);
                             String newText = text;
                             int offsetLength = (offsetEnd-offsetBegin);

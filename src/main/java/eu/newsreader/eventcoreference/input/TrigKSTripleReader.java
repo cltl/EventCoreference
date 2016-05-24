@@ -209,7 +209,6 @@ public class TrigKSTripleReader {
         long startTime = System.currentTimeMillis();
         HashMap<String, PerspectiveJsonObject> perspectiveMap = new HashMap<String, PerspectiveJsonObject>();
 
-        ArrayList<JSONObject> pEvents = new ArrayList<JSONObject>();
         ArrayList<String> uris = new ArrayList<String>();
         HashMap<String, JSONObject> eventMap = new HashMap<String, JSONObject>();
         for (int i = 0; i < targetEvents.size(); i++) {

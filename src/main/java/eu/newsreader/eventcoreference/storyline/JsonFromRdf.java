@@ -445,9 +445,24 @@ public class JsonFromRdf {
                     for (int j = 0; j < values.length; j++) {
                         String value = values[j];
                         String ns = getNameSpaceString(value);
+
+                        /// hack
+                        /// skip non entities of single words
+                        if (ns.equalsIgnoreCase("ne")) {
+                            if (value.indexOf("+")==-1) {
+                                continue;
+                            }
+                            else {
+                                ns = "co";
+                            }
+                        }
+
                         if (!ns.isEmpty()) {
                             value = ns + ":" + getValue(value);
                         }
+
+
+
                         value = value.replace("+", "_"); //// just to make it look nicer
                         if (property.equalsIgnoreCase("pb")) {
                             if (!pbActors.contains(value)) {
@@ -739,6 +754,7 @@ public class JsonFromRdf {
     static JSONObject getMentionObjectFromMentionURI (String mentionUri) {
         JSONObject mObject = new JSONObject();
         try {
+          //  System.out.println("mentionUri = " + mentionUri);
             int idx = mentionUri.lastIndexOf("#");
             if (idx > -1) {
                 String uri = mentionUri.substring(0, idx);
@@ -821,7 +837,7 @@ public class JsonFromRdf {
     }
 
     static void addValuesFromMention (JSONObject object, String key, String str) throws JSONException {
-        int idx_s = str.indexOf("=");
+        int idx_s = str.lastIndexOf("=");
         String [] v = str.substring(idx_s+1).split(",");
         for (int i = 0; i < v.length; i++) {
             String s = v[i];

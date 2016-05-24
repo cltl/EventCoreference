@@ -296,6 +296,11 @@ public class TrigToJsonPerspectiveStoriesFT {
                 System.out.println("Events after actor count filter = " + jsonObjects.size());
             }
 
+/*
+            jsonObjects = JsonStoryUtil.removePerspectiveEvents(trigTripleData, jsonObjects);
+            System.out.println("Events after removing perspective events = " + jsonObjects.size());
+*/
+
             jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
                     topicThreshold,
                     climaxThreshold,

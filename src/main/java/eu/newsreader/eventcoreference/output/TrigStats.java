@@ -30,6 +30,7 @@ public class TrigStats {
     static HashMap<String, PhraseCount> eventLabelWithoutFNMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> eventLabelWithoutILIMap = new HashMap<String, PhraseCount>();
     static HashMap<String, ArrayList<String>> eventMap = new HashMap<String, ArrayList<String>>();
+    static HashMap<String, ArrayList<String>> entityMap = new HashMap<String, ArrayList<String>>();
     static HashMap<String, PhraseCount> esoMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> fnMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> iliMap = new HashMap<String, PhraseCount>();
@@ -42,6 +43,21 @@ public class TrigStats {
         }
         else {
             map.put(key, new PhraseCount(key, nr));
+        }
+    }
+    static void updateMentionMap (String key,  HashMap<String, ArrayList<String>> map, ArrayList<String> mentions) {
+        if (map.containsKey(key)) {
+            ArrayList<String> mMentions = map.get(key);
+            for (int i = 0; i < mentions.size(); i++) {
+                String mention = mentions.get(i);
+                if (!mMentions.contains(mention)) {
+                    mMentions.add(mention);
+                    map.put(key, mMentions);
+                }
+            }
+        }
+        else {
+            map.put(key, mentions);
         }
     }
 
@@ -66,9 +82,39 @@ public class TrigStats {
         }
     }
 
+    static void dumpSortedMap (HashMap<String, ArrayList<String>> mentionMap, HashMap<String, PhraseCount> map, String outputPath) {
+        SortedSet<PhraseCount> treeSet = new TreeSet<PhraseCount>(new PhraseCount.Compare());
+        Set keySet = map.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            PhraseCount cnt = map.get(key);
+            treeSet.add(cnt);
+        }
+        try {
+            OutputStream fos = new FileOutputStream(outputPath);
+            for (PhraseCount pcount : treeSet) {
+                String str = pcount.getPhrase()+"\t"+pcount.getCount();
+                if (mentionMap.containsKey(pcount.getPhrase())) {
+                    ArrayList<String> mentions = mentionMap.get(pcount.getPhrase());
+                    for (int i = 0; i < mentions.size(); i++) {
+                        String mention = mentions.get(i);
+                        str += "\t"+mention;
+                    }
+                }
+                str +="\n";
+                fos.write(str.getBytes());
+            }
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     static void dumpTypeMap (HashMap<String, ArrayList<String>> map, HashMap<String, PhraseCount> mentionMap, String outputPath) {
         try {
-            OutputStream fos = new FileOutputStream(outputPath); Set keySet = map.keySet();
+            OutputStream fos = new FileOutputStream(outputPath);
+            Set keySet = map.keySet();
             Iterator<String> keys = keySet.iterator();
             while (keys.hasNext()) {
                 String key = keys.next();
@@ -111,6 +157,8 @@ public class TrigStats {
             String type = getInstanceType(key);
             if (type.equalsIgnoreCase("dbp") || type.toLowerCase().endsWith(".dbp")) {
                 updateMap(key, m, dbpMap);
+                ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                updateMentionMap(key, entityMap, mentionLabels);
             }
             else if (type.equalsIgnoreCase("en")) {
                 updateMap(key, m, enMap);
@@ -181,7 +229,9 @@ public class TrigStats {
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".nonentities.xls";
         dumpSortedMap(neMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".dbp.xls";
-        dumpSortedMap(dbpMap, outputFile);
+        dumpSortedMap(entityMap, dbpMap, outputFile);
+        //dumpSortedMap(dbpMap, outputFile);
+
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabels.xls";
         dumpSortedMap(eventLabelMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOeso.xls";
