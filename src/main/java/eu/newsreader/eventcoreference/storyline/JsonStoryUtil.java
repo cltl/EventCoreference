@@ -123,7 +123,7 @@ public class JsonStoryUtil {
                                     if (jsonMentions.keys().hasNext()) {
                                         jsonObject.put("mentions", jsonMentions.get("mentions"));
                                     }
-                                    JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples);
+                                    JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples, blacklist);
                                     //JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatementSimple(otherTriples);
                                     if (actors.keys().hasNext()) {
                                         jsonObject.put("actors", actors);
@@ -384,7 +384,7 @@ public class JsonStoryUtil {
                         if (MERGE) {
                             JsonStoryUtil.nMergedEvents = 0;
                             storyObjects = JsonStoryUtil.mergeEvents(storyObjects, timeGran, actionOnt, actionSim);
-                            System.out.println("Nr. of merged events (proportional ontologology match: " + actionSim+", time: "+timeGran+") = " + JsonStoryUtil.nMergedEvents);
+                            //System.out.println("Nr. of merged events (proportional ontologology match: " + actionSim+", time: "+timeGran+") = " + JsonStoryUtil.nMergedEvents);
                         }
                         for (int i = 0; i < storyObjects.size(); i++) {
                             JSONObject object = storyObjects.get(i);
@@ -770,13 +770,15 @@ public class JsonStoryUtil {
             } catch (JSONException e) {
                  e.printStackTrace();
             }
-            oEvent.remove("actors");
-            try {
-               // System.out.println("oActorObject.toString() = " + oActorObject.toString());
-               // System.out.println("nActorObject.toString() = " + nActorObject.toString());
-                oEvent.put("actors", nActorObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (nActorObject.length()>0) {
+                oEvent.remove("actors");
+                try {
+                    // System.out.println("oActorObject.toString() = " + oActorObject.toString());
+                    // System.out.println("nActorObject.toString() = " + nActorObject.toString());
+                    oEvent.put("actors", nActorObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

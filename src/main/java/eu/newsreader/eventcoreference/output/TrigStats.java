@@ -230,8 +230,6 @@ public class TrigStats {
         dumpSortedMap(neMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".dbp.xls";
         dumpSortedMap(entityMap, dbpMap, outputFile);
-        //dumpSortedMap(dbpMap, outputFile);
-
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabels.xls";
         dumpSortedMap(eventLabelMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOeso.xls";

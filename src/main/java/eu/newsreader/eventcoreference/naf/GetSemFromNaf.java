@@ -516,7 +516,20 @@ public class GetSemFromNaf {
         }
     }*/
 
-
+    static String normalizeLemmaString (KafSaxParser kafSaxParser, KafParticipant kafParticipant) {
+          String normalizedLemmaString  = "";
+          for (int i = 0; i < kafParticipant.getSpanIds().size(); i++) {
+              String span = kafParticipant.getSpanIds().get(i);
+              if (kafSaxParser.contentWord(span)) {
+                  KafTerm kafTerm = kafSaxParser.getTerm(span);
+                  normalizedLemmaString +=kafTerm.getLemma()+" ";
+              }
+          }
+          if (normalizedLemmaString.isEmpty()) {
+              normalizedLemmaString = kafParticipant.getTokenString();
+          }
+          return normalizedLemmaString.trim();
+    }
     /**
      * We should only run this function if we know which roles are not already covered by the entities and coreference sets.
      * The Util.addObject is supposed to check that!
@@ -577,7 +590,8 @@ public class GetSemFromNaf {
                     kafParticipant.setTokenStrings(kafSaxParser);
                     if (Util.hasAlphaNumeric(kafParticipant.getTokenString())) {
                         try {
-                            String uri = entityUri + URLEncoder.encode(kafParticipant.getTokenString(), "UTF-8").toLowerCase();
+                            String normalizedString = normalizeLemmaString(kafSaxParser, kafParticipant);
+                            String uri = entityUri + URLEncoder.encode(normalizedString, "UTF-8").toLowerCase();
                             SemActor semActor = new SemActor(SemObject.NONENTITY);
                             semActor.setId(uri);
                             ArrayList<ArrayList<CorefTarget>> srlTargets = new ArrayList<ArrayList<CorefTarget>>();

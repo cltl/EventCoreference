@@ -403,7 +403,8 @@ public class JsonFromRdf {
         return jsonActorsObject;
     }
 
-    static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
+    static JSONObject getActorsJSONObjectFromInstanceStatement (ArrayList<Statement> statements,
+                                                                ArrayList<String> blacklist) throws JSONException {
         ArrayList<String> coveredActors = new ArrayList<String>();
         JSONObject jsonActorsObject = new JSONObject();
         ArrayList<Triple> eventTriples = new ArrayList<Triple>();
@@ -449,19 +450,22 @@ public class JsonFromRdf {
                         /// hack
                         /// skip non entities of single words
                         if (ns.equalsIgnoreCase("ne")) {
-                            if (value.indexOf("+")==-1) {
+                            String label = value;
+                            int idx = value.lastIndexOf("/");
+                            if (idx>-1) {
+                                label = value.substring(idx+1);
+                            }
+                           // System.out.println("label = " + label);
+
+                            if (blacklist.contains(label.toLowerCase())) {
                                 continue;
                             }
-                            else {
-                                ns = "co";
-                            }
+                            ns = "co";
                         }
 
                         if (!ns.isEmpty()) {
                             value = ns + ":" + getValue(value);
                         }
-
-
 
                         value = value.replace("+", "_"); //// just to make it look nicer
                         if (property.equalsIgnoreCase("pb")) {

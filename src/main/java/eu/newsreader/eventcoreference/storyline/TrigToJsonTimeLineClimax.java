@@ -372,7 +372,7 @@ public class TrigToJsonTimeLineClimax {
                         if (jsonMentions.keys().hasNext()) {
                             jsonObject.put("mentions", jsonMentions.get("mentions"));
                         }
-                        JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples);
+                        JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatement(otherTriples, blacklist);
                         //JSONObject actors = JsonFromRdf.getActorsJSONObjectFromInstanceStatementSimple(otherTriples);
                         if (actors.keys().hasNext()) {
                             jsonObject.put("actors", actors);
