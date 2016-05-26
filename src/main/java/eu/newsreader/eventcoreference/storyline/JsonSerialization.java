@@ -318,6 +318,14 @@ public class JsonSerialization {
 
                 for (int j = 0; j < objects.size(); j++) {
                     JSONObject jsonObject = objects.get(j);
+/*
+                    String instance = jsonObject.getString("instance");
+                    if (instance.equalsIgnoreCase("http://www.newsreader-project.eu/data/dasym/426985.naf.topic#ev8")) {
+                        JSONObject actors = (JSONObject) jsonObject.get("actors");
+                        System.out.println("actors = " + actors.toString()  );
+                    }
+*/
+
                     timeLineObject.append("events", jsonObject);
                 }
 
@@ -325,7 +333,6 @@ public class JsonSerialization {
                     JSONObject jsonObject = mentions.get(j);
                     timeLineObject.append("sources", jsonObject);
                 }
-
                 File folder = new File(pathToFolder);
                 OutputStream jsonOut = new FileOutputStream(folder.getAbsolutePath() + "/" + name+ "contextual.timeline.json");
 

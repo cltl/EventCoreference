@@ -134,7 +134,6 @@ public class JsonStoryUtil {
                                         jsonObject.put("topics", topics.get("topics"));
                                     }
                                     jsonObjectArrayList.add(jsonObject);
-
                                 }
                             } catch (NumberFormatException e) {
                                // e.printStackTrace();
@@ -210,8 +209,16 @@ public class JsonStoryUtil {
                 // e.printStackTrace();
             }
             if (hasActorCount) {
-                //  System.out.println("Adding oEvent.toString() = " + oEvent.get("labels").toString());
-                jsonObjectArrayList.add(oEvent);
+                try {
+                    oActorObject = oEvent.getJSONObject("actors");
+                    if (oActorObject.length()>0) {
+                        ///// make sure we have actors left
+                        //  System.out.println("Adding oEvent.toString() = " + oEvent.get("labels").toString());
+                        jsonObjectArrayList.add(oEvent);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
             else {
             }
@@ -719,6 +726,9 @@ public class JsonStoryUtil {
             JSONObject oActorObject = null;
             try {
                 oActorObject = oEvent.getJSONObject("actors");
+                if (oActorObject.length()==0) {
+                    System.out.println("oEvent = " + oEvent.get("instance"));
+                }
                 Iterator oKeys = oActorObject.sortedKeys();
                 while (oKeys.hasNext()) {
                     String oKey = oKeys.next().toString();
@@ -727,6 +737,9 @@ public class JsonStoryUtil {
                         for (int j = 0; j < actors.length(); j++) {
                             String nextActor = actors.getString(j);
                             nextActor = nextActor.substring(nextActor.lastIndexOf("/") + 1);
+                            if (nextActor.isEmpty()) {
+                              //  System.out.println("nextActor = " + nextActor);
+                            }
                             if (!actorNames.contains(nextActor)) {
                                 actorNames.add(nextActor);
                             }
@@ -736,7 +749,7 @@ public class JsonStoryUtil {
                     }
                 }
             } catch (JSONException e) {
-                // e.printStackTrace();
+                 e.printStackTrace();
             }
         }
         return actorNames.size();
@@ -861,7 +874,7 @@ public class JsonStoryUtil {
                                 count(totalTopicCount, topic);
                                 givenTopics.add(topic);
                             } else {
-                                //  System.out.println("topic = " + topic);
+                                System.out.println("blacklist topic = " + topic);
                             }
                         }
                         storyTopicMap.put(groupName, givenTopics);
@@ -873,7 +886,7 @@ public class JsonStoryUtil {
                                 count(totalTopicCount, topic);
                                 givenTopics.add(topic);
                             } else {
-                                //  System.out.println("topic = " + topic);
+                                System.out.println("blacklist topic = " + topic);
                             }
                         }
                         storyTopicMap.put(groupName, givenTopics);
@@ -893,24 +906,38 @@ public class JsonStoryUtil {
             HashMap<String, Integer> topicCount = new HashMap<String, Integer>();
             for (int i = 0; i < topics.size(); i++) {
                 String topic = topics.get(i);
-                count(topicCount, topic);
+                if (!topic.isEmpty()) {
+                    count(topicCount, topic);
+                }
             }
             Set cntSet = topicCount.keySet();
             Iterator<String> cntKeys = cntSet.iterator();
             while (cntKeys.hasNext()) {
                 String topic = cntKeys.next();
-                Integer cnt = topicCount.get(topic);
-                double score = informationValue(totalTopicCount, topic, cnt);
-                if (score>max) {
-                    max = score;
-                    maxTopic = topic;
+                if (!topic.isEmpty()) {
+                    Integer cnt = topicCount.get(topic);
+                    double score = informationValue(totalTopicCount, topic, cnt);
+                    if (score > max) {
+                        max = score;
+                        maxTopic = topic;
+                    }
                 }
             }
-           // System.out.println("maxTopic = " + maxTopic);
-            if (euroVoc.uriLabelMap.containsKey(maxTopic)) {
-                String label = euroVoc.uriLabelMap.get(maxTopic);
-                //System.out.println("label = " + label);
-                renameMap.put(groupName, label);
+            if (!maxTopic.isEmpty()) {
+                // System.out.println("maxTopic = " + maxTopic);
+                if (euroVoc.uriLabelMap.containsKey(maxTopic)) {
+                    String label = euroVoc.uriLabelMap.get(maxTopic);
+                    //System.out.println("label = " + label);
+                    renameMap.put(groupName, label);
+                } else {
+                    //  System.out.println("could not find maxTopic = " + maxTopic);
+                    String label = maxTopic.replace("+", " ");
+                    int idx = label.lastIndexOf("/");
+                    if (idx>-1) {
+                        label = label.substring(idx+1);
+                    }
+                    renameMap.put(groupName, label);
+                }
             }
         }
         HashMap<String, Integer> topicScore = new HashMap<String, Integer>();

@@ -317,11 +317,6 @@ public class TrigToJsonPerspectiveStoriesFT {
             if (euroVoc.uriLabelMap.size()>0) {
                 JsonStoryUtil.renameStories(jsonObjects, euroVoc, euroVocBlackList);
             }
-            nEvents = jsonObjects.size();
-
-            nActors = JsonStoryUtil.countActors(jsonObjects);
-            nMentions = JsonStoryUtil.countMentions(jsonObjects);
-            nStories = JsonStoryUtil.countGroups(jsonObjects);
             ArrayList<JSONObject> rawTextArrayList = new ArrayList<JSONObject>();
             ArrayList<JSONObject> perspectiveEvents = new ArrayList<JSONObject>();
             ArrayList<JSONObject> structuredEvents = new ArrayList<JSONObject>();
@@ -361,6 +356,11 @@ public class TrigToJsonPerspectiveStoriesFT {
                 }
 
             }
+            nEvents = jsonObjects.size();
+
+            nActors = JsonStoryUtil.countActors(jsonObjects);
+            nMentions = JsonStoryUtil.countMentions(jsonObjects);
+            nStories = JsonStoryUtil.countGroups(jsonObjects);
 
             JsonSerialization.writeJsonObjectArrayWithStructuredData(trigfolder, "", project,
                     jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
@@ -379,6 +379,7 @@ public class TrigToJsonPerspectiveStoriesFT {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         System.out.println("story_cnt = " + nStories);
         System.out.println("event_cnt = " + nEvents);
         System.out.println("mention_cnt = "+ nMentions);
@@ -418,6 +419,7 @@ public class TrigToJsonPerspectiveStoriesFT {
             ArrayList<JSONObject> groupEvents = storyMap.get(group);
             int nActors = JsonStoryUtil.countActors(groupEvents);
             int nMentions = JsonStoryUtil.countMentions(groupEvents);
+           // System.out.println("group = " + group);
             JsonSerialization.writeJsonObjectArrayWithStructuredData(trigFolder, group, project,
                     groupEvents, rawTextArrayList, groupEvents.size(), 1, nActors, nMentions, "polls", structuredEvents);
 
