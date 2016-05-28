@@ -30,7 +30,6 @@ public class EsoTreeStaticHtml {
             "\t  margin: auto;\n" +
             "\t\tpadding:0;\n" +
             "\t\tdisplay: table;\n" +
-            "\t\tborder: 1px solid black;\n" +
             "\t\t}\n" +
             "  #row  {\n" +
             "    display: table-row;\n" +
@@ -38,19 +37,34 @@ public class EsoTreeStaticHtml {
             "\t#left {\n" +
             "\t\twidth:150px;\n" +
             "\t\tpadding:1em;\n" +
-            "\t\tbackground: #EEF;\n" +
+            "\t\tbackground:#F3E2A9;\n" +
             "\t\tdisplay: table-cell;\n" +
             "\t\t}\n" +
             "\t#right {\n" +
             "\t\twidth:150px;\n" +
             "\t\tpadding:1em;\n" +
-            "\t\tbackground:#FEE;\n" +
+            "\t\tbackground:#F3E2A9;\n" +
             "    display: table-cell;\n" +
             "\t\t}\n" +
             "\t#cell {\n" +
-            "\t\twidth:15px;\n" +
-            //"\t\tpadding: 1em;\n" +
-            "\t\tbackground:#EEF;\n" +
+
+            "\t\tfont-family: verdana,arial,sans-serif;\n" +
+            "\t    font-size:11px;\n" +
+            "\t    padding:1em;\n" +
+            "\t\twidth:30px;\n" +
+            "\t\tbackground:#F7F2E0;\n" +
+            "\t\tborder: 0.5px solid red;\n" +
+            "\t\t\n" +
+            "\t\t\tpadding: 1em;\n" +
+            "\tbackground: #F7F2E0;\n" +
+            "\tbackground: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ViZWNkYSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQwJSIgc3RvcC1jb2xvcj0iI2UwZTBjNiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjZWNlYjciIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);\n" +
+            "\tbackground: -moz-linear-gradient(top,  #F7F2E0 0%, #F7F2E0 40%, #ceceb7 100%);\n" +
+            "\tbackground: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F7F2E0), color-stop(40%,#F7F2E0), color-stop(100%,#ceceb7));\n" +
+            "\tbackground: -webkit-linear-gradient(top,  #F7F2E0 0%,#F7F2E0 40%,#ceceb7 100%);\n" +
+            "\tbackground: -o-linear-gradient(top,  #F7F2E0 0%,#F7F2E0 40%,#ceceb7 100%);\n" +
+            "\tbackground: -ms-linear-gradient(top,  #F7F2E0 0%,#F7F2E0 40%,#ceceb7 100%);\n" +
+            "\tbackground: linear-gradient(to bottom,  #F7F2E0 0%,#F7F2E0 40%,#ceceb7 100%);\n" +
+            "\tborder: 1px solid #F78181;\n" +
             "    \tdisplay: table-cell;\n" +
             "\t\t}\n" +
             "\t\t\n" +
@@ -64,7 +78,7 @@ public class EsoTreeStaticHtml {
     static public final String bodyStart =
             "            <body> \n" +
             "            \t<div id=\"header\"> \n" +
-            "            \t<p>Brexit</p> \n" +
+            "            \t<p>ESO coverage</p> \n" +
             "            \t</div>";
 
     static public final String bodyEnd = "</body>\n" +  "</html>";

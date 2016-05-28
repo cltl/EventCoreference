@@ -418,7 +418,7 @@ public class JsonStoryUtil {
         } // end of while objects in sorted climaxObjects
 
         //// now we handle the singleton events
-        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
+ /*       storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
         String group = "001:unrelated events";
         String groupName = "unrelated events";
         String groupScore = "001";
@@ -442,7 +442,7 @@ public class JsonStoryUtil {
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
             groupedObjects.add(object);
-        }
+        }*/
         System.out.println("eventCounter = " + eventCounter);
         return groupedObjects;
     }
@@ -1695,9 +1695,10 @@ public class JsonStoryUtil {
                         ArrayList<Statement> perspectiveValues = trigTripleData.tripleMapGrasp.get(object);
                         for (int j = 0; j < perspectiveValues.size(); j++) {
                             Statement statement1 = perspectiveValues.get(j);
+                            //System.out.println("statement1.toString() = " + statement1.toString());
+                           // System.out.println("statement1.getObject().toString() = " + statement1.getObject().toString());
                             //ttp://www.w3.org/ns/prov#wasAttributedTo,
                             if (statement1.getPredicate().getURI().endsWith("#wasAttributedTo")) {
-                                //  System.out.println("statement1.getObject().toString() = " + statement1.getObject().toString());
                                 if (trigTripleData.tripleMapGrasp.containsKey(statement1.getObject().toString())) {
                                     //// this means the source has properties so it is likely to be the document with an author
                                     ArrayList<Statement> provStatements = trigTripleData.tripleMapGrasp.get(statement1.getObject().toString());
@@ -1711,22 +1712,24 @@ public class JsonStoryUtil {
                                         //  System.out.println("author source = " + source);
                                     }
                                 } else {
-                                    //// There can be source documents without meta data.
-                                    //// In that case, there are no triples for in tripleMapGrasp with this subject but it is still a document
-                                    //// The next hack checks for upper case characters in the URI
-                                    //// If they are present, we assume it is somebody otherwise we assume it is a document and we assign it to the meta string
-
                                     //// it is not the document so a cited source
                                     cite = statement1.getObject().toString();
                                     int idx = cite.lastIndexOf("/");
                                     if (idx > -1) {
                                         cite = cite.substring(idx + 1);
                                     }
+/*                                  THIS DOES NOT WORK: PRONOUNS, RECEPTIONIST, ETC...
+                                    //// There can be source documents without meta data.
+                                    //// In that case, there are no triples for in tripleMapGrasp with this subject but it is still a document
+                                    //// The next hack checks for upper case characters in the URI
+                                    //// If they are present, we assume it is somebody otherwise we assume it is a document and we assign it to the meta string
+
                                     if (cite.toLowerCase().equals(cite)) {
                                         //// no uppercase characters
                                         cite = meta;
                                     }
-                                   // System.out.println("quote source = " + cite);
+*/
+                                  //  System.out.println("quote source = " + cite);
 
                                 }
                             } else if (statement1.getPredicate().getURI().endsWith("#value")) {
@@ -1754,7 +1757,7 @@ public class JsonStoryUtil {
 
                                 }
                             } else {
-                                //    System.out.println("statement1.getPredicate().getURI() = " + statement1.getPredicate().getURI());
+                               //     System.out.println("statement1.getPredicate().getURI() = " + statement1.getPredicate().getURI());
                             }
                         }
                     }
@@ -1867,7 +1870,7 @@ public class JsonStoryUtil {
                                     else {
                                         ///citation
                                         perspective.put("source", source);
-                                        //  System.out.println("source = " + source);
+                                       // System.out.println("source = " + source);
                                         mentionObject.append("perspective", perspective);
                                     }
                                 }

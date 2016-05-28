@@ -1,5 +1,6 @@
 package eu.newsreader.eventcoreference.input;
 
+import eu.newsreader.eventcoreference.objects.PhraseCount;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -76,8 +77,10 @@ public class EsoReader extends DefaultHandler {
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next();
-            if (!subToSuper.containsKey(key)) {
-                if (!tops.contains(key)) tops.add(key);
+            if (!key.equals("eso:SituationRuleAssertion")) {
+                if (!subToSuper.containsKey(key)) {
+                    if (!tops.contains(key)) tops.add(key);
+                }
             }
         }
         return tops;
@@ -185,7 +188,47 @@ public class EsoReader extends DefaultHandler {
                 if (eventCounts.containsKey(top)) {
                     cnt = eventCounts.get(top);
                 }
-                for (int j = 0; j < level; j++) {
+                for (int j = 2; j < level; j++) {
+                    str += "<div id=\"cell\"></div>";
+
+                }
+                if (cnt > 0) {
+                    str += "<div id=\"cell\"><p>" + top + ":" + cnt + "</p></div>";
+                } else {
+                    str += "<div id=\"cell\"><p>" + top + "</p></div>";
+
+                    //str += "<div id=\"cell\">" + "</div>";
+                }/*
+                for (int j = level; j < maxDepth; j++) {
+                    str += "<div id=\"cell\"></div>";
+
+                }*/
+                str += "</div>\n";
+                if (superToSub.containsKey(top)) {
+                    ArrayList<String> children = superToSub.get(top);
+                    str += htmlTableTree(ns, children, level, eventCounts, maxDepth);
+                }
+            }
+        }
+        return str;
+    }
+
+    public String  htmlTableTree (String ns, ArrayList<String> tops,
+                                  int level,
+                                  HashMap<String, Integer> eventCounts,
+                                  HashMap<String, ArrayList<PhraseCount>> phrases,
+                                  int maxDepth) {
+        String str = "";
+        level++;
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            if (top.startsWith(ns)) {
+                str += "<div id=\"row\">";
+                Integer cnt = 0;
+                if (eventCounts.containsKey(top)) {
+                    cnt = eventCounts.get(top);
+                }
+                for (int j = 2; j < level; j++) {
                     str += "<div id=\"cell\"></div>";
 
                 }
@@ -196,14 +239,33 @@ public class EsoReader extends DefaultHandler {
 
                     //str += "<div id=\"cell\">" + "</div>";
                 }
+/*
                 for (int j = level; j < maxDepth; j++) {
                     str += "<div id=\"cell\"></div>";
+
+                }
+*/
+                str += "</div>\n";
+                str += "<div id=\"row\">";
+                for (int j = 2; j < level; j++) {
+                    str += "<div id=\"cell\"></div>";
+
+                }
+                System.out.println("top = " + top);
+                if (phrases.containsKey(top)) {
+                    ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                    for (int j = 0; j < phraseCounts.size(); j++) {
+                        PhraseCount phraseCount = phraseCounts.get(j);
+                        System.out.println("phraseCount.toString() = " + phraseCount.toString());
+                    }
+                    System.out.println("phraseCounts.toString() = " + phraseCounts.toString());
+                    str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
 
                 }
                 str += "</div>\n";
                 if (superToSub.containsKey(top)) {
                     ArrayList<String> children = superToSub.get(top);
-                    str += htmlTableTree(ns, children, level, eventCounts, maxDepth);
+                    str += htmlTableTree(ns, children, level, eventCounts, phrases, maxDepth);
                 }
             }
         }
@@ -237,6 +299,38 @@ public class EsoReader extends DefaultHandler {
             }
         }
     }
+
+/*    public void cumulateScores (String ns, ArrayList<String> tops,
+                                  HashMap<String, ArrayList<PhraseCount>> eventCounts ) {
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            if (top.startsWith(ns)) {
+                if (superToSub.containsKey(top)) {
+                    ArrayList<String> children = superToSub.get(top);
+                    cumulateScores(ns, children, eventCounts);
+                    int cCount = 0;
+                    for (int j = 0; j < children.size(); j++) {
+                        String child =  children.get(j);
+                        if (eventCounts.containsKey(child)) {
+                            ArrayList<PhraseCount> phrases = eventCounts.get(child);
+                            for (int k = 0; k < phrases.size(); k++) {
+                                PhraseCount phraseCount = phrases.get(k);
+                                cCount += phraseCount.getCount();
+                            }
+                        }
+                    }
+                    if (eventCounts.containsKey(top)) {
+                        Integer cnt = eventCounts.get(top);
+                        cnt+= cCount;
+                        eventCounts.put(top, cnt);
+                    }
+                    else {
+                        eventCounts.put(top, cCount);
+                    }
+                }
+            }
+        }
+    }*/
 
     public int getMaxDepth (ArrayList<String> tops, int level) {
         int maxDepth = 0;

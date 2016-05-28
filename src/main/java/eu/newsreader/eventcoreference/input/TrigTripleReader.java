@@ -116,6 +116,7 @@ public class TrigTripleReader {
         }
         System.out.println("trigTripleData instances = " + trigTripleData.tripleMapInstances.size());
         System.out.println("trigTripleData others = " + trigTripleData.tripleMapOthers.size());
+        System.out.println("trigTripleData grasp = " + trigTripleData.tripleMapGrasp.size());
         return trigTripleData;
     }
 
