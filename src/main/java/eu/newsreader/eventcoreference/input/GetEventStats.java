@@ -64,7 +64,7 @@ public class GetEventStats {
         if (!esoFile.isEmpty()) {
             System.out.println("esoFile = " + esoFile);
             esoReader.parseFile(esoFile);
-            esoReader.getDescendants(esoEvent, eventTypes);
+            esoReader.simpleTaxonomy.getDescendants(esoEvent, eventTypes);
         }
         System.out.println("eventTypes.toString() = " + eventTypes.toString());
 

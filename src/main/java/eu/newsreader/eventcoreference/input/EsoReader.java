@@ -1,6 +1,6 @@
 package eu.newsreader.eventcoreference.input;
 
-import eu.newsreader.eventcoreference.objects.PhraseCount;
+import eu.newsreader.eventcoreference.output.SimpleTaxonomy;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -14,7 +14,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -25,8 +24,11 @@ public class EsoReader extends DefaultHandler {
     String value = "";
     String subClass = "";
     String superClass = "";
+    public SimpleTaxonomy simpleTaxonomy;
+/*
     public HashMap<String, String> subToSuper = new HashMap<String, String>();
     public HashMap<String, ArrayList<String>> superToSub = new HashMap<String, ArrayList<String>>();
+*/
 
     static public void main (String[] args) {
         String esoPath = "";
@@ -55,11 +57,11 @@ public class EsoReader extends DefaultHandler {
      </Synset>
      */
     public void writeToWnLmFRelation (OutputStream fos) throws IOException {
-        Set keySet = subToSuper.keySet();
+        Set keySet = simpleTaxonomy.subToSuper.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next();
-            String superKey = subToSuper.get(key);
+            String superKey = simpleTaxonomy.subToSuper.get(key);
             String str = "<Synset id=\""+key+"\">\n";
             str += "<SynsetRelation relType=\"has_hyperonym\" target=\""+superKey+"\"/>\n";
             str += "</Synset>\n";
@@ -71,14 +73,14 @@ public class EsoReader extends DefaultHandler {
         init();
     }
 
-    public ArrayList<String> getTops () {
+/*    public ArrayList<String> getTops () {
         ArrayList<String> tops = new ArrayList<String>();
-        Set keySet = superToSub.keySet();
+        Set keySet = simpleTaxonomy.superToSub.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next();
             if (!key.equals("eso:SituationRuleAssertion")) {
-                if (!subToSuper.containsKey(key)) {
+                if (!simpleTaxonomy.subToSuper.containsKey(key)) {
                     if (!tops.contains(key)) tops.add(key);
                 }
             }
@@ -158,7 +160,7 @@ public class EsoReader extends DefaultHandler {
                 System.out.println(str);
             }
         }
-    }
+    }*/
 
 
     /*
@@ -174,7 +176,7 @@ public class EsoReader extends DefaultHandler {
         </div>
     </div>
      */
-    public String  htmlTableTree (String ns, ArrayList<String> tops,
+ /*   public String  htmlTableTree (String ns, ArrayList<String> tops,
                                   int level,
                                   HashMap<String, Integer> eventCounts,
                                   int maxDepth) {
@@ -198,11 +200,11 @@ public class EsoReader extends DefaultHandler {
                     str += "<div id=\"cell\"><p>" + top + "</p></div>";
 
                     //str += "<div id=\"cell\">" + "</div>";
-                }/*
+                }*//*
                 for (int j = level; j < maxDepth; j++) {
                     str += "<div id=\"cell\"></div>";
 
-                }*/
+                }*//*
                 str += "</div>\n";
                 if (superToSub.containsKey(top)) {
                     ArrayList<String> children = superToSub.get(top);
@@ -211,9 +213,9 @@ public class EsoReader extends DefaultHandler {
             }
         }
         return str;
-    }
+    }*/
 
-    public String  htmlTableTree (String ns, ArrayList<String> tops,
+/*    public String  htmlTableTree (String ns, ArrayList<String> tops,
                                   int level,
                                   HashMap<String, Integer> eventCounts,
                                   HashMap<String, ArrayList<PhraseCount>> phrases,
@@ -239,12 +241,12 @@ public class EsoReader extends DefaultHandler {
 
                     //str += "<div id=\"cell\">" + "</div>";
                 }
-/*
+*//*
                 for (int j = level; j < maxDepth; j++) {
                     str += "<div id=\"cell\"></div>";
 
                 }
-*/
+*//*
                 str += "</div>\n";
                 str += "<div id=\"row\">";
                 for (int j = 2; j < level; j++) {
@@ -270,9 +272,9 @@ public class EsoReader extends DefaultHandler {
             }
         }
         return str;
-    }
+    }*/
 
-    public void cumulateScores (String ns, ArrayList<String> tops,
+/*    public void cumulateScores (String ns, ArrayList<String> tops,
                                   HashMap<String, Integer> eventCounts ) {
         for (int i = 0; i < tops.size(); i++) {
             String top = tops.get(i);
@@ -298,7 +300,7 @@ public class EsoReader extends DefaultHandler {
                 }
             }
         }
-    }
+    }*/
 
 /*    public void cumulateScores (String ns, ArrayList<String> tops,
                                   HashMap<String, ArrayList<PhraseCount>> eventCounts ) {
@@ -332,7 +334,7 @@ public class EsoReader extends DefaultHandler {
         }
     }*/
 
-    public int getMaxDepth (ArrayList<String> tops, int level) {
+/*    public int getMaxDepth (ArrayList<String> tops, int level) {
         int maxDepth = 0;
         level++;
         maxDepth = level;
@@ -347,7 +349,7 @@ public class EsoReader extends DefaultHandler {
             }
         }
         return maxDepth;
-    }
+    }*/
 
     /*
     <div class="Table">
@@ -395,8 +397,7 @@ public class EsoReader extends DefaultHandler {
     }//--c
 
     public void init () {
-        subToSuper = new HashMap<String,String>();
-        superToSub = new HashMap<String, ArrayList<String>>();
+        simpleTaxonomy = new SimpleTaxonomy();
     }
 
     /**
@@ -439,18 +440,18 @@ public class EsoReader extends DefaultHandler {
                     if (idx>-1) {
                         superClass = "eso:"+superClass.substring(idx+1);
                     }
-                    subToSuper.put(subClass, superClass);
-                    if (superToSub.containsKey(superClass)) {
-                        ArrayList<String> subs = superToSub.get(superClass);
+                    simpleTaxonomy.subToSuper.put(subClass, superClass);
+                    if (simpleTaxonomy.superToSub.containsKey(superClass)) {
+                        ArrayList<String> subs = simpleTaxonomy.superToSub.get(superClass);
                         if (!subs.contains(subClass)) {
                             subs.add(subClass);
-                            superToSub.put(superClass, subs);
+                            simpleTaxonomy.superToSub.put(superClass, subs);
                         }
                     }
                     else {
                         ArrayList<String> subs = new ArrayList<String>();
                         subs.add(subClass);
-                        superToSub.put(superClass, subs);
+                        simpleTaxonomy.superToSub.put(superClass, subs);
                     }
                 }
             }
@@ -481,18 +482,18 @@ public class EsoReader extends DefaultHandler {
              if (idx>-1) {
                  valueName = "fn:"+value.substring(idx+1);
              }
-            subToSuper.put(valueName, subClass);
-            if (superToSub.containsKey(subClass)) {
-                ArrayList<String> subs = superToSub.get(subClass);
+             simpleTaxonomy.subToSuper.put(valueName, subClass);
+            if (simpleTaxonomy.superToSub.containsKey(subClass)) {
+                ArrayList<String> subs = simpleTaxonomy.superToSub.get(subClass);
                 if (!subs.contains(valueName)) {
                     subs.add(valueName);
-                    superToSub.put(subClass, subs);
+                    simpleTaxonomy.superToSub.put(subClass, subs);
                 }
             }
             else {
                 ArrayList<String> subs = new ArrayList<String>();
                 subs.add(valueName);
-                superToSub.put(subClass, subs);
+                simpleTaxonomy.superToSub.put(subClass, subs);
             }
         }
     }

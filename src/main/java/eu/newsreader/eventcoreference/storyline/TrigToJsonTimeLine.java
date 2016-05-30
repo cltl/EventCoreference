@@ -761,7 +761,7 @@ public class TrigToJsonTimeLine {
                         value = getValue(value);
                         ArrayList<String> parents = new ArrayList<String>();
                         String parentClass = "";
-                        esoReader.getParentChain(value, parents);
+                        esoReader.simpleTaxonomy.getParentChain(value, parents);
                         if (parents.size()==0) {
                             parentClass = value;
                         }

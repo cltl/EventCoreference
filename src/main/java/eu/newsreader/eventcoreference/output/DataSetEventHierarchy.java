@@ -2,7 +2,7 @@ package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.input.EsoReader;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
-import eu.newsreader.eventcoreference.util.EsoTreeStaticHtml;
+import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
 
 import java.io.*;
@@ -32,15 +32,15 @@ public class DataSetEventHierarchy {
         HashMap<String, Integer> cnt = readEventCountTsv(cntPath, "eso");
         HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEventCountTypeTsv (eventPath, "eso");
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
-        ArrayList<String> tops = esoReader.getTops();
-        esoReader.cumulateScores("eso:", tops, cnt);
-        int maxDepth = esoReader.getMaxDepth(tops, 1);
-        String str = EsoTreeStaticHtml.header+EsoTreeStaticHtml.bodyStart;
+        ArrayList<String> tops = esoReader.simpleTaxonomy.getTops();
+        esoReader.simpleTaxonomy.cumulateScores("eso:", tops, cnt);
+        int maxDepth = esoReader.simpleTaxonomy.getMaxDepth(tops, 1);
+        String str = TreeStaticHtml.header+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
         //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
-        str += esoReader.htmlTableTree("eso:",tops, 1, cnt, cntPredicates, maxDepth);
+        str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt, cntPredicates, maxDepth);
         str += "</div>\n";
-        str += EsoTreeStaticHtml.bodyEnd;
+        str += TreeStaticHtml.bodyEnd;
         //System.out.println(str);
         //esoReader.printTree(tops, 0, cnt);
 
@@ -51,11 +51,11 @@ public class DataSetEventHierarchy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        str = EsoTreeStaticHtml.header+EsoTreeStaticHtml.bodyStart;
+        str = TreeStaticHtml.header+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
-        str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
+        str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
         str += "</div>\n";
-        str += EsoTreeStaticHtml.bodyEnd;
+        str += TreeStaticHtml.bodyEnd;
         //System.out.println(str);
         //esoReader.printTree(tops, 0, cnt);
 

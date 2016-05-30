@@ -118,7 +118,7 @@ public class GetEsoCounts {
             fos.close();
 
             fos = new FileOutputStream(trigfolder.getParentFile()+"/"+trigfolder.getName()+".eso-hierarchy.txt");
-            ArrayList<String> topNodes = esoReader.getTops();
+            ArrayList<String> topNodes = esoReader.simpleTaxonomy.getTops();
             printTree(esoReader, topNodes, 0, fos);
             fos.close();
 
@@ -223,8 +223,8 @@ public class GetEsoCounts {
                 str += "  ";
 
             }
-            if (esoReader.superToSub.containsKey(top)) {
-                ArrayList<String> children = esoReader.superToSub.get(top);
+            if (esoReader.simpleTaxonomy.superToSub.containsKey(top)) {
+                ArrayList<String> children = esoReader.simpleTaxonomy.superToSub.get(top);
 
 
                 str += top + ":" + count+"\n";
