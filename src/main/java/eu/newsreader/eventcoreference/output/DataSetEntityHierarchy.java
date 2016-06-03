@@ -20,8 +20,11 @@ public class DataSetEntityHierarchy {
     static public void main (String[] args) {
         String hierarchyPath = "";
         String entityPath = "";
+        String title = "";
         hierarchyPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/counted_types_unsorted.tsv";
         entityPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.dbp.types.tsv";
+        title = "PostNL DBp ontology for entities";
+
         SimpleTaxonomy simpleTaxonomy = new SimpleTaxonomy();
         simpleTaxonomy.readSimpleTaxonomyFromDbpFile(hierarchyPath);
         ArrayList<String> tops = simpleTaxonomy.getTops();
@@ -31,7 +34,7 @@ public class DataSetEntityHierarchy {
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
         simpleTaxonomy.cumulateScores("dbp:", tops, cnt);
         int maxDepth = simpleTaxonomy.getMaxDepth(tops, 1);
-        String str = TreeStaticHtml.header+ TreeStaticHtml.bodyStart;
+        String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
         //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
         str += simpleTaxonomy.htmlTableTree("dbp:",tops, 1, cnt, cntPredicates, maxDepth);
@@ -47,7 +50,7 @@ public class DataSetEntityHierarchy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        str = TreeStaticHtml.header+ TreeStaticHtml.bodyStart;
+        str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
         str += simpleTaxonomy.htmlTableTree("dbp:",tops, 1, cnt, maxDepth);
         str += "</div>\n";

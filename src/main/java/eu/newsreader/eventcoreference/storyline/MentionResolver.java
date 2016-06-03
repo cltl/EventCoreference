@@ -60,7 +60,7 @@ public class MentionResolver {
                 JSONArray mentions = (JSONArray) jsonObject.get("mentions");
                 for (int j = 0; j < mentions.length(); j++) {
                     JSONObject mObject  = mentions.getJSONObject(j);
-                    String uString = mObject.getJSONArray("uri").getString(0);
+                    String uString = mObject.getString("uri");
                     if (!sourceUriList.contains(uString)) {
                         sourceUriList.add(uString);
                     }
@@ -115,7 +115,7 @@ public class MentionResolver {
                 JSONArray mentions = (JSONArray) jsonObject.get("mentions");
                 for (int j = 0; j < mentions.length(); j++) {
                     JSONObject mObject  = mentions.getJSONObject(j);
-                    String uString = mObject.getJSONArray("uri").getString(0);
+                    String uString = mObject.getString("uri");
                     if (!sourceUriList.contains(uString)) {
                         sourceUriList.add(uString);
                     }
@@ -169,7 +169,7 @@ public class MentionResolver {
                 JSONArray mentions = (JSONArray) jsonObject.get("mentions");
                 for (int j = 0; j < mentions.length(); j++) {
                     JSONObject mObject  = mentions.getJSONObject(j);
-                    String uString = mObject.getJSONArray("uri").getString(0);
+                    String uString = mObject.getString("uri");
                     if (!sourceUriList.contains(uString)) {
                         sourceUriList.add(uString);
                     }
@@ -225,7 +225,7 @@ public class MentionResolver {
                 JSONArray mentions = (JSONArray) jsonObject.get("mentions");
                 for (int j = 0; j < mentions.length(); j++) {
                     JSONObject mObject  = mentions.getJSONObject(j);
-                    String uString = mObject.getJSONArray("uri").getString(0);
+                    String uString = mObject.getString("uri");
                     if (!sourceUriList.contains(uString)) {
                         sourceUriList.add(uString);
                     }

@@ -336,8 +336,9 @@ public class ReadFtData {
     static JSONObject createMentionForPoll (String source) {
         JSONObject mObject = new JSONObject();
         try {
-            mObject.append("uri", source);
-            mObject.append("char", "0, 0");
+            mObject.put("uri", source);
+            mObject.append("char", "0");
+            mObject.append("char", "0");
         } catch (JSONException e) {
             e.printStackTrace();
         }

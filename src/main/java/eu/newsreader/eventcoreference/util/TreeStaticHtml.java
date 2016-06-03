@@ -5,13 +5,18 @@ package eu.newsreader.eventcoreference.util;
  */
 public class TreeStaticHtml {
 
-    static public final String header = "\n" +
+    static public final String makeHeader(String title) {
+        String header = header1+title+header2;
+        return header;
+    }
+    static public final String header1 = "\n" +
             "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n" +
             "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
             "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" +
             "<head>\n" +
             "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" +
-            "<title>Taxononmy view</title>\n" +
+            "<title>";
+    static public final String header2 = "</title>\n" +
             "\n" +
             "<style type=\"text/css\">\n" +
             "\n" +

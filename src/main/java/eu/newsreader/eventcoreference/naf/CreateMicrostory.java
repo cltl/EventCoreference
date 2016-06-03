@@ -501,15 +501,11 @@ public class CreateMicrostory {
         Iterator keys = actorObject.sortedKeys();
         while (keys.hasNext()) {
             String key = keys.next().toString(); //role
-          //  System.out.println("key = " + key);
             if (key.toLowerCase().startsWith("pb/")
-
                     || key.toLowerCase().startsWith("fn/")
                     || key.toLowerCase().startsWith("eso/")
                     ) {
                 JSONArray actors = actorObject.getJSONArray(key);
-              //  System.out.println("actors.length() = " + actors.length());
-               // System.out.println("actors.toString() = " + actors.toString());
                 for (int i = 0; i < events.size(); i++) {
                     JSONObject oEvent = events.get(i);
                     if (!oEvent.get("instance").toString().equals(event.get("instance").toString())) {
@@ -533,24 +529,8 @@ public class CreateMicrostory {
                                     }
                                     break;
                                 }
-
-  /*                              if (intersectingDBpActor(actors, oActors)) {
-                                    // System.out.println("oActors.toString() = " + oActors.toString());
-                                    cnt++;
-                                    if (!coPartipantEvents.contains(oEvent)) {
-                                         coPartipantEvents.add(oEvent);
-                                    }
-                                    break;
-                                }*/
                             }
                         }
-/*
-                        if (cnt>=2) {
-                            if (!coPartipantEvents.contains(oEvent)) {
-                                coPartipantEvents.add(oEvent);
-                            }
-                        }
-*/
                     }
                 }
             }

@@ -25,6 +25,7 @@ public class JsonStoryUtil {
 
     static ArrayList<JSONObject> getJSONObjectArray(TrigTripleData trigTripleData,
                                                     boolean ALL,
+                                                    boolean SKIPPERSPECTIVEEVENTS,
                                                     String eventTypes,
                                                     ArrayList<String> blacklist,
                                                     HashMap<String, ArrayList<String>> iliMap,
@@ -48,12 +49,13 @@ public class JsonStoryUtil {
                     if (JsonFromRdf.prefLabelInList(instanceTriples, blacklist)) {
                         continue;
                     }
-                    /// we skip events that are objects of the generatedBy property in the grasp layer
-                    if (JsonFromRdf.mentionInList(instanceTriples, trigTripleData.perspectiveMentions)) {
-                        nSkip++;
-                        continue;
+                    if (SKIPPERSPECTIVEEVENTS) {
+                        /// we skip events that are objects of the generatedBy property in the grasp layer
+                       if (JsonFromRdf.mentionInList(instanceTriples, trigTripleData.perspectiveMentions)) {
+                            nSkip++;
+                            continue;
+                        }
                     }
-
                     if (eventTypes.isEmpty() ||
                             eventTypes.equalsIgnoreCase("N") ||
                             eventTypes.equalsIgnoreCase("any") ||
@@ -378,6 +380,8 @@ public class JsonStoryUtil {
                                     object,
                                     8,
                                     climaxThreshold);
+                            selectedEvents.remove(object); /// no longer available for linking
+                           // System.out.println("selectedEvents = " + selectedEvents.size());
                             coveredEvents.add(eventInstance);
                         }
                         else {
@@ -717,6 +721,40 @@ public class JsonStoryUtil {
             }
         }
         return groups.size();
+    }
+
+
+    public static int countCited(ArrayList<JSONObject> events) {
+        ArrayList<String> citedNames = new ArrayList<String>();
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject oEvent = events.get(i);
+            JSONObject mentions = null;
+            try {
+                mentions = oEvent.getJSONObject("mentions");
+                Iterator oKeys = mentions.sortedKeys();
+                while (oKeys.hasNext()) {
+                    String oKey = oKeys.next().toString();
+                    try {
+                        JSONArray actors = mentions.getJSONArray(oKey);
+                        for (int j = 0; j < actors.length(); j++) {
+                            String nextActor = actors.getString(j);
+                            nextActor = nextActor.substring(nextActor.lastIndexOf("/") + 1);
+                            if (nextActor.isEmpty()) {
+                                //  System.out.println("nextActor = " + nextActor);
+                            }
+                            if (!citedNames.contains(nextActor)) {
+                                citedNames.add(nextActor);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return citedNames.size();
     }
 
     public static int countActors(ArrayList<JSONObject> events) {
@@ -1754,7 +1792,6 @@ public class JsonStoryUtil {
                                       //  System.out.println("myPerspective = " + myPerspective);
                                         perspectives.add(myPerspective);
                                     }
-
                                 }
                             } else {
                                //     System.out.println("statement1.getPredicate().getURI() = " + statement1.getPredicate().getURI());
@@ -1788,9 +1825,9 @@ public class JsonStoryUtil {
                 for (int m = 0; m < mMentions.length(); m++) {
                     try {
                         JSONObject mentionObject = (JSONObject) mMentions.get(m);
-                        JSONArray uriObject = mentionObject.getJSONArray("uri");
+                        String uriString = mentionObject.getString("uri");
                         JSONArray offsetArray = mentionObject.getJSONArray("char");
-                        String mention = JsonStoryUtil.getStringValueforMention(uriObject, offsetArray);
+                        String mention = JsonStoryUtil.getStringValueforMention(uriString, offsetArray);
                         System.out.println("mention = " + mention);
                         if (trigTripleData.tripleMapGrasp.containsKey(mention)) {
                             /// we remove the events from the story line!!!!!
@@ -1823,9 +1860,9 @@ public class JsonStoryUtil {
                 for (int m = 0; m < mMentions.length(); m++) {
                     try {
                         JSONObject mentionObject = (JSONObject) mMentions.get(m);
-                        JSONArray uriObject = mentionObject.getJSONArray("uri");
+                        String uriString = mentionObject.getString("uri");
                         JSONArray offsetArray = mentionObject.getJSONArray("char");
-                        String mention = JsonStoryUtil.getStringValueforMention(uriObject, offsetArray);
+                        String mention = JsonStoryUtil.getStringValueforMention(uriString, offsetArray);
                         PerspectiveJsonObject perspectiveJsonObject = getPerspectiveObjectForEvent(trigTripleData, mention, meta);
 
                         //System.out.println("mention event = " + mention);
@@ -1844,7 +1881,7 @@ public class JsonStoryUtil {
                                             perspective.append("attribution", a);
                                         }*/
                                         perspective.put("attribution", attribution);
-                                        perspective.append("source", author);
+                                        perspective.put("source", author);
                                         //  System.out.println("source = " + source);
                                         mentionObject.append("perspective", perspective);
 
@@ -2036,19 +2073,33 @@ public class JsonStoryUtil {
         return pEvents;
     }
 
-    static public String getURIforMention (JSONArray uriValue, JSONArray charOffset) throws JSONException {
-        String uri = "<"+uriValue.getString(0)+"#char="+charOffset.getString(0)+","+charOffset.getString(1)+">";
+    static public String getURIforMention (String uriValue, JSONArray charOffset) throws JSONException {
+        String uri = "<"+uriValue+"#char="+charOffset.getString(0)+","+charOffset.getString(1)+">";
         //<http://www.ft.com/thing/05fc83c6-1b5c-11e5-8201-cbdb03d71480#char=19,28>
         //{"char":["1699","1706"],"uri":["http://www.ft.com/thing/03de44c8-2f96-11e5-8873-775ba7c2ea3d"]}
         return uri;
     }
     
+    static public String getStringValueforMention (String uriValue, JSONArray charOffset) throws JSONException {
+        String uri = uriValue+"#char="+charOffset.getString(0)+","+charOffset.getString(1);
+        //<http://www.ft.com/thing/05fc83c6-1b5c-11e5-8201-cbdb03d71480#char=19,28>
+        //{"char":["1699","1706"],"uri":["http://www.ft.com/thing/03de44c8-2f96-11e5-8873-775ba7c2ea3d"]}
+        return uri;
+    }
+
+/*    static public String getURIforMention (JSONArray uriValue, JSONArray charOffset) throws JSONException {
+        String uri = "<"+uriValue.getString(0)+"#char="+charOffset.getString(0)+","+charOffset.getString(1)+">";
+        //<http://www.ft.com/thing/05fc83c6-1b5c-11e5-8201-cbdb03d71480#char=19,28>
+        //{"char":["1699","1706"],"uri":["http://www.ft.com/thing/03de44c8-2f96-11e5-8873-775ba7c2ea3d"]}
+        return uri;
+    }
+
     static public String getStringValueforMention (JSONArray uriValue, JSONArray charOffset) throws JSONException {
         String uri = uriValue.getString(0)+"#char="+charOffset.getString(0)+","+charOffset.getString(1);
         //<http://www.ft.com/thing/05fc83c6-1b5c-11e5-8201-cbdb03d71480#char=19,28>
         //{"char":["1699","1706"],"uri":["http://www.ft.com/thing/03de44c8-2f96-11e5-8873-775ba7c2ea3d"]}
         return uri;
-    }
+    }*/
 
     static ArrayList<JSONObject> getPerspectiveEventsFromKS (ArrayList<JSONObject> jsonObjects) throws JSONException {
         ArrayList<JSONObject> pEvents = new ArrayList<JSONObject>();
@@ -2067,9 +2118,9 @@ public class JsonStoryUtil {
                     String source = "";
                     String speechactLabel = "";
                     String targetLabel = "";
-                    JSONArray uriObject = mentionObject.getJSONArray("uri");
+                    String uriString = mentionObject.getString("uri");
                     JSONArray offsetArray = mentionObject.getJSONArray("char");
-                    String mention = getURIforMention(uriObject, offsetArray);
+                    String mention = getURIforMention(uriString, offsetArray);
                     System.out.println("event mention = " + mention);
                     String sparqlQuery = makeTripleQuery(mention);
                     ArrayList<Statement> perspectiveTriples = TrigKSTripleReader.readTriplesFromKs(mention, sparqlQuery);
@@ -2320,16 +2371,6 @@ public class JsonStoryUtil {
 
         climax = "1";
 
-/*        String targetGroupName = targetEvent.getString("groupName");
-        int idx = targetGroupName.lastIndexOf("]");
-        if (idx>-1) {
-            targetGroupName = targetGroupName.substring(0, idx+1);
-        }
-        String storyName = "[p]"+targetGroupName+":"+source;
-        storyName = targetGroupName+":"+source;
-
-        group = targetEvent.getString("groupScore")+":"+storyName;
-        groupName=storyName;*/
         targetEventId = targetEvent.getString("instance");
 
         sourcePerspectiveEvent.put("instance", key);
@@ -2391,17 +2432,6 @@ public class JsonStoryUtil {
         groupScore=targetEvent.getString("groupScore");
 
         climax = "1";
-
-/*        String targetGroupName = targetEvent.getString("groupName");
-        int idx = targetGroupName.lastIndexOf("]");
-        if (idx>-1) {
-            targetGroupName = targetGroupName.substring(0, idx+1);
-        }
-        String storyName = "[p]"+targetGroupName+":"+source;
-        storyName = targetGroupName+":"+source;
-
-        group = targetEvent.getString("groupScore")+":"+storyName;
-        groupName=storyName;*/
 
         sourcePerspectiveEvent.put("climax", climax);
         sourcePerspectiveEvent.put("time", time);

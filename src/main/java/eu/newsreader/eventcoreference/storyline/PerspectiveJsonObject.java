@@ -164,11 +164,11 @@ public class PerspectiveJsonObject {
             object.put("possibility", "likely");
         }
 
-        if (attribution.contains("confirm")) {
-            object.put("belief", "confirm");
+        if (attribution.contains("denial")) {
+            object.put("belief", "deny");
         }
-        else if (attribution.contains("confirm")) {
-            object.put("belief", "denial");
+        else if (attribution.contains("deny")) {
+            object.put("belief", "deny");
         }
         else {
             object.put("belief", "confirm");
@@ -233,11 +233,12 @@ public class PerspectiveJsonObject {
                 normValues.add(normValue);
             }
 
-            if (value.toLowerCase().indexOf("neg")>-1) {
-                normValue= "denial";
+            if (value.toLowerCase().indexOf("_neg")>-1) {
+              //  System.out.println("value = " + value);
+                normValue= "deny";
                 normValues.add(normValue);
             }
-            else if (value.toLowerCase().indexOf("pos")>-1) {
+            else if (value.toLowerCase().indexOf("_pos")>-1) {
                 normValue= "confirm";
                 normValues.add(normValue);
             }
@@ -255,12 +256,17 @@ public class PerspectiveJsonObject {
                 normValue= "unlikely";
                 normValues.add(normValue);
             }
-            else if (value.toLowerCase().indexOf("propable")>-1) {
+            else if (value.toLowerCase().indexOf("probable")>-1) {
                 normValue= "likely";
                 normValues.add(normValue);
             }
         }
-
+        if (normValues.contains("deny")) {
+           // System.out.println("normValues = " + normValues.toString());
+        }
+        else {
+          //  normValues = new ArrayList<String>();
+        }
         return normValues;
     }
 }

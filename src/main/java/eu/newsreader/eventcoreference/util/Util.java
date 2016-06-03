@@ -1210,7 +1210,8 @@ public class Util {
         KafSense domSense = null;
         for (int i = 0; i < kafEntity.getExternalReferences().size(); i++) {
             KafSense kafSense = kafEntity.getExternalReferences().get(i);
-            if (kafSense.getResource().equalsIgnoreCase("DominantEntities")) {
+            if (kafSense.getResource().equalsIgnoreCase("DominantEntities") ||
+                    (kafSense.getSource().equalsIgnoreCase("DominantEntities"))) {
                 domSense =kafSense;
                 break;
             }
@@ -2753,9 +2754,8 @@ public class Util {
                     JSONArray myMentions = jsonObject.getJSONArray("mentions");
                     for (int m = 0; m < myMentions.length(); m++) {
                         JSONObject mentionObject = (JSONObject) myMentions.get(m);
-                        JSONArray uriObject = mentionObject.getJSONArray("uri");
+                        String uri = mentionObject.getString("uri");
                         JSONArray offsetArray = mentionObject.getJSONArray("char");
-                        String uri = uriObject.getString(0);
                         Integer offsetBegin =  null;
                         try {
                             offsetBegin = Integer.parseInt(offsetArray.getString(0));

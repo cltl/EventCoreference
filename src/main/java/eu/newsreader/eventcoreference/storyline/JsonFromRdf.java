@@ -768,14 +768,14 @@ public class JsonFromRdf {
                     String tokens = values[1];
                     String terms = values[2];
                     String sentence = values[3];
-                    mObject.append("uri", uri);
+                    mObject.put("uri", uri);
                     addValuesFromMention(mObject, "char", charOffset);
                     addValuesFromMention(mObject, "tokens", tokens);
                     addValuesFromMention(mObject, "terms", terms);
                     addValuesFromMention(mObject, "sentence", sentence);
                 } else if (values.length == 1) {
                     String charOffset = values[0];
-                    mObject.append("uri", uri);
+                    mObject.put("uri", uri);
                     addValuesFromMention(mObject, "char", charOffset);
                 }
             }

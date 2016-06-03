@@ -22,6 +22,7 @@ public class TrigToJsonPerspectiveStoriesFT {
     static ArrayList<String> blacklist = new ArrayList<String>();
     static String ACTORTYPE = "";
     static boolean ALL = false; /// if true we do not filter events
+    static boolean SKIPPEVENTS = false; /// if true we we exclude perspective events from the stories
     static boolean MERGE = false;
     static String timeGran = "D";
     static String actionOnt = "";
@@ -285,7 +286,7 @@ public class TrigToJsonPerspectiveStoriesFT {
         }
         try {
             ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(trigTripleData,
-                    ALL,EVENTSCHEMA, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
+                    ALL,SKIPPEVENTS, EVENTSCHEMA, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
             System.out.println("Events in SEM-RDF files = " + jsonObjects.size());
             if (blacklist.size()>0) {
                 jsonObjects = JsonStoryUtil.filterEventsForBlackList(jsonObjects, blacklist);
@@ -366,7 +367,7 @@ public class TrigToJsonPerspectiveStoriesFT {
                     jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
 
 
-            splitStories(jsonObjects,rawTextArrayList,structuredEvents,project,trigfolder);
+            //splitStories(jsonObjects,rawTextArrayList,structuredEvents,project,trigfolder);
 
             if (!COMBINE) {
                 if (PERSPECTIVE && perspectiveEvents.size()>0) {

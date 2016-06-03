@@ -21,21 +21,26 @@ public class DataSetEventHierarchy {
         String esoPath = "";
         String cntPath = "";
         String eventPath = "";
+        String title = "";
         esoPath = "/Users/piek/Desktop/NWR/eso/ESO.v2/ESO_V2_Final.owl";
-        //cntPath = "/Users/piek/Desktop/NWR-INC/financialtimes/FT Brexit stats 2/mostFrequentEventESOtypes_results.csv";
-        cntPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.eso.xls";
+
         cntPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.eso.xls";
         eventPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.event.xls";
+        title = "PostNL ESO ontology events";
+
+        cntPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.eso.xls";
+        eventPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.event.xls";
+        title = "Brexit ESO ontology events";
+
         EsoReader esoReader = new EsoReader();
         esoReader.parseFile(esoPath);
-      //  HashMap<String, Integer> cnt = readEventCount(cntPath, "eso");
         HashMap<String, Integer> cnt = readEventCountTsv(cntPath, "eso");
         HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEventCountTypeTsv (eventPath, "eso");
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
         ArrayList<String> tops = esoReader.simpleTaxonomy.getTops();
         esoReader.simpleTaxonomy.cumulateScores("eso:", tops, cnt);
         int maxDepth = esoReader.simpleTaxonomy.getMaxDepth(tops, 1);
-        String str = TreeStaticHtml.header+ TreeStaticHtml.bodyStart;
+        String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
         //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
         str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt, cntPredicates, maxDepth);
@@ -51,7 +56,7 @@ public class DataSetEventHierarchy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        str = TreeStaticHtml.header+ TreeStaticHtml.bodyStart;
+        str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
         str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
         str += "</div>\n";

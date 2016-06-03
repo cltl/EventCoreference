@@ -280,9 +280,9 @@ public class TrigKSTripleReader {
                 for (int m = 0; m < mMentions.length(); m++) {
                     try {
                         JSONObject mentionObject = (JSONObject) mMentions.get(m);
-                        JSONArray uriObject = mentionObject.getJSONArray("uri");
+                        String uriString = mentionObject.getString("uri");
                         JSONArray offsetArray = mentionObject.getJSONArray("char");
-                        String mention = JsonStoryUtil.getURIforMention(uriObject, offsetArray);
+                        String mention = JsonStoryUtil.getURIforMention(uriString, offsetArray);
                         //System.out.println("mention event = " + mention);
                         if (perspectiveMap.containsKey(mention)) {
                             JSONObject perpective = new JSONObject();
