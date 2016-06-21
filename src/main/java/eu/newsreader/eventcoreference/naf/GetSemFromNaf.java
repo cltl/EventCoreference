@@ -1012,6 +1012,24 @@ public class GetSemFromNaf {
                                     timexRelationCount,Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
                             semRelations.add(semRelation);
                             timeAnchor = true;
+                            if (docSemTime!=null) {
+                                if (semAnchorTime.getOwlTime().pastOf(docSemTime.getOwlTime())) {
+/*
+                                    System.out.println("PAST");
+                                    System.out.println("semAnchorTime = " + semAnchorTime.getOwlTime().toString());
+                                    System.out.println("docSemTime = " + docSemTime.getOwlTime().toString());
+*/
+                                     semEvent.addPastFactuality();
+                                }
+                                else {
+/*
+                                    System.out.println("RECENT");
+                                    System.out.println("semAnchorTime = " + semAnchorTime.getOwlTime().toString());
+                                    System.out.println("docSemTime = " + docSemTime.getOwlTime().toString());
+*/
+                                    semEvent.addRecentFactuality();
+                                }
+                            }
                         }
                     }
                 }
@@ -1045,6 +1063,15 @@ public class GetSemFromNaf {
                                         timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
                                 semRelations.add(semRelation);
                                 timeAnchor = true;
+                                if (docSemTime!=null) {
+                                    if (semTime.getOwlTime().pastOf(docSemTime.getOwlTime())) {
+                                        semEvent.addPastFactuality();
+                                    }
+                                    else {
+                                        semEvent.addRecentFactuality();
+                                    }
+                                }
+
                                 //  break;*//*
                             }
                         }
@@ -1064,6 +1091,15 @@ public class GetSemFromNaf {
                                         timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
                                 semRelations.add(semRelation);
                                 timeAnchor = true;
+                                if (docSemTime!=null) {
+                                    if (semTime.getOwlTime().pastOf(docSemTime.getOwlTime())) {
+                                        semEvent.addPastFactuality();
+                                    }
+                                    else {
+                                        semEvent.addRecentFactuality();
+                                    }
+                                }
+
                                 //  break;*//*
                             }
                         }
@@ -1082,6 +1118,15 @@ public class GetSemFromNaf {
                                         timexRelationCount, Sem.hasAtTime.getLocalName(), semEvent.getId(), mention);
                                 semRelations.add(semRelation);
                                 timeAnchor = true;
+                                if (docSemTime!=null) {
+                                    if (semTime.getOwlTime().pastOf(docSemTime.getOwlTime())) {
+                                        semEvent.addPastFactuality();
+                                    }
+                                    else {
+                                        semEvent.addRecentFactuality();
+                                    }
+                                }
+
                                 // break;
                             }
                         }

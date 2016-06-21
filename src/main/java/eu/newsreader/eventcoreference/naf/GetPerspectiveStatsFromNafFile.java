@@ -345,11 +345,12 @@ public class GetPerspectiveStatsFromNafFile {
         ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
                 project,
                 semActors,
+                semEvents,
                 contextualVector,
                 sourceVector,
                 grammaticalVector);
         ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(kafSaxParser,
-                project, sourcePerspectives);
+                project, sourcePerspectives, semEvents);
 
     //    System.out.println("sourcePerspectives.size() = " + sourcePerspectives.size());
     //    System.out.println("documentPerspectives.size() = " + documentPerspectives.size());

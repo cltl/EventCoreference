@@ -666,6 +666,7 @@ public class ClusterEventObjects {
             perspectiveObjects = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
                     project,
                     semActors,
+                    semEvents,
                     contextualVector,
                     sourceVector,
                     grammaticalVector);

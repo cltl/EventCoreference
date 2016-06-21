@@ -155,11 +155,12 @@ public class GetSemFromNafStream {
             ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
                     project,
                     semActors,
+                    semEvents,
                     contextualVector,
                     sourceVector,
                     grammaticalVector);
             ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(
-                    kafSaxParser, project, sourcePerspectives);
+                    kafSaxParser, project, sourcePerspectives, semEvents);
             JenaSerialization.serializeJenaCompositeEventsAndPerspective(System.out, compositeEventArraylist, kafSaxParser, sourcePerspectives, documentPerspectives);
         }
     }

@@ -1,13 +1,10 @@
 package eu.newsreader.eventcoreference.objects;
 
-import eu.kyotoproject.kaf.KafFactuality;
-import eu.kyotoproject.kaf.KafOpinion;
-import eu.kyotoproject.kaf.KafSaxParser;
-import eu.kyotoproject.kaf.KafWordForm;
+import eu.kyotoproject.kaf.*;
+import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * Created by piek on 1/22/14.
@@ -120,14 +117,362 @@ public class NafMention implements Serializable {
         return factualities;
     }
 
+    public KafFactuality getDominantFactuality () {
+        KafFactuality kafFactuality = new KafFactuality();
+        if (factualities.size()==1) {
+            kafFactuality = factualities.get(0);
+        }
+        else {
+            HashMap<String, Integer> cntCertain = new HashMap<String, Integer>();
+            HashMap<String, Integer> cntPolarity = new HashMap<String, Integer>();
+            HashMap<String, Integer> cntTense = new HashMap<String, Integer>();
+            for (int f = 0; f < factualities.size(); f++) {
+                KafFactuality factuality = factualities.get(f);
+                for (int i = 0; i < factuality.getFactValueArrayList().size(); i++) {
+                    KafFactValue factValue = kafFactuality.getFactValueArrayList().get(i);
+                    if (factValue.getResource().equals(KafFactValue.resourceAttributionCertainty)) {
+                        if (cntCertain.containsKey(factValue.getValue())) {
+                            Integer cnt = cntCertain.get(factValue.getValue());
+                            cnt++;
+                            cntCertain.put(factValue.getValue(),cnt);
+                        }
+                        else {
+                            cntCertain.put(factValue.getValue(),1);
+                        }
+                    }
+                    else if (factValue.getResource().equals(KafFactValue.resourceAttributionPolarity)) {
+                        if (cntPolarity.containsKey(factValue.getValue())) {
+                            Integer cnt = cntPolarity.get(factValue.getValue());
+                            cnt++;
+                            cntPolarity.put(factValue.getValue(),cnt);
+                        }
+                        else {
+                            cntPolarity.put(factValue.getValue(),1);
+                        }
+                    }
+                    else if (factValue.getResource().equals(KafFactValue.resourceAttributionTense)) {
+                        if (cntTense.containsKey(factValue.getValue())) {
+                            Integer cnt = cntTense.get(factValue.getValue());
+                            cnt++;
+                            cntTense.put(factValue.getValue(),cnt);
+                        }
+                        else {
+                            cntTense.put(factValue.getValue(),1);
+                        }
+                    }
+                    else if (factValue.getResource().equals(KafFactValue.resourceFactbank)) {
+                        if (factValue.getValue().startsWith("CT")) {
+                            if (cntCertain.containsKey(KafFactValue.CERTAIN)) {
+                                Integer cnt = cntCertain.get(factValue.getValue());
+                                cnt++;
+                                cntCertain.put(KafFactValue.CERTAIN,cnt);
+                            }
+                            else {
+                                cntCertain.put(KafFactValue.CERTAIN,1);
+                            }
+                        }
+                        if (factValue.getValue().endsWith("+")) {
+                            if (cntPolarity.containsKey(KafFactValue.POS)) {
+                                Integer cnt = cntPolarity.get(factValue.getValue());
+                                cnt++;
+                                cntPolarity.put(KafFactValue.POS,cnt);
+                            }
+                            else {
+                                cntPolarity.put(KafFactValue.POS,1);
+                            }
+                        }
+                        else if (factValue.getValue().endsWith("-")) {
+                            if (cntPolarity.containsKey(KafFactValue.NEG)) {
+                                Integer cnt = cntPolarity.get(factValue.getValue());
+                                cnt++;
+                                cntPolarity.put(KafFactValue.NEG,cnt);
+                            }
+                            else {
+                                cntPolarity.put(KafFactValue.NEG,1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            TreeSet sort = new TreeSet();
+            Set keySet = cntCertain.keySet();
+            Iterator<String> keys = keySet.iterator();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                sort.add(cntCertain.get(key));
+            }
+            Integer top = 0;
+            String topValue = "";
+            keys = sort.descendingIterator();
+            while (keys.hasNext()) {
+                String value = keys.next();
+                if (!value.equals("u")) {
+                    Integer cnt = cntCertain.get(value);
+                    if (cnt > top) {
+                        topValue = value;
+                        top = cnt;
+                    }
+                    else if (cnt==top) {
+                        if (value.equals(KafFactValue.UNCERTAIN) && topValue.equals(KafFactValue.CERTAIN)) {
+                            topValue = KafFactValue.UNCERTAIN;
+                        }
+                    }
+                }
+            }
+            if (!topValue.isEmpty()) {
+                KafFactValue kafFactValue = new KafFactValue();
+                kafFactValue.setResource(KafFactValue.resourceAttributionCertainty);
+                kafFactValue.setValue(topValue);
+                kafFactuality.addFactValue(kafFactValue);
+            }
+
+            sort = new TreeSet();
+            keySet = cntPolarity.keySet();
+            keys = keySet.iterator();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                sort.add(cntPolarity.get(key));
+            }
+            top = 0;
+            topValue = "";
+            keys = sort.descendingIterator();
+            while (keys.hasNext()) {
+                String value = keys.next();
+                if (!value.equals("u")) {
+                    Integer cnt = cntPolarity.get(value);
+                    if (cnt > top) {
+                        topValue = value;
+                        top = cnt;
+                    }
+                    else if (cnt==top) {
+                        if (value.equals(KafFactValue.NEG) && topValue.equals(KafFactValue.POS)) {
+                            topValue = KafFactValue.NEG;
+                        }
+                    }
+                }
+            }
+            if (!topValue.isEmpty()) {
+                KafFactValue kafFactValue = new KafFactValue();
+                kafFactValue.setResource(KafFactValue.resourceAttributionPolarity);
+                kafFactValue.setValue(topValue);
+                kafFactuality.addFactValue(kafFactValue);
+            }
+
+            sort = new TreeSet();
+            keySet = cntTense.keySet();
+            keys = keySet.iterator();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                sort.add(cntTense.get(key));
+            }
+            top = 0;
+            topValue = "";
+            keys = sort.descendingIterator();
+            while (keys.hasNext()) {
+                String value = keys.next();
+                if (!value.equals("u")) {
+                    Integer cnt = cntTense.get(value);
+                    if (cnt > top) {
+                        topValue = value;
+                        top = cnt;
+                    }
+                    else if (cnt==top) {
+                        if (value.equals(KafFactValue.RECENT) && topValue.equals(KafFactValue.PAST)) {
+                            topValue = KafFactValue.RECENT;
+                        }
+                    }
+                }
+            }
+            if (!topValue.isEmpty()) {
+                KafFactValue kafFactValue = new KafFactValue();
+                kafFactValue.setResource(KafFactValue.resourceAttributionTense);
+                kafFactValue.setValue(topValue);
+                kafFactuality.addFactValue(kafFactValue);
+            }
+        }
+        return kafFactuality;
+    }
+
+    static public KafFactuality getDominantFactuality (ArrayList<KafFactuality> factualities) {
+        KafFactuality kafFactuality = new KafFactuality();
+        if (factualities.size()==1) {
+            kafFactuality = factualities.get(0);
+        }
+        else {
+            HashMap<String, Integer> cntCertain = new HashMap<String, Integer>();
+            HashMap<String, Integer> cntPolarity = new HashMap<String, Integer>();
+            HashMap<String, Integer> cntTense = new HashMap<String, Integer>();
+            for (int f = 0; f < factualities.size(); f++) {
+                KafFactuality factuality = factualities.get(f);
+                for (int i = 0; i < factuality.getFactValueArrayList().size(); i++) {
+                    KafFactValue factValue = factuality.getFactValueArrayList().get(i);
+                    if (factValue.getResource().equals(KafFactValue.resourceAttributionCertainty)) {
+                        if (cntCertain.containsKey(factValue.getValue())) {
+                            Integer cnt = cntCertain.get(factValue.getValue());
+                            cnt++;
+                            cntCertain.put(factValue.getValue(),cnt);
+                        }
+                        else {
+                            cntCertain.put(factValue.getValue(),1);
+                        }
+                    }
+                    else if (factValue.getResource().equals(KafFactValue.resourceAttributionPolarity)) {
+                        if (cntPolarity.containsKey(factValue.getValue())) {
+                            Integer cnt = cntPolarity.get(factValue.getValue());
+                            cnt++;
+                            cntPolarity.put(factValue.getValue(),cnt);
+                        }
+                        else {
+                            cntPolarity.put(factValue.getValue(),1);
+                        }
+                    }
+                    else if (factValue.getResource().equals(KafFactValue.resourceAttributionTense)) {
+                        if (cntTense.containsKey(factValue.getValue())) {
+                            Integer cnt = cntTense.get(factValue.getValue());
+                            cnt++;
+                            cntTense.put(factValue.getValue(),cnt);
+                        }
+                        else {
+                            cntTense.put(factValue.getValue(),1);
+                        }
+                    }
+                    else if (factValue.getResource().equals(KafFactValue.resourceFactbank)) {
+                        if (factValue.getValue().startsWith("CT")) {
+                            if (cntCertain.containsKey(KafFactValue.CERTAIN)) {
+                                Integer cnt = cntCertain.get(KafFactValue.CERTAIN);
+                                cnt++;
+                                cntCertain.put(KafFactValue.CERTAIN,cnt);
+                            }
+                            else {
+                                cntCertain.put(KafFactValue.CERTAIN,1);
+                            }
+                        }
+                        if (factValue.getValue().endsWith("+")) {
+                            if (cntPolarity.containsKey(KafFactValue.POS)) {
+                                Integer cnt = cntPolarity.get(KafFactValue.POS);
+                                cnt++;
+                                cntPolarity.put(KafFactValue.POS,cnt);
+                            }
+                            else {
+                                cntPolarity.put(KafFactValue.POS,1);
+                            }
+                        }
+                        else if (factValue.getValue().endsWith("-")) {
+                            if (cntPolarity.containsKey(KafFactValue.NEG)) {
+                                Integer cnt = cntPolarity.get(KafFactValue.NEG);
+                                cnt++;
+                                cntPolarity.put(KafFactValue.NEG,cnt);
+                            }
+                            else {
+                                cntPolarity.put(KafFactValue.NEG,1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Map<String, Integer> sortedMap = Util.sortByComparatorDecreasing(cntCertain);
+            Set keySet = sortedMap.keySet();
+            //Util.printMap(sortedMap);
+            Iterator<String> keys = keySet.iterator();
+            Integer top = 0;
+            String topValue = "";
+            while (keys.hasNext()) {
+                String value = keys.next();
+                if (!value.equalsIgnoreCase("u") && !value.equalsIgnoreCase("UNDERSPECIFIED")) {
+                    Integer cnt = sortedMap.get(value);
+                    if (cnt > top) {
+                        topValue = value;
+                        top = cnt;
+                    }
+                    else if (cnt==top) {
+                        if (value.equals(KafFactValue.UNCERTAIN) && topValue.equals(KafFactValue.CERTAIN)) {
+                            topValue = KafFactValue.UNCERTAIN;
+                        }
+                    }
+                }
+            }
+            if (!topValue.isEmpty()) {
+                KafFactValue kafFactValue = new KafFactValue();
+                kafFactValue.setResource(KafFactValue.resourceAttributionCertainty);
+                kafFactValue.setValue(topValue);
+                kafFactuality.addFactValue(kafFactValue);
+            }
+
+            sortedMap = Util.sortByComparatorDecreasing(cntPolarity);
+            keySet = sortedMap.keySet();
+            //Util.printMap(sortedMap);
+            keys = keySet.iterator();
+            top = 0;
+            topValue = "";
+            while (keys.hasNext()) {
+                String value = keys.next();
+                if (!value.equalsIgnoreCase("u") && !value.equalsIgnoreCase("UNDERSPECIFIED")) {
+                    Integer cnt = sortedMap.get(value);
+                    if (cnt > top) {
+                        topValue = value;
+                        top = cnt;
+                    }
+                    else if (cnt==top) {
+                        if (value.equals(KafFactValue.NEG) && topValue.equals(KafFactValue.POS)) {
+                            topValue = KafFactValue.NEG;
+                        }
+                    }
+                }
+            }
+            if (!topValue.isEmpty()) {
+                KafFactValue kafFactValue = new KafFactValue();
+                kafFactValue.setResource(KafFactValue.resourceAttributionPolarity);
+                kafFactValue.setValue(topValue);
+                kafFactuality.addFactValue(kafFactValue);
+            }
+            sortedMap = Util.sortByComparatorDecreasing(cntTense);
+            keySet = sortedMap.keySet();
+            //Util.printMap(sortedMap);
+            keys = keySet.iterator();
+
+            top = 0;
+            topValue = "";
+            while (keys.hasNext()) {
+                String value = keys.next();
+                if (!value.equalsIgnoreCase("u") && !value.equalsIgnoreCase("UNDERSPECIFIED")) {
+                    Integer cnt = sortedMap.get(value);
+                    if (cnt > top) {
+                        topValue = value;
+                        top = cnt;
+                    }
+                    else if (cnt==top) {
+                        if (value.equals(KafFactValue.RECENT) && topValue.equals(KafFactValue.PAST)) {
+                            topValue = KafFactValue.RECENT;
+                        }
+                        else if (value.equals(KafFactValue.RECENT) && topValue.equals(KafFactValue.NON_FUTURE)) {
+                            topValue = KafFactValue.RECENT;
+                        }
+                        else if (value.equals(KafFactValue.PAST) && topValue.equals(KafFactValue.NON_FUTURE)) {
+                            topValue = KafFactValue.RECENT;
+                        }
+                    }
+                }
+            }
+            if (!topValue.isEmpty()) {
+                KafFactValue kafFactValue = new KafFactValue();
+                kafFactValue.setResource(KafFactValue.resourceAttributionTense);
+                kafFactValue.setValue(topValue);
+                kafFactuality.addFactValue(kafFactValue);
+            }
+        }
+        return kafFactuality;
+    }
+
     public void addFactuality(KafSaxParser kafSaxParser) {
         for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
             KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
                 /// in naf.v2 factuality uses tokens as span, in naf.v3 factuality uses terms as spans
             if (!Collections.disjoint(termsIds, kafFactuality.getSpans())) {
                     this.factualities.add(kafFactuality);
-             //   System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
-             //   System.out.println("this.factualities.size() = " + this.factualities.size());
+                //System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
+               // System.out.println("this.factualities.size() = " + this.factualities.size());
             }
         }
     }

@@ -20,6 +20,7 @@ public class TrigToJsonPerspectiveStoriesFT {
     static Dataset dataset = TDBFactory.createDataset();
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static ArrayList<String> blacklist = new ArrayList<String>();
+    static boolean ONESTORY = false;
     static String ACTORTYPE = "";
     static boolean ALL = false; /// if true we do not filter events
     static boolean SKIPPEVENTS = false; /// if true we we exclude perspective events from the stories
@@ -87,6 +88,9 @@ public class TrigToJsonPerspectiveStoriesFT {
             }
             else if (arg.equals("--year") && args.length>(i+1)) {
                 year = args[i+1];
+            }
+            else if (arg.equals("--onestory")) {
+                ONESTORY = true;
             }
             else if (arg.equals("--ft") && args.length>(i+1)) {
                 pathToFtDataFile = args[i+1];
@@ -301,15 +305,20 @@ public class TrigToJsonPerspectiveStoriesFT {
             jsonObjects = JsonStoryUtil.removePerspectiveEvents(trigTripleData, jsonObjects);
             System.out.println("Events after removing perspective events = " + jsonObjects.size());
 */
-
-            jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
-                    topicThreshold,
-                    climaxThreshold,
-                    entityFilter, MERGE,
-                    timeGran,
-                    actionOnt,
-                    actionSim,
-                    interSect);
+            if (ONESTORY) {
+                System.out.println("creating one story...");
+                jsonObjects = JsonStoryUtil.createOneStoryForJSONArrayList(jsonObjects, climaxThreshold, MERGE, timeGran, actionOnt, actionSim);
+            }
+            else {
+                jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
+                        topicThreshold,
+                        climaxThreshold,
+                        entityFilter, MERGE,
+                        timeGran,
+                        actionOnt,
+                        actionSim,
+                        interSect);
+            }
             System.out.println("Events after storyline filter = " + jsonObjects.size());
             //JsonStoryUtil.augmentEventLabelsWithArguments(jsonObjects);
 

@@ -157,11 +157,12 @@ public class GetSemAndPerspectiveFromNafFile {
             ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
                     project,
                     semActors,
+                    semEvents,
                     contextualVector,
                     sourceVector,
                     grammaticalVector);
             ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(
-                    kafSaxParser, project, sourcePerspectives);
+                    kafSaxParser, project, sourcePerspectives, semEvents);
 
             String pathToTrigFile = pathToNafFile + ".sem.perspective.trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);

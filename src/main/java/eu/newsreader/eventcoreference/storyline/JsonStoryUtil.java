@@ -185,23 +185,25 @@ public class JsonStoryUtil {
                         for (int j = 0; j < actors.length(); j++) {
                             String actor = actors.getString(j);
                             actor = actor.substring(actor.lastIndexOf("/") + 1);
-/*                            if (entityFilter.isEmpty() ||
-                                    (actor.toLowerCase().indexOf(entityFilter.toLowerCase())==-1)) {*/
-                            if (actorCount.containsKey(actor)) {
-                                Integer cnt = actorCount.get(actor);
-                                if (cnt >= actorThreshold) {
-                                    hasActorCount = true;
-                                    // System.out.println("actor = " + actor);
-                                    // System.out.println("cnt = " + cnt);
+                            if ((actor.length()>1)) {
+                                if (actorCount.containsKey(actor)) {
+                                    Integer cnt = actorCount.get(actor);
+                                    if (cnt >= actorThreshold) {
+                                        hasActorCount = true;
+                                        // System.out.println("actor = " + actor);
+                                        // System.out.println("cnt = " + cnt);
+                                    } else {
+                                        /// removes actors with too low freqency
+                                        oActorObject.remove(oKey);
+                                    }
                                 } else {
                                     /// removes actors with too low freqency
                                     oActorObject.remove(oKey);
                                 }
-                            } else {
-                                /// removes actors with too low freqency
+                            }
+                            else {
                                 oActorObject.remove(oKey);
                             }
-                        /*    }*/
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -449,6 +451,108 @@ public class JsonStoryUtil {
         }*/
         System.out.println("eventCounter = " + eventCounter);
         return groupedObjects;
+    }
+
+    static ArrayList<JSONObject> createOneStoryForJSONArrayList (ArrayList<JSONObject> jsonObjects,
+                                                                   int climaxThreshold,
+                                                                   boolean MERGE,
+                                                                   String timeGran,
+                                                                   String actionOnt,
+                                                                   int actionSim
+                                                                   )  throws JSONException {
+        boolean DEBUG = false;
+        ArrayList<JSONObject> storyObjects = new ArrayList<JSONObject>(); /// data struture for a story
+
+        /// We build up a climax index over all the events
+        //Vector<Integer> climaxIndex = new Vector<Integer>();
+        //1. We determine the climax score for each individual event
+        // We sum the inverse sentence numbers of all mentions
+        TreeSet climaxObjects = determineClimaxValues(jsonObjects, climaxThreshold);
+        //TreeSet climaxObjects = determineClimaxValuesFirstMentionOnly(jsonObjects);
+        Iterator<JSONObject> sortedObjects = climaxObjects.iterator();
+        System.out.println("Events above climax threshold = " + climaxObjects.size());
+        sortedObjects = climaxObjects.iterator();
+        ArrayList<String> coveredEvents = new ArrayList<String>();
+
+        ///Main event....
+        JSONObject mainEvent = sortedObjects.next();
+        /// create the administrative fields in the JSON structure for a event that define story membership
+        Integer groupClimax = Integer.parseInt(mainEvent.get("climax").toString());
+        String group = "";
+        String labels = "";
+        try {
+            labels = mainEvent.get("labels").toString();
+        } catch (JSONException e) {
+            try {
+                labels = mainEvent.get("prefLabel").toString();
+            } catch (JSONException e1) {
+                // e1.printStackTrace();
+            }
+            //  e.printStackTrace();
+        }
+        group = climaxString(groupClimax) + ":" + labels;
+
+        String groupName = labels;
+        String groupScore = climaxString(groupClimax);
+        String mainActor = getfirstActorByRoleFromEvent(mainEvent, "pb/A1"); /// for representation purposes
+        if (mainActor.isEmpty()) {
+            mainActor = getfirstActorByRoleFromEvent(mainEvent, "pb/A0");
+        }
+        if (mainActor.isEmpty()) {
+            mainActor = getfirstActorByRoleFromEvent(mainEvent, "pb/A2");
+        }
+        group += mainActor;
+        groupName += mainActor;
+        mainEvent.put("group", group);
+        mainEvent.put("groupName", groupName);
+        mainEvent.put("groupScore", groupScore);
+        String instance = mainEvent.getString("instance");
+        coveredEvents.add(instance);
+
+        //// add the climax event to the story ArrayList
+        storyObjects.add(mainEvent);
+        int eventCounter = 0;
+        while (sortedObjects.hasNext()) {
+            JSONObject jsonObject = sortedObjects.next();
+            eventCounter++;
+            instance = jsonObject.getString("instance");
+            if (!coveredEvents.contains(instance)) {
+                coveredEvents.add(instance);
+                //// this event is not yet part of a story and is the next event with climax value
+                //// we use this to create a new story by adding other events with bridging relations into the storyObjects ArrayList
+                try {
+                    addObjectToGroup(
+                            storyObjects,
+                            group,
+                            groupName,
+                            groupScore,
+                            jsonObject,
+                            8,
+                            climaxThreshold);
+
+
+                } catch (JSONException e) {
+                     e.printStackTrace();
+                }
+            }
+            else {
+            //    System.out.println("duplicate instance = " + instance);
+            }
+            //  break;
+
+        } // end of while objects in sorted climaxObjects
+
+
+
+
+        if (MERGE) {
+            JsonStoryUtil.nMergedEvents = 0;
+            storyObjects = JsonStoryUtil.mergeEvents(storyObjects, timeGran, actionOnt, actionSim);
+            //System.out.println("Nr. of merged events (proportional ontologology match: " + actionSim+", time: "+timeGran+") = " + JsonStoryUtil.nMergedEvents);
+        }
+
+        System.out.println("eventCounter = " + eventCounter);
+        return storyObjects;
     }
 
 

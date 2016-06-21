@@ -281,6 +281,116 @@ doc-uri
          */
 
         if ((targetEventMentions.size()>0)) {
+            Resource factualityValue = null;
+            ArrayList<KafFactuality> allFactualities = new ArrayList<KafFactuality>();
+            for (int i = 0; i < targetEventMentions.size(); i++) {
+                NafMention mention = targetEventMentions.get(i);
+                for (int j = 0; j < mention.getFactuality().size(); j++) {
+                    KafFactuality kafFactuality = mention.getFactuality().get(j);
+                    allFactualities.add(kafFactuality);
+                }
+            }
+            KafFactuality kafFactuality = NafMention.getDominantFactuality(allFactualities);
+
+            if (allFactualities.size() == 0) {
+                //// default perspective
+                factualityValue = model.createResource(ResourcesUri.grasp+KafFactuality.defaultAttribution);
+            }
+            else {
+                factualityValue = model.createResource(ResourcesUri.grasp+kafFactuality.getPrediction());
+            }
+
+            for (int i = 0; i < targetEventMentions.size(); i++) {
+                NafMention mention = targetEventMentions.get(i);
+                /// the mention of the target event is the subject
+                Resource mentionSubject = model.createResource(mention.toString());
+                mentionSubject.addProperty(RDFS.label, model.createLiteral(mention.getSentenceText()));
+
+                Resource targetResource = null;
+                if (sourceEntity.getURI().isEmpty()) {
+                    String uri = "";
+                    try {
+                        uri = URLEncoder.encode(source.getTokenString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        //  e.printStackTrace();
+                    }
+                    if (!uri.isEmpty()) {
+                        //targetResource = ds.getDefaultModel().createResource(uri);
+                        targetResource = model.createResource(uri);
+                    }
+                }
+                else {
+                   // targetResource = ds.getDefaultModel().createResource(sourceEntity.getURI());
+                    targetResource = model.createResource(sourceEntity.getURI());
+                }
+                if (targetResource!=null) {
+                    Resource attributionSubject = model.createResource(attrId);
+                    Property property = model.createProperty(ResourcesUri.grasp,"hasAttribution" );
+                    mentionSubject.addProperty(property, attributionSubject);
+                    if (!cueMention.toString().isEmpty()) {
+                        property = model.createProperty(ResourcesUri.grasp, "generatedBy");
+                        //Resource object = ds.getDefaultModel().createResource(this.cueMention.toString());
+                        Resource object = model.createResource(this.cueMention.toString());
+                        mentionSubject.addProperty(property, object);
+                        mentionSubject.addProperty(RDFS.comment, model.createLiteral(cueMention.getSentenceText()));
+                    }
+                    property = model.createProperty(ns, "wasAttributedTo");
+                    attributionSubject.addProperty(property, targetResource);
+                    if (factualityValue!=null)  {
+                        property = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
+                        //  System.out.println("kafFactuality = " + kafFactuality.getPrediction());
+                        attributionSubject.addProperty(property, factualityValue);
+
+                    }
+
+                    if (mention.getOpinions().size()>0) {
+                        for (int j = 0; j < mention.getOpinions().size(); j++) {
+                            KafOpinion kafOpinion = mention.getOpinions().get(j);
+                            property = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
+                            String sentiment = kafOpinion.getOpinionSentiment().getPolarity();
+                            if (sentiment.equals("+")) {
+                                sentiment = "positive";
+                            }
+                            else if (sentiment.equals("-")) {
+                                sentiment ="negative";
+                            }
+                            Resource sentimentValue = model.createResource(ResourcesUri.grasp+sentiment);
+                            //System.out.println("sentiment = " + sentiment);
+                            attributionSubject.addProperty(property, sentimentValue); /// creates the literal as value
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void addToJenaDataSetOrg (Model model, String ns, String attrId) {
+        /*
+        mentionId2      hasAttribution         attributionId1
+                        gaf:generatedBy        mentionId3
+        attributionId1  rdf:value              CERTAIN_POS_FUTURE
+                        rdf:value              POSITIVE
+                        prov:wasAttributedTo   doc-uri
+                        gaf:wasAttributedTo    dbp:Zetsche
+
+         */
+        /*
+http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=254,261
+	gafAttribution:CERTAIN,NON_FUTURE
+		http://dbpedia.org/resource/Caesars_Entertainment_Corporation ;
+		gaf:generatedBy http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=201,209.
+
+
+http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=201,209
+			gafAttribution:CERTAIN,NON_FUTURE
+				doc-uri;
+
+doc-uri
+	prov:wasAttributedTo author;
+	prov:wasAttributedTo journal.
+         */
+
+        if ((targetEventMentions.size()>0)) {
 
          //   Model model = ds.getDefaultModel();
             for (int i = 0; i < targetEventMentions.size(); i++) {
@@ -327,12 +437,20 @@ doc-uri
                         attributionSubject.addProperty(property, factualityValue);
                     }
                     else {
+                        KafFactuality kafFactuality = mention.getDominantFactuality();
+                        property = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
+                        Resource factualityValue = model.createResource(ResourcesUri.grasp+kafFactuality.getPrediction());
+                        //  System.out.println("kafFactuality = " + kafFactuality.getPrediction());
+                        attributionSubject.addProperty(property, factualityValue);
+/*
                         for (int j = 0; j < mention.getFactuality().size(); j++) {
                             KafFactuality kafFactuality = mention.getFactuality().get(j);
                             property = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
                             Resource factualityValue = model.createResource(ResourcesUri.grasp+kafFactuality.getPrediction());
+                          //  System.out.println("kafFactuality = " + kafFactuality.getPrediction());
                             attributionSubject.addProperty(property, factualityValue);
                         }
+*/
                     }
                     if (mention.getOpinions().size()>0) {
                         for (int j = 0; j < mention.getOpinions().size(); j++) {

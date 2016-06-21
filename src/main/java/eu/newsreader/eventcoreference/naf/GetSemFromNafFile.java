@@ -63,10 +63,15 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.v6/45/45_1ecb.xml.naf.fix.xml.newpred.coref";
         pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/100095.naf";
         pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/118719.naf";
+        pathToNafFile = "/Users/piek/Desktop/NWR-INC/financialtimes/data/brexit6.naf/0a22a1be-f246-11e3-ac7a-00144feabdc0.naf";
         //pathToNafFile = "/Users/piek/Desktop/ISO-WG5/more-than-two_sentences.out.naf.xml";
-        String sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
+        String sourceFrameFile = "";
+        sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
+        sourceFrameFile = "/Code/vu/newsreader/vua-resources/source.txt";
         String contextualFrameFile = "";
-        String grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical-nl.txt";
+        String grammaticalFrameFile = "";
+        grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical-nl.txt";
+        grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical.txt";
         String project = "";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -226,11 +231,12 @@ public class GetSemFromNafFile {
                 ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
                         project,
                         semActors,
+                        semEvents,
                         contextualVector,
                         sourceVector,
                         grammaticalVector);
                 ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(
-                        kafSaxParser, project, sourcePerspectives);
+                        kafSaxParser, project, sourcePerspectives, semEvents);
                 JenaSerialization.serializeJenaCompositeEventsAndPerspective(fos, compositeEventArraylist, kafSaxParser, sourcePerspectives, documentPerspectives);
             }
             fos.close();

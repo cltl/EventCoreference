@@ -139,14 +139,90 @@ public class SemObject implements Serializable {
         return termIds;
     }
 
+
     public void addFactuality(KafSaxParser kafSaxParser) {
-        for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
-            KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
-            for (int j = 0; j < nafMentions.size(); j++) {
-                NafMention nafMention = nafMentions.get(j);
-                nafMention.addFactuality(kafSaxParser);
+        for (int j = 0; j < nafMentions.size(); j++) {
+            NafMention nafMention = nafMentions.get(j);
+            nafMention.addFactuality(kafSaxParser);
+            nafMention.addOpinion(kafSaxParser);
+        }
+    }
+
+    public void addPastFactuality() {
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            if (nafMention.getFactuality().size()==0) {
+                KafFactuality kafFactuality = new KafFactuality();
+                KafFactValue kafFactValue = new KafFactValue();
+                kafFactValue.setResource(KafFactValue.resourceAttributionTense);
+                kafFactValue.setValue(KafFactValue.PAST);
+                kafFactuality.addFactValue(kafFactValue);
+                nafMention.getFactuality().add(kafFactuality);
+
+            }
+            else {
+                for (int j = 0; j < nafMention.getFactuality().size(); j++) {
+                    KafFactuality kafFactuality = nafMention.getFactuality().get(j);
+                    boolean SET = false;
+                    for (int k = 0; k < kafFactuality.getFactValueArrayList().size(); k++) {
+                        KafFactValue kafFactValue = kafFactuality.getFactValueArrayList().get(k);
+                        if (kafFactValue.getResource().equals(KafFactValue.resourceAttributionTense)) {
+                            kafFactValue.setValue(KafFactValue.PAST);
+                            SET = true;
+                        }
+                    }
+                    if (!SET) {
+                        KafFactValue kafFactValue = new KafFactValue();
+                        kafFactValue.setResource(KafFactValue.resourceAttributionTense);
+                        kafFactValue.setValue(KafFactValue.PAST);
+                        kafFactuality.addFactValue(kafFactValue);
+                    }
+                }
+            }
+            /*for (int j = 0; j < nafMention.getFactuality().size(); j++) {
+                KafFactuality kafFactuality = nafMention.getFactuality().get(j);
+                System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
+            }*/
+        }
+
+    }
+
+    public void addRecentFactuality() {
+        for (int i = 0; i < nafMentions.size(); i++) {
+            NafMention nafMention = nafMentions.get(i);
+            if (nafMention.getFactuality().size()==0) {
+                KafFactuality kafFactuality = new KafFactuality();
+                KafFactValue kafFactValue = new KafFactValue();
+                kafFactValue.setResource(KafFactValue.resourceAttributionTense);
+                kafFactValue.setValue(KafFactValue.RECENT);
+                kafFactuality.addFactValue(kafFactValue);
+                nafMention.getFactuality().add(kafFactuality);
+
+            }
+            else {
+                for (int j = 0; j < nafMention.getFactuality().size(); j++) {
+                    KafFactuality kafFactuality = nafMention.getFactuality().get(j);
+                //    System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
+                    boolean SET = false;
+                    for (int k = 0; k < kafFactuality.getFactValueArrayList().size(); k++) {
+                        KafFactValue kafFactValue = kafFactuality.getFactValueArrayList().get(k);
+                        if (kafFactValue.getResource().equals(KafFactValue.resourceAttributionTense)) {
+                            /// we overwrite any other tense value!!!!!
+                            kafFactValue.setValue(KafFactValue.RECENT);
+                            SET = true;
+                        }
+                    }
+                    if (!SET) {
+                        KafFactValue kafFactValue = new KafFactValue();
+                        kafFactValue.setResource(KafFactValue.resourceAttributionTense);
+                        kafFactValue.setValue(KafFactValue.RECENT);
+                        kafFactuality.addFactValue(kafFactValue);
+                    }
+                 //   System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
+                }
             }
         }
+
     }
 
     public void setConcepts(ArrayList<KafSense> concepts) {

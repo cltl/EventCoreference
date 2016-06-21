@@ -115,6 +115,27 @@ public class OwlTime implements Serializable {
         this.instance = instance;
     }
 
+    public boolean pastOf(OwlTime otherTime)  {
+        try {
+            if (Integer.parseInt(this.year)<Integer.parseInt(otherTime.year)) {
+                return true;
+            }
+            else if (Integer.parseInt(this.year)==Integer.parseInt(otherTime.year)) {
+                if (Integer.parseInt(this.month)<Integer.parseInt(otherTime.month)) {
+                    return true;
+                }
+                else if (Integer.parseInt(this.month)==Integer.parseInt(otherTime.month)) {
+                    if ((Integer.parseInt(this.day)+5)<Integer.parseInt(otherTime.day)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+           // e.printStackTrace();
+        }
+        return false;
+    }
+
     public String separateWords (String date) {
         String str = date;
         String [] fields = date.split(" ");

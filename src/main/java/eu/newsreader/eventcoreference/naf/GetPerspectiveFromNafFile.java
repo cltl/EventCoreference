@@ -105,6 +105,7 @@ public class GetPerspectiveFromNafFile {
 
     static public void getPerspectiveFromFile (String pathToNafFile, String project) throws IOException {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
+        ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         KafSaxParser kafSaxParser = new KafSaxParser();
         if (!pathToNafFile.toLowerCase().endsWith(".gz")) {
             kafSaxParser.parseFile(pathToNafFile);
@@ -127,17 +128,19 @@ public class GetPerspectiveFromNafFile {
             baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
         }
 
+        GetSemFromNaf.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
         GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         GetSemFromNaf.processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
 
         ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
                 project,
                 semActors,
+                semEvents,
                 contextualVector,
                 sourceVector,
                 grammaticalVector);
         ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(kafSaxParser,
-                project, sourcePerspectives);
+                project, sourcePerspectives, semEvents);
         String perspectiveFilePath = pathToNafFile + ".perspective.trig";
         GetPerspectiveRelations.perspectiveRelationsToTrig(perspectiveFilePath, kafSaxParser, sourcePerspectives, documentPerspectives);
     }

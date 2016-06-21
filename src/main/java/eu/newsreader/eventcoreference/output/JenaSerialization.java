@@ -165,10 +165,10 @@ public class JenaSerialization {
     }
 
     static public void addJenaPerspectiveObjects(String attrBase, String namespace,
-                                            ArrayList<PerspectiveObject> perspectiveObjects) {
+                                            ArrayList<PerspectiveObject> perspectiveObjects, int cnt) {
         for (int i = 0; i < perspectiveObjects.size(); i++) {
             PerspectiveObject perspectiveObject = perspectiveObjects.get(i);
-            String attrId = attrBase+"Attr"+i;
+            String attrId = attrBase+"Attr"+cnt+i;
             perspectiveObject.addToJenaDataSet(graspModel, namespace, attrId);
         }
     }
@@ -383,9 +383,9 @@ public class JenaSerialization {
             addJenaCompositeEvents(semEvents, null, false, false);
             addDocMetaData(kafSaxParser);
             String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
-            addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, sourcePerspectiveObjects);
+            addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, sourcePerspectiveObjects, 1);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
-            addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, authorPerspectiveObjects);
+            addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
         try {
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
         } catch (Exception e) {

@@ -244,15 +244,44 @@ public class PerspectiveJsonObject {
             }
 
             if (value.toLowerCase().indexOf("non_future")>-1) {
-                normValue= "now";
+                normValue= "non_future";
                 normValues.add(normValue);
             }
             else if (value.toLowerCase().indexOf("future")>-1) {
                 normValue= "future";
                 normValues.add(normValue);
             }
+            else if (value.toLowerCase().indexOf("past")>-1) {
+                normValue= "past";
+                normValues.add(normValue);
+            }
+            else if (value.toLowerCase().indexOf("recent")>-1) {
+                normValue= "now";
+                normValues.add(normValue);
+            }
+
+            /*if (value.toLowerCase().indexOf("improbable")>-1) {
+                normValue= "uncertain";
+                normValues.add(normValue);
+            }
+            else if (value.toLowerCase().indexOf("possible")>-1) {
+                normValue= "uncertain";
+                normValues.add(normValue);
+            }
+            else if (value.toLowerCase().indexOf("probable")>-1) {
+                normValue= "certain";
+                normValues.add(normValue);
+            }*/
 
             if (value.toLowerCase().indexOf("improbable")>-1) {
+                normValue= "unlikely";
+                normValues.add(normValue);
+            }
+            else if (value.toLowerCase().indexOf("impossible")>-1) {
+                normValue= "unlikely";
+                normValues.add(normValue);
+            }
+            else if (value.toLowerCase().indexOf("possible")>-1) {
                 normValue= "unlikely";
                 normValues.add(normValue);
             }
@@ -269,4 +298,25 @@ public class PerspectiveJsonObject {
         }
         return normValues;
     }
+
+    /**
+     * 118189       <factVal resource="factbank" value="CT+"/>
+     4354       <factVal resource="factbank" value="CT-"/>
+     1791       <factVal resource="factbank" value="PR+"/>
+     51       <factVal resource="factbank" value="PR-"/>
+     1932       <factVal resource="factbank" value="PS+"/>
+     37       <factVal resource="factbank" value="PS-"/>
+     23409       <factVal resource="factbank" value="Uu"/>
+     122543       <factVal resource="nwr:attributionCertainty" value="CERTAIN"/>
+     941       <factVal resource="nwr:attributionCertainty" value="POSSIBLE"/>
+     1838       <factVal resource="nwr:attributionCertainty" value="PROBABLE"/>
+     1551       <factVal resource="nwr:attributionCertainty" value="UNCERTAIN"/>
+     22890       <factVal resource="nwr:attributionCertainty" value="UNDERSPECIFIED"/>
+     5831       <factVal resource="nwr:attributionPolarity" value="NEG"/>
+     120977       <factVal resource="nwr:attributionPolarity" value="POS"/>
+     22955       <factVal resource="nwr:attributionPolarity" value="UNDERSPECIFIED"/>
+     11947       <factVal resource="nwr:attributionTense" value="FUTURE"/>
+     62878       <factVal resource="nwr:attributionTense" value="NON_FUTURE"/>
+     74938       <factVal resource="nwr:attributionTense" value="UNDERSPECIFIED"/>
+     */
 }

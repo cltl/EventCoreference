@@ -387,6 +387,7 @@ public class NoClusterEventObjects {
             perspectiveObjects = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
                     project,
                     semActors,
+                    semEvents,
                     contextualVector,
                     sourceVector,
                     grammaticalVector);

@@ -4,10 +4,7 @@ import eu.newsreader.eventcoreference.objects.PhraseCount;
 import org.apache.tools.bzip2.CBZip2InputStream;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -67,30 +64,44 @@ public class SimpleTaxonomy {
 Agent	Family	Family	99
 Agent	Organisation	Broadcaster	BroadcastNetwork	1
 Agent	Organisation	Broadcaster	Broadcaster	15
+
+www.w3.org/2002/07/owl#Thing	Agent	Person	Monarch
+www.w3.org/2002/07/owl#Thing	Agent	Person	MovieDirector
+www.w3.org/2002/07/owl#Thing	Agent	Person	Noble
+www.w3.org/2002/07/owl#Thing	Agent	Person	OfficeHolder
+www.w3.org/2002/07/owl#Thing	Agent	Person	OrganisationMember	SportsTeamMember
+www.w3.org/2002/07/owl#Thing	Agent	Person	Orphan
+www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
      */
                         String[] fields = inputLine.split("\t");
-                        if (fields.length > 2) {
-                            for (int i = 0; i < fields.length-2; i++) {
+                        if (fields.length > 1) {
+                            for (int i = 0; i < fields.length-1; i++) {
                                 String subClass = "dbp:"+fields[i+1];
-                                String superClass = "dbp:"+fields[i];
-                                //System.out.println("subClass = " + subClass);
-                                //System.out.println("superClass = " + superClass);
-                                if (!subClass.equals(superClass)) {
-                                    subToSuper.put(subClass, superClass);
-                                    if (superToSub.containsKey(superClass)) {
-                                        ArrayList<String> subs = superToSub.get(superClass);
-                                        if (!subs.contains(subClass)) {
+                                Integer cnt = -1;
+                                try {
+                                    cnt = Integer.parseInt(subClass);
+                                } catch (NumberFormatException e) {
+                                   // e.printStackTrace();
+                                    //So only if fields[i+1] is not a count!
+                                    String superClass = "dbp:"+fields[i];
+                                    //System.out.println("subClass = " + subClass);
+                                    //System.out.println("superClass = " + superClass);
+                                    if (!subClass.equals(superClass)) {
+                                        subToSuper.put(subClass, superClass);
+                                        if (superToSub.containsKey(superClass)) {
+                                            ArrayList<String> subs = superToSub.get(superClass);
+                                            if (!subs.contains(subClass)) {
+                                                subs.add(subClass);
+                                                superToSub.put(superClass, subs);
+                                            }
+                                        }
+                                        else {
+                                            ArrayList<String> subs = new ArrayList<String>();
                                             subs.add(subClass);
                                             superToSub.put(superClass, subs);
                                         }
                                     }
-                                    else {
-                                        ArrayList<String> subs = new ArrayList<String>();
-                                        subs.add(subClass);
-                                        superToSub.put(superClass, subs);
-                                    }
                                 }
-
                             }
                         }
 
@@ -143,19 +154,25 @@ Agent	Organisation	Broadcaster	Broadcaster	15
 
     public String getMostSpecificChild (ArrayList<String> types) {
         String child = "";
-        ArrayList<String> parents = new ArrayList<String>();
-        for (int i = 0; i < types.size(); i++) {
-            String t = types.get(i);
-            if (subToSuper.containsKey(t)) {
-                for (int j = i; j < types.size(); j++) {
-                    String t2 =  types.get(j);
-                    if (subToSuper.get(t).equals(t2)) {
-                        parents.add(t2);
-                        if (!parents.contains(t)) {
-                            child = t;
+        if (types.size()==1) {
+            child = types.get(0);
+        }
+        else {
+            ArrayList<String> parents = new ArrayList<String>();
+            for (int i = 0; i < types.size(); i++) {
+                String t = types.get(i);
+                if (subToSuper.containsKey(t)) {
+                    for (int j = 0; j < types.size(); j++) {
+                        if (j!=i) {
+                            String t2 = types.get(j);
+                            if (subToSuper.get(t).equals(t2)) {
+                                parents.add(t2);
+                                if (!parents.contains(t)) {
+                                    child = t;
+                                }
+                            }
                         }
                     }
-
                 }
             }
         }
@@ -227,54 +244,119 @@ Agent	Organisation	Broadcaster	Broadcaster	15
      */
     public String  htmlTableTree (String ns, ArrayList<String> tops,
                                   int level,
-                                  HashMap<String, Integer> eventCounts,
-                                  int maxDepth) {
+                                  HashMap<String, Integer> eventCounts ) {
         String str = "";
         level++;
         for (int i = 0; i < tops.size(); i++) {
             String top = tops.get(i);
             if (top.startsWith(ns)) {
-                str += "<div id=\"row\">";
                 Integer cnt = 0;
                 if (eventCounts.containsKey(top)) {
                     cnt = eventCounts.get(top);
                 }
-                for (int j = 2; j < level; j++) {
-                    str += "<div id=\"cell\"></div>";
+                if (cnt>0) {
+                    str += "<div id=\"row\">";
 
-                }
-                String ref = top;
-                if (top.startsWith("http")) {
-                    int idx = top.lastIndexOf("/");
-                    String name = top;
-                    if (idx>-1) {
-                        name = top.substring(idx+1);
-                    }
-                    ref = "<a href=\""+top+"\">"+name+"</a>";
-                }
-                else if (top.startsWith("dbp:")) {
-                    int idx = top.lastIndexOf(":");
-                    String name = top;
-                    if (idx>-1) {
-                        name = top.substring(idx+1);
-                    }
-                    ref = "<a href=\"http://dbpedia.org/ontology/"+name+"\">"+name+"</a>";
-                }
-                if (cnt > 0) {
-                    str += "<div id=\"cell\"><p>" + ref + ":" + cnt + "</p></div>";
-                } else {
-                    str += "<div id=\"cell\"><p>" + ref + "</p></div>";
+                    for (int j = 2; j < level; j++) {
+                        str += "<div id=\"cell\"></div>";
 
-                    //str += "<div id=\"cell\">" + "</div>";
-                }/*
+                    }
+                    String ref = top;
+                    if (top.startsWith("http")) {
+                        int idx = top.lastIndexOf("/");
+                        String name = top;
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
+                        }
+                        ref = "<a href=\"" + top + "\">" + name + "</a>";
+                    } else if (top.startsWith("dbp:")) {
+                        int idx = top.lastIndexOf(":");
+                        String name = top;
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
+                        }
+                        ref = "<a href=\"http://dbpedia.org/ontology/" + name + "\">" + name + "</a>";
+                    }
+
+
+                    if (cnt > 0) {
+                        str += "<div id=\"cell\"><p>" + ref + ":" + cnt + "</p></div>";
+                    } else {
+                        str += "<div id=\"cell\"><p>" + ref + "</p></div>";
+
+                        //str += "<div id=\"cell\">" + "</div>";
+                    }/*
                 for (int j = level; j < maxDepth; j++) {
                     str += "<div id=\"cell\"></div>";
 
                 }*/
-                str += "</div>\n";
-                if (superToSub.containsKey(top)) {
-                    ArrayList<String> children = superToSub.get(top);
-                    str += htmlTableTree(ns, children, level, eventCounts, maxDepth);
+                    str += "</div>\n";
+                    System.out.println("top = " + top);
+                    if (superToSub.containsKey(top)) {
+                        ArrayList<String> children = superToSub.get(top);
+                        str += htmlTableTree(ns, children, level, eventCounts);
+                    }
+                }
+            }
+        }
+        return str;
+    }
+    public String  htmlTableTreeOverview (String ns, ArrayList<String> tops,
+                                  int level,
+                                  HashMap<String, Integer> eventCounts,
+                                          HashMap<String, ArrayList<PhraseCount>> phrases ) {
+        String str = "";
+        level++;
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            if (top.startsWith(ns)) {
+                Integer cnt = 0;
+                if (eventCounts.containsKey(top)) {
+                    cnt = eventCounts.get(top);
+                }
+                if (cnt>0) {
+                    str += "<div id=\"row\">";
+
+                    for (int j = 2; j < level; j++) {
+                        str += "<div id=\"cell\"></div>";
+
+                    }
+                    String ref = top;
+                    if (top.startsWith("http")) {
+                        int idx = top.lastIndexOf("/");
+                        String name = top;
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
+                        }
+                        ref = "<a href=\"" + top + "\">" + name + "</a>";
+                    } else if (top.startsWith("dbp:")) {
+                        int idx = top.lastIndexOf(":");
+                        String name = top;
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
+                        }
+                        ref = "<a href=\"http://dbpedia.org/ontology/" + name + "\">" + name + "</a>";
+                    }
+
+
+
+                    int instances = 0;
+                    if (phrases.containsKey(top)) {
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                        instances = phraseCounts.size();
+                    }
+                    if (cnt > 0) {
+                        str += "<div id=\"cell\"><p>" + ref + ":" + instances+";"+ cnt+"</p></div>";
+                    } else {
+                        str += "<div id=\"cell\"><p>" + ref + "</p></div>";
+                    }
+
+                    str += "</div>\n";
+                  //  System.out.println("top = " + top);
+                    if (superToSub.containsKey(top)) {
+                        ArrayList<String> children = superToSub.get(top);
+                        str += htmlTableTreeOverview(ns, children, level, eventCounts,phrases);
+                    }
                 }
             }
         }
@@ -284,82 +366,197 @@ Agent	Organisation	Broadcaster	Broadcaster	15
     public String  htmlTableTree (String ns, ArrayList<String> tops,
                                   int level,
                                   HashMap<String, Integer> eventCounts,
-                                  HashMap<String, ArrayList<PhraseCount>> phrases,
-                                  int maxDepth) {
+                                  HashMap<String, ArrayList<PhraseCount>> phrases ) {
         String str = "";
         level++;
         for (int i = 0; i < tops.size(); i++) {
             String top = tops.get(i);
             if (top.startsWith(ns)) {
-                str += "<div id=\"row\">";
                 Integer cnt = 0;
                 if (eventCounts.containsKey(top)) {
                     cnt = eventCounts.get(top);
                 }
-                for (int j = 2; j < level; j++) {
-                    str += "<div id=\"cell\"></div>";
+                System.out.println(top+ ":" + cnt);
+                if (cnt>0) {
+                    str += "<div id=\"row\">";
+                    for (int j = 2; j < level; j++) {
+                        str += "<div id=\"cell\"></div>";
 
-                }
-                String ref = top;
-                if (top.startsWith("http")) {
-                    int idx = top.lastIndexOf("/");
-                    String name = top;
-                    if (idx>-1) {
-                        name = top.substring(idx+1);
                     }
-                    ref = "<a href=\""+top+"\">"+name+"</a>";
-                }
-                else if (top.startsWith("dbp:")) {
-                    int idx = top.lastIndexOf(":");
-                    String name = top;
-                    if (idx>-1) {
-                        name = top.substring(idx+1);
-                    }
-                    ref = "<a href=\"http://dbpedia.org/ontology/"+name+"\">"+name+"</a>";
-                }
-                if (cnt > 0) {
-                    str += "<div id=\"cell\"><p>" + ref + ":" + cnt + "</p></div>";
-                } else {
-                    str += "<div id=\"cell\"><p>" + ref + "</p></div>";
-
-                    //str += "<div id=\"cell\">" + "</div>";
-                }
-                str += "</div>\n";
-                str += "<div id=\"row\">";
-                for (int j = 2; j < level; j++) {
-                    str += "<div id=\"cell\"></div>";
-
-                }
-               // System.out.println("top = " + top);
-                if (phrases.containsKey(top)) {
-                    ArrayList<PhraseCount> phraseCounts = phrases.get(top);
-                    String phraseString = "[";
-                    for (int j = 0; j < phraseCounts.size(); j++) {
-                        PhraseCount phraseCount = phraseCounts.get(j);
-                        int idx = phraseCount.getPhrase().lastIndexOf("/");
-                        String name = phraseCount.getPhrase();
-                        if (idx>-1) {
-                            name = phraseCount.getPhrase().substring(idx+1);
+                    String ref = top;
+                    if (top.startsWith("http")) {
+                        int idx = top.lastIndexOf("/");
+                        String name = top;
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
                         }
-                        ref = "<a href=\""+phraseCount.getPhrase()+"\">"+name+":"+phraseCount.getCount()+"</a>";
-                        phraseString+= ref;
-                        if (j<phraseCounts.size()-1) {
-                            phraseString +=", ";
+                        ref = "<a href=\"" + top + "\">" + name + "</a>";
+                    } else if (top.startsWith("dbp:")) {
+                        int idx = top.lastIndexOf(":");
+                        String name = top;
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
                         }
+                        ref = "<a href=\"http://dbpedia.org/ontology/" + name + "\">" + name + "</a>";
                     }
-                    phraseString+="]";
-                    str += "<div id=\"cell\"><p>" + phraseString+ "</p></div>";
-                    //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
+                    if (cnt > 0) {
+                        str += "<div id=\"cell\"><p>" + ref + ":" + cnt + "</p></div>";
+                    } else {
+                        str += "<div id=\"cell\"><p>" + ref + "</p></div>";
 
+                        //str += "<div id=\"cell\">" + "</div>";
+                    }
+                    str += "</div>\n";
+                    str += "<div id=\"row\">";
+                    for (int j = 2; j < level; j++) {
+                        str += "<div id=\"cell\"></div>";
+
+                    }
+                    if (phrases.containsKey(top)) {
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                        String phraseString = "[";
+                        for (int j = 0; j < phraseCounts.size(); j++) {
+                            PhraseCount phraseCount = phraseCounts.get(j);
+                            int idx = phraseCount.getPhrase().lastIndexOf("/");
+                            String name = phraseCount.getPhrase();
+                            if (idx > -1) {
+                                name = phraseCount.getPhrase().substring(idx + 1);
+                            }
+                            ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + "</a>";
+                            phraseString += ref;
+                            if (j < phraseCounts.size() - 1) {
+                                phraseString += ", ";
+                            }
+                        }
+                        phraseString += "]";
+                        str += "<div id=\"cell\"><p>" + phraseString + "</p></div>";
+                        //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
+
+                    }
+                    str += "</div>\n";
+                    if (superToSub.containsKey(top)) {
+                        ArrayList<String> children = superToSub.get(top);
+                        str += htmlTableTree(ns, children, level, eventCounts, phrases);
+                    }
                 }
-                str += "</div>\n";
-                if (superToSub.containsKey(top)) {
-                    ArrayList<String> children = superToSub.get(top);
-                    str += htmlTableTree(ns, children, level, eventCounts, phrases, maxDepth);
-                }
+            }
+            else {
+                System.out.println("ns = " + ns);
+                System.out.println("top = " + top);
             }
         }
         return str;
+    }
+
+    public void  htmlTableTree (OutputStream fos, String ns, ArrayList<String> tops,
+                                  int level,
+                                  HashMap<String, Integer> eventCounts,
+                                  HashMap<String, ArrayList<PhraseCount>> phrases ) throws IOException {
+        String str = "";
+        level++;
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            str  = "";
+            if (top.startsWith(ns)) {
+                Integer cnt = 0;
+                if (eventCounts.containsKey(top)) {
+                    cnt = eventCounts.get(top);
+                }
+              //  System.out.println(top+ ":" + cnt);
+                if (cnt>0) {
+                    str += "<div id=\"row\">";
+                    for (int j = 2; j < level; j++) {
+                        str += "<div id=\"cell\"></div>";
+
+                    }
+                    String ref = top;
+                    if (top.startsWith("http")) {
+                        int idx = top.lastIndexOf("/");
+                        String name = top;
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
+                        }
+                        ref = "<a href=\"" + top + "\">" + name + "</a>";
+                    } else if (top.startsWith("dbp:")) {
+                        int idx = top.lastIndexOf(":");
+                        String name = top;
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
+                        }
+                        ref = "<a href=\"http://dbpedia.org/ontology/" + name + "\">" + name + "</a>";
+                    }
+                    int instances = 0;
+                    if (phrases.containsKey(top)) {
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                        instances = phraseCounts.size();
+                    }
+                    if (cnt > 0) {
+                        str += "<div id=\"cell\"><p>" + ref + ":" + instances+";"+ cnt+"</p></div>";
+                    } else {
+                        str += "<div id=\"cell\"><p>" + ref + "</p></div>";
+                    }
+                    str += "</div>\n";
+                    str += "<div id=\"row\">";
+                    for (int j = 2; j < level; j++) {
+                        str += "<div id=\"cell\"></div>";
+
+                    }
+                    fos.write(str.getBytes());
+                    str = "";
+
+                    if (phrases.containsKey(top)) {
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                        Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
+                            @Override
+                            public int compare(PhraseCount p1, PhraseCount p2) {
+
+                                return p2.getCount().compareTo(p1.getCount());
+                            }
+                        });
+                        String phraseString = "[";
+                        int max = phraseCounts.get(0).getCount();
+                        for (int j = 0; j < phraseCounts.size(); j++) {
+                            PhraseCount phraseCount = phraseCounts.get(j);
+                            //if ((phraseCount.getCount()*100)/max>=0) {
+                            if (phraseCount.getCount()>10) {
+                                int idx = phraseCount.getPhrase().lastIndexOf("/");
+                                String name = phraseCount.getPhrase();
+                                if (idx > -1) {
+                                    name = phraseCount.getPhrase().substring(idx + 1);
+                                }
+                                ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + "</a>";
+                                phraseString += ref;
+                                if (j < phraseCounts.size() - 1) {
+                                    phraseString += ", ";
+                                }
+                            }
+                        }
+                        phraseString += "]";
+                        str = "<div id=\"cell\"><p>" + phraseString + "</p></div>";
+                        fos.write(str.getBytes());
+                        //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
+
+                    }
+                    str = "</div>\n";
+                    fos.write(str.getBytes());
+                    if (superToSub.containsKey(top)) {
+                        ArrayList<String> children = superToSub.get(top);
+                       // System.out.println(top+ ":" + cnt+", children:"+children.size());
+                        htmlTableTree(fos, ns, children, level, eventCounts, phrases);
+                    }
+                    else {
+                      //  System.out.println("has no children top = " + top);
+                    }
+                }
+                else {
+                    //// no use for this class
+                }
+            }
+            else {
+                System.out.println("ns = " + ns);
+                System.out.println("top = " + top);
+            }
+        }
     }
 
     public void cumulateScores (String ns, ArrayList<String> tops,
@@ -386,6 +583,10 @@ Agent	Organisation	Broadcaster	Broadcaster	15
                         eventCounts.put(top, cCount);
                     }
                 }
+            }
+            else {
+                System.out.println("ns = " + ns);
+                System.out.println("top = " + top);
             }
         }
     }
