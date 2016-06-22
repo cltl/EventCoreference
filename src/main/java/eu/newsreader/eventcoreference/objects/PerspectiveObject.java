@@ -300,6 +300,18 @@ doc-uri
                 factualityValue = model.createResource(ResourcesUri.grasp+kafFactuality.getPrediction());
             }
 
+            Resource sentimentValue = null;
+            String sentiment = NafMention.getDominantOpinion(targetEventMentions);
+            if (!sentiment.isEmpty()) {
+                if (sentiment.equals("+")) {
+                    sentiment = "positive";
+                }
+                else if (sentiment.equals("-")) {
+                    sentiment ="negative";
+                }
+                sentimentValue = model.createResource(ResourcesUri.grasp+sentiment);
+            }
+
             for (int i = 0; i < targetEventMentions.size(); i++) {
                 NafMention mention = targetEventMentions.get(i);
                 /// the mention of the target event is the subject
@@ -342,22 +354,9 @@ doc-uri
                         attributionSubject.addProperty(property, factualityValue);
 
                     }
-
-                    if (mention.getOpinions().size()>0) {
-                        for (int j = 0; j < mention.getOpinions().size(); j++) {
-                            KafOpinion kafOpinion = mention.getOpinions().get(j);
+                    if (sentimentValue!=null) {
                             property = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
-                            String sentiment = kafOpinion.getOpinionSentiment().getPolarity();
-                            if (sentiment.equals("+")) {
-                                sentiment = "positive";
-                            }
-                            else if (sentiment.equals("-")) {
-                                sentiment ="negative";
-                            }
-                            Resource sentimentValue = model.createResource(ResourcesUri.grasp+sentiment);
-                            //System.out.println("sentiment = " + sentiment);
                             attributionSubject.addProperty(property, sentimentValue); /// creates the literal as value
-                        }
                     }
                 }
             }

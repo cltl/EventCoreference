@@ -357,14 +357,16 @@ public class JsonStoryUtil {
                         bridgedEvents = intersectEventObjects(coevents, topicevents);
                         if (bridgedEvents.size() > 5) {
                             System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
-                            System.out.println("coveredEvents = " + coveredEvents.size());
+                            int prop = (100*coveredEvents.size())/climaxObjects.size();
+                            System.out.println("covered Events = " + prop +"%");
                         }
                     }
                     else {
                         bridgedEvents = coevents;
                         if (bridgedEvents.size() > 5) {
                             System.out.println("intersection co-participating events = " + bridgedEvents.size());
-                            System.out.println("coveredEvents = " + coveredEvents.size());
+                            int prop = (100*coveredEvents.size())/climaxObjects.size();
+                            System.out.println("covered Events = " + prop +"%");
                         }
                     }
 

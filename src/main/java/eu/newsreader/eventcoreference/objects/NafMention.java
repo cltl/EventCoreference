@@ -465,6 +465,34 @@ public class NafMention implements Serializable {
         return kafFactuality;
     }
 
+    static public String getDominantOpinion (ArrayList<NafMention> mentions) {
+        String dominantOpinion = "";
+        int cntPositive = 0;
+        int cntNegative = 0;
+        for (int i = 0; i < mentions.size(); i++) {
+            NafMention nafMention = mentions.get(i);
+            if (nafMention.getOpinions().size()>0) {
+                for (int j = 0; j < nafMention.getOpinions().size(); j++) {
+                    KafOpinion kafOpinion = nafMention.getOpinions().get(j);
+                    String sentiment = kafOpinion.getOpinionSentiment().getPolarity();
+                    if (sentiment.equals("+")) {
+                        cntPositive++;
+                    }
+                    else if (sentiment.equals("-")) {
+                        cntNegative++;
+                    }
+                }
+            }
+        }
+        if (cntNegative>=cntPositive && cntNegative>0) {
+            dominantOpinion = "-";
+        }
+        else if (cntPositive>0) {
+            dominantOpinion ="+";
+        }
+        return dominantOpinion;
+    }
+
     public void addFactuality(KafSaxParser kafSaxParser) {
         for (int i = 0; i < kafSaxParser.kafFactualityLayer.size(); i++) {
             KafFactuality kafFactuality = kafSaxParser.kafFactualityLayer.get(i);
