@@ -1,3 +1,5 @@
+set -e
+
 #Requires an installation of maven 2.x and Java 1.6 or higher
 
 # define the location of the install scipt
