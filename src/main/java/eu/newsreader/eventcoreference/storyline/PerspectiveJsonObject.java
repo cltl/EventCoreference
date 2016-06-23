@@ -205,7 +205,7 @@ public class PerspectiveJsonObject {
 
         // if (!value.equals("u_u_u") && !value.equals("CERTAIN_NON_FUTURE_POS")) {
 
-        // System.out.println("value = " + value);
+        //System.out.println("value = " + value);
         if (value.toLowerCase().equals("u_u_u") || (value.equals("u_u_u_u"))) {
             normValues.add("certain");
             normValues.add("confirm");
@@ -224,15 +224,8 @@ public class PerspectiveJsonObject {
             normValues.add(normValue);
         }
         else {
-            if (value.toLowerCase().indexOf("uncertain")>-1) {
-                normValue= "uncertain";
-                normValues.add(normValue);
-            }
-            else if (value.toLowerCase().indexOf("certain")>-1) {
-                normValue= "certain";
-                normValues.add(normValue);
-            }
 
+            //// polarity
             if (value.toLowerCase().indexOf("_neg")>-1) {
               //  System.out.println("value = " + value);
                 normValue= "deny";
@@ -242,7 +235,14 @@ public class PerspectiveJsonObject {
                 normValue= "confirm";
                 normValues.add(normValue);
             }
+            else if (value.toLowerCase().indexOf("_underspecified")>-1) {
+                normValue= "confirm";
+                normValues.add(normValue);
+            }
 
+
+
+            //// tense
             if (value.toLowerCase().indexOf("non_future")>-1) {
                 normValue= "recent";
                 normValues.add(normValue);
@@ -260,20 +260,16 @@ public class PerspectiveJsonObject {
                 normValues.add(normValue);
             }
 
-            /*if (value.toLowerCase().indexOf("improbable")>-1) {
+            //// certainty
+            if (value.toLowerCase().indexOf("uncertain")>-1) {
                 normValue= "uncertain";
                 normValues.add(normValue);
             }
-            else if (value.toLowerCase().indexOf("possible")>-1) {
-                normValue= "uncertain";
-                normValues.add(normValue);
-            }
-            else if (value.toLowerCase().indexOf("probable")>-1) {
+            else if (value.toLowerCase().indexOf("certain")>-1) {
                 normValue= "certain";
                 normValues.add(normValue);
-            }*/
-
-            if (value.toLowerCase().indexOf("improbable")>-1) {
+            }
+            else if (value.toLowerCase().indexOf("improbable")>-1) {
                 normValue= "certain";
                 normValues.add(normValue);
             }
@@ -285,25 +281,13 @@ public class PerspectiveJsonObject {
                 normValue= "uncertain";
                 normValues.add(normValue);
             }
-            else if (value.toLowerCase().indexOf("ps")>-1) {
-                normValue= "uncertain";
-                normValues.add(normValue);
-            }
             else if (value.toLowerCase().indexOf("probable")>-1) {
                 normValue= "certain";
                 normValues.add(normValue);
             }
-            else if (value.toLowerCase().indexOf("pr")>-1) {
-                normValue= "certain";
-                normValues.add(normValue);
-            }
         }
-        if (normValues.contains("deny")) {
-           // System.out.println("normValues = " + normValues.toString());
-        }
-        else {
-          //  normValues = new ArrayList<String>();
-        }
+
+        //System.out.println("normValues = " + normValues.toString());
         return normValues;
     }
 
