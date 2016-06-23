@@ -209,6 +209,7 @@ public class GetPerspectiveRelations {
                                 for (int k = 0; k < semEvent.getNafMentions().size(); k++) {
                                     NafMention nafMention = semEvent.getNafMentions().get(k);
                                     if (!Collections.disjoint(targetParticipant.getSpanIds(), nafMention.getTermsIds())) {
+                                       // System.out.println("nafMention.getOpinions().size() = " + nafMention.getOpinions().size());
                                        // System.out.println("nafMention.getTermsIds() = " + nafMention.getTermsIds());
                                        // System.out.println("targetParticipant.getSpanIds() = " + targetParticipant.getSpanIds());
                                         perspectiveObject.addTargetEventMention(nafMention);

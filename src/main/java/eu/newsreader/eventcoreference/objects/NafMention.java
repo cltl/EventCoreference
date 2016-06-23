@@ -307,14 +307,19 @@ public class NafMention implements Serializable {
                 KafFactuality factuality = factualities.get(f);
                 for (int i = 0; i < factuality.getFactValueArrayList().size(); i++) {
                     KafFactValue factValue = factuality.getFactValueArrayList().get(i);
+
                     if (factValue.getResource().equals(KafFactValue.resourceAttributionCertainty)) {
-                        if (cntCertain.containsKey(factValue.getValue())) {
-                            Integer cnt = cntCertain.get(factValue.getValue());
+                        String value = factValue.getValue();
+                        if (value.equalsIgnoreCase("UNDERSPECIFIED"))   {
+                            value = "UNCERTAIN";
+                        }
+                        if (cntCertain.containsKey(value)) {
+                            Integer cnt = cntCertain.get(value);
                             cnt++;
-                            cntCertain.put(factValue.getValue(),cnt);
+                            cntCertain.put(value,cnt);
                         }
                         else {
-                            cntCertain.put(factValue.getValue(),1);
+                            cntCertain.put(value,1);
                         }
                     }
                     else if (factValue.getResource().equals(KafFactValue.resourceAttributionPolarity)) {
@@ -380,7 +385,7 @@ public class NafMention implements Serializable {
             String topValue = "";
             while (keys.hasNext()) {
                 String value = keys.next();
-                if (!value.equalsIgnoreCase("u") && !value.equalsIgnoreCase("UNDERSPECIFIED")) {
+                if (!value.equalsIgnoreCase("u")) {
                     Integer cnt = sortedMap.get(value);
                     if (cnt > top) {
                         topValue = value;
@@ -408,7 +413,7 @@ public class NafMention implements Serializable {
             topValue = "";
             while (keys.hasNext()) {
                 String value = keys.next();
-                if (!value.equalsIgnoreCase("u") && !value.equalsIgnoreCase("UNDERSPECIFIED")) {
+                if (!value.equalsIgnoreCase("u")) {
                     Integer cnt = sortedMap.get(value);
                     if (cnt > top) {
                         topValue = value;
@@ -436,7 +441,7 @@ public class NafMention implements Serializable {
             topValue = "";
             while (keys.hasNext()) {
                 String value = keys.next();
-                if (!value.equalsIgnoreCase("u") && !value.equalsIgnoreCase("UNDERSPECIFIED")) {
+                if (!value.equalsIgnoreCase("u")) {
                     Integer cnt = sortedMap.get(value);
                     if (cnt > top) {
                         topValue = value;
@@ -450,7 +455,7 @@ public class NafMention implements Serializable {
                             topValue = KafFactValue.RECENT;
                         }
                         else if (value.equals(KafFactValue.PAST) && topValue.equals(KafFactValue.NON_FUTURE)) {
-                            topValue = KafFactValue.RECENT;
+                            topValue = KafFactValue.PAST;
                         }
                     }
                 }
@@ -469,26 +474,33 @@ public class NafMention implements Serializable {
         String dominantOpinion = "";
         int cntPositive = 0;
         int cntNegative = 0;
+       // System.out.println("mentions.size() = " + mentions.size());
         for (int i = 0; i < mentions.size(); i++) {
             NafMention nafMention = mentions.get(i);
             if (nafMention.getOpinions().size()>0) {
                 for (int j = 0; j < nafMention.getOpinions().size(); j++) {
                     KafOpinion kafOpinion = nafMention.getOpinions().get(j);
                     String sentiment = kafOpinion.getOpinionSentiment().getPolarity();
-                    if (sentiment.equals("+")) {
+                   // System.out.println("sentiment = " + sentiment);
+                    if (sentiment.equals("positive")) {
                         cntPositive++;
                     }
-                    else if (sentiment.equals("-")) {
+                    else if (sentiment.equals("negative")) {
                         cntNegative++;
                     }
                 }
             }
+            else {
+              //  System.out.println("No opinions");
+            }
         }
         if (cntNegative>=cntPositive && cntNegative>0) {
+          //  System.out.println("cntNegative = " + cntNegative);
             dominantOpinion = "-";
         }
         else if (cntPositive>0) {
             dominantOpinion ="+";
+          //  System.out.println("cntPositive = " + cntPositive);
         }
         return dominantOpinion;
     }
@@ -519,6 +531,7 @@ public class NafMention implements Serializable {
                 this.opinions.add(kafOpinion);
             }
         }
+        //System.out.println("this.opinions.size() = " + this.opinions.size());
     }
 
     public String getBaseUri() {

@@ -363,7 +363,7 @@ doc-uri
         }
     }
 
-    public void addToJenaDataSetOrg (Model model, String ns, String attrId) {
+    public void addToJenaDataSet2 (Model model, String ns, String attrId) {
         /*
         mentionId2      hasAttribution         attributionId1
                         gaf:generatedBy        mentionId3

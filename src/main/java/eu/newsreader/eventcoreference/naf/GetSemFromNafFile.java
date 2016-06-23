@@ -63,7 +63,7 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.v6/45/45_1ecb.xml.naf.fix.xml.newpred.coref";
         pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/100095.naf";
         pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/118719.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/financialtimes/data/brexit6.naf/0a22a1be-f246-11e3-ac7a-00144feabdc0.naf";
+        pathToNafFile = "/Users/piek/Desktop/NWR-INC/financialtimes/data/brexit6-SAMPLE/0a22a1be-f246-11e3-ac7a-00144feabdc0.naf";
         //pathToNafFile = "/Users/piek/Desktop/ISO-WG5/more-than-two_sentences.out.naf.xml";
         String sourceFrameFile = "";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";

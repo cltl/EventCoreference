@@ -209,7 +209,7 @@ public class PerspectiveJsonObject {
         if (value.toLowerCase().equals("u_u_u") || (value.equals("u_u_u_u"))) {
             normValues.add("certain");
             normValues.add("confirm");
-            normValues.add("now");
+            normValues.add("recent");
         }
         else if (value.toLowerCase().indexOf("negative")>-1) {
             // normValue="-";
@@ -244,7 +244,7 @@ public class PerspectiveJsonObject {
             }
 
             if (value.toLowerCase().indexOf("non_future")>-1) {
-                normValue= "non_future";
+                normValue= "recent";
                 normValues.add(normValue);
             }
             else if (value.toLowerCase().indexOf("future")>-1) {
@@ -256,7 +256,7 @@ public class PerspectiveJsonObject {
                 normValues.add(normValue);
             }
             else if (value.toLowerCase().indexOf("recent")>-1) {
-                normValue= "now";
+                normValue= "recent";
                 normValues.add(normValue);
             }
 
@@ -274,19 +274,27 @@ public class PerspectiveJsonObject {
             }*/
 
             if (value.toLowerCase().indexOf("improbable")>-1) {
-                normValue= "unlikely";
+                normValue= "certain";
                 normValues.add(normValue);
             }
             else if (value.toLowerCase().indexOf("impossible")>-1) {
-                normValue= "unlikely";
+                normValue= "certain";
                 normValues.add(normValue);
             }
             else if (value.toLowerCase().indexOf("possible")>-1) {
-                normValue= "unlikely";
+                normValue= "uncertain";
+                normValues.add(normValue);
+            }
+            else if (value.toLowerCase().indexOf("ps")>-1) {
+                normValue= "uncertain";
                 normValues.add(normValue);
             }
             else if (value.toLowerCase().indexOf("probable")>-1) {
-                normValue= "likely";
+                normValue= "certain";
+                normValues.add(normValue);
+            }
+            else if (value.toLowerCase().indexOf("pr")>-1) {
+                normValue= "certain";
                 normValues.add(normValue);
             }
         }
