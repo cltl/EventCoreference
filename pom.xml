@@ -44,6 +44,7 @@
             <groupId>com.github.cltl</groupId>
             <artifactId>KafSaxParser</artifactId>
             <version>v3.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
