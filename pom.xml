@@ -41,6 +41,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.cltl</groupId>
+            <artifactId>KafSaxParser</artifactId>
+            <version>v3.0</version>
+        </dependency>
+        <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
             <artifactId>owlapi-distribution</artifactId>
             <version>3.4.10</version>
@@ -66,11 +71,6 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20090211</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.cltl</groupId>
-            <artifactId>KafSaxParser</artifactId>
-            <version>v3.0</version>
         </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
