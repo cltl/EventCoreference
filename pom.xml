@@ -44,7 +44,6 @@
             <groupId>com.github.cltl</groupId>
             <artifactId>KafSaxParser</artifactId>
             <version>v3.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
@@ -114,7 +113,7 @@
             </repository>
     </repositories>
 
-    <build>
+    <!--<build>
         <plugins>
 
             <plugin>
@@ -142,15 +141,15 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id><!-- this is used for inheritance merges -->
-                        <phase>package</phase><!-- append to the packaging phase -->
+                        <id>make-assembly</id>&lt;!&ndash; this is used for inheritance merges &ndash;&gt;
+                        <phase>package</phase>&lt;!&ndash; append to the packaging phase &ndash;&gt;
                         <goals>
-                            <goal>attached</goal><!-- goals == mojos -->
+                            <goal>attached</goal>&lt;!&ndash; goals == mojos &ndash;&gt;
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 </project>
