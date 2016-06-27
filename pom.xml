@@ -113,7 +113,7 @@
             </repository>
     </repositories>
 
-    <!--<build>
+    <build>
         <plugins>
 
             <plugin>
@@ -141,15 +141,15 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>&lt;!&ndash; this is used for inheritance merges &ndash;&gt;
-                        <phase>package</phase>&lt;!&ndash; append to the packaging phase &ndash;&gt;
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>attached</goal>&lt;!&ndash; goals == mojos &ndash;&gt;
+                            <goal>attached</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-    </build>-->
+    </build>
 
 </project>
