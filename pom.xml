@@ -43,7 +43,7 @@
         <dependency>
             <groupId>com.github.cltl</groupId>
             <artifactId>KafSaxParser</artifactId>
-            <version>v3.0</version>
+            <version>v3.1</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
