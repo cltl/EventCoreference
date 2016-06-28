@@ -191,7 +191,6 @@ public class JsonFromCat extends DefaultHandler {
     public ArrayList<LocationLink> locationLinks;
     public ArrayList<PlotLink> plotLinks;
     public ArrayList<ActorLink> actorLinks;
-    public HashMap<String, String> sourceEventHashMap;
     String fileName;
 
     public JsonFromCat () {
@@ -214,7 +213,6 @@ public class JsonFromCat extends DefaultHandler {
         eventTermArrayList = new ArrayList<KafTerm>();
         locationTermArrayList = new ArrayList<KafTerm>();
         timeTermArrayList = new ArrayList<TimeTerm>();
-        sourceEventHashMap = new HashMap<String, String>();
         timeLinks = new ArrayList<TimeLink>();
         locationLinks = new ArrayList<LocationLink>();
         actorLinks = new ArrayList<ActorLink>();
@@ -222,6 +220,7 @@ public class JsonFromCat extends DefaultHandler {
     }
 
     public void parseFile(String filePath) {
+        init();
         fileName = new File(filePath).getName();
         String myerror = "";
         try {
@@ -548,8 +547,8 @@ public class JsonFromCat extends DefaultHandler {
                 else {
                     eventObject.put("time", timeString);
                     eventObject.put("event", "ev" + i);
-                    eventObject.put("group", "100:[" + fileName + "]");
-                    eventObject.put("groupName", "[" + fileName + "]");
+                    eventObject.put("group", "100:[" + eventPhrase + "]");
+                    eventObject.put("groupName", "[" + eventPhrase + "]");
                     eventObject.put("groupScore", "100");
                     eventObject.put("climax", 4);
                     events.add(eventObject);
