@@ -170,7 +170,7 @@ public class PerspectiveJsonObject {
         else if (attribution.contains("deny")) {
             object.put("belief", "deny");
         }
-        else {
+        else if (attribution.contains("confirm")) {
             object.put("belief", "confirm");
         }
 
@@ -187,16 +187,21 @@ public class PerspectiveJsonObject {
         if (attribution.contains("future")) {
             object.put("when", "future");
         }
-        else if (attribution.contains("now")) {
-            object.put("when", "now");
+        else if (attribution.contains("recent")) {
+            object.put("when", "recent");
         }
         else if (attribution.contains("past")) {
             object.put("when", "past");
         }
         else {
-            object.put("when", "now");
+            object.put("when", "recent");
         }
         return object;
+    }
+    public void setDefaultPerspectiveValue () {
+        attribution.add("certain");
+        attribution.add("confirm");
+        attribution.add("recent");
     }
 
     static public ArrayList<String> normalizePerspectiveValue (String value) {
@@ -244,7 +249,7 @@ public class PerspectiveJsonObject {
 
             //// tense
             if (value.toLowerCase().indexOf("non_future")>-1) {
-                normValue= "recent";
+                normValue= "now";
                 normValues.add(normValue);
             }
             else if (value.toLowerCase().indexOf("future")>-1) {
