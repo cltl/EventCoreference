@@ -191,7 +191,8 @@ public class JsonFromCat extends DefaultHandler {
     public ArrayList<LocationLink> locationLinks;
     public ArrayList<PlotLink> plotLinks;
     public ArrayList<ActorLink> actorLinks;
-    public HashMap<String, KafTerm> termHashMap;
+    public HashMap<String, String> sourceEventHashMap;
+    String fileName;
 
     public JsonFromCat () {
         init();
@@ -202,6 +203,7 @@ public class JsonFromCat extends DefaultHandler {
         target = "";
         source = "";
         span = "";
+        fileName ="";
         TIME = false;
         kafWordForm = new KafWordForm();
         kafTerm = new KafTerm();
@@ -212,7 +214,7 @@ public class JsonFromCat extends DefaultHandler {
         eventTermArrayList = new ArrayList<KafTerm>();
         locationTermArrayList = new ArrayList<KafTerm>();
         timeTermArrayList = new ArrayList<TimeTerm>();
-        termHashMap = new HashMap<String, KafTerm>();
+        sourceEventHashMap = new HashMap<String, String>();
         timeLinks = new ArrayList<TimeLink>();
         locationLinks = new ArrayList<LocationLink>();
         actorLinks = new ArrayList<ActorLink>();
@@ -220,8 +222,8 @@ public class JsonFromCat extends DefaultHandler {
     }
 
     public void parseFile(String filePath) {
+        fileName = new File(filePath).getName();
         String myerror = "";
-        init();
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(false);
@@ -272,13 +274,13 @@ public class JsonFromCat extends DefaultHandler {
                 ) {
             kafTerm = new KafTerm();
             kafTerm.setType(qName);
-            kafTerm.setTid(attributes.getValue("m_id"));
+            kafTerm.setTid(fileName+"_"+attributes.getValue("m_id"));
             TIME = false;
         }
         else if (qName.equalsIgnoreCase("TIME_DATE")) {
             timeTerm = new TimeTerm();
             timeTerm.setType(qName);
-            timeTerm.setTid(attributes.getValue("m_id"));
+            timeTerm.setTid(fileName+"_"+attributes.getValue("m_id"));
             timeTerm.setDct(attributes.getValue("DCT").equalsIgnoreCase("true"));
             timeTerm.setValue(attributes.getValue("value"));
             timeTerm.setAnchorTimeId(attributes.getValue("anchorTimeID"));
@@ -294,10 +296,10 @@ public class JsonFromCat extends DefaultHandler {
             }
         }
         else if (qName.equalsIgnoreCase("source")) {
-            source = attributes.getValue("m_id");
+            source = fileName+"_"+attributes.getValue("m_id");
         }
         else if (qName.equalsIgnoreCase("target")) {
-                target = attributes.getValue("m_id");
+                target = fileName+"_"+attributes.getValue("m_id");
         }
         else if (qName.equalsIgnoreCase("tlink")) {
             relType =attributes.getValue("relType");
@@ -441,7 +443,7 @@ public class JsonFromCat extends DefaultHandler {
         return sentence.trim();
     }
 
-    public ArrayList<JSONObject> getJsonObject (String fileName) throws JSONException {
+    public ArrayList<JSONObject> getJsonObject () throws JSONException {
         ArrayList<JSONObject> events = new ArrayList<JSONObject>();
         for (int i = 0; i < eventTermArrayList.size(); i++) {
             JSONObject eventObject = new JSONObject();
@@ -546,14 +548,15 @@ public class JsonFromCat extends DefaultHandler {
                 else {
                     eventObject.put("time", timeString);
                     eventObject.put("event", "ev" + i);
-                    eventObject.put("group", "100:[" + eventPhrase + "]");
-                    eventObject.put("groupName", "[" + eventPhrase + "]");
+                    eventObject.put("group", "100:[" + fileName + "]");
+                    eventObject.put("groupName", "[" + fileName + "]");
                     eventObject.put("groupScore", "100");
                     eventObject.put("climax", 4);
                     events.add(eventObject);
                 }
             }
         }
+        JsonStoryUtil.minimalizeActors(events);
 
         return events;
     }
@@ -584,7 +587,6 @@ public class JsonFromCat extends DefaultHandler {
 
                 File folder = new File(pathToFolder);
                 String outputFile = folder.getAbsolutePath() + "/" + "contextual.timeline.json";
-                System.out.println("outputFile = " + outputFile);
                 OutputStream jsonOut = new FileOutputStream(outputFile);
 
                 String str = "{ \"timeline\":\n";
@@ -608,11 +610,10 @@ public class JsonFromCat extends DefaultHandler {
         String pathToCatFile = "";
         String pathToFtDataFile = "";
         String fileExtension = "";
-        pathToCatFile = "/Users/piek/Desktop/ECBplus_Topic37CAT/37_1ecbplus.xml.xml";
+        //pathToCatFile = "/Users/piek/Desktop/ECBplus_Topic37CAT/37_1ecbplus.xml.xml";
         pathToFtDataFile = "/Users/piek/Desktop/NWR-INC/financialtimes/data/poll.data";
-        //folder = "/Users/piek/Desktop/NWR/NWR-benchmark/coreference/corpus_CAT_GS_201412/corpus_apple/";
-        ///Users/piek/Desktop/NWR/NWR-Annotation/corpus_CAT_ref/corpus_apple
-        //fileExtension = ".xml";
+        folder = "/Users/piek/Desktop/ECBplus_Topic37CAT/";
+        fileExtension = ".xml";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equalsIgnoreCase("--cat-file") && args.length > (i + 1)) {
@@ -626,20 +627,20 @@ public class JsonFromCat extends DefaultHandler {
         System.out.println("fileExtension = " + fileExtension);
         System.out.println("folder = " + folder);
         JsonFromCat jsonFromCat = new JsonFromCat();
+        ArrayList<JSONObject> structuredEvents = null;
+        if (!pathToFtDataFile.isEmpty()) {
+            HashMap<String, ArrayList<ReadFtData.DataFt>> dataFtMap = ReadFtData.readData(pathToFtDataFile);
+            structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
+        }
+
         if (!pathToCatFile.isEmpty()) {
             File catFile = new File (pathToCatFile);
             folder = catFile.getParent();
             jsonFromCat.parseFile(pathToCatFile);
             jsonFromCat.getActorLinks();
             ArrayList<JSONObject> events = null;
-            ArrayList<JSONObject> structuredEvents = null;
-            if (!pathToFtDataFile.isEmpty()) {
-                HashMap<String, ArrayList<ReadFtData.DataFt>> dataFtMap = ReadFtData.readData(pathToFtDataFile);
-                structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
-            }
-
             try {
-                events = jsonFromCat.getJsonObject(catFile.getName());
+                events = jsonFromCat.getJsonObject();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -647,29 +648,26 @@ public class JsonFromCat extends DefaultHandler {
         }
         else if (!folder.isEmpty()) {
             ArrayList<File> files = Util.makeFlatFileList(new File(folder), fileExtension);
+            ArrayList<JSONObject> events = new ArrayList<JSONObject>();
             for (int i = 0; i < files.size(); i++) {
                 File file = files.get(i);
-                //System.out.println("file.getName() = " + file.getName());
+                System.out.println("file.getName() = " + file.getName());
                 jsonFromCat.parseFile(file.getAbsolutePath());
-
-                String fileName = file.getName();
-                int idx = fileName.indexOf(".");
-                if (idx > -1) {
-                    fileName = fileName.substring(0, idx);
-                }
-                // System.out.println("fileName = " + fileName);
+                jsonFromCat.getActorLinks();
                 try {
-                    OutputStream fos = new FileOutputStream(file.getAbsolutePath()  + ".key");
-                       // jsonFromCat.serializeToCorefSet(fos, fileName);
-                      //  CoNLLfile.serializeToCoNLL(fos, fileName, type, kafWordFormArrayList, kafCoreferenceSetArrayList);
-
-                    fos.close();
-                } catch (IOException e) {
+                    ArrayList<JSONObject> localEvents = jsonFromCat.getJsonObject();
+                    for (int j = 0; j < localEvents.size(); j++) {
+                        JSONObject event = localEvents.get(j);
+                        events.add(event);
+                    }
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //break;
             }
+            System.out.println("events.size() = " + events.size());
+            jsonFromCat.writeJsonObjectArrayWithStructuredData(folder, "ecb*", events,"polls", structuredEvents);
         }
+        System.out.println("DONE.");
     }
 }
 
