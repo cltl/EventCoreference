@@ -271,7 +271,7 @@ public class TrigToJsonStoryPerspectives {
                 TrigKSTripleReader.limit = kslimit;
             }
             if (!sparqlQuery.isEmpty()) {
-              //  trigTripleData = TrigKSTripleReader.readTriplesFromKS(sparqlQuery);
+                trigTripleData = TrigKSTripleReader.readTriplesFromKs(sparqlQuery);
             }
             else if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
                 if (ALL) {
