@@ -264,7 +264,9 @@ To run the scripts you need to specify:
     - a username, e.g. --ks "my user name"
     - a password, e.g. --ks-pass "my pass word"
     
-Please consult a KnowledgeStore manager for the credentials.
+Please consult a KnowledgeStore manager for the credentials. If you leave out the specifications to the service point and database, the query is
+submitted by default to the wikinews database (English) store at FBK in Trento. 
+
 To avoid overloading system and since the demo can only show a limited amount of data you can set a limit on the number of events extracted from
 the KnowledgeStore (this is a hard limit on the SPARQL query) as well as a limit on the events in the storyline:
 
