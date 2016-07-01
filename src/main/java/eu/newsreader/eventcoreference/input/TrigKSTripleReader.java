@@ -26,8 +26,8 @@ import static com.hp.hpl.jena.rdf.model.ResourceFactory.createStatement;
 public class TrigKSTripleReader {
 
     public static int qCount = 0;
-    //final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
-    public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews/sparql";
+    public static String service = "https://knowledgestore2.fbk.eu";
+    public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews-new/sparql";
     //public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
@@ -36,12 +36,13 @@ public class TrigKSTripleReader {
 
     HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 
-    static public void setServicePoint (String ks) {
-        serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
+    static public void setServicePoint (String service, String ks) {
+        serviceEndpoint = service+"/"+ks+"/sparql";
     }
 
-    static public void setServicePoint (String ks, String username, String password) {
-        serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
+    static public void setServicePoint (String service, String ks, String username, String password) {
+        //serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
+        serviceEndpoint = service+""+ks+"/sparql";
         user = username;
         pass = password;
     }
@@ -449,13 +450,15 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        //System.out.println("sparqlQuery = " + sparqlQuery);
+       // System.out.println("sparqlQuery = " + sparqlQuery);
         return readTriplesFromKs(sparqlQuery);
     }
 
 
     public static TrigTripleData readTriplesFromKs(String sparqlQuery){
-
+        System.out.println("serviceEndpoint = " + serviceEndpoint);
+        System.out.println("user = " + user);
+        System.out.println("pass = " + pass);
         TrigTripleData trigTripleData = new TrigTripleData();
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 

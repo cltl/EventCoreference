@@ -79,7 +79,7 @@ public class JsonStoryUtil {
                             }
                             ////// we need at least have the year!!!!
                             ///// this check does not work for historic data!!!!
-                            if (timeAnchor.length()<4) {
+                            if (timeAnchor.length() < 4) {
                                 continue;
                             }
                             if (timeAnchor.length() == 6) {
@@ -95,8 +95,10 @@ public class JsonStoryUtil {
                                 continue;
                             }
                             ///skipping historic events
-                            // if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
-
+                            /* if (timeAnchor.startsWith("19") || timeAnchor.startsWith("20")) {
+                                continue;
+                               }
+                            */
                             try {
                                 //System.out.println("timeAnchor = " + timeAnchor);
                                 Integer dateInteger = Integer.parseInt(timeAnchor.substring(0,4));
