@@ -26,7 +26,7 @@ echo "TOPIC INTERSECT = $TOPIC"
 echo "CLIMAX THRESHOLD = $CLIMAX"
 echo "ACTION SCHEMA = $ACTIONSCHEMA"
 
-java -Xmx4000m -cp /Code/vu/newsreader/EventCoreference/target/EventCoreference-v3.0-jar-with-dependencies.jar eu.newsreader.eventcoreference.storyline.TrigToJsonStoryPerspectives --trig-folder "$INPUT" --raw-text "../../data/rawtext.idx"  --climax-level $CLIMAX  --story-limit 50000 --actors any $MERGE --time $TIME --action-ont $ONT --action-sim $ONTGRAN --actor-cnt $ACTOR --actor-intersect $INTERSECT --topic-level $TOPIC --ft "../../data/poll.data"  --blacklist "../../data/blacklist.txt" --eurovoc "$RESOURCES/mapping_eurovoc_skos.csv.gz" --eurovoc-blacklist "../../data/eurovoc-blacklist.txt" --project my-project --action-schema "$ACTIONSCHEMA"
+java -Xmx4000m -cp $LIB/EventCoreference-v3.0-jar-with-dependencies.jar eu.newsreader.eventcoreference.storyline.TrigToJsonStoryPerspectives --trig-folder "$INPUT" --raw-text "../../data/rawtext.idx"  --climax-level $CLIMAX  --story-limit 50000 --actors any $MERGE --time $TIME --action-ont $ONT --action-sim $ONTGRAN --actor-cnt $ACTOR --actor-intersect $INTERSECT --topic-level $TOPIC --ft "../../data/poll.data"  --blacklist "../../data/blacklist.txt" --eurovoc "$RESOURCES/mapping_eurovoc_skos.csv.gz" --eurovoc-blacklist "../../data/eurovoc-blacklist.txt" --project my-project --action-schema "$ACTIONSCHEMA"
 
 cp "$INPUT/contextual.timeline.json" "$DEMO/contextual.timeline.json"
 
