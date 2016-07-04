@@ -339,23 +339,13 @@ public class TrigToJsonStoryPerspectives {
             ArrayList<JSONObject> rawTextArrayList = new ArrayList<JSONObject>();
             ArrayList<JSONObject> perspectiveEvents = new ArrayList<JSONObject>();
             ArrayList<JSONObject> structuredEvents = new ArrayList<JSONObject>();
-            if (PERSPECTIVE) {
-                if (!entityQuery.isEmpty() || !eventQuery.isEmpty()) {
+            if (PERSPECTIVE && jsonObjects.size()>0) {
+                if (!entityQuery.isEmpty() || !eventQuery.isEmpty() ||!sparqlQuery.isEmpty()) {
                     System.out.println("Getting perspectives for: " + jsonObjects.size() + " events");
-                    if (COMBINE) {
-                        TrigKSTripleReader.integrateAttributionFromKs(jsonObjects);
-                    }
-                    else {
-                        perspectiveEvents = TrigKSTripleReader.readAttributionFromKs(jsonObjects);
-                    }
+                    TrigKSTripleReader.integrateAttributionFromKs(jsonObjects);
                 }
                 else {
-                    if (COMBINE) {
-                        JsonStoryUtil.integratePerspectivesInEventObjects(trigTripleData, jsonObjects, project);
-                    }
-                    else {
-                        perspectiveEvents = JsonStoryUtil.getPerspectiveEvents(trigTripleData, jsonObjects);
-                    }
+                    JsonStoryUtil.integratePerspectivesInEventObjects(trigTripleData, jsonObjects, project);
                 }
             }
 
@@ -370,8 +360,9 @@ public class TrigToJsonStoryPerspectives {
                 MentionResolver.ReadFileToUriTextArrayList(pathToRawTextIndexFile, jsonObjects);
             }
             else {
-                if (!eventQuery.isEmpty() || !entityQuery.isEmpty()) {
+                if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sparqlQuery.isEmpty()) {
                   //  rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
+                    System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
                     MentionResolver.createSnippetIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
                 }
 

@@ -42,7 +42,7 @@ public class TrigKSTripleReader {
 
     static public void setServicePoint (String service, String ks, String username, String password) {
         //serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
-        serviceEndpoint = service+""+ks+"/sparql";
+        serviceEndpoint = service+"/"+ks+"/sparql";
         user = username;
         pass = password;
     }

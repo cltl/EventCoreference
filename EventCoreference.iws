@@ -115,8 +115,13 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/TimeLanguage.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/TimeLanguage.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util$AppendableObjectOutputStream.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util$AppendableObjectOutputStream.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iml" afterPath="$PROJECT_DIR$/EventCoreference.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iws" afterPath="$PROJECT_DIR$/EventCoreference.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/storyteller-ks-entity-event.sh" afterPath="$PROJECT_DIR$/scripts/storyteller-ks-entity-event.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/storyteller-ks-entity.sh" afterPath="$PROJECT_DIR$/scripts/storyteller-ks-entity.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/storyteller-ks-event.sh" afterPath="$PROJECT_DIR$/scripts/storyteller-ks-event.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/storyteller-ks-sparql.sh" afterPath="$PROJECT_DIR$/scripts/storyteller-ks-sparql.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonStoryPerspectives.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonStoryPerspectives.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" />
     </list>
@@ -188,18 +193,18 @@
       <file leaf-file-name="JsonStoryUtil.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
+            <state relative-caret-position="6596">
               <caret line="402" column="102" selection-start-line="402" selection-start-column="93" selection-end-line="402" selection-end-column="102" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TrigToJsonStoryPerspectives.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TrigToJsonStoryPerspectives.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonStoryPerspectives.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="469">
-              <caret line="273" column="14" selection-start-line="273" selection-start-column="14" selection-end-line="273" selection-end-column="14" />
+            <state relative-caret-position="425">
+              <caret line="365" column="55" selection-start-line="365" selection-start-column="55" selection-end-line="365" selection-end-column="55" />
               <folding>
                 <element signature="e#14698#14710#0" expanded="true" />
               </folding>
@@ -207,25 +212,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="145">
-              <caret line="166" column="0" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="MarkdownPreviewEditor">
-            <state />
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="RawTextIndex.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/RawTextIndex.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-119">
+            <state relative-caret-position="697">
               <caret line="49" column="35" selection-start-line="49" selection-start-column="35" selection-end-line="49" selection-end-column="35" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -233,8 +227,8 @@
       <file leaf-file-name="TrigKSTripleReader.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="692">
-              <caret line="453" column="51" selection-start-line="453" selection-start-column="15" selection-end-line="453" selection-end-column="46" />
+            <state relative-caret-position="-1054">
+              <caret line="208" column="23" selection-start-line="208" selection-start-column="23" selection-end-line="208" selection-end-column="23" />
               <folding>
                 <element signature="e#1506#1507#0" expanded="true" />
                 <element signature="e#1564#1565#0" expanded="true" />
@@ -243,17 +237,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MentionResolver.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MentionResolver.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="396" column="33" selection-start-line="396" selection-start-column="33" selection-end-line="396" selection-end-column="33" />
+            <state relative-caret-position="153">
+              <caret line="319" column="14" selection-start-line="319" selection-start-column="14" selection-end-line="319" selection-end-column="14" />
               <folding>
                 <element signature="e#12396#12423#0" expanded="true" />
                 <element signature="e#12490#12507#0" expanded="true" />
                 <element signature="e#13387#13395#0" expanded="true" />
-                <element signature="e#13835#14058#0" expanded="true" />
-                <element signature="e#14057#14058#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -262,7 +254,7 @@
       <file leaf-file-name="GetNAF.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetNAF.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
+            <state relative-caret-position="1088">
               <caret line="83" column="36" selection-start-line="83" selection-start-column="36" selection-end-line="83" selection-end-column="36" />
               <folding />
             </state>
@@ -351,12 +343,12 @@
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonPerspectiveTimeLineClimax.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonTimeLineClimax.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetNAF.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonPerspectiveStoriesFT.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonStoryPerspectives.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java" />
       </list>
     </option>
   </component>
@@ -374,15 +366,41 @@
     </option>
   </component>
   <component name="MavenProjectNavigator">
-    <treeState />
+    <treeState>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="EventCoreference and NAF2SEM-GRASP" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="EventCoreference and NAF2SEM-GRASP" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Lifecycle" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
+        </PATH_ELEMENT>
+      </PATH>
+    </treeState>
   </component>
   <component name="MavenRunner">
     <option name="runMavenInBackground" value="false" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1280" />
-    <option name="height" value="773" />
+    <option name="x" value="403" />
+    <option name="y" value="96" />
+    <option name="width" value="1920" />
+    <option name="height" value="777" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -412,8 +430,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -448,7 +467,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -995,27 +1013,6 @@
       <option name="presentableId" value="Default" />
       <updated>1382608862052</updated>
     </task>
-    <task id="LOCAL-00243" summary="-- maven prepare">
-      <created>1459007591823</created>
-      <option name="number" value="00243" />
-      <option name="presentableId" value="LOCAL-00243" />
-      <option name="project" value="LOCAL" />
-      <updated>1459007591824</updated>
-    </task>
-    <task id="LOCAL-00244" summary="-- maven prepare">
-      <created>1459066044972</created>
-      <option name="number" value="00244" />
-      <option name="presentableId" value="LOCAL-00244" />
-      <option name="project" value="LOCAL" />
-      <updated>1459066044973</updated>
-    </task>
-    <task id="LOCAL-00245" summary="-- maven prepare">
-      <created>1459069049869</created>
-      <option name="number" value="00245" />
-      <option name="presentableId" value="LOCAL-00245" />
-      <option name="project" value="LOCAL" />
-      <updated>1459069049869</updated>
-    </task>
     <task id="LOCAL-00246" summary="-- API change DOCTIME and CONTEXTTIME parameter added for NAF2SEM">
       <created>1459149564847</created>
       <option name="number" value="00246" />
@@ -1338,26 +1335,46 @@
       <option name="project" value="LOCAL" />
       <updated>1467384311073</updated>
     </task>
-    <option name="localTasksCounter" value="292" />
+    <task id="LOCAL-00292" summary="-- storylines and json">
+      <created>1467384407935</created>
+      <option name="number" value="00292" />
+      <option name="presentableId" value="LOCAL-00292" />
+      <option name="project" value="LOCAL" />
+      <updated>1467384407935</updated>
+    </task>
+    <task id="LOCAL-00293" summary="-- storylines and json">
+      <created>1467400769667</created>
+      <option name="number" value="00293" />
+      <option name="presentableId" value="LOCAL-00293" />
+      <option name="project" value="LOCAL" />
+      <updated>1467400769668</updated>
+    </task>
+    <task id="LOCAL-00294" summary="-- storylines and json">
+      <created>1467616381584</created>
+      <option name="number" value="00294" />
+      <option name="presentableId" value="LOCAL-00294" />
+      <option name="project" value="LOCAL" />
+      <updated>1467616381585</updated>
+    </task>
+    <option name="localTasksCounter" value="295" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="773" extended-state="0" />
+    <frame x="403" y="96" width="1920" height="777" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27138644" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25783476" sideWeight="0.50104165" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.09773829" sideWeight="0.95652175" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15601704" sideWeight="0.95652175" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.113235295" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15781711" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22140762" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32890856" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25040388" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12886049" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25767368" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1370,6 +1387,7 @@
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293247" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1049936" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27138644" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23050848" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1735,17 +1753,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="205">
           <caret line="550" column="66" selection-start-line="550" selection-start-column="66" selection-end-line="550" selection-end-column="66" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="class#CatLink#0;class#JsonFromCat#0" expanded="false" />
-            <element signature="class#PlotLink#0;class#JsonFromCat#0" expanded="false" />
-            <element signature="class#TimeLink#0;class#JsonFromCat#0" expanded="false" />
-            <element signature="class#LocationLink#0;class#JsonFromCat#0" expanded="false" />
-            <element signature="class#ActorLink#0;class#JsonFromCat#0" expanded="false" />
-            <element signature="class#TimeTerm#0;class#JsonFromCat#0" expanded="false" />
-            <element signature="e#14937#14949#0" expanded="false" />
-            <element signature="e#25234#25246#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1753,7 +1760,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="541">
           <caret line="200" column="44" selection-start-line="200" selection-start-column="44" selection-end-line="200" selection-end-column="44" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1767,17 +1773,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonPerspectiveTimeLineClimax.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="293" column="76" selection-start-line="293" selection-start-column="76" selection-end-line="293" selection-end-column="76" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonPerspectiveTimeLineClimax.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetNAF.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
+        <state relative-caret-position="1088">
           <caret line="83" column="36" selection-start-line="83" selection-start-column="36" selection-end-line="83" selection-end-column="36" />
           <folding />
         </state>
@@ -1787,63 +1786,43 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-72">
           <caret line="21" column="18" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="396" column="33" selection-start-line="396" selection-start-column="33" selection-end-line="396" selection-end-column="33" />
-          <folding>
-            <element signature="e#12396#12423#0" expanded="true" />
-            <element signature="e#12490#12507#0" expanded="true" />
-            <element signature="e#13387#13395#0" expanded="true" />
-            <element signature="e#13835#14058#0" expanded="true" />
-            <element signature="e#14057#14058#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/RawTextIndex.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-119">
+        <state relative-caret-position="697">
           <caret line="49" column="35" selection-start-line="49" selection-start-column="35" selection-end-line="49" selection-end-column="35" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
+        <state relative-caret-position="6596">
           <caret line="402" column="102" selection-start-line="402" selection-start-column="93" selection-end-line="402" selection-end-column="102" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonTimeLineClimax.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="233" column="38" selection-start-line="233" selection-start-column="38" selection-end-line="233" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonTimeLineClimax.java" />
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="145">
-          <caret line="166" column="0" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
       <provider editor-type-id="MarkdownPreviewEditor">
         <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="298">
+          <caret line="268" column="0" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="692">
-          <caret line="453" column="51" selection-start-line="453" selection-start-column="15" selection-end-line="453" selection-end-column="46" />
+        <state relative-caret-position="-1054">
+          <caret line="208" column="23" selection-start-line="208" selection-start-column="23" selection-end-line="208" selection-end-column="23" />
           <folding>
             <element signature="e#1506#1507#0" expanded="true" />
             <element signature="e#1564#1565#0" expanded="true" />
@@ -1853,10 +1832,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonStoryPerspectives.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="469">
-          <caret line="273" column="14" selection-start-line="273" selection-start-column="14" selection-end-line="273" selection-end-column="14" />
+        <state relative-caret-position="425">
+          <caret line="365" column="55" selection-start-line="365" selection-start-column="55" selection-end-line="365" selection-end-column="55" />
           <folding>
             <element signature="e#14698#14710#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="319" column="14" selection-start-line="319" selection-start-column="14" selection-end-line="319" selection-end-column="14" />
+          <folding>
+            <element signature="e#12396#12423#0" expanded="true" />
+            <element signature="e#12490#12507#0" expanded="true" />
+            <element signature="e#13387#13395#0" expanded="true" />
           </folding>
         </state>
       </provider>

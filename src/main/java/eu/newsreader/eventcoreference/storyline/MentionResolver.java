@@ -317,7 +317,7 @@ public class MentionResolver {
             String key = keys.next();
             /// we first get the tokens for the single NAF file.
             /// next we serve each event with mentions in this NAF file
-            System.out.println("key = " + key);
+            //System.out.println("key = " + key);
             ArrayList<KafWordForm> wordForms = null;
             try {
                 String nafURI = makeRequestUrl(KS, key);
@@ -416,7 +416,7 @@ public class MentionResolver {
             //break;
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
-        System.out.println("Time elapsed to get sources from KS:");
+        System.out.println("Time elapsed to get text snippets from KS:");
         System.out.println(estimatedTime/1000.0);
     }
 
