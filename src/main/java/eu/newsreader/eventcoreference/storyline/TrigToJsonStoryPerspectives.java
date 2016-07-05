@@ -368,7 +368,6 @@ public class TrigToJsonStoryPerspectives {
 
             }
             nEvents = jsonObjects.size();
-
             nActors = JsonStoryUtil.countActors(jsonObjects);
             nMentions = JsonStoryUtil.countMentions(jsonObjects);
             nStories = JsonStoryUtil.countGroups(jsonObjects);
@@ -376,18 +375,20 @@ public class TrigToJsonStoryPerspectives {
             JsonSerialization.writeJsonObjectArrayWithStructuredData(trigfolder, "", project,
                     jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
 
+
+            /// @Deprecated
             /// Creates separate JSON files for each story. @Deprecated
             //splitStories(jsonObjects,rawTextArrayList,structuredEvents,project,trigfolder);
 
             /// @Deprecated
-            if (!COMBINE) {
+/*            if (!COMBINE) {
                 if (PERSPECTIVE && perspectiveEvents.size()>0) {
                     JsonSerialization.writeJsonPerspectiveArray(trigfolder, project, perspectiveEvents);
                 }
                 if (!pathToFtDataFile.isEmpty() && structuredEvents.size()>0) {
                     JsonSerialization.writeJsonStructuredArray(trigfolder, project, structuredEvents);
                 }
-            }
+            }*/
         } catch (JSONException e) {
             e.printStackTrace();
         }

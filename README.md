@@ -1,6 +1,6 @@
 EventCoreference
 ================
-version 3.0
+version 3.1.1
 Copyright: VU University Amsterdam, Piek Vossen
 email: piek.vossen@vu.nl
 website: www.newsreader-project.eu

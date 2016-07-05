@@ -6,7 +6,7 @@
     <groupId>com.github.cltl</groupId>
 
     <artifactId>EventCoreference</artifactId>
-    <version>v3.0</version>
+    <version>v3.1.1</version>
     <packaging>jar</packaging>
     <name>EventCoreference and NAF2SEM-GRASP</name>
     <description>Reads NewsReader NAF files and creates event coreference relations in NAF or RDF-TRiG according to the NewsReader SEM and GRASP model.</description>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>com.github.cltl</groupId>
             <artifactId>KafSaxParser</artifactId>
-            <version>v3.1</version>
+            <version>v3.1.1</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>

@@ -5,6 +5,7 @@ import eu.newsreader.eventcoreference.input.TrigTripleData;
 import eu.newsreader.eventcoreference.input.TrigTripleReader;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.storyline.JsonFromRdf;
+import eu.newsreader.eventcoreference.storyline.JsonStoryUtil;
 import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.File;
@@ -141,12 +142,27 @@ public class TrigStats {
 
     static public void main (String[] args) {
         String folderpath = "";
-        folderpath = args[0];
-        //folderpath = "/Users/piek/Desktop/NWR-INC/financialtimes/brexit4-ne";
+        String type = "instance";
+        folderpath = "/Users/piek/Desktop/NWR-INC/financialtimes/data/brexit6.naf";
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("--trig-folder") && args.length>(i+1)) {
+                folderpath = args[i+1];
+            }
+            else if (arg.equals("--type") && args.length>(i+1)) {
+                type = args[i+1];
+            }
+        }
         File inputFolder = new File(folderpath);
         System.out.println("inputFolder = " + inputFolder);
         ArrayList<File> files = Util.makeRecursiveFileList(inputFolder, ".trig");
         System.out.println(".trig files size() = " + files.size());
+        if (type.equals("instance")) processInstances(inputFolder, files);
+        if (type.equals("grasp")) processGrasp(inputFolder, files);
+
+    }
+
+    static void processInstances (File inputFolder, ArrayList<File> files) {
         TrigTripleData trigTripleData = TrigTripleReader.readInstanceTripleFromTrigFiles(files);
         Set keySet = trigTripleData.tripleMapInstances.keySet();
         Iterator<String> keys = keySet.iterator();
@@ -224,7 +240,8 @@ public class TrigStats {
             }
         }
         File folderParent = inputFolder.getParentFile();
-        String outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".entities.xls";
+        String outputFile = "";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".entities.xls";
         dumpSortedMap(enMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".nonentities.xls";
         dumpSortedMap(neMap, outputFile);
@@ -246,6 +263,17 @@ public class TrigStats {
         dumpSortedMap(iliMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event.xls";
         dumpTypeMap(eventMap, eventLabelMap, outputFile);
+    }
+
+    static void processGrasp (File inputFolder, ArrayList<File> files) {
+        TrigTripleData trigTripleData = TrigTripleReader.readGraspTripleFromTrigFiles(files);
+        getSourceStats(trigTripleData);
+        File folderParent = inputFolder.getParentFile();
+        String outputFile = "";
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".cited.xls";
+        dumpSortedMap(citeMap, outputFile);
+        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".author.xls";
+        dumpSortedMap(authMap, outputFile);
     }
 
     static int countMentions (ArrayList<Statement> statements) {
@@ -319,6 +347,105 @@ public class TrigStats {
                 }
             }
             return result;
+    }
+
+
+
+    public static void getSourceStats(TrigTripleData trigTripleData) {
+        Set keySet = trigTripleData.tripleMapGrasp.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<Statement> perspectiveTriples = trigTripleData.tripleMapGrasp.get(key);
+            for (int i = 0; i < perspectiveTriples.size(); i++) {
+                Statement statement = perspectiveTriples.get(i);
+                String predicate = statement.getPredicate().getURI();
+                String object = statement.getObject().toString();
+                if (predicate.endsWith("#hasAttribution")) {
+                    if (trigTripleData.tripleMapGrasp.containsKey(object)) {
+                        ArrayList<Statement> perspectiveValues = trigTripleData.tripleMapGrasp.get(object);
+                        for (int j = 0; j < perspectiveValues.size(); j++) {
+                            Statement statement1 = perspectiveValues.get(j);
+                            if (statement1.getPredicate().getURI().endsWith("#wasAttributedTo")) {
+                                if (trigTripleData.tripleMapGrasp.containsKey(statement1.getObject().toString())) {
+                                    //// this means the source has properties so it is likely to be the document with an author
+                                    ArrayList<Statement> provStatements = trigTripleData.tripleMapGrasp.get(statement1.getObject().toString());
+                                    for (int k = 0; k < provStatements.size(); k++) {
+                                        Statement statement2 = provStatements.get(k);
+                                        String authorString = statement2.getObject().toString();
+                                        int idx = authorString.lastIndexOf("/");
+                                        if (idx > -1) {
+                                            authorString = authorString.substring(idx + 1);
+                                        }
+                                        if (authorString.indexOf("_and_")>-1){
+                                            String[] fields = authorString.split("_and_");
+                                            for (int l = 0; l < fields.length; l++) {
+                                                String field = fields[l];
+                                                if (authorString.indexOf("%2C")>-1) {
+                                                    String[] subfields = field.split("%2C");
+                                                    for (int m = 0; m < subfields.length; m++) {
+                                                        String subfield = subfields[m];
+                                                        if (!subfield.toLowerCase().endsWith("correspondent")
+                                                                && !subfield.endsWith("editor")
+                                                                && !subfield.toLowerCase().startsWith("in+")
+                                                                ) {
+                                                            String author = JsonStoryUtil.normalizeSourceValue(subfield);
+                                                            updateMap(author, 1, authMap);
+                                                        }
+                                                    }
+                                                }
+                                                else {
+                                                    String author = JsonStoryUtil.normalizeSourceValue(field);
+                                                    updateMap(author, 1, authMap);
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            String author = JsonStoryUtil.normalizeSourceValue(authorString);
+                                            updateMap(author, 1, authMap);
+                                        }
+
+                                        /*if (author.indexOf("_and_")>-1) {
+                                            ArrayList<String> authors = JsonStoryUtil.splitAuthors(authorString);
+                                            for (int l = 0; l < authors.size(); l++) {
+                                                String subauthor = authors.get(j);
+                                                if (subauthor.)
+                                                updateMap(subauthor, 1, authMap);
+                                            }
+                                        }
+                                        else{
+                                            updateMap(author, 1, authMap);
+                                        }*/
+                                    }
+                                } else {
+                                    //// it is not the document so a cited source
+                                    String cite = statement1.getObject().toString();
+                                    int idx = cite.lastIndexOf("/");
+                                    if (idx > -1) {
+                                        cite = cite.substring(idx + 1);
+                                    }
+                                    cite= JsonStoryUtil.normalizeSourceValue(cite);
+                                    updateMap(cite, 1, citeMap);
+/*                                  THIS DOES NOT WORK: PRONOUNS, RECEPTIONIST, ETC...
+                                    //// There can be source documents without meta data.
+                                    //// In that case, there are no triples for in tripleMapGrasp with this subject but it is still a document
+                                    //// The next hack checks for upper case characters in the URI
+                                    //// If they are present, we assume it is somebody otherwise we assume it is a document and we assign it to the meta string
+
+                                    if (cite.toLowerCase().equals(cite)) {
+                                        //// no uppercase characters
+                                        cite = meta;
+                                    }
+*/
+                                    //  System.out.println("quote source = " + cite);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

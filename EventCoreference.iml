@@ -14,7 +14,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.github.cltl:KafSaxParser:v3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.cltl:KafSaxParser:v3.1.1" level="project" />
     <orderEntry type="library" name="Maven: ant:ant:1.6.5" level="project" />
     <orderEntry type="library" name="Maven: net.sourceforge.owlapi:owlapi-distribution:3.4.10" level="project" />
     <orderEntry type="library" name="Maven: net.sourceforge.owlapi:owlapi-apibinding:3.4.10" level="project" />

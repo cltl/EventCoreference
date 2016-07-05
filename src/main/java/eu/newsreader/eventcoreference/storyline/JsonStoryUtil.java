@@ -1823,7 +1823,7 @@ public class JsonStoryUtil {
     }
 
 
-    static PerspectiveJsonObject getPerspectiveObjectForEvent (TrigTripleData trigTripleData, String mentionUri, String meta) {
+    public static PerspectiveJsonObject getPerspectiveObjectForEvent(TrigTripleData trigTripleData, String mentionUri, String meta) {
         PerspectiveJsonObject perspectiveJsonObject = new PerspectiveJsonObject();
         String author = "";
         String cite = "";
@@ -2361,7 +2361,7 @@ public class JsonStoryUtil {
         return authors;
     }
 
-    static String cleanAuthor (String author) {
+    public static String cleanAuthor(String author) {
         String cleanAuthor = author;
         int idx = author.indexOf("_in_");
         if (idx>-1) {
@@ -2389,7 +2389,9 @@ public class JsonStoryUtil {
         if (idx>-1) {
             normValue = normValue.substring(0, idx).trim();
         }
-
+        if (normValue.startsWith("By_")) {
+            normValue = normValue.substring(3);
+        }
         idx = normValue.indexOf(":By_");
         if (idx>-1) {
             normValue = normValue.substring(0, idx+1).trim()+normValue.substring(idx+4);
