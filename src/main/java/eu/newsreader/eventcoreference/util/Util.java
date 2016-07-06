@@ -2866,4 +2866,38 @@ public class Util {
                     + " [Value] : " + entry.getValue());
         }
     }
+    
+    public static ArrayList<String> splitSubstring (String str, String substr) {
+        ArrayList<String> split = new ArrayList<String>();
+        int idx_s = 0;
+        int idx_e = str.indexOf(substr);
+        while (idx_e>-1) {
+            String f = str.substring(idx_s, idx_e);
+            split.add(f.trim());
+            idx_s = idx_e+substr.length();
+            idx_e = str.indexOf(substr, idx_s);
+        }
+        if (idx_s<str.length()) {
+           String f = str.substring(idx_s).trim();
+            split.add(f);
+        }
+        //System.out.println("split.toString() = " + split.toString());
+        return split;
+    }
+
+    public static String getCamelName (String name) {
+        final String capital = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lastName = "";
+        boolean CAMEL = false;
+        System.out.println("name = " + name);
+        for (int i = 1; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (capital.indexOf(c)>-1) {
+               CAMEL = true;
+            }
+            if (CAMEL) lastName+=c;
+        }
+        System.out.println("lastName = " + lastName);
+        return lastName;
+    }
 }

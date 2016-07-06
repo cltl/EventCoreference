@@ -72,6 +72,10 @@ public class PerspectiveJsonObject {
     }
 
     public String getAuthor() {
+        if (!author.isEmpty()) {
+            int idx = author.lastIndexOf("/");
+            if (idx > -1) { author =  author.substring(idx + 1); }
+        }
         return author;
     }
 
@@ -80,6 +84,10 @@ public class PerspectiveJsonObject {
     }
 
     public String getCite() {
+        if (!cite.isEmpty()) {
+            int idx = cite.lastIndexOf("/");
+            if (idx > -1) { cite = cite.substring(idx + 1); }
+        }
         return cite;
     }
 

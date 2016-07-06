@@ -8,6 +8,7 @@ import eu.newsreader.eventcoreference.input.TrigTripleData;
 import eu.newsreader.eventcoreference.naf.CreateMicrostory;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.EuroVoc;
+import eu.newsreader.eventcoreference.util.Util;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1975,7 +1976,7 @@ public class JsonStoryUtil {
 
                         //System.out.println("mention event = " + mention);
                         if (perspectiveJsonObject!=null) {
-                            String source = JsonStoryUtil.normalizeSourceValue(perspectiveJsonObject.getSource());
+                           /* String source = JsonStoryUtil.normalizeSourceValue(perspectiveJsonObject.getSource());
                             if (!source.isEmpty()) {
                                 if (source.indexOf("_and_")>-1) {
                                     ArrayList<String> authors = JsonStoryUtil.splitAuthors(source);
@@ -1983,11 +1984,11 @@ public class JsonStoryUtil {
                                         String author = authors.get(j);
                                         JSONObject perspective = new JSONObject();
                                         JSONObject attribution = perspectiveJsonObject.getJSONObject();
-/*                                        for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
+*//*                                        for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
                                             String a = perspectiveJsonObject.getAttribution().get(n);
                                             //  System.out.println("a = " + a);
                                             perspective.append("attribution", a);
-                                        }*/
+                                        }*//*
                                         perspective.put("attribution", attribution);
                                         perspective.put("source", author);
                                         //  System.out.println("source = " + source);
@@ -2000,11 +2001,11 @@ public class JsonStoryUtil {
                                     JSONObject attribution = perspectiveJsonObject.getJSONObject();
                                     perspective.put("attribution", attribution);
 
-/*                                    for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
+*//*                                    for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
                                         String a = perspectiveJsonObject.getAttribution().get(n);
                                         //  System.out.println("a = " + a);
                                         perspective.append("attribution", a);
-                                    }*/
+                                    }*//*
 
                                     if (source.startsWith("author:")) {
                                         source = cleanAuthor(source);
@@ -2015,12 +2016,57 @@ public class JsonStoryUtil {
                                     else {
                                         ///citation
                                         perspective.put("source", source);
-                                       // System.out.println("source = " + source);
+                                        // System.out.println("source = " + source);
                                         mentionObject.append("perspective", perspective);
                                     }
                                 }
+                           */
+                            String source = perspectiveJsonObject.getCite();
+                            if (!source.isEmpty()) {
+                                if (source.toLowerCase().equals(source)) {
+                                    //// no uppercase characters
+                                    source = "cite:someone";
+                                }
+                                else {
+                                    source = JsonStoryUtil.normalizeSourceValue(source);
+                                    source = JsonStoryUtil.cleanCite(source);
+                                    source = "cite:"+source;
+                                }
+                                JSONObject perspective = new JSONObject();
+                                JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                                perspective.put("attribution", attribution);
+                                perspective.put("source", source);
+                                //  System.out.println("source = " + source);
+                                mentionObject.append("perspective", perspective);
                             }
-
+                            else {
+                                source = perspectiveJsonObject.getAuthor();
+                                if (!source.isEmpty()) {
+                                    ArrayList<String> authorAnd = Util.splitSubstring(source, "+and+");
+                                    for (int l = 0; l < authorAnd.size(); l++) {
+                                        String subauthor = authorAnd.get(l);
+                                        ArrayList<String> subauthorfields = Util.splitSubstring(subauthor, "%2C+");
+                                        for (int x = 0; x < subauthorfields.size(); x++) {
+                                            String subfield = subauthorfields.get(x);
+                                            // System.out.println("subfield = " + subfield);
+                                            if (!subfield.toLowerCase().endsWith("correspondent")
+                                                    && !subfield.toLowerCase().endsWith("reporter")
+                                                    && !subfield.toLowerCase().endsWith("editor")
+                                                    && !subfield.toLowerCase().startsWith("in+")
+                                                    ) {
+                                                String author = JsonStoryUtil.normalizeSourceValue(subfield);
+                                                author = "author:" + JsonStoryUtil.cleanAuthor(author);
+                                                JSONObject perspective = new JSONObject();
+                                                JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                                                perspective.put("attribution", attribution);
+                                                perspective.put("source", author);
+                                                //  System.out.println("source = " + source);
+                                                mentionObject.append("perspective", perspective);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     } catch (JSONException e) {
                         // e.printStackTrace();
@@ -2361,17 +2407,37 @@ public class JsonStoryUtil {
         return authors;
     }
 
+
     public static String cleanAuthor(String author) {
         String cleanAuthor = author;
         int idx = author.indexOf("_in_");
         if (idx>-1) {
             cleanAuthor = author.substring(0, idx);
         }
+        idx = cleanAuthor.indexOf("_at_");
+        if (idx>-1) {
+            cleanAuthor = cleanAuthor.substring(0, idx);
+        }
         idx = cleanAuthor.indexOf("?_");
         if (idx>-1) {
             cleanAuthor = cleanAuthor.substring(0, idx);
         }
         return cleanAuthor;
+    }
+
+    public static String cleanCite(String cite) {
+        String cleanCite = cite;
+        if (cite.startsWith("Mrs")) {
+            cleanCite = cite.substring(3);
+        }
+        else if (cite.startsWith("Mr")) {
+            cleanCite = cite.substring(2);
+        }
+        else if (cite.startsWith("Ms")) {
+            cleanCite = cite.substring(2);
+        }
+
+        return cleanCite;
     }
 
     static public String normalizeSourceValue (String value) {
@@ -2389,7 +2455,10 @@ public class JsonStoryUtil {
         if (idx>-1) {
             normValue = normValue.substring(0, idx).trim();
         }
-        if (normValue.startsWith("By_")) {
+        if (normValue.toLowerCase().startsWith("review_by_")) {
+            normValue = normValue.substring(10);
+        }
+        if (normValue.toLowerCase().startsWith("by_")) {
             normValue = normValue.substring(3);
         }
         idx = normValue.indexOf(":By_");

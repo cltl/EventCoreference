@@ -268,6 +268,7 @@ public class TrigStats {
     static void processGrasp (File inputFolder, ArrayList<File> files) {
         TrigTripleData trigTripleData = TrigTripleReader.readGraspTripleFromTrigFiles(files);
         getSourceStats(trigTripleData);
+        normaliseMap(citeMap);
         File folderParent = inputFolder.getParentFile();
         String outputFile = "";
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".cited.xls";
@@ -377,45 +378,25 @@ public class TrigStats {
                                         if (idx > -1) {
                                             authorString = authorString.substring(idx + 1);
                                         }
-                                        if (authorString.indexOf("_and_")>-1){
-                                            String[] fields = authorString.split("_and_");
-                                            for (int l = 0; l < fields.length; l++) {
-                                                String field = fields[l];
-                                                if (authorString.indexOf("%2C")>-1) {
-                                                    String[] subfields = field.split("%2C");
-                                                    for (int m = 0; m < subfields.length; m++) {
-                                                        String subfield = subfields[m];
-                                                        if (!subfield.toLowerCase().endsWith("correspondent")
-                                                                && !subfield.endsWith("editor")
-                                                                && !subfield.toLowerCase().startsWith("in+")
-                                                                ) {
-                                                            String author = JsonStoryUtil.normalizeSourceValue(subfield);
-                                                            updateMap(author, 1, authMap);
-                                                        }
-                                                    }
-                                                }
-                                                else {
-                                                    String author = JsonStoryUtil.normalizeSourceValue(field);
+                                       // System.out.println("authorString = " + authorString);
+                                        ArrayList<String> authorAnd = Util.splitSubstring(authorString, "+and+");
+                                        for (int l = 0; l < authorAnd.size(); l++) {
+                                            String subauthor = authorAnd.get(l);
+                                            ArrayList<String> subauthorfields= Util.splitSubstring(subauthor, "%2C+");
+                                            for (int m = 0; m < subauthorfields.size(); m++) {
+                                                String subfield = subauthorfields.get(m);
+                                               // System.out.println("subfield = " + subfield);
+                                                if (!subfield.toLowerCase().endsWith("correspondent")
+                                                        && !subfield.toLowerCase().endsWith("reporter")
+                                                        && !subfield.toLowerCase().endsWith("editor")
+                                                        && !subfield.toLowerCase().startsWith("in+")
+                                                        ) {
+                                                    String author = JsonStoryUtil.normalizeSourceValue(subfield);
+                                                    author =  JsonStoryUtil.cleanAuthor(author);
                                                     updateMap(author, 1, authMap);
                                                 }
                                             }
                                         }
-                                        else {
-                                            String author = JsonStoryUtil.normalizeSourceValue(authorString);
-                                            updateMap(author, 1, authMap);
-                                        }
-
-                                        /*if (author.indexOf("_and_")>-1) {
-                                            ArrayList<String> authors = JsonStoryUtil.splitAuthors(authorString);
-                                            for (int l = 0; l < authors.size(); l++) {
-                                                String subauthor = authors.get(j);
-                                                if (subauthor.)
-                                                updateMap(subauthor, 1, authMap);
-                                            }
-                                        }
-                                        else{
-                                            updateMap(author, 1, authMap);
-                                        }*/
                                     }
                                 } else {
                                     //// it is not the document so a cited source
@@ -424,8 +405,6 @@ public class TrigStats {
                                     if (idx > -1) {
                                         cite = cite.substring(idx + 1);
                                     }
-                                    cite= JsonStoryUtil.normalizeSourceValue(cite);
-                                    updateMap(cite, 1, citeMap);
 /*                                  THIS DOES NOT WORK: PRONOUNS, RECEPTIONIST, ETC...
                                     //// There can be source documents without meta data.
                                     //// In that case, there are no triples for in tripleMapGrasp with this subject but it is still a document
@@ -437,8 +416,13 @@ public class TrigStats {
                                         cite = meta;
                                     }
 */
-                                    //  System.out.println("quote source = " + cite);
-
+                                    if (cite.toLowerCase().equals(cite)) {
+                                        //// no uppercase characters
+                                        cite = "someone";
+                                    }
+                                    cite= JsonStoryUtil.normalizeSourceValue(cite);
+                                    cite = JsonStoryUtil.cleanCite(cite);
+                                    updateMap(cite, 1, citeMap);
                                 }
                             }
                         }
@@ -446,6 +430,78 @@ public class TrigStats {
                 }
             }
         }
+    }
+
+    static public HashMap<String, String> getFullNameMap (HashMap<String, PhraseCount> map) {
+        HashMap<String, String> fullNameMap = new HashMap<String, String>();
+        Vector<String> singleNames = new Vector<String>();
+        Set keySet = map.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            String [] fields = key.split("_");
+            if (fields.length==1) {
+                String lastName = Util.getCamelName(key);
+                if (lastName.isEmpty()) {
+                    singleNames.add(key);
+                }
+            }
+        }
+        System.out.println("singleNames = " + singleNames.toString());
+        /// we now have last name only entries
+        /// we iterate again
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            String [] fields = key.split("_");
+            if (fields.length>1) {
+                String lastField = fields[fields.length-1];
+                if (singleNames.contains(lastField)) {
+                    fullNameMap.put(lastField, key);
+                }
+            }
+            else {
+                String lastName = Util.getCamelName(key);
+                if (!lastName.isEmpty()) {
+                    if (singleNames.contains(lastName)) {
+                        fullNameMap.put(lastName, key);
+                    }
+                }
+            }
+        }
+        return fullNameMap;
+    }
+
+    static public void normaliseMap (HashMap<String, PhraseCount> map) {
+        System.out.println("map.size() = " + map.size());
+        HashMap<String, PhraseCount> newMap = new HashMap<String, PhraseCount>();
+        Vector<String> normalisedKey = new Vector<String>();
+        HashMap<String, String> fullNameMap = getFullNameMap(map);
+        Set keySet = map.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            PhraseCount phraseCount = map.get(key);
+            if (fullNameMap.containsKey(key)) {
+                String fullName = fullNameMap.get(key);
+                PhraseCount fullPhraseCount = map.get(fullName);
+                fullPhraseCount.addCount(phraseCount.getCount());
+                map.put(fullName, fullPhraseCount);
+                normalisedKey.add(key);
+            }
+        }
+        /// we now have last name only entries
+        /// we iterate again
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            PhraseCount phraseCount = map.get(key);
+            if (!normalisedKey.contains(key)) {
+                newMap.put(key, phraseCount);
+            }
+        }
+        System.out.println("newMap.size() = " + newMap.size());
+        map = newMap;
     }
 
 }
