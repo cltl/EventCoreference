@@ -37,12 +37,17 @@ public class TrigKSTripleReader {
     HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 
     static public void setServicePoint (String service, String ks) {
-        serviceEndpoint = service+"/"+ks+"/sparql";
+        if (ks.isEmpty()) {
+            serviceEndpoint = service+ "/sparql";
+        }
+        else {
+            serviceEndpoint = service + "/" + ks + "/sparql";
+        }
     }
 
     static public void setServicePoint (String service, String ks, String username, String password) {
         //serviceEndpoint = "https://knowledgestore2.fbk.eu/"+ks+"/sparql";
-        serviceEndpoint = service+"/"+ks+"/sparql";
+        setServicePoint(service, ks);
         user = username;
         pass = password;
     }
@@ -225,7 +230,7 @@ public class TrigKSTripleReader {
             }
         }
         String sparqlQuery = makeAttributionQuery(uris);
-      //  System.out.println("sparqlQuery = " + sparqlQuery);
+       // System.out.println("sparqlQuery = " + sparqlQuery);
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
         try {
             QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
@@ -288,7 +293,8 @@ public class TrigKSTripleReader {
                         if (perspectiveMap.containsKey(mention)) {
                             JSONObject perpective = new JSONObject();
                             PerspectiveJsonObject perspectiveJsonObject = perspectiveMap.get(mention);
-                            for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
+                            JsonStoryUtil.addPerspectiveToMention(mentionObject, perspectiveJsonObject);
+                            /*for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
                                 String a =  perspectiveJsonObject.getAttribution().get(n);
                                // System.out.println("a = " + a);
                                 perpective.append("attribution", a);
@@ -297,7 +303,7 @@ public class TrigKSTripleReader {
                             if (!source.isEmpty()) {
                                 perpective.put("source", source);
                                 mentionObject.put("perspective", perpective);
-                            }
+                            }*/
                         }
                     } catch (JSONException e) {
                        // e.printStackTrace();

@@ -1957,6 +1957,57 @@ public class JsonStoryUtil {
         return realEvents;
     }
 
+    static public void addPerspectiveToMention (JSONObject mentionObject, PerspectiveJsonObject perspectiveJsonObject) throws JSONException {
+        if (perspectiveJsonObject!=null) {
+            String source = perspectiveJsonObject.getCite();
+            if (!source.isEmpty()) {
+                if (source.toLowerCase().equals(source)) {
+                    //// no uppercase characters
+                    source = "cite:someone";
+                }
+                else {
+                    source = JsonStoryUtil.normalizeSourceValue(source);
+                    source = JsonStoryUtil.cleanCite(source);
+                    source = "cite:"+source;
+                }
+                JSONObject perspective = new JSONObject();
+                JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                perspective.put("attribution", attribution);
+                perspective.put("source", source);
+                //  System.out.println("source = " + source);
+                mentionObject.append("perspective", perspective);
+            }
+            else {
+                source = perspectiveJsonObject.getAuthor();
+                if (!source.isEmpty()) {
+                    ArrayList<String> authorAnd = Util.splitSubstring(source, "+and+");
+                    for (int l = 0; l < authorAnd.size(); l++) {
+                        String subauthor = authorAnd.get(l);
+                        ArrayList<String> subauthorfields = Util.splitSubstring(subauthor, "%2C+");
+                        for (int x = 0; x < subauthorfields.size(); x++) {
+                            String subfield = subauthorfields.get(x);
+                            // System.out.println("subfield = " + subfield);
+                            if (!subfield.toLowerCase().endsWith("correspondent")
+                                    && !subfield.toLowerCase().endsWith("reporter")
+                                    && !subfield.toLowerCase().endsWith("editor")
+                                    && !subfield.toLowerCase().startsWith("in+")
+                                    ) {
+                                String author = JsonStoryUtil.normalizeSourceValue(subfield);
+                                author = "author:" + JsonStoryUtil.cleanAuthor(author);
+                                JSONObject perspective = new JSONObject();
+                                JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                                perspective.put("attribution", attribution);
+                                perspective.put("source", author);
+                                //  System.out.println("source = " + source);
+                                mentionObject.append("perspective", perspective);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     static void integratePerspectivesInEventObjects (TrigTripleData trigTripleData, ArrayList<JSONObject> targetEvents, String meta) {
         for (int i = 0; i < targetEvents.size(); i++) {
             JSONObject mEvent = targetEvents.get(i);
@@ -1976,97 +2027,7 @@ public class JsonStoryUtil {
 
                         //System.out.println("mention event = " + mention);
                         if (perspectiveJsonObject!=null) {
-                           /* String source = JsonStoryUtil.normalizeSourceValue(perspectiveJsonObject.getSource());
-                            if (!source.isEmpty()) {
-                                if (source.indexOf("_and_")>-1) {
-                                    ArrayList<String> authors = JsonStoryUtil.splitAuthors(source);
-                                    for (int j = 0; j < authors.size(); j++) {
-                                        String author = authors.get(j);
-                                        JSONObject perspective = new JSONObject();
-                                        JSONObject attribution = perspectiveJsonObject.getJSONObject();
-*//*                                        for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
-                                            String a = perspectiveJsonObject.getAttribution().get(n);
-                                            //  System.out.println("a = " + a);
-                                            perspective.append("attribution", a);
-                                        }*//*
-                                        perspective.put("attribution", attribution);
-                                        perspective.put("source", author);
-                                        //  System.out.println("source = " + source);
-                                        mentionObject.append("perspective", perspective);
-
-                                    }
-                                }
-                                else {
-                                    JSONObject perspective = new JSONObject();
-                                    JSONObject attribution = perspectiveJsonObject.getJSONObject();
-                                    perspective.put("attribution", attribution);
-
-*//*                                    for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
-                                        String a = perspectiveJsonObject.getAttribution().get(n);
-                                        //  System.out.println("a = " + a);
-                                        perspective.append("attribution", a);
-                                    }*//*
-
-                                    if (source.startsWith("author:")) {
-                                        source = cleanAuthor(source);
-                                        perspective.put("source", source);
-                                        //  System.out.println("source = " + source);
-                                        mentionObject.append("perspective", perspective);
-                                    }
-                                    else {
-                                        ///citation
-                                        perspective.put("source", source);
-                                        // System.out.println("source = " + source);
-                                        mentionObject.append("perspective", perspective);
-                                    }
-                                }
-                           */
-                            String source = perspectiveJsonObject.getCite();
-                            if (!source.isEmpty()) {
-                                if (source.toLowerCase().equals(source)) {
-                                    //// no uppercase characters
-                                    source = "cite:someone";
-                                }
-                                else {
-                                    source = JsonStoryUtil.normalizeSourceValue(source);
-                                    source = JsonStoryUtil.cleanCite(source);
-                                    source = "cite:"+source;
-                                }
-                                JSONObject perspective = new JSONObject();
-                                JSONObject attribution = perspectiveJsonObject.getJSONObject();
-                                perspective.put("attribution", attribution);
-                                perspective.put("source", source);
-                                //  System.out.println("source = " + source);
-                                mentionObject.append("perspective", perspective);
-                            }
-                            else {
-                                source = perspectiveJsonObject.getAuthor();
-                                if (!source.isEmpty()) {
-                                    ArrayList<String> authorAnd = Util.splitSubstring(source, "+and+");
-                                    for (int l = 0; l < authorAnd.size(); l++) {
-                                        String subauthor = authorAnd.get(l);
-                                        ArrayList<String> subauthorfields = Util.splitSubstring(subauthor, "%2C+");
-                                        for (int x = 0; x < subauthorfields.size(); x++) {
-                                            String subfield = subauthorfields.get(x);
-                                            // System.out.println("subfield = " + subfield);
-                                            if (!subfield.toLowerCase().endsWith("correspondent")
-                                                    && !subfield.toLowerCase().endsWith("reporter")
-                                                    && !subfield.toLowerCase().endsWith("editor")
-                                                    && !subfield.toLowerCase().startsWith("in+")
-                                                    ) {
-                                                String author = JsonStoryUtil.normalizeSourceValue(subfield);
-                                                author = "author:" + JsonStoryUtil.cleanAuthor(author);
-                                                JSONObject perspective = new JSONObject();
-                                                JSONObject attribution = perspectiveJsonObject.getJSONObject();
-                                                perspective.put("attribution", attribution);
-                                                perspective.put("source", author);
-                                                //  System.out.println("source = " + source);
-                                                mentionObject.append("perspective", perspective);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            addPerspectiveToMention(mentionObject, perspectiveJsonObject);
                         }
                     } catch (JSONException e) {
                         // e.printStackTrace();

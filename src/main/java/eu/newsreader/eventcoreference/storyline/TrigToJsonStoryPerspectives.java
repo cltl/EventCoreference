@@ -44,10 +44,10 @@ public class TrigToJsonStoryPerspectives {
     static int nMentions = 0;
     static int nStories = 0;
     static String year = "";
-    static String KSSERVICE = "https://knowledgestore2.fbk.eu";
-    static String KS = "nwr/wikinews-new";
-    static String KSuser = "nwr/wikinews-new";
-    static String KSpass = "nwr/wikinews-new";
+    static String KSSERVICE = ""; //https://knowledgestore2.fbk.eu";
+    static String KS = ""; //"nwr/wikinews-new";
+    static String KSuser = ""; //"nwr/wikinews-new";
+    static String KSpass = ""; //"nwr/wikinews-new";
     static String EVENTSCHEMA = "";
     static EuroVoc euroVoc = new EuroVoc();
     static EuroVoc euroVocBlackList = new EuroVoc();
@@ -259,7 +259,7 @@ public class TrigToJsonStoryPerspectives {
                 System.out.println("querying KnowledgeStore with SPARQL = " + sparqlQuery);
             }
             long startTime = System.currentTimeMillis();
-            if (!KS.isEmpty() && !KSSERVICE.isEmpty()) {
+            if (!KSSERVICE.isEmpty()) {
                 if (KSuser.isEmpty()) {
                     TrigKSTripleReader.setServicePoint(KSSERVICE, KS);
                 }
