@@ -363,7 +363,7 @@ public class TrigToJsonStoryPerspectives {
                 if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sparqlQuery.isEmpty()) {
                   //  rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
                     System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
-                    MentionResolver.createSnippetIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
+                    MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
                 }
 
             }

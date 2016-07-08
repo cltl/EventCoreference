@@ -21,7 +21,6 @@ public class MentionResolver {
     static final int nContext = 75;
     final String USER_AGENT = "Mozilla/5.0";
     public static String serviceBase = "https://knowledgestore2.fbk.eu/";
-    public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars3/files?id=";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
 
@@ -38,11 +37,17 @@ public class MentionResolver {
         return content;
     }
 
-    public static String makeRequestUrl (String knowledgeStore, String mentionUri) {
+    public static String makeRequestUrl (String SERVICE, String knowledgeStore, String mentionUri) {
         //https://knowledgestore2.fbk.eu/nwr/wikinews-new/files?id=<
         //knowledgestore2.fbk.eu/nwr/wikinews-new
        // knowledgeStore = "nwr/wikinews-new";
-        String str = serviceBase + knowledgeStore+"/files?id=<"+mentionUri+".naf>";
+        String str = "";
+        if (knowledgeStore.isEmpty()) {
+            str = SERVICE+"/files?id=<"+mentionUri+".naf>";
+        }
+        else {
+            str = SERVICE + "/"+knowledgeStore+"/files?id=<"+mentionUri+".naf>";
+        }
         return str;
     }
 
@@ -50,7 +55,13 @@ public class MentionResolver {
         //https://knowledgestore2.fbk.eu/nwr/wikinews-new/files?id=<
         //knowledgestore2.fbk.eu/nwr/wikinews-new
        // knowledgeStore = "nwr/wikinews-new";
-        String str = serviceBase + knowledgeStore+"/files?id=<"+mentionUri+">";
+        String str = "";
+        if (knowledgeStore.isEmpty()) {
+            str = serviceBase+"/files?id=<"+mentionUri+".naf>";
+        }
+        else {
+            str = serviceBase + knowledgeStore+"/files?id=<"+mentionUri+".naf>";
+        }
         return str;
     }
 
@@ -113,7 +124,7 @@ public class MentionResolver {
 
     }
 
-    static void createRawTextIndexFromMentions (ArrayList<JSONObject> objects, JSONObject timeLineObject, String KS, final String KSuser, final String KSpass) {
+    static void createRawTextIndexFromMentions (ArrayList<JSONObject> objects, JSONObject timeLineObject, String SERVICE, String KS, final String KSuser, final String KSpass) {
         ArrayList<String> sourceUriList = new ArrayList<String>();
         for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject = objects.get(i);
@@ -142,7 +153,7 @@ public class MentionResolver {
         for (int i = 0; i < sourceUriList.size(); i++) {
             String sourceUri = sourceUriList.get(i);
             try {
-                String nafURI = makeRequestUrl(KS, sourceUri);
+                String nafURI = makeRequestUrl(SERVICE, KS, sourceUri);
                 String text = GetNAF.getFile(nafURI);
                 JSONObject jsonSnippetObject = new JSONObject();
                 jsonSnippetObject.put("uri", sourceUri);
@@ -222,7 +233,7 @@ public class MentionResolver {
         return sourceObjects;
     }
 
-    static ArrayList<JSONObject> createRawTextIndexFromMentions (ArrayList<JSONObject> objects, String KS, final String KSuser, final String KSpass) {
+    static ArrayList<JSONObject> createRawTextIndexFromMentions (ArrayList<JSONObject> objects, String SERVICE, String KS, final String KSuser, final String KSpass) {
         ArrayList<JSONObject> sourceObjects = new ArrayList<JSONObject>();
         ArrayList<String> sourceUriList = new ArrayList<String>();
         for (int i = 0; i < objects.size(); i++) {
@@ -252,7 +263,7 @@ public class MentionResolver {
         for (int i = 0; i < sourceUriList.size(); i++) {
             String sourceUri = sourceUriList.get(i);
             try {
-                String nafURI = makeRequestUrl(KS, sourceUri);
+                String nafURI = makeRequestUrl(SERVICE, KS, sourceUri);
                 String text = GetNAF.getFile(nafURI);
                 JSONObject jsonSnippetObject = new JSONObject();
                 jsonSnippetObject.put("uri", sourceUri);
@@ -276,7 +287,7 @@ public class MentionResolver {
         return sourceObjects;
     }
 
-    static void createSnippetIndexFromMentions (ArrayList<JSONObject> objects, String KS, final String KSuser, final String KSpass) throws JSONException {
+    static void createSnippetIndexFromMentions (ArrayList<JSONObject> objects, String SERVICE, String KS, final String KSuser, final String KSpass) throws JSONException {
         HashMap<String, ArrayList<String>> sourceUriList = new HashMap<String, ArrayList<String>>();
         HashMap<String, Integer> eventIdObjectMap = new HashMap<String, Integer>();
         for (int i = 0; i < objects.size(); i++) {
@@ -320,7 +331,8 @@ public class MentionResolver {
             //System.out.println("key = " + key);
             ArrayList<KafWordForm> wordForms = null;
             try {
-                String nafURI = makeRequestUrl(KS, key);
+                String nafURI = makeRequestUrl(SERVICE, KS, key);
+                System.out.println("nafURI = " + nafURI);
                 wordForms = GetNAF.getNafWordFormsFile(nafURI);
 /*                for (int i = 0; i < wordForms.size(); i++) {
                     KafWordForm kafWordForm = wordForms.get(i);

@@ -51,7 +51,7 @@ public class JsonSerialization {
         }
     }
 
-    static void writeJsonObjectArrayForQuery (String KS, String query,
+    static void writeJsonObjectArrayForQuery (String SERVICE, String KS, String query,
                                               String project,
                                               ArrayList<JSONObject> objects,
                                               int nEvents,
@@ -77,7 +77,7 @@ public class JsonSerialization {
                     MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, KS);
                 }
                 else {
-                    MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, KS, KSuser, KSpass);
+                    MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, SERVICE, KS, KSuser, KSpass);
                 }
                 timeLineObject.append("event_cnt", nEvents);
                 timeLineObject.append("story_cnt", nStories);
