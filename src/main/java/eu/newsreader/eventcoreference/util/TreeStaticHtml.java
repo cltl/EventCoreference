@@ -5,17 +5,87 @@ package eu.newsreader.eventcoreference.util;
  */
 public class TreeStaticHtml {
 
-    static public final String makeHeader(String title) {
-        String header = header1+title+header2;
+    static public final String makeHeader(String title, String scripts) {
+        String header = makeHeader1(scripts)+title+header2;
         return header;
     }
-    static public final String header1 = "\n" +
-            "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n" +
-            "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
-            "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" +
-            "<head>\n" +
-            "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" +
-            "<title>";
+
+    static public final String makeScripts () {
+        String str = "<script type=\"text/javascript\">\n" +
+                "    function getValues()\n" +
+                "    {\n" +
+                "        var str = '';\n" +
+                "        var elem = document.getElementById('queryform').elements;\n" +
+                "        for(var i = 0; i < elem.length; i++)\n" +
+                "        {\n" +
+                "            if (elem[i].checked) str += elem[i].value+\";\";\n" +
+                "           \n" +
+                "        }\n" +
+                "        alert(str); \n" +
+                "    }\n" +
+                "</script>" +
+                "<script type=\"text/javascript\">\n" +
+                "    function clearValues()\n" +
+                "    {\n" +
+                "        var elem = document.getElementById('queryform').elements;\n" +
+                "        for(var i = 0; i < elem.length; i++)\n" +
+                "        {\n" +
+                "            if (elem[i].checked) elem[i].checked=false;\n" +
+                "           \n" +
+                "        }\n" +
+                "    }\n" +
+                "</script>";
+        return str;
+    }
+
+    static public final String makeScripts (int n, int m) {
+
+        String str = "<SCRIPT LANGUAGE=\"JavaScript\">\n" +
+                "function searchButton (form){\n" +
+                "\tQuery = \"--event-type \";\n" +
+                "    N=" + n + ";\n" +
+                "\tfor (Count = 0; Count < N; Count++) {\n" +
+                "        if (form.checktype[Count].checked) {\n" +
+                "        \tQuery = Query + form.checktype[Count].value+\";\";\n" +
+                "        }\n" +
+                "    }\n" +
+                "    M=" + m + ";\n" +
+                "    Query = Query + \" --event-word \";\n" +
+                "    for (Count = 0; Count < M; Count++) {\n" +
+                "        if (form.checkword[Count].checked) {\n" +
+                "        \tQuery = Query + form.checkword[Count].value+\";\";\n" +
+                "        }\n" +
+                "    }\n" +
+                "    alert (\"I will search for: \"+Query);\n" +
+                "}\n" +
+                "</SCRIPT>\n" +
+                "\n" +
+                "<SCRIPT LANGUAGE=\"JavaScript\">\n" +
+                "function clearButton (form){\n" +
+                "    N=" + n + ";\n" +
+                "\tfor (Count = 0; Count < N; Count++) {\n" +
+                "        form.checktype[Count].checked = false;\n" +
+                "    }\n" +
+                "    M=" + m + ";\n" +
+                "    for (Count = 0; Count < M; Count++) {\n" +
+                "        form.checkword[Count].checked = false;\n" +
+                "    }\n" +
+                "}\n" +
+                "</SCRIPT>";
+        return str;
+    }
+
+    static public final String makeHeader1 (String scripts) {
+        String str = "\n" +
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n" +
+                "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" +
+                "<head>\n" + scripts+"\n"+
+                "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" +
+                "<title>";
+        return str;
+    }
+
     static public final String header2 = "</title>\n" +
             "\n" +
             "<style type=\"text/css\">\n" +
@@ -86,4 +156,20 @@ public class TreeStaticHtml {
             "            \t</div>";
 
     static public final String bodyEnd = "</body>\n" +  "</html>";
+
+
+    static public final String formStart = "<FORM ID=\"queryform\" NAME=\"queryform\">  \n" +
+            "<INPUT TYPE=\"button\" NAME=\"search\" Value=\"Search\" onClick=\"getValues()\"><BR>\n" +
+            "<INPUT TYPE=\"button\" NAME=\"clear\" Value=\"Clear\" onClick=\"clearValues()\"><BR>  ";
+
+    static public final String formEnd = "</FORM>";
+
+    static public String makeTickBox (String name, String type, int nr) {
+        String tb = "<INPUT TYPE=\"checkbox\" NAME=\"check"+type+nr+"\" VALUE=\""+name+"\">";
+        return tb;
+    }
+    static public String makeTickBox (String name) {
+        String tb = "<INPUT TYPE=\"checkbox\" NAME=\"check"+"\" VALUE=\""+name+"\">";
+        return tb;
+    }
 }

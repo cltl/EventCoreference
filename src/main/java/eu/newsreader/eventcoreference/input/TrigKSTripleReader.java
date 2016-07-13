@@ -123,6 +123,7 @@ public class TrigKSTripleReader {
                 "     OPTIONAL { ?mention <http://groundedannotationframework.org/grasp#hasAttribution> [<http://groundedannotationframework.org/grasp#wasAttributedTo> ?cite]}\n" +
                 "     OPTIONAL { ?mention <http://groundedannotationframework.org/grasp#hasAttribution> [<http://www.w3.org/ns/prov#wasAttributedTo>  [<http://www.w3.org/ns/prov#wasAttributedTo> ?author]]}\n" +
                 "}";
+        //System.out.println("sparqlQuery = " + sparqlQuery);
         return sparqlQuery;
     }
 
@@ -213,7 +214,7 @@ public class TrigKSTripleReader {
 
     public static void integrateAttributionFromKs(ArrayList<JSONObject> targetEvents){
         long startTime = System.currentTimeMillis();
-        HashMap<String, PerspectiveJsonObject> perspectiveMap = new HashMap<String, PerspectiveJsonObject>();
+        HashMap<String, ArrayList<PerspectiveJsonObject>> perspectiveMap = new HashMap<String, ArrayList<PerspectiveJsonObject>>();
 
         ArrayList<String> uris = new ArrayList<String>();
         HashMap<String, JSONObject> eventMap = new HashMap<String, JSONObject>();
@@ -252,24 +253,31 @@ public class TrigKSTripleReader {
                 try { label = solution.get("label").toString(); } catch (Exception e) { }
                 try { comment = solution.get("comment").toString(); } catch (Exception e) { }
 
+                if (author.isEmpty() && cite.isEmpty()) {
+                    author = "unknown";
+                }
                 ArrayList<String> perspectives = PerspectiveJsonObject.normalizePerspectiveValue(attribution);
                 if (!perspectives.isEmpty()) {
                     JSONObject targetEvent = eventMap.get(event);
                     if (targetEvent != null) {
-                       // System.out.println("mention input = " + mention);
+                        PerspectiveJsonObject perspectiveJsonObject = new PerspectiveJsonObject(perspectives, author, cite, comment, event, label, mention, targetEvent);
                         if (perspectiveMap.containsKey(mention)) {
-                            PerspectiveJsonObject perspectiveJsonObject = perspectiveMap.get(mention);
-                            perspectiveJsonObject.addAttribution(perspectives);
-                            perspectiveMap.put(mention, perspectiveJsonObject);
+                            ArrayList<PerspectiveJsonObject> perspectiveJsonObjects = perspectiveMap.get(mention);
+                            perspectiveJsonObjects.add(perspectiveJsonObject);
+                            perspectiveMap.put(mention, perspectiveJsonObjects);
                         }
                         else {
-                            PerspectiveJsonObject perspectiveJsonObject = new PerspectiveJsonObject(perspectives, author, cite, comment, event, label, mention, targetEvent);
-                            perspectiveMap.put(mention, perspectiveJsonObject);
+                            ArrayList<PerspectiveJsonObject> perspectiveJsonObjects = new ArrayList<PerspectiveJsonObject>();
+                            perspectiveJsonObjects.add(perspectiveJsonObject);
+                            perspectiveMap.put(mention, perspectiveJsonObjects);
                         }
 
                     } else {
-                        System.out.println("mention no target event = " + mention);
+                        System.out.println("Error: mention without target event = " + mention);
                     }
+                }
+                else {
+                    System.out.println("No perspectives for this event.");
                 }
             }
         } catch (Exception e) {
@@ -281,6 +289,7 @@ public class TrigKSTripleReader {
             try {
                 mMentions = (JSONArray) mEvent.get("mentions");
             } catch (JSONException e) {
+                e.printStackTrace();
             }
             if (mMentions!=null) {
                 for (int m = 0; m < mMentions.length(); m++) {
@@ -289,25 +298,36 @@ public class TrigKSTripleReader {
                         String uriString = mentionObject.getString("uri");
                         JSONArray offsetArray = mentionObject.getJSONArray("char");
                         String mention = JsonStoryUtil.getURIforMention(uriString, offsetArray);
-                        //System.out.println("mention event = " + mention);
+                        if (mention.endsWith("#ev110")) {
+                            System.out.println("mention event to add the perspectives= " + mention);
+                        }
                         if (perspectiveMap.containsKey(mention)) {
-                            JSONObject perpective = new JSONObject();
-                            PerspectiveJsonObject perspectiveJsonObject = perspectiveMap.get(mention);
-                            JsonStoryUtil.addPerspectiveToMention(mentionObject, perspectiveJsonObject);
-                            /*for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
-                                String a =  perspectiveJsonObject.getAttribution().get(n);
-                               // System.out.println("a = " + a);
-                                perpective.append("attribution", a);
+                            ArrayList<PerspectiveJsonObject> perspectiveJsonObjects = perspectiveMap.get(mention);
+                            for (int j = 0; j < perspectiveJsonObjects.size(); j++) {
+                                PerspectiveJsonObject perspectiveJsonObject = perspectiveJsonObjects.get(j);
+
+                                if (mention.endsWith("#ev110")) {
+                                    System.out.println("perspectiveJsonObject.getAuthor() = " + perspectiveJsonObject.getAuthor());
+                                    System.out.println("perspectiveJsonObject.getSource() = " + perspectiveJsonObject.getSource());
+                                }
+                                JsonStoryUtil.addPerspectiveToMention(mentionObject, perspectiveJsonObject);
+
                             }
-                            String source = JsonStoryUtil.normalizeSourceValue(perspectiveJsonObject.getSource());
-                            if (!source.isEmpty()) {
-                                perpective.put("source", source);
-                                mentionObject.put("perspective", perpective);
-                            }*/
+                        }
+                        else {
+                            PerspectiveJsonObject dymmyPerspective = new PerspectiveJsonObject();
+                            JsonStoryUtil.addPerspectiveToMention(mentionObject, dymmyPerspective);
                         }
                     } catch (JSONException e) {
-                       // e.printStackTrace();
+                        e.printStackTrace();
                     }
+                }
+            }
+            else {
+                try {
+                    System.out.println("No mentions for target = "+mEvent.getString("instance"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -456,6 +476,37 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
+        System.out.println("sparqlQuery = " + sparqlQuery);
+        return readTriplesFromKs(sparqlQuery);
+    }
+
+    static public TrigTripleData readTriplesFromKSforSurfaceSubForm(String entityLabel, String filter){
+        String eventFilter = "";
+        if (filter.equals("eso")){
+            eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
+                    "?type <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.newsreader-project.eu/domain-ontology#> . }\n";
+        } else if (filter.equals("fn")){
+            eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
+                    "?type <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> <http://www.newsreader-project.eu/ontologies/framenet/> . }\n";
+        }
+
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "FILTER regex(str(?entlabel), \"" + entityLabel + "\") .\n" +
+                "?ent rdfs:label ?entlabel .\n" +
+                "?event sem:hasActor ?ent .\n" +
+                eventFilter +
+                "} LIMIT "+limit+" }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
+                "} ORDER BY ?event";
        // System.out.println("sparqlQuery = " + sparqlQuery);
         return readTriplesFromKs(sparqlQuery);
     }
@@ -463,8 +514,8 @@ public class TrigKSTripleReader {
 
     public static TrigTripleData readTriplesFromKs(String sparqlQuery){
         System.out.println("serviceEndpoint = " + serviceEndpoint);
-        System.out.println("user = " + user);
-        System.out.println("pass = " + pass);
+        //System.out.println("user = " + user);
+        //System.out.println("pass = " + pass);
         TrigTripleData trigTripleData = new TrigTripleData();
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
 

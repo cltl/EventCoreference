@@ -41,7 +41,7 @@ public class DataSetEntityHierarchy {
         ArrayList<String> tops = simpleTaxonomy.getTops();
         System.out.println("tops.toString() = " + tops.toString());
         HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEntityCountTypeTsv (simpleTaxonomy, entityPath, "//dbpedia.org/");
-        HashMap<String, Integer> cnt = cntEntities(cntPredicates);
+        HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
         System.out.println("Cumulating scores");
         simpleTaxonomy.cumulateScores("dbp:", tops, cnt);
@@ -51,11 +51,12 @@ public class DataSetEntityHierarchy {
 
         try {
             OutputStream fos = new FileOutputStream(entityPath+".words.html");
-            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+            String scripts = TreeStaticHtml.makeScripts(cnt.size(), cntPredicates.size());
+            String str = TreeStaticHtml.makeHeader(title, scripts)+ TreeStaticHtml.bodyStart;
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
             //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
-            simpleTaxonomy.htmlTableTree(fos, "dbp:",tops, 1, cnt, cntPredicates);
+            simpleTaxonomy.htmlTableTree(fos, "dbp:",tops, 1, cnt, cntPredicates, 1, 1);
             str = "</div>\n";
             str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
@@ -63,7 +64,7 @@ public class DataSetEntityHierarchy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+       /* String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
         str += simpleTaxonomy.htmlTableTreeOverview("dbp:",tops, 1, cnt, cntPredicates);
         str += "</div>\n";
@@ -77,11 +78,11 @@ public class DataSetEntityHierarchy {
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
-    static public HashMap<String, Integer> cntEntities (HashMap<String, ArrayList<PhraseCount>> map) {
+    static public HashMap<String, Integer> cntPhrases (HashMap<String, ArrayList<PhraseCount>> map) {
         HashMap<String, Integer> countMap = new HashMap<String, Integer>();
         Set keySet = map.keySet();
         Iterator<String> keys = keySet.iterator();
@@ -96,6 +97,18 @@ public class DataSetEntityHierarchy {
             countMap.put(key, sum);
         }
         return countMap;
+    }
+
+    static public int totalPhrases (HashMap<String, ArrayList<PhraseCount>> map) {
+        int n = 0;
+        Set keySet = map.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<PhraseCount> phrases = map.get(key);
+            n+= phrases.size();
+        }
+        return n;
     }
 
     /*

@@ -275,10 +275,12 @@ public class TrigToJsonStoryPerspectives {
             }
             else if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
                 if (ALL) {
-                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
+                    //trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
+                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforSurfaceSubForm(entityQuery, "");
                 }
                 else {
-                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery, EVENTSCHEMA.toLowerCase());
+                    //trigTripleData = TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery, EVENTSCHEMA.toLowerCase());
+                    trigTripleData = TrigKSTripleReader.readTriplesFromKSforSurfaceSubForm(entityQuery, EVENTSCHEMA.toLowerCase());
                 }
             }
             else if (entityQuery.isEmpty() && !eventQuery.isEmpty()) {

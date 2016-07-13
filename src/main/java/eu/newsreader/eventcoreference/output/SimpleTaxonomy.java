@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.objects.PhraseCount;
+import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
 
 import java.io.*;
@@ -441,8 +442,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                 }
             }
             else {
-                System.out.println("ns = " + ns);
-                System.out.println("top = " + top);
+              //  System.out.println("ns = " + ns);
+              //  System.out.println("top = " + top);
             }
         }
         return str;
@@ -450,8 +451,10 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
 
     public void  htmlTableTree (OutputStream fos, String ns, ArrayList<String> tops,
                                   int level,
-                                  HashMap<String, Integer> eventCounts,
-                                  HashMap<String, ArrayList<PhraseCount>> phrases ) throws IOException {
+                                  HashMap<String, Integer> typeCounts,
+                                  HashMap<String, ArrayList<PhraseCount>> phrases,
+                                int nTypes,
+                                int nPhrases) throws IOException {
         String str = "";
         level++;
         for (int i = 0; i < tops.size(); i++) {
@@ -459,8 +462,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
             str  = "";
             if (top.startsWith(ns)) {
                 Integer cnt = 0;
-                if (eventCounts.containsKey(top)) {
-                    cnt = eventCounts.get(top);
+                if (typeCounts.containsKey(top)) {
+                    cnt = typeCounts.get(top);
                 }
               //  System.out.println(top+ ":" + cnt);
                 if (cnt>0) {
@@ -470,12 +473,14 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
 
                     }
                     String ref = top;
+                    String tb = TreeStaticHtml.makeTickBox(top, "type", nTypes);
                     if (top.startsWith("http")) {
                         int idx = top.lastIndexOf("/");
                         String name = top;
                         if (idx > -1) {
                             name = top.substring(idx + 1);
                         }
+                        tb = TreeStaticHtml.makeTickBox(name, "type", nTypes);
                         ref = "<a href=\"" + top + "\">" + name + "</a>";
                     } else if (top.startsWith("dbp:")) {
                         int idx = top.lastIndexOf(":");
@@ -483,6 +488,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         if (idx > -1) {
                             name = top.substring(idx + 1);
                         }
+                        tb = TreeStaticHtml.makeTickBox(name, "type", nTypes);
                         ref = "<a href=\"http://dbpedia.org/ontology/" + name + "\">" + name + "</a>";
                     }
                     int instances = 0;
@@ -491,10 +497,11 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         instances = phraseCounts.size();
                     }
                     if (cnt > 0) {
-                        str += "<div id=\"cell\"><p>" + ref + ":" + instances+";"+ cnt+"</p></div>";
+                        str += "<div id=\"cell\"><p>" + ref + ":" + instances+";"+ cnt+tb+"</p></div>";
                     } else {
-                        str += "<div id=\"cell\"><p>" + ref + "</p></div>";
+                        str += "<div id=\"cell\"><p>" + ref + tb+"</p></div>";
                     }
+                    nTypes++;
                     str += "</div>\n";
                     str += "<div id=\"row\">";
                     for (int j = 2; j < level; j++) {
@@ -518,13 +525,15 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         for (int j = 0; j < phraseCounts.size(); j++) {
                             PhraseCount phraseCount = phraseCounts.get(j);
                             //if ((phraseCount.getCount()*100)/max>=0) {
-                            if (phraseCount.getCount()>10) {
+                            if (phraseCount.getCount()>0) {
                                 int idx = phraseCount.getPhrase().lastIndexOf("/");
                                 String name = phraseCount.getPhrase();
                                 if (idx > -1) {
                                     name = phraseCount.getPhrase().substring(idx + 1);
                                 }
-                                ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + "</a>";
+                                tb = TreeStaticHtml.makeTickBox(name, "word", nPhrases);
+                                ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() +tb+ "</a>";
+                                nPhrases++;
                                 phraseString += ref;
                                 if (j < phraseCounts.size() - 1) {
                                     phraseString += ", ";
@@ -542,7 +551,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     if (superToSub.containsKey(top)) {
                         ArrayList<String> children = superToSub.get(top);
                        // System.out.println(top+ ":" + cnt+", children:"+children.size());
-                        htmlTableTree(fos, ns, children, level, eventCounts, phrases);
+                        htmlTableTree(fos, ns, children, level, typeCounts, phrases, nTypes, nPhrases);
                     }
                     else {
                       //  System.out.println("has no children top = " + top);
@@ -553,8 +562,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                 }
             }
             else {
-                System.out.println("ns = " + ns);
-                System.out.println("top = " + top);
+             //   System.out.println("ns = " + ns);
+             //   System.out.println("top = " + top);
             }
         }
     }
@@ -585,8 +594,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                 }
             }
             else {
-                System.out.println("ns = " + ns);
-                System.out.println("top = " + top);
+               // System.out.println("ns = " + ns);
+               // System.out.println("top = " + top);
             }
         }
     }

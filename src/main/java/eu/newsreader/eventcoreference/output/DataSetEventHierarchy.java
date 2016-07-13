@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
+import static eu.newsreader.eventcoreference.output.DataSetEntityHierarchy.cntPhrases;
+import static eu.newsreader.eventcoreference.output.DataSetEntityHierarchy.totalPhrases;
+
 /**
  * Created by piek on 15/04/16.
  */
@@ -19,16 +22,12 @@ public class DataSetEventHierarchy {
 
     static public void main (String[] args) {
         String esoPath = "";
-        String cntPath = "";
         String eventPath = "";
         String title = "";
         esoPath = "/Users/piek/Desktop/NWR/eso/ESO.v2/ESO_V2_Final.owl";
-
-        cntPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.eso.xls";
         eventPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.event.xls";
         title = "PostNL ESO ontology events";
 
-        cntPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.eso.xls";
         eventPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.event.xls";
         title = "Brexit ESO ontology events";
         for (int i = 0; i < args.length; i++) {
@@ -39,38 +38,43 @@ public class DataSetEventHierarchy {
             else if (arg.equals("--event") && args.length>(i+1)) {
                 eventPath = args[i+1];
             }
-            else if (arg.equals("--cnt") && args.length>(i+1)) {
-                cntPath = args[i+1];
-            }
             else if (arg.equals("--title") && args.length>(i+1)) {
                 title = args[i+1];
             }
         }
+        System.out.println("esoPath = " + esoPath);
+        System.out.println("counts for eventPath = " + eventPath);
+        System.out.println("title = " + title);
         EsoReader esoReader = new EsoReader();
         esoReader.parseFile(esoPath);
-        HashMap<String, Integer> cnt = readEventCountTsv(cntPath, "eso");
         HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEventCountTypeTsv (eventPath, "eso");
+        HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
+        System.out.println("Cumulating scores");
         ArrayList<String> tops = esoReader.simpleTaxonomy.getTops();
         esoReader.simpleTaxonomy.cumulateScores("eso:", tops, cnt);
        // int maxDepth = esoReader.simpleTaxonomy.getMaxDepth(tops, 1);
-        String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
-        str += "<div id=\"container\">\n";
-        //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
-        str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt, cntPredicates);
-        str += "</div>\n";
-        str += TreeStaticHtml.bodyEnd;
-        //System.out.println(str);
-        //esoReader.printTree(tops, 0, cnt);
+
 
         try {
-            OutputStream fos = new FileOutputStream(cntPath+".words.html");
+            OutputStream fos = new FileOutputStream(eventPath+".words.html");
+            int nPhrases = totalPhrases(cntPredicates);
+            String scripts = TreeStaticHtml.makeScripts();
+            String str = TreeStaticHtml.makeHeader(title, scripts)+ TreeStaticHtml.bodyStart;
+            str += "<div id=\"container\">\n";
+            str += TreeStaticHtml.formStart;
+            fos.write(str.getBytes());
+            //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
+            esoReader.simpleTaxonomy.htmlTableTree(fos, "eso:",tops, 1, cnt, cntPredicates, 1, 1);
+            str = "</div>\n";
+            str += TreeStaticHtml.formEnd;
+            str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+/*        str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
         str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt);
         str += "</div>\n";
@@ -79,12 +83,12 @@ public class DataSetEventHierarchy {
         //esoReader.printTree(tops, 0, cnt);
 
         try {
-            OutputStream fos = new FileOutputStream(cntPath+".overview.html");
+            OutputStream fos = new FileOutputStream(eventPath+".overview.html");
             fos.write(str.getBytes());
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 

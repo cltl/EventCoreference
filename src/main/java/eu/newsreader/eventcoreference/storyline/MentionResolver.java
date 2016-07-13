@@ -287,7 +287,11 @@ public class MentionResolver {
         return sourceObjects;
     }
 
-    static void createSnippetIndexFromMentions (ArrayList<JSONObject> objects, String SERVICE, String KS, final String KSuser, final String KSpass) throws JSONException {
+    static void createSnippetIndexFromMentions (ArrayList<JSONObject> objects,
+                                                String SERVICE,
+                                                String KS,
+                                                final String KSuser,
+                                                final String KSpass) throws JSONException {
         HashMap<String, ArrayList<String>> sourceUriList = new HashMap<String, ArrayList<String>>();
         HashMap<String, Integer> eventIdObjectMap = new HashMap<String, Integer>();
         for (int i = 0; i < objects.size(); i++) {
@@ -301,8 +305,10 @@ public class MentionResolver {
                     String uString = mObject.getString("uri");
                     if (sourceUriList.containsKey(uString)) {
                         ArrayList<String> eventIds = sourceUriList.get(uString);
-                        eventIds.add(eventId);
-                        sourceUriList.put(uString, eventIds);
+                        if (!eventIds.contains(eventId)) {
+                            eventIds.add(eventId);
+                            sourceUriList.put(uString, eventIds);
+                        }
                     }
                     else {
                         ArrayList<String> eventIds = new ArrayList<String>();
@@ -332,7 +338,7 @@ public class MentionResolver {
             ArrayList<KafWordForm> wordForms = null;
             try {
                 String nafURI = makeRequestUrl(SERVICE, KS, key);
-                System.out.println("nafURI = " + nafURI);
+              //  System.out.println("nafURI = " + nafURI);
                 wordForms = GetNAF.getNafWordFormsFile(nafURI);
 /*                for (int i = 0; i < wordForms.size(); i++) {
                     KafWordForm kafWordForm = wordForms.get(i);
@@ -345,9 +351,11 @@ public class MentionResolver {
             ArrayList<String> eventIds = sourceUriList.get(key);
             for (int i = 0; i < eventIds.size(); i++) {
                 String eventId = eventIds.get(i);
+             //   System.out.println("eventId = " + eventId);
                 int idx = eventIdObjectMap.get(eventId);
                 JSONObject eventObject = objects.get(idx);
                 JSONArray mentions = (JSONArray) eventObject.get("mentions");
+              //  System.out.println("mentions.length() = " + mentions.length());
                 for (int j = 0; j < mentions.length(); j++) {
                     JSONObject mObject  = mentions.getJSONObject(j);
                     String uString = mObject.getString("uri");
@@ -406,7 +414,9 @@ public class MentionResolver {
                                     }
 
                                 }
-                               // System.out.println("final newText = " + newText);
+                               /* System.out.println("offsetBegin = " + offsetBegin);
+                                System.out.println("offsetEnd = " + offsetEnd);
+                                System.out.println("final newText = " + newText);*/
                                 mObject.append("snippet", newText);
                                 mObject.append("snippet_char", offsetBegin);
                                 mObject.append("snippet_char", offsetEnd);

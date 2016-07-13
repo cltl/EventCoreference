@@ -429,7 +429,7 @@ public class JsonStoryUtil {
         } // end of while objects in sorted climaxObjects
 
         //// now we handle the singleton events
- /*       storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
+/*        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
         String group = "001:unrelated events";
         String groupName = "unrelated events";
         String groupScore = "001";
@@ -1974,7 +1974,7 @@ public class JsonStoryUtil {
                 JSONObject attribution = perspectiveJsonObject.getJSONObject();
                 perspective.put("attribution", attribution);
                 perspective.put("source", source);
-                //  System.out.println("source = " + source);
+                //System.out.println("source = " + source);
                 mentionObject.append("perspective", perspective);
             }
             else {
@@ -2004,6 +2004,17 @@ public class JsonStoryUtil {
                         }
                     }
                 }
+                else {
+                    //// no cited source and no author source
+                    String author =  "author:" + "unknown";
+                    JSONObject perspective = new JSONObject();
+                    JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                    perspective.put("attribution", attribution);
+                    perspective.put("source", author);
+                    //  System.out.println("source = " + source);
+                    mentionObject.append("perspective", perspective);
+
+                }
             }
         }
     }
@@ -2028,6 +2039,9 @@ public class JsonStoryUtil {
                         //System.out.println("mention event = " + mention);
                         if (perspectiveJsonObject!=null) {
                             addPerspectiveToMention(mentionObject, perspectiveJsonObject);
+                        }
+                        else {
+
                         }
                     } catch (JSONException e) {
                         // e.printStackTrace();
