@@ -419,16 +419,48 @@ public class TrigKSTripleReader {
         return filter;
     }
 
-
-    static public void readTriplesFromKSforEntity(String entityQuery){
-        String types = "";
-        String labels = "";
-        String [] fields = entityQuery.split(";");
+    static public String makeInstanceFilter(String variable, String query) {
+        // "?event sem:hasActor ?ent .\n" +
+        String filter = "{ ";
+        String[] fields = query.split(";");
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i];
-            if (field.indexOf(":")>-1) {
+            if (i>0)  filter +=" UNION ";
+            filter += " { "+variable+" sem:hasActor "+field+" } ";
+        }
+        filter += " }\n" ;
+        return filter;
+    }
+
+    static String multiwordFix (String q) {
+        String fix = "";
+        for (int i = 0; i < q.length(); i++) {
+            String c = q.substring(i,i+1);
+            System.out.println("c = " + c);
+            if (c.equals("^")) {
+                fix += " ";
+            }
+            else fix += c;
+
+        }
+        return fix;
+    }
+    static public void readTriplesFromKSforEntity(String entityQuery){
+        String types = "";
+        String instances = "";
+        String labels = "";
+        String [] fields = entityQuery.split(";");
+        System.out.println("entityQuery = " + entityQuery);
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+           // field = multiwordFix(field);
+            if (field.indexOf("dbp:")>-1) {
                 if (!types.isEmpty()) types += ";";
                 types += field;
+            }
+            else if (field.indexOf("dbpedia:")>-1) {
+                if (!instances.isEmpty()) instances += ";";
+                instances += field;
             }
             else {
                 if (!labels.isEmpty()) labels += ";";
@@ -437,6 +469,7 @@ public class TrigKSTripleReader {
         }
         if (!labels.isEmpty()) readTriplesFromKSforEntityLabel(labels);
         if (!types.isEmpty()) readTriplesFromKSforEntityType(types);
+        if (!types.isEmpty()) readTriplesFromKSforEntityInstance(instances);
     }
 
     static public void readTriplesFromKSforEvents(String eventQuery){
@@ -444,7 +477,8 @@ public class TrigKSTripleReader {
         String labels = "";
         String [] fields = eventQuery.split(";");
         for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
+            String field = fields[i].trim().replace('^', ' ');
+            //field = multiwordFix(field);
             if (field.indexOf(":")>-1) {
                 if (!types.isEmpty()) types += ";";
                 types += field;
@@ -485,6 +519,7 @@ public class TrigKSTripleReader {
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
                 "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
@@ -504,10 +539,37 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
+    static public void readTriplesFromKSforEntityInstance(String entityType){
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                //"?event sem:hasActor ?ent .\n" +
+                makeInstanceFilter("?event", entityType) +
+                //"?ent rdf:type " + entityType + " .\n" +
+                "} LIMIT "+limit+" }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
+                "} ORDER BY ?event";
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        readTriplesFromKs(sparqlQuery);
+    }
+
     static public void readTriplesFromKSforEventType(String eventType){
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
@@ -530,6 +592,8 @@ public class TrigKSTripleReader {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
@@ -554,6 +618,7 @@ public class TrigKSTripleReader {
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
                 "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
@@ -588,6 +653,8 @@ public class TrigKSTripleReader {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
                 "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
                 "WHERE {\n" +
@@ -619,6 +686,8 @@ public class TrigKSTripleReader {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
                 "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
                 "WHERE {\n" +
@@ -647,6 +716,8 @@ public class TrigKSTripleReader {
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
                 "WHERE {\n" +
                 "{SELECT distinct ?event WHERE { \n" +

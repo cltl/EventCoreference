@@ -243,14 +243,18 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             }
 
             else if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
+                TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
+
+/*
                 if (ALL) {
                     TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
                    // TrigKSTripleReader.readTriplesFromKSforSurfaceSubForm(entityQuery, "");
                 }
                 else {
-                    TrigKSTripleReader.readTriplesFromKSforEntityEventType(entityQuery, EVENTSCHEMA.toLowerCase());
+                   // TrigKSTripleReader.readTriplesFromKSforEntityEventType(entityQuery, EVENTSCHEMA.toLowerCase());
                   //  TrigKSTripleReader.readTriplesFromKSforSurfaceSubForm(entityQuery, EVENTSCHEMA.toLowerCase());
                 }
+*/
             }
             else if (entityQuery.isEmpty() && !eventQuery.isEmpty()) {
                 TrigKSTripleReader.readTriplesFromKSforEvents(eventQuery);

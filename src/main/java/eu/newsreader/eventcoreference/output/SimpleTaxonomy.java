@@ -446,7 +446,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 }
                                 tb = TreeStaticHtml.makeTickBox(type, name);
                                 if (phraseCount.getPhrase().indexOf("dbpedia")>-1) {
-                                    tb = TreeStaticHtml.makeTickBox(type, name, "dbp:"+name);
+                                    tb = TreeStaticHtml.makeTickBox(type, name, "dbpedia:"+name);
                                     ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + tb + "</a>";
                                 }
                                 else {

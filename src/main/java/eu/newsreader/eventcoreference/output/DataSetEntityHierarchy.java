@@ -52,7 +52,7 @@ public class DataSetEntityHierarchy {
         try {
             OutputStream fos = new FileOutputStream(entityPath+".words.html");
             //String scripts = TreeStaticHtml.makeScripts(cnt.size(), cntPredicates.size());
-            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, 0, 0, 0, 0);
             str += "<div id=\"Events\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());

@@ -266,18 +266,28 @@ public class TreeStaticHtml {
             "            \t<p>Ontology coverage</p> \n" +
             "            \t</div>";
 
-    static public final String bodyStart = "<body>\n" +
-            "\n" +
-            "<p>NewsReader Storyteller</p>\n" +
-            "\n" +
-            "<FORM ID=\"queryform\" NAME=\"queryform\" action='/' method=\"POST\"> \n" +
-            "<input type='submit' value='Search'/>\n" +
-            "\n" +
-            "<ul class=\"tab\">\n" +
-            "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Entities')\">Entities</a></li>\n" +
-            "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Events')\">Events</a></li>\n" +
-            "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Sources')\">Sources</a></li>\n" +
-            "</ul>";
+    static public String makeBodyStart(String title, int nDocs, int nEvents, int nEntities, int nSources) {
+        String bodyStart = "<body>\n" +
+                "\n" +
+                "<p>NewsReader Storyteller</p>\n" +
+                "<h1>"+title+"</h1>\n" +
+                "<div id=\"container\">\n" +
+                "<div id=\"row\"><div id=\"cell\">Nr. of documents</div><div id=\"cell\">904</div></div>\n" +
+                "<div id=\"row\"><div id=\"cell\">Nr. of events</div><div id=\"cell\">78,531</div></div>\n" +
+                "<div id=\"row\"><div id=\"cell\">Nr. of entities</div><div id=\"cell\"></div></div>\n" +
+                "<div id=\"row\"><div id=\"cell\">Nr. of sources</div><div id=\"cell\">876</div></div>\n" +
+                "</div>"+
+                "\n" +
+                "<FORM ID=\"queryform\" NAME=\"queryform\" action='/' method=\"POST\"> \n" +
+                "<input type='submit' value='Search'/>\n" +
+                "\n" +
+                "<ul class=\"tab\">\n" +
+                "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Entities')\">Entities</a></li>\n" +
+                "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Events')\">Events</a></li>\n" +
+                "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Sources')\">Sources</a></li>\n" +
+                "</ul>";
+        return bodyStart;
+    }
 
     static public final String bodyEndOld = "</body>\n" +  "</html>";
 

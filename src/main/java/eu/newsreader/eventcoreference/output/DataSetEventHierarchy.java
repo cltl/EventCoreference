@@ -60,7 +60,7 @@ public class DataSetEventHierarchy {
             OutputStream fos = new FileOutputStream(eventPath+".words.html");
             int nPhrases = totalPhrases(cntPredicates);
             //String scripts = TreeStaticHtml.makeScripts();
-            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, 0, 0, 0, 0);
             str += "<div id=\"Events\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
