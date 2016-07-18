@@ -364,103 +364,16 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
         return str;
     }
 
-    public String  htmlTableTree (String ns, ArrayList<String> tops,
-                                  int level,
-                                  HashMap<String, Integer> eventCounts,
-                                  HashMap<String, ArrayList<PhraseCount>> phrases ) {
-        String str = "";
-        level++;
-        for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            if (top.startsWith(ns)) {
-                Integer cnt = 0;
-                if (eventCounts.containsKey(top)) {
-                    cnt = eventCounts.get(top);
-                }
-                System.out.println(top+ ":" + cnt);
-                if (cnt>0) {
-                    str += "<div id=\"row\">";
-                    for (int j = 2; j < level; j++) {
-                        str += "<div id=\"cell\"></div>";
-
-                    }
-                    String ref = top;
-                    if (top.startsWith("http")) {
-                        int idx = top.lastIndexOf("/");
-                        String name = top;
-                        if (idx > -1) {
-                            name = top.substring(idx + 1);
-                        }
-                        ref = "<a href=\"" + top + "\">" + name + "</a>";
-                    } else if (top.startsWith("dbp:")) {
-                        int idx = top.lastIndexOf(":");
-                        String name = top;
-                        if (idx > -1) {
-                            name = top.substring(idx + 1);
-                        }
-                        ref = "<a href=\"http://dbpedia.org/ontology/" + name + "\">" + name + "</a>";
-                    }
-                    if (cnt > 0) {
-                        str += "<div id=\"cell\"><p>" + ref + ":" + cnt + "</p></div>";
-                    } else {
-                        str += "<div id=\"cell\"><p>" + ref + "</p></div>";
-
-                        //str += "<div id=\"cell\">" + "</div>";
-                    }
-                    str += "</div>\n";
-                    str += "<div id=\"row\">";
-                    for (int j = 2; j < level; j++) {
-                        str += "<div id=\"cell\"></div>";
-
-                    }
-                    if (phrases.containsKey(top)) {
-                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
-                        String phraseString = "[";
-                        for (int j = 0; j < phraseCounts.size(); j++) {
-                            PhraseCount phraseCount = phraseCounts.get(j);
-                            int idx = phraseCount.getPhrase().lastIndexOf("/");
-                            String name = phraseCount.getPhrase();
-                            if (idx > -1) {
-                                name = phraseCount.getPhrase().substring(idx + 1);
-                            }
-                            ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + "</a>";
-                            phraseString += ref;
-                            if (j < phraseCounts.size() - 1) {
-                                phraseString += ", ";
-                            }
-                        }
-                        phraseString += "]";
-                        str += "<div id=\"cell\"><p>" + phraseString + "</p></div>";
-                        //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
-
-                    }
-                    str += "</div>\n";
-                    if (superToSub.containsKey(top)) {
-                        ArrayList<String> children = superToSub.get(top);
-                        str += htmlTableTree(ns, children, level, eventCounts, phrases);
-                    }
-                }
-            }
-            else {
-              //  System.out.println("ns = " + ns);
-              //  System.out.println("top = " + top);
-            }
-        }
-        return str;
-    }
-
-    public void  htmlTableTree (OutputStream fos, String ns, ArrayList<String> tops,
+    public void  htmlTableTree (OutputStream fos, String type, String ns, ArrayList<String> tops,
                                   int level,
                                   HashMap<String, Integer> typeCounts,
-                                  HashMap<String, ArrayList<PhraseCount>> phrases,
-                                int nTypes,
-                                int nPhrases) throws IOException {
+                                  HashMap<String, ArrayList<PhraseCount>> phrases) throws IOException {
         String str = "";
         level++;
         for (int i = 0; i < tops.size(); i++) {
             String top = tops.get(i);
             str  = "";
-            if (top.startsWith(ns)) {
+            if (top.startsWith(ns) || ns.isEmpty()) {
                 Integer cnt = 0;
                 if (typeCounts.containsKey(top)) {
                     cnt = typeCounts.get(top);
@@ -473,22 +386,23 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
 
                     }
                     String ref = top;
-                    String tb = TreeStaticHtml.makeTickBox(top, "type", nTypes);
+                    String tb = TreeStaticHtml.makeTickBox(type, top);
                     if (top.startsWith("http")) {
                         int idx = top.lastIndexOf("/");
                         String name = top;
                         if (idx > -1) {
                             name = top.substring(idx + 1);
                         }
-                        tb = TreeStaticHtml.makeTickBox(name, "type", nTypes);
-                        ref = "<a href=\"" + top + "\">" + name + "</a>";
+                        tb = TreeStaticHtml.makeTickBox(type, name);
+                        //ref = "<a href=\"" + top + "\">" + name + "</a>";
+                        ref =  name;
                     } else if (top.startsWith("dbp:")) {
                         int idx = top.lastIndexOf(":");
                         String name = top;
                         if (idx > -1) {
                             name = top.substring(idx + 1);
                         }
-                        tb = TreeStaticHtml.makeTickBox(name, "type", nTypes);
+                        tb = TreeStaticHtml.makeTickBox(type, name);
                         ref = "<a href=\"http://dbpedia.org/ontology/" + name + "\">" + name + "</a>";
                     }
                     int instances = 0;
@@ -501,7 +415,6 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     } else {
                         str += "<div id=\"cell\"><p>" + ref + tb+"</p></div>";
                     }
-                    nTypes++;
                     str += "</div>\n";
                     str += "<div id=\"row\">";
                     for (int j = 2; j < level; j++) {
@@ -531,9 +444,13 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 if (idx > -1) {
                                     name = phraseCount.getPhrase().substring(idx + 1);
                                 }
-                                tb = TreeStaticHtml.makeTickBox(name, "word", nPhrases);
-                                ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() +tb+ "</a>";
-                                nPhrases++;
+                                tb = TreeStaticHtml.makeTickBox(type, name);
+                                if (phraseCount.getPhrase().indexOf("dbpedia")>-1) {
+                                    ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + tb + "</a>";
+                                }
+                                else {
+                                    ref =  name + ":" + phraseCount.getCount() + tb;
+                                }
                                 phraseString += ref;
                                 if (j < phraseCounts.size() - 1) {
                                     phraseString += ", ";
@@ -551,7 +468,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     if (superToSub.containsKey(top)) {
                         ArrayList<String> children = superToSub.get(top);
                        // System.out.println(top+ ":" + cnt+", children:"+children.size());
-                        htmlTableTree(fos, ns, children, level, typeCounts, phrases, nTypes, nPhrases);
+                        htmlTableTree(fos, type, ns, children, level, typeCounts, phrases);
                     }
                     else {
                       //  System.out.println("has no children top = " + top);

@@ -6,7 +6,12 @@ package eu.newsreader.eventcoreference.util;
 public class TreeStaticHtml {
 
     static public final String makeHeader(String title, String scripts) {
-        String header = makeHeader1(scripts)+title+header2;
+        String header = makeHeaderWithScripts(scripts)+title+header1;
+        return header;
+    }
+
+    static public final String makeHeader(String title) {
+        String header = makeHeaderWithoutScripts()+title+header1;
         return header;
     }
 
@@ -75,7 +80,7 @@ public class TreeStaticHtml {
         return str;
     }
 
-    static public final String makeHeader1 (String scripts) {
+    static public final String makeHeaderWithScripts (String scripts) {
         String str = "\n" +
                 "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n" +
                 "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
@@ -85,6 +90,112 @@ public class TreeStaticHtml {
                 "<title>";
         return str;
     }
+
+    static public final String makeHeaderWithoutScripts () {
+        String str = "\n" +
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n" +
+                "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" +
+                "<head>\n" +
+                "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" +
+                "<title>";
+        return str;
+    }
+
+    static public final String header1 = "</title>\n" +
+            " \n" +
+            "<style>\n" +
+            "body {font-family: \"Lato\", sans-serif;}\n" +
+            "\n" +
+            "ul.tab {\n" +
+            "    list-style-type: none;\n" +
+            "    margin: 0;\n" +
+            "    padding: 0;\n" +
+            "    overflow: hidden;\n" +
+            "    border: 1px solid #ccc;\n" +
+            "    background-color: #f1f1f1;\n" +
+            "}\n" +
+            "\n" +
+            "/* Float the list items side by side */\n" +
+            "ul.tab li {float: left;}\n" +
+            "\n" +
+            "/* Style the links inside the list items */\n" +
+            "ul.tab li a {\n" +
+            "    display: inline-block;\n" +
+            "    color: black;\n" +
+            "    text-align: center;\n" +
+            "    padding: 14px 16px;\n" +
+            "    text-decoration: none;\n" +
+            "    transition: 0.3s;\n" +
+            "    font-size: 17px;\n" +
+            "}\n" +
+            "\n" +
+            "/* Change background color of links on hover */\n" +
+            "ul.tab li a:hover {\n" +
+            "    background-color: #ddd;\n" +
+            "}\n" +
+            "\n" +
+            "/* Create an active/current tablink class */\n" +
+            "ul.tab li a:focus, .active {\n" +
+            "    background-color: #ccc;\n" +
+            "}\n" +
+            "\n" +
+            "/* Style the tab content */\n" +
+            ".tabcontent {\n" +
+            "    display: none;\n" +
+            "    padding: 6px 12px;\n" +
+            "    border: 1px solid #ccc;\n" +
+            "    border-top: none;\n" +
+            "}\n" +
+            "\n" +
+            ".tabcontent {\n" +
+            "    -webkit-animation: fadeEffect 3s;\n" +
+            "    animation: fadeEffect 3s; /* Fading effect takes 1 second */\n" +
+            "}\n" +
+            "\n" +
+            "@-webkit-keyframes fadeEffect {\n" +
+            "    from {opacity: 0;}\n" +
+            "    to {opacity: 1;}\n" +
+            "}\n" +
+            "\n" +
+            "@keyframes fadeEffect {\n" +
+            "    from {opacity: 0;}\n" +
+            "    to {opacity: 1;}\n" +
+            "}\n" +
+            "\n" +
+            "#container {\n" +
+            "\t  width: 80%;\n" +
+            "\t  margin: auto;\n" +
+            "\t\tpadding:0;\n" +
+            "\t\tdisplay: table;\n" +
+            "\t\t}\n" +
+            "  #row  {\n" +
+            "    display: table-row;\n" +
+            "    }\n" +
+            "\t#left {\n" +
+            "\t\twidth:150px;\n" +
+            "\t\tpadding:1em;\n" +
+            "\t\tbackground:#F3E2A9;\n" +
+            "\t\tdisplay: table-cell;\n" +
+            "\t\t}\n" +
+            "\t#right {\n" +
+            "\t\twidth:150px;\n" +
+            "\t\tpadding:1em;\n" +
+            "\t\tbackground:#F3E2A9;\n" +
+            "    display: table-cell;\n" +
+            "\t\t}\n" +
+            "\t#cell {\n" +
+            "\t\tfont-family: verdana,arial,sans-serif;\n" +
+            "\t    font-size:11px;\n" +
+            "\t\twidth:30px;\n" +
+            "\t   /*  border: 2px solid #F78181; */\n" +
+            "    \tdisplay: table-cell;\n" +
+            "\t\t}\n" +
+            "</style>"+
+            "\n" +
+            "\n" +
+            "</head>\n" ;
+
 
     static public final String header2 = "</title>\n" +
             "\n" +
@@ -149,27 +260,56 @@ public class TreeStaticHtml {
             "\n" +
             "</head>\n" ;
 
-    static public final String bodyStart =
+    static public final String bodyStartOld =
             "            <body> \n" +
             "            \t<div id=\"header\"> \n" +
             "            \t<p>Ontology coverage</p> \n" +
             "            \t</div>";
 
-    static public final String bodyEnd = "</body>\n" +  "</html>";
+    static public final String bodyStart = "<body>\n" +
+            "\n" +
+            "<p>NewsReader Storyteller</p>\n" +
+            "\n" +
+            "<FORM ID=\"queryform\" NAME=\"queryform\" action='/' method=\"POST\"> \n" +
+            "<input type='submit' value='Search'/>\n" +
+            "\n" +
+            "<ul class=\"tab\">\n" +
+            "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Entities')\">Entities</a></li>\n" +
+            "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Events')\">Events</a></li>\n" +
+            "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Sources')\">Sources</a></li>\n" +
+            "</ul>";
+
+    static public final String bodyEndOld = "</body>\n" +  "</html>";
+
+    static public final String bodyEnd =
+            "<script>\n" +
+            "function openData(evt, aName) {\n" +
+            "    var i, tabcontent, tablinks;\n" +
+            "    tabcontent = document.getElementsByClassName(\"tabcontent\");\n" +
+            "    for (i = 0; i < tabcontent.length; i++) {\n" +
+            "        tabcontent[i].style.display = \"none\";\n" +
+            "    }\n" +
+            "    tablinks = document.getElementsByClassName(\"tablinks\");\n" +
+            "    for (i = 0; i < tablinks.length; i++) {\n" +
+            "        tablinks[i].className = tablinks[i].className.replace(\" active\", \"\");\n" +
+            "    }\n" +
+            "    document.getElementById(aName).style.display = \"block\";\n" +
+            "    evt.currentTarget.className += \" active\";\n" +
+            "}\n" +
+            "</script>\n" +
+            "     \n" +
+            "</body>\n" +
+            "</html>";
 
 
-    static public final String formStart = "<FORM ID=\"queryform\" NAME=\"queryform\">  \n" +
+    static public final String formStartJS = "<FORM ID=\"queryform\" NAME=\"queryform\">  \n" +
             "<INPUT TYPE=\"button\" NAME=\"search\" Value=\"Search\" onClick=\"getValues()\"><BR>\n" +
             "<INPUT TYPE=\"button\" NAME=\"clear\" Value=\"Clear\" onClick=\"clearValues()\"><BR>  ";
 
     static public final String formEnd = "</FORM>";
 
-    static public String makeTickBox (String name, String type, int nr) {
-        String tb = "<INPUT TYPE=\"checkbox\" NAME=\"check"+type+nr+"\" VALUE=\""+name+"\">";
-        return tb;
-    }
-    static public String makeTickBox (String name) {
-        String tb = "<INPUT TYPE=\"checkbox\" NAME=\"check"+"\" VALUE=\""+name+"\">";
+    static public String makeTickBox (String type, String name) {
+        String tb = "<INPUT TYPE=\"checkbox\" NAME=\""+type+"\" VALUE=\""+name+"\">";
         return tb;
     }
 }

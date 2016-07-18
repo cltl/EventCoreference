@@ -1,12 +1,13 @@
 package eu.newsreader.eventcoreference.storyline;
 
-import eu.newsreader.eventcoreference.input.*;
+import eu.newsreader.eventcoreference.input.EsoReader;
+import eu.newsreader.eventcoreference.input.FrameNetReader;
+import eu.newsreader.eventcoreference.input.TrigKSTripleReader;
 import eu.newsreader.eventcoreference.util.EuroVoc;
 import eu.newsreader.eventcoreference.util.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,12 +16,10 @@ import java.util.Set;
 /**
  * Created by piek on 1/3/14.
  */
-public class TrigToJsonStoryPerspectives {
+public class QueryKnowledgeStoreToJsonStoryPerspectives {
 
-    static TrigTripleData trigTripleData = new TrigTripleData();
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static ArrayList<String> blacklist = new ArrayList<String>();
-    static boolean ONESTORY = false;
     static boolean ALL = false; /// if true we do not filter events
     static boolean SKIPPEVENTS = false; /// if true we we exclude perspective events from the stories
     static boolean MERGE = false;
@@ -28,8 +27,6 @@ public class TrigToJsonStoryPerspectives {
     static String actionOnt = "";
     static int actionSim = 1;
     static int interSect = 1;
-    static boolean PERSPECTIVE = true; // @Deprecated, can be taken out eventually
-    static boolean COMBINE = true; // @Deprecated, can be taken out eventually
     static EsoReader esoReader = new EsoReader();
     static FrameNetReader frameNetReader = new FrameNetReader();
     static ArrayList<String> topFrames = new ArrayList<String>();
@@ -44,19 +41,22 @@ public class TrigToJsonStoryPerspectives {
     static int nMentions = 0;
     static int nStories = 0;
     static String year = "";
+    static String KSSERVICE = ""; //https://knowledgestore2.fbk.eu";
+    static String KS = ""; //"nwr/wikinews-new";
+    static String KSuser = ""; //"nwr/wikinews-new";
+    static String KSpass = ""; //"nwr/wikinews-new";
     static String EVENTSCHEMA = "";
     static EuroVoc euroVoc = new EuroVoc();
     static EuroVoc euroVocBlackList = new EuroVoc();
 
     static public void main (String[] args) {
-        trigTripleData = new TrigTripleData();
         String project = "NewsReader storyline";
         String pathToILIfile = "";
         String sparqlQuery = "";
         String eventQuery = "";
+        String sourceQuery = "";
         String entityQuery = "";
-        String trigfolder = "";
-        String trigfile = "";
+        String kslimit = "500";
         String pathToRawTextIndexFile = "";
         String pathToFtDataFile = "";
         String blackListFile = "";
@@ -68,28 +68,20 @@ public class TrigToJsonStoryPerspectives {
         esoLevel = 0;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.equals("--trig-folder") && args.length>(i+1)) {
-                trigfolder = args[i+1];
-            }
-            else if (arg.equals("--sparql") && args.length>(i+1)) {
+            if (arg.equals("--sparql") && args.length>(i+1)) {
                 sparqlQuery = args[i+1];
             }
             else if (arg.equals("--event") && args.length>(i+1)) {
                 eventQuery = args[i+1];
-                String[] fields = entityQuery.split(":");
-                if (fields.length==2) {
-                    EVENTSCHEMA = fields[0];
-                    entityQuery = fields[1];
-                }
             }
             else if (arg.equals("--entity") && args.length>(i+1)) {
                 entityQuery = args[i+1];
             }
+            else if (arg.equals("--source") && args.length>(i+1)) {
+                sourceQuery = args[i+1];
+            }
             else if (arg.equals("--year") && args.length>(i+1)) {
                 year = args[i+1];
-            }
-            else if (arg.equals("--onestory")) {
-                ONESTORY = true;
             }
             else if (arg.equals("--ft") && args.length>(i+1)) {
                 pathToFtDataFile = args[i+1];
@@ -119,10 +111,7 @@ public class TrigToJsonStoryPerspectives {
             }
             else if (arg.equals("--merge")) {
                 MERGE = true;
-            }/*
-            else if (arg.equals("--perspective")) {
-                PERSPECTIVE = true;
-            }*/
+            }
             else if (arg.equals("--eurovoc") && args.length>(i+1)) {
                 euroVocFile = args[i+1];
                 euroVoc.readEuroVoc(euroVocFile,"en");
@@ -132,11 +121,23 @@ public class TrigToJsonStoryPerspectives {
                 euroVocBlackList.readEuroVoc(euroVocBlackListFile, "en");
                 System.out.println("euroVocBlackList = " + euroVocBlackList.uriLabelMap.size());
             }
+            else if (arg.equals("--service") && args.length>(i+1)) {
+                KSSERVICE = args[i+1];
+            }
+            else if (arg.equals("--ks") && args.length>(i+1)) {
+                KS = args[i+1];
+            }
+            else if (arg.equals("--ks-user") && args.length>(i+1)) {
+                KSuser = args[i+1];
+            }
+            else if (arg.equals("--ks-pass") && args.length>(i+1)) {
+                KSpass = args[i+1];
+            }
+            else if (arg.equals("--ks-limit") && args.length>(i+1)) {
+                kslimit = args[i+1];
+            }
             else if (arg.equals("--project") && args.length>(i+1)) {
                 project = args[i+1];
-            }
-            else if (arg.equals("--trig-file") && args.length>(i+1)) {
-                trigfile = args[i+1];
             }
             else if (arg.equals("--ili") && args.length>(i+1)) {
                 pathToILIfile = args[i+1];
@@ -194,9 +195,9 @@ public class TrigToJsonStoryPerspectives {
         System.out.println("actionSim = " + actionSim);
         System.out.println("actorThreshold = " + actorThreshold);
         System.out.println("actor interSect = " + interSect);
+        System.out.println("max results for KnowledgeStore = " + kslimit);
         System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
         System.out.println("MERGE = " + MERGE);
-        System.out.println("PERSPECTIVE = " + PERSPECTIVE);
         if (!blackListFile.isEmpty()) {
             blacklist = Util.ReadFileToStringArrayList(blackListFile);
         }
@@ -210,22 +211,62 @@ public class TrigToJsonStoryPerspectives {
             esoReader.parseFile(esoFile);
         }
         iliMap = Util.ReadFileToStringHashMap(pathToILIfile);
-        ArrayList<File> trigFiles = new ArrayList<File>();
-        if (!trigfolder.isEmpty()) {
-            System.out.println("trigfolder = " + trigfolder);
-            trigFiles = Util.makeRecursiveFileList(new File(trigfolder), ".trig");
+
+        if (!KSSERVICE.isEmpty()) {
+            if (KSuser.isEmpty()) {
+                TrigKSTripleReader.setServicePoint(KSSERVICE, KS);
+            }
+            else {
+                TrigKSTripleReader.setServicePoint(KSSERVICE, KS, KSuser, KSpass);
+            }
         }
-        else if (!trigfile.isEmpty()) {
-            System.out.println("trigfile = " + trigfile);
-            trigFiles.add(new File(trigfile));
-        }
-        if (trigFiles.size()>0) {
-            System.out.println("trigFiles.size() = " + trigFiles.size());
-            trigTripleData = TrigTripleReader.readTripleFromTrigFiles(trigFiles);
+        if (!kslimit.isEmpty()) {
+            TrigKSTripleReader.limit = kslimit;
         }
 
+        long startTime = System.currentTimeMillis();
+
+
+        if (!sparqlQuery.isEmpty()) {
+            System.out.println("querying KnowledgeStore with SPARQL = " + sparqlQuery);
+            TrigKSTripleReader.readTriplesFromKs(sparqlQuery);
+        }
+        else if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sourceQuery.isEmpty()) {
+            if (!eventQuery.isEmpty()) {
+                System.out.println("querying KnowledgeStore for event = " + eventQuery);
+            }
+            if (!entityQuery.isEmpty()) {
+                System.out.println("querying KnowledgeStore for entity = " + entityQuery);
+            }
+            if (!sourceQuery.isEmpty()) {
+                System.out.println("querying KnowledgeStore for source = " + sourceQuery);
+            }
+
+            else if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
+                if (ALL) {
+                    TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
+                   // TrigKSTripleReader.readTriplesFromKSforSurfaceSubForm(entityQuery, "");
+                }
+                else {
+                    TrigKSTripleReader.readTriplesFromKSforEntityEventType(entityQuery, EVENTSCHEMA.toLowerCase());
+                  //  TrigKSTripleReader.readTriplesFromKSforSurfaceSubForm(entityQuery, EVENTSCHEMA.toLowerCase());
+                }
+            }
+            else if (entityQuery.isEmpty() && !eventQuery.isEmpty()) {
+                TrigKSTripleReader.readTriplesFromKSforEvents(eventQuery);
+            }
+            else if (!entityQuery.isEmpty() && !eventQuery.isEmpty()) {
+                TrigKSTripleReader.readTriplesFromKSforEntityAndEvent(entityQuery, eventQuery);
+            }
+        }
+
+        long estimatedTime = System.currentTimeMillis() - startTime;
+
+        System.out.println("Time elapsed:");
+        System.out.println(estimatedTime/1000.0);
+
         try {
-            ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(trigTripleData,
+            ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(TrigKSTripleReader.trigTripleData,
                     ALL,SKIPPEVENTS, EVENTSCHEMA, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
             System.out.println("Events in SEM-RDF files = " + jsonObjects.size());
             if (blacklist.size()>0) {
@@ -241,12 +282,8 @@ public class TrigToJsonStoryPerspectives {
             jsonObjects = JsonStoryUtil.removePerspectiveEvents(trigTripleData, jsonObjects);
             System.out.println("Events after removing perspective events = " + jsonObjects.size());
 */
-            if (ONESTORY) {
-                System.out.println("creating one story...");
-                jsonObjects = JsonStoryUtil.createOneStoryForJSONArrayList(jsonObjects, climaxThreshold, MERGE, timeGran, actionOnt, actionSim);
-            }
-            else {
-                jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
+
+            jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
                         topicThreshold,
                         climaxThreshold,
                         entityFilter, MERGE,
@@ -254,7 +291,6 @@ public class TrigToJsonStoryPerspectives {
                         actionOnt,
                         actionSim,
                         interSect);
-            }
             System.out.println("Events after storyline filter = " + jsonObjects.size());
             //JsonStoryUtil.augmentEventLabelsWithArguments(jsonObjects);
 
@@ -264,15 +300,14 @@ public class TrigToJsonStoryPerspectives {
                 JsonStoryUtil.renameStories(jsonObjects, euroVoc, euroVocBlackList);
             }
             ArrayList<JSONObject> rawTextArrayList = new ArrayList<JSONObject>();
-            ArrayList<JSONObject> perspectiveEvents = new ArrayList<JSONObject>();
             ArrayList<JSONObject> structuredEvents = new ArrayList<JSONObject>();
-            if (PERSPECTIVE && jsonObjects.size()>0) {
+            if (jsonObjects.size()>0) {
                 if (!entityQuery.isEmpty() || !eventQuery.isEmpty() ||!sparqlQuery.isEmpty()) {
                     System.out.println("Getting perspectives for: " + jsonObjects.size() + " events");
                     TrigKSTripleReader.integrateAttributionFromKs(jsonObjects);
                 }
                 else {
-                    JsonStoryUtil.integratePerspectivesInEventObjects(trigTripleData, jsonObjects, project);
+                    JsonStoryUtil.integratePerspectivesInEventObjects(TrigKSTripleReader.trigTripleData, jsonObjects, project);
                 }
             }
 
@@ -286,28 +321,22 @@ public class TrigToJsonStoryPerspectives {
                // rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
                 MentionResolver.ReadFileToUriTextArrayList(pathToRawTextIndexFile, jsonObjects);
             }
+            else {
+                if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sparqlQuery.isEmpty()) {
+                  //  rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
+                    System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
+                    MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
+                }
+
+            }
             nEvents = jsonObjects.size();
             nActors = JsonStoryUtil.countActors(jsonObjects);
             nMentions = JsonStoryUtil.countMentions(jsonObjects);
             nStories = JsonStoryUtil.countGroups(jsonObjects);
 
-            JsonSerialization.writeJsonObjectArrayWithStructuredData(trigfolder, "", project,
+            JsonSerialization.writeJsonObjectArrayWithStructuredData("", "", project,
                     jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
 
-
-            /// @Deprecated
-            /// Creates separate JSON files for each story. @Deprecated
-            //splitStories(jsonObjects,rawTextArrayList,structuredEvents,project,trigfolder);
-
-            /// @Deprecated
-/*            if (!COMBINE) {
-                if (PERSPECTIVE && perspectiveEvents.size()>0) {
-                    JsonSerialization.writeJsonPerspectiveArray(trigfolder, project, perspectiveEvents);
-                }
-                if (!pathToFtDataFile.isEmpty() && structuredEvents.size()>0) {
-                    JsonSerialization.writeJsonStructuredArray(trigfolder, project, structuredEvents);
-                }
-            }*/
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -59,14 +59,14 @@ public class DataSetEventHierarchy {
         try {
             OutputStream fos = new FileOutputStream(eventPath+".words.html");
             int nPhrases = totalPhrases(cntPredicates);
-            String scripts = TreeStaticHtml.makeScripts();
-            String str = TreeStaticHtml.makeHeader(title, scripts)+ TreeStaticHtml.bodyStart;
+            //String scripts = TreeStaticHtml.makeScripts();
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+            str += "<div id=\"Events\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
-            str += TreeStaticHtml.formStart;
             fos.write(str.getBytes());
             //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
-            esoReader.simpleTaxonomy.htmlTableTree(fos, "eso:",tops, 1, cnt, cntPredicates, 1, 1);
-            str = "</div>\n";
+            esoReader.simpleTaxonomy.htmlTableTree(fos, "event", "eso:",tops, 1, cnt, cntPredicates);
+            str = "</div></div>\n";
             str += TreeStaticHtml.formEnd;
             str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());

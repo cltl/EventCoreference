@@ -51,13 +51,13 @@ public class DataSetEntityHierarchy {
 
         try {
             OutputStream fos = new FileOutputStream(entityPath+".words.html");
-            String scripts = TreeStaticHtml.makeScripts(cnt.size(), cntPredicates.size());
-            String str = TreeStaticHtml.makeHeader(title, scripts)+ TreeStaticHtml.bodyStart;
+            //String scripts = TreeStaticHtml.makeScripts(cnt.size(), cntPredicates.size());
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+            str += "<div id=\"Events\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
-            //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
-            simpleTaxonomy.htmlTableTree(fos, "dbp:",tops, 1, cnt, cntPredicates, 1, 1);
-            str = "</div>\n";
+            simpleTaxonomy.htmlTableTree(fos, "entity", "dbp:",tops, 1, cnt, cntPredicates);
+            str = "</div></div>\n";
             str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
