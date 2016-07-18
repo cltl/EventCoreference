@@ -312,4 +312,9 @@ public class TreeStaticHtml {
         String tb = "<INPUT TYPE=\"checkbox\" NAME=\""+type+"\" VALUE=\""+name+"\">";
         return tb;
     }
+
+    static public String makeTickBox (String type, String name, String value) {
+        String tb = "<INPUT TYPE=\"checkbox\" NAME=\""+type+"\" VALUE=\""+value+"\">";
+        return tb;
+    }
 }

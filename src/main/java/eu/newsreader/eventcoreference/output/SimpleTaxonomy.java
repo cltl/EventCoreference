@@ -402,7 +402,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         if (idx > -1) {
                             name = top.substring(idx + 1);
                         }
-                        tb = TreeStaticHtml.makeTickBox(type, name);
+                        tb = TreeStaticHtml.makeTickBox(type, name, top);
                         ref = "<a href=\"http://dbpedia.org/ontology/" + name + "\">" + name + "</a>";
                     }
                     int instances = 0;
@@ -446,6 +446,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 }
                                 tb = TreeStaticHtml.makeTickBox(type, name);
                                 if (phraseCount.getPhrase().indexOf("dbpedia")>-1) {
+                                    tb = TreeStaticHtml.makeTickBox(type, name, "dbp:"+name);
                                     ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + tb + "</a>";
                                 }
                                 else {
