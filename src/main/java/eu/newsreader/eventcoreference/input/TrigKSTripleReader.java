@@ -450,7 +450,7 @@ public class TrigKSTripleReader {
         String instances = "";
         String labels = "";
         String [] fields = entityQuery.split(";");
-        System.out.println("entityQuery = " + entityQuery);
+       // System.out.println("entityQuery = " + entityQuery);
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i].trim().replace('^', ' ');
            // field = multiwordFix(field);
@@ -469,7 +469,7 @@ public class TrigKSTripleReader {
         }
         if (!labels.isEmpty()) readTriplesFromKSforEntityLabel(labels);
         if (!types.isEmpty()) readTriplesFromKSforEntityType(types);
-        if (!types.isEmpty()) readTriplesFromKSforEntityInstance(instances);
+        if (!instances.isEmpty()) readTriplesFromKSforEntityInstance(instances);
     }
 
     static public void readTriplesFromKSforEvents(String eventQuery){
