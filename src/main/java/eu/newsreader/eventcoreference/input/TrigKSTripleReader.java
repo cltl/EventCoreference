@@ -186,7 +186,7 @@ public class TrigKSTripleReader {
                         }
 
                     } else {
-                        System.out.println("mention no target event = " + mention);
+                      //  System.out.println("mention no target event = " + mention);
                     }
                 }
             }
@@ -206,9 +206,8 @@ public class TrigKSTripleReader {
             }
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
-        System.out.println("Perspective Time elapsed:");
-        System.out.println(estimatedTime/1000.0);
-        System.out.println("pEvents = " + pEvents.size());
+        System.out.println(" * Perspective Time elapsed:"+estimatedTime/1000.0);
+        //System.out.println("pEvents = " + pEvents.size());
         return pEvents;
     }
 
@@ -274,11 +273,11 @@ public class TrigKSTripleReader {
                         }
 
                     } else {
-                        System.out.println("Error: mention without target event = " + mention);
+                      //  System.out.println("Error: mention without target event = " + mention);
                     }
                 }
                 else {
-                    System.out.println("No perspectives for this event.");
+                  //  System.out.println("No perspectives for this event.");
                 }
             }
         } catch (Exception e) {
@@ -299,18 +298,10 @@ public class TrigKSTripleReader {
                         String uriString = mentionObject.getString("uri");
                         JSONArray offsetArray = mentionObject.getJSONArray("char");
                         String mention = JsonStoryUtil.getURIforMention(uriString, offsetArray);
-                        if (mention.endsWith("#ev110")) {
-                            System.out.println("mention event to add the perspectives= " + mention);
-                        }
                         if (perspectiveMap.containsKey(mention)) {
                             ArrayList<PerspectiveJsonObject> perspectiveJsonObjects = perspectiveMap.get(mention);
                             for (int j = 0; j < perspectiveJsonObjects.size(); j++) {
                                 PerspectiveJsonObject perspectiveJsonObject = perspectiveJsonObjects.get(j);
-
-                                if (mention.endsWith("#ev110")) {
-                                    System.out.println("perspectiveJsonObject.getAuthor() = " + perspectiveJsonObject.getAuthor());
-                                    System.out.println("perspectiveJsonObject.getSource() = " + perspectiveJsonObject.getSource());
-                                }
                                 JsonStoryUtil.addPerspectiveToMention(mentionObject, perspectiveJsonObject);
 
                             }
@@ -325,16 +316,15 @@ public class TrigKSTripleReader {
                 }
             }
             else {
-                try {
+                /*try {
                     System.out.println("No mentions for target = "+mEvent.getString("instance"));
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
-        System.out.println("Perspective Time elapsed:");
-        System.out.println(estimatedTime/1000.0);
+        System.out.println(" * Perspective Time elapsed:"+estimatedTime/1000.0);
     }
 
 
@@ -736,8 +726,8 @@ public class TrigKSTripleReader {
 
 
     public static void readTriplesFromKs(String sparqlQuery){
-        System.out.println("serviceEndpoint = " + serviceEndpoint);
-        System.out.println("sparqlQuery = " + sparqlQuery);
+        //System.out.println("serviceEndpoint = " + serviceEndpoint);
+        //System.out.println("sparqlQuery = " + sparqlQuery);
         //System.out.println("user = " + user);
         //System.out.println("pass = " + pass);
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
@@ -839,8 +829,8 @@ public class TrigKSTripleReader {
             }
             oldEvent=currentEvent;
         }
-        System.out.println("instance statements = "+trigTripleData.tripleMapInstances.size());
-        System.out.println("sem statements = " + trigTripleData.tripleMapOthers.size());
+        System.out.println(" * instance statements = "+trigTripleData.tripleMapInstances.size());
+        System.out.println(" * sem statements = " + trigTripleData.tripleMapOthers.size());
     }
 
     private static boolean isEventUri (String subject) {

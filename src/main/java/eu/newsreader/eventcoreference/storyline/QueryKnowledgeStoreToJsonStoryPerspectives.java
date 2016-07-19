@@ -119,7 +119,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             else if (arg.equals("--eurovoc-blacklist") && args.length>(i+1)) {
                 euroVocBlackListFile = args[i+1];
                 euroVocBlackList.readEuroVoc(euroVocBlackListFile, "en");
-                System.out.println("euroVocBlackList = " + euroVocBlackList.uriLabelMap.size());
+               // System.out.println("euroVocBlackList = " + euroVocBlackList.uriLabelMap.size());
             }
             else if (arg.equals("--service") && args.length>(i+1)) {
                 KSSERVICE = args[i+1];
@@ -189,7 +189,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
             }
         }
-        System.out.println("climaxThreshold = " + climaxThreshold);
+        /*System.out.println("climaxThreshold = " + climaxThreshold);
         System.out.println("topicThreshold = " + topicThreshold);
         System.out.println("actionOnt = " + actionOnt);
         System.out.println("actionSim = " + actionSim);
@@ -197,7 +197,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         System.out.println("actor interSect = " + interSect);
         System.out.println("max results for KnowledgeStore = " + kslimit);
         System.out.println("pathToRawTextIndexFile = " + pathToRawTextIndexFile);
-        System.out.println("MERGE = " + MERGE);
+        System.out.println("MERGE = " + MERGE);*/
         if (!blackListFile.isEmpty()) {
             blacklist = Util.ReadFileToStringArrayList(blackListFile);
         }
@@ -226,20 +226,19 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
 
         long startTime = System.currentTimeMillis();
 
-
         if (!sparqlQuery.isEmpty()) {
-            System.out.println("querying KnowledgeStore with SPARQL = " + sparqlQuery);
+            System.out.println(" * querying KnowledgeStore with SPARQL = " + sparqlQuery);
             TrigKSTripleReader.readTriplesFromKs(sparqlQuery);
         }
         else if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sourceQuery.isEmpty()) {
             if (!eventQuery.isEmpty()) {
-                System.out.println("querying KnowledgeStore for event = " + eventQuery);
+                System.out.println(" * querying KnowledgeStore for event = " + eventQuery);
             }
             if (!entityQuery.isEmpty()) {
-                System.out.println("querying KnowledgeStore for entity = " + entityQuery);
+                System.out.println(" * querying KnowledgeStore for entity = " + entityQuery);
             }
             if (!sourceQuery.isEmpty()) {
-                System.out.println("querying KnowledgeStore for source = " + sourceQuery);
+                System.out.println(" * querying KnowledgeStore for source = " + sourceQuery);
             }
 
             else if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
@@ -266,20 +265,19 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
 
         long estimatedTime = System.currentTimeMillis() - startTime;
 
-        System.out.println("Time elapsed:");
-        System.out.println(estimatedTime/1000.0);
+        System.out.println(" * Time elapsed to get results from KS:"+estimatedTime/1000.0);
 
         try {
             ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(TrigKSTripleReader.trigTripleData,
                     ALL,SKIPPEVENTS, EVENTSCHEMA, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
-            System.out.println("Events in SEM-RDF files = " + jsonObjects.size());
+            System.out.println(" * Events in SEM-RDF = " + jsonObjects.size());
             if (blacklist.size()>0) {
                 jsonObjects = JsonStoryUtil.filterEventsForBlackList(jsonObjects, blacklist);
-                System.out.println("Events after blacklist filter= " + jsonObjects.size());
+             //   System.out.println("Events after blacklist filter= " + jsonObjects.size());
             }
             if (actorThreshold>0) {
                 jsonObjects = JsonStoryUtil.filterEventsForActors(jsonObjects, entityFilter, actorThreshold);
-                System.out.println("Events after actor count filter = " + jsonObjects.size());
+             //   System.out.println("Events after actor count filter = " + jsonObjects.size());
             }
 
 /*
@@ -295,7 +293,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                         actionOnt,
                         actionSim,
                         interSect);
-            System.out.println("Events after storyline filter = " + jsonObjects.size());
+         //   System.out.println("Events after storyline filter = " + jsonObjects.size());
             //JsonStoryUtil.augmentEventLabelsWithArguments(jsonObjects);
 
             JsonStoryUtil.minimalizeActors(jsonObjects);
@@ -306,13 +304,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             ArrayList<JSONObject> rawTextArrayList = new ArrayList<JSONObject>();
             ArrayList<JSONObject> structuredEvents = new ArrayList<JSONObject>();
             if (jsonObjects.size()>0) {
-                if (!entityQuery.isEmpty() || !eventQuery.isEmpty() ||!sparqlQuery.isEmpty()) {
-                    System.out.println("Getting perspectives for: " + jsonObjects.size() + " events");
-                    TrigKSTripleReader.integrateAttributionFromKs(jsonObjects);
-                }
-                else {
-                    JsonStoryUtil.integratePerspectivesInEventObjects(TrigKSTripleReader.trigTripleData, jsonObjects, project);
-                }
+                TrigKSTripleReader.integrateAttributionFromKs(jsonObjects);
             }
 
 
@@ -328,7 +320,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             else {
                 if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sparqlQuery.isEmpty()) {
                   //  rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
-                    System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
+                 //   System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
                     MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
                 }
 
@@ -345,10 +337,10 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             e.printStackTrace();
         }
 
-        System.out.println("story_cnt = " + nStories);
-        System.out.println("event_cnt = " + nEvents);
-        System.out.println("mention_cnt = "+ nMentions);
-        System.out.println("actor_cnt = " + nActors);
+        System.out.println(" * story_cnt = " + nStories);
+        System.out.println(" * event_cnt = " + nEvents);
+        System.out.println(" * mention_cnt = "+ nMentions);
+        System.out.println(" * actor_cnt = " + nActors);
     }
 
     static void splitStories (ArrayList<JSONObject> events,

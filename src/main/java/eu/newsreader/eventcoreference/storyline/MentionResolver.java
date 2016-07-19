@@ -320,7 +320,7 @@ public class MentionResolver {
                 e.printStackTrace();
             }
         }
-        System.out.println("Getting sourcedocuments for unique sources = " + sourceUriList.size());
+        System.out.println(" * Getting sourcedocuments for unique sources = " + sourceUriList.size());
         long startTime = System.currentTimeMillis();
         Authenticator.setDefault(new Authenticator() {
             @Override
@@ -438,8 +438,7 @@ public class MentionResolver {
             //break;
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
-        System.out.println("Time elapsed to get text snippets from KS:");
-        System.out.println(estimatedTime/1000.0);
+        System.out.println(" * Time elapsed to get text snippets from KS:"+estimatedTime/1000.0);
     }
 
  /*   static void addSnippetToEventMentions (JSONObject jsonObject) throws JSONException {

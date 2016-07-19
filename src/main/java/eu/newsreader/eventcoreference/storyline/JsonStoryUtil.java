@@ -161,7 +161,7 @@ public class JsonStoryUtil {
                 }
             }
         }
-        System.out.println("Nr. of perspective generatedBy Events skipped = " + nSkip);
+       // System.out.println("Nr. of perspective generatedBy Events skipped = " + nSkip);
         return jsonObjectArrayList;
     }
 
@@ -359,17 +359,17 @@ public class JsonStoryUtil {
                     if (topicThreshold>0) {
                         bridgedEvents = intersectEventObjects(coevents, topicevents);
                         if (bridgedEvents.size() > 5) {
-                            System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
+                           // System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
                             int prop = (100*coveredEvents.size())/climaxObjects.size();
-                            System.out.println("covered Events = " + prop +"%");
+                          //  System.out.println("covered Events = " + prop +"%");
                         }
                     }
                     else {
                         bridgedEvents = coevents;
                         if (bridgedEvents.size() > 5) {
-                            System.out.println("intersection co-participating events = " + bridgedEvents.size());
+                          //  System.out.println("intersection co-participating events = " + bridgedEvents.size());
                             int prop = (100*coveredEvents.size())/climaxObjects.size();
-                            System.out.println("covered Events = " + prop +"%");
+                         //   System.out.println("covered Events = " + prop +"%");
                         }
                     }
 
@@ -429,7 +429,7 @@ public class JsonStoryUtil {
         } // end of while objects in sorted climaxObjects
 
         //// now we handle the singleton events
-/*        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
+        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
         String group = "001:unrelated events";
         String groupName = "unrelated events";
         String groupScore = "001";
@@ -447,14 +447,14 @@ public class JsonStoryUtil {
                     2,
                     climaxThreshold);
         }
-        System.out.println("groupedObjects.size() = " + groupedObjects.size());
-        System.out.println("singleObjects.size() = " + storyObjects.size());
+      //  System.out.println("groupedObjects.size() = " + groupedObjects.size());
+      //  System.out.println("singleObjects.size() = " + storyObjects.size());
         //// we add the singleton events to the other grouped events
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
             groupedObjects.add(object);
-        }*/
-        System.out.println("eventCounter = " + eventCounter);
+        }
+       // System.out.println("eventCounter = " + eventCounter);
         return groupedObjects;
     }
 
