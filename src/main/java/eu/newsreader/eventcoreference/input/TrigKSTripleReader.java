@@ -625,9 +625,11 @@ public class TrigKSTripleReader {
                 "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
                 "WHERE {\n" +
                 "{SELECT distinct ?event WHERE { \n" +
-                "?event rdf:type " + eventType + " .\n" +
+                makeTypeFilter("?event", eventType) +
+                //"?event rdf:type " + eventType + " .\n" +
                 "?event sem:hasActor ?ent .\n" +
-                "?ent rdf:type " + entityType + " .\n" +
+                makeTypeFilter("?ent", entityType) +
+                //"?ent rdf:type " + entityType + " .\n" +
                 "} LIMIT "+limit+" }\n" +
                 "?event ?relation ?object .\n" +
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
