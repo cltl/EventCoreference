@@ -372,7 +372,7 @@ public class TrigKSTripleReader {
         String filter = "FILTER (";
         String[] fields = query.split(";");
         for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
+            String field = fields[i].replace('^', ' ');;
             if (i>0)  filter +=" || ";
             filter += "regex(str("+variable+"), \"^"+field+"$\")";
         }
@@ -386,7 +386,7 @@ public class TrigKSTripleReader {
         String filter = "FILTER (";
         String[] fields = query.split(";");
         for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
+            String field = fields[i].replace('^', ' ');;
             if (i>0)  filter +=" || ";
             filter += "regex(str("+variable+"), \""+field+"\")";
         }
@@ -401,7 +401,7 @@ public class TrigKSTripleReader {
         String filter = "{ ";
         String[] fields = query.split(";");
         for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
+            String field = fields[i].replace('^', ' ');;
             if (i>0)  filter +=" UNION ";
             filter += " { "+variable+" rdf:type "+field+" } ";
         }
@@ -414,7 +414,7 @@ public class TrigKSTripleReader {
         String filter = "{ ";
         String[] fields = query.split(";");
         for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
+            String field = fields[i].replace('^', ' ');;
             if (i>0)  filter +=" UNION ";
             filter += " { "+variable+" sem:hasActor "+field+" } ";
         }
@@ -422,19 +422,6 @@ public class TrigKSTripleReader {
         return filter;
     }
 
-    static String multiwordFix (String q) {
-        String fix = "";
-        for (int i = 0; i < q.length(); i++) {
-            String c = q.substring(i,i+1);
-            System.out.println("c = " + c);
-            if (c.equals("^")) {
-                fix += " ";
-            }
-            else fix += c;
-
-        }
-        return fix;
-    }
     static public void readTriplesFromKSforEntity(String entityQuery){
         String types = "";
         String instances = "";
@@ -491,7 +478,8 @@ public class TrigKSTripleReader {
                 "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
                 "WHERE {\n" +
                 "{SELECT distinct ?event WHERE { \n" +
-                makeLabelFilter("?entlabel",entityLabel) +
+                //makeLabelFilter("?entlabel",entityLabel) +
+                makeSubStringLabelFilter("?entlabel",entityLabel) +
                 "?ent rdfs:label ?entlabel .\n" +
                 "?event sem:hasActor ?ent .\n" +
                 "} LIMIT "+limit+" }\n" +
