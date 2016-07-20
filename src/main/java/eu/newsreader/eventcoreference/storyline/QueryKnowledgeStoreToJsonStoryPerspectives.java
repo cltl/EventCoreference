@@ -241,7 +241,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 System.out.println(" * querying KnowledgeStore for source = " + sourceQuery);
             }
 
-            else if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
+            if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
                 TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
 
 /*

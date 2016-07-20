@@ -780,7 +780,7 @@ public class TrigKSTripleReader {
 
     public static void readTriplesFromKs(String sparqlQuery){
         //System.out.println("serviceEndpoint = " + serviceEndpoint);
-        System.out.println("sparqlQuery = " + sparqlQuery);
+        //System.out.println("sparqlQuery = " + sparqlQuery);
         //System.out.println("user = " + user);
         //System.out.println("pass = " + pass);
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
