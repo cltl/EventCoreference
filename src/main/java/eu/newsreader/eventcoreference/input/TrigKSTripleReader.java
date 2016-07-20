@@ -449,6 +449,21 @@ public class TrigKSTripleReader {
         if (!instances.isEmpty()) readTriplesFromKSforEntityInstance(instances);
     }
 
+    static public void readTriplesFromKSforSource(String sourceQuery){
+        String [] fields = sourceQuery.split(";");
+       // System.out.println("entityQuery = " + entityQuery);
+        String sources = "";
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+            if (!sources.isEmpty()) sources += ";";
+            sources += field;
+        }
+        if (!sources.isEmpty()) {
+            readTriplesFromKSforCitedSurfaceForm(sources);
+            readTriplesFromKSforAuthorSurfaceForm(sources);
+        }
+    }
+
     static public void readTriplesFromKSforEvents(String eventQuery){
         String types = "";
         String labels = "";
@@ -686,6 +701,56 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
+    static public void readTriplesFromKSforCitedSurfaceForm(String citedLabel){
+
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
+                "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event gaf:denotedBy ?mention.\n" +
+                "?mention grasp:hasAttribution ?attribution.\n" +
+                "?attribution grasp:wasAttributedTo ?cite.\n" +
+                makeSubStringLabelFilter("?cite", citedLabel) +
+               // "FILTER (regex(str(?cite), \"Agral\")) .\n" +
+                "} LIMIT 1000 }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event";
+        // System.out.println("sparqlQuery = " + sparqlQuery);
+        readTriplesFromKs(sparqlQuery);
+    }
+
+    static public void readTriplesFromKSforAuthorSurfaceForm(String authorLabel){
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
+                "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
+                "PREFIX prov:  <http://www.w3.org/ns/prov#>\n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event gaf:denotedBy ?mention.\n" +
+                "?mention grasp:hasAttribution ?attribution.\n" +
+                "?attribution prov:wasAttributedTo ?author .\n" +
+                makeSubStringLabelFilter("?author", authorLabel) +
+                // "FILTER (regex(str(?author), \"u\"))\n" +
+                "} LIMIT 1000 }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event";
+        // System.out.println("sparqlQuery = " + sparqlQuery);
+        readTriplesFromKs(sparqlQuery);
+    }
+
 
 
 
@@ -715,7 +780,7 @@ public class TrigKSTripleReader {
 
     public static void readTriplesFromKs(String sparqlQuery){
         //System.out.println("serviceEndpoint = " + serviceEndpoint);
-        //System.out.println("sparqlQuery = " + sparqlQuery);
+        System.out.println("sparqlQuery = " + sparqlQuery);
         //System.out.println("user = " + user);
         //System.out.println("pass = " + pass);
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());

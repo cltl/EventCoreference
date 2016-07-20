@@ -261,6 +261,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             else if (!entityQuery.isEmpty() && !eventQuery.isEmpty()) {
                 TrigKSTripleReader.readTriplesFromKSforEntityAndEvent(entityQuery, eventQuery);
             }
+            else if (!sourceQuery.isEmpty()) {
+                TrigKSTripleReader.readTriplesFromKSforSource(sourceQuery);
+            }
         }
 
         long estimatedTime = System.currentTimeMillis() - startTime;
