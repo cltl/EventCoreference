@@ -225,10 +225,15 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         }
 
         long startTime = System.currentTimeMillis();
-
+        String ksQueryError = "";
         if (!sparqlQuery.isEmpty()) {
             System.out.println(" * querying KnowledgeStore with SPARQL = " + sparqlQuery);
-            TrigKSTripleReader.readTriplesFromKs(sparqlQuery);
+            try {
+                TrigKSTripleReader.readTriplesFromKs(sparqlQuery);
+            } catch (Exception e) {
+                ksQueryError = e.getMessage();
+                ksQueryError += e.getCause();
+            }
         }
         else if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sourceQuery.isEmpty()) {
             if (!eventQuery.isEmpty()) {
@@ -242,53 +247,65 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             }
 
             if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
-                TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
-
-/*
-                if (ALL) {
+                try {
                     TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
-                   // TrigKSTripleReader.readTriplesFromKSforSurfaceSubForm(entityQuery, "");
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
                 }
-                else {
-                   // TrigKSTripleReader.readTriplesFromKSforEntityEventType(entityQuery, EVENTSCHEMA.toLowerCase());
-                  //  TrigKSTripleReader.readTriplesFromKSforSurfaceSubForm(entityQuery, EVENTSCHEMA.toLowerCase());
-                }
-*/
             }
             else if (entityQuery.isEmpty() && !eventQuery.isEmpty()) {
-                TrigKSTripleReader.readTriplesFromKSforEvents(eventQuery);
+                try {
+                    TrigKSTripleReader.readTriplesFromKSforEvents(eventQuery);
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
             }
             else if (!entityQuery.isEmpty() && !eventQuery.isEmpty()) {
-                TrigKSTripleReader.readTriplesFromKSforEntityAndEvent(entityQuery, eventQuery);
+                try {
+                    TrigKSTripleReader.readTriplesFromKSforEntityAndEvent(entityQuery, eventQuery);
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
             }
             else if (!sourceQuery.isEmpty()) {
-                TrigKSTripleReader.readTriplesFromKSforSource(sourceQuery);
+                try {
+                    TrigKSTripleReader.readTriplesFromKSforSource(sourceQuery);
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
             }
         }
+        if (!ksQueryError.isEmpty())  {
+            System.out.println(" * Error querying KnowledgeStore:"+ksQueryError);
+        }
+        else {
+            long estimatedTime = System.currentTimeMillis() - startTime;
 
-        long estimatedTime = System.currentTimeMillis() - startTime;
+            System.out.println(" * Time elapsed to get results from KS:" + estimatedTime / 1000.0);
 
-        System.out.println(" * Time elapsed to get results from KS:"+estimatedTime/1000.0);
-
-        try {
-            ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(TrigKSTripleReader.trigTripleData,
-                    ALL,SKIPPEVENTS, EVENTSCHEMA, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
-            System.out.println(" * Events in SEM-RDF = " + jsonObjects.size());
-            if (blacklist.size()>0) {
-                jsonObjects = JsonStoryUtil.filterEventsForBlackList(jsonObjects, blacklist);
-             //   System.out.println("Events after blacklist filter= " + jsonObjects.size());
-            }
-            if (actorThreshold>0) {
-                jsonObjects = JsonStoryUtil.filterEventsForActors(jsonObjects, entityFilter, actorThreshold);
-             //   System.out.println("Events after actor count filter = " + jsonObjects.size());
-            }
+            try {
+                ArrayList<JSONObject> jsonObjects = JsonStoryUtil.getJSONObjectArray(TrigKSTripleReader.trigTripleData,
+                        ALL, SKIPPEVENTS, EVENTSCHEMA, blacklist, iliMap, fnLevel, frameNetReader, topFrames, esoLevel, esoReader);
+                System.out.println(" * Events in SEM-RDF = " + jsonObjects.size());
+                if (blacklist.size() > 0) {
+                    jsonObjects = JsonStoryUtil.filterEventsForBlackList(jsonObjects, blacklist);
+                    //   System.out.println("Events after blacklist filter= " + jsonObjects.size());
+                }
+                if (actorThreshold > 0) {
+                    jsonObjects = JsonStoryUtil.filterEventsForActors(jsonObjects, entityFilter, actorThreshold);
+                    //   System.out.println("Events after actor count filter = " + jsonObjects.size());
+                }
 
 /*
             jsonObjects = JsonStoryUtil.removePerspectiveEvents(trigTripleData, jsonObjects);
             System.out.println("Events after removing perspective events = " + jsonObjects.size());
 */
 
-            jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
+                jsonObjects = JsonStoryUtil.createStoryLinesForJSONArrayList(jsonObjects,
                         topicThreshold,
                         climaxThreshold,
                         entityFilter, MERGE,
@@ -296,54 +313,54 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                         actionOnt,
                         actionSim,
                         interSect);
-         //   System.out.println("Events after storyline filter = " + jsonObjects.size());
-            //JsonStoryUtil.augmentEventLabelsWithArguments(jsonObjects);
+                //   System.out.println("Events after storyline filter = " + jsonObjects.size());
+                //JsonStoryUtil.augmentEventLabelsWithArguments(jsonObjects);
 
-            JsonStoryUtil.minimalizeActors(jsonObjects);
-           // System.out.println("eurovoc = " + euroVoc.uriLabelMap.size());
-            if (euroVoc.uriLabelMap.size()>0) {
-                JsonStoryUtil.renameStories(jsonObjects, euroVoc, euroVocBlackList);
-            }
-            ArrayList<JSONObject> rawTextArrayList = new ArrayList<JSONObject>();
-            ArrayList<JSONObject> structuredEvents = new ArrayList<JSONObject>();
-            if (jsonObjects.size()>0) {
-                TrigKSTripleReader.integrateAttributionFromKs(jsonObjects);
-            }
-
-
-            if (!pathToFtDataFile.isEmpty()) {
-                HashMap<String, ArrayList<ReadFtData.DataFt>> dataFtMap = ReadFtData.readData(pathToFtDataFile);
-                structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
-            }
-
-            if (!pathToRawTextIndexFile.isEmpty()) {
-               // rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
-                MentionResolver.ReadFileToUriTextArrayList(pathToRawTextIndexFile, jsonObjects);
-            }
-            else {
-                if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sparqlQuery.isEmpty()) {
-                  //  rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
-                 //   System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
-                    MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
+                JsonStoryUtil.minimalizeActors(jsonObjects);
+                // System.out.println("eurovoc = " + euroVoc.uriLabelMap.size());
+                if (euroVoc.uriLabelMap.size() > 0) {
+                    JsonStoryUtil.renameStories(jsonObjects, euroVoc, euroVocBlackList);
+                }
+                ArrayList<JSONObject> rawTextArrayList = new ArrayList<JSONObject>();
+                ArrayList<JSONObject> structuredEvents = new ArrayList<JSONObject>();
+                if (jsonObjects.size() > 0) {
+                    TrigKSTripleReader.integrateAttributionFromKs(jsonObjects);
                 }
 
+
+                if (!pathToFtDataFile.isEmpty()) {
+                    HashMap<String, ArrayList<ReadFtData.DataFt>> dataFtMap = ReadFtData.readData(pathToFtDataFile);
+                    structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
+                }
+
+                if (!pathToRawTextIndexFile.isEmpty()) {
+                    // rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
+                    MentionResolver.ReadFileToUriTextArrayList(pathToRawTextIndexFile, jsonObjects);
+                } else {
+                    if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sparqlQuery.isEmpty()) {
+                        //  rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
+                        //   System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
+                        MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
+                    }
+
+                }
+                nEvents = jsonObjects.size();
+                nActors = JsonStoryUtil.countActors(jsonObjects);
+                nMentions = JsonStoryUtil.countMentions(jsonObjects);
+                nStories = JsonStoryUtil.countGroups(jsonObjects);
+
+                JsonSerialization.writeJsonObjectArrayWithStructuredData("", "", project,
+                        jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            nEvents = jsonObjects.size();
-            nActors = JsonStoryUtil.countActors(jsonObjects);
-            nMentions = JsonStoryUtil.countMentions(jsonObjects);
-            nStories = JsonStoryUtil.countGroups(jsonObjects);
 
-            JsonSerialization.writeJsonObjectArrayWithStructuredData("", "", project,
-                    jsonObjects, rawTextArrayList, nEvents, nStories, nActors, nMentions, "polls", structuredEvents);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+            System.out.println(" * story_cnt = " + nStories);
+            System.out.println(" * event_cnt = " + nEvents);
+            System.out.println(" * mention_cnt = " + nMentions);
+            System.out.println(" * actor_cnt = " + nActors);
         }
-
-        System.out.println(" * story_cnt = " + nStories);
-        System.out.println(" * event_cnt = " + nEvents);
-        System.out.println(" * mention_cnt = "+ nMentions);
-        System.out.println(" * actor_cnt = " + nActors);
     }
 
     static void splitStories (ArrayList<JSONObject> events,

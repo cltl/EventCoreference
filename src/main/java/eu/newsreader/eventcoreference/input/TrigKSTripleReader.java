@@ -422,7 +422,7 @@ public class TrigKSTripleReader {
         return filter;
     }
 
-    static public void readTriplesFromKSforEntity(String entityQuery){
+    static public void readTriplesFromKSforEntity(String entityQuery)throws Exception {
         String types = "";
         String instances = "";
         String labels = "";
@@ -449,7 +449,7 @@ public class TrigKSTripleReader {
         if (!instances.isEmpty()) readTriplesFromKSforEntityInstance(instances);
     }
 
-    static public void readTriplesFromKSforSource(String sourceQuery){
+    static public void readTriplesFromKSforSource(String sourceQuery)throws Exception {
         String [] fields = sourceQuery.split(";");
        // System.out.println("entityQuery = " + entityQuery);
         String sources = "";
@@ -464,7 +464,7 @@ public class TrigKSTripleReader {
         }
     }
 
-    static public void readTriplesFromKSforEvents(String eventQuery){
+    static public void readTriplesFromKSforEvents(String eventQuery)throws Exception {
         String types = "";
         String labels = "";
         String [] fields = eventQuery.split(";");
@@ -485,7 +485,7 @@ public class TrigKSTripleReader {
     }
 
 
-    static public void readTriplesFromKSforEntityLabel(String entityLabel){
+    static public void readTriplesFromKSforEntityLabel(String entityLabel)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
@@ -507,7 +507,7 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
-    static public void readTriplesFromKSforEntityType(String entityType){
+    static public void readTriplesFromKSforEntityType(String entityType)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
@@ -532,7 +532,7 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
-    static public void readTriplesFromKSforEntityInstance(String entityType){
+    static public void readTriplesFromKSforEntityInstance(String entityType)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
@@ -557,10 +557,11 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
-    static public void readTriplesFromKSforEventType(String eventType){
+    static public void readTriplesFromKSforEventType(String eventType)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
                 "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
                 "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
@@ -577,14 +578,15 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        // System.out.println("sparqlQuery = " + sparqlQuery);
+       //  System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
-    static public void readTriplesFromKSforEventLabel(String eventLabel){
+    static public void readTriplesFromKSforEventLabel(String eventLabel)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
                 "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
                 "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
@@ -606,10 +608,11 @@ public class TrigKSTripleReader {
     }
 
 
-    static public void readTriplesFromKSforEntityAndEvent(String entityType, String eventType){
+    static public void readTriplesFromKSforEntityAndEvent(String entityType, String eventType)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
                 "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
                 "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
@@ -633,7 +636,7 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
-    static public void readTriplesFromKSforEntityEventType(String entityLabel, String filter){
+    static public void readTriplesFromKSforEntityEventType(String entityLabel, String filter)throws Exception {
 
 
         String eventFilter = "";
@@ -668,7 +671,7 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
-    static public void readTriplesFromKSforSurfaceSubForm(String entityLabel, String filter){
+    static public void readTriplesFromKSforSurfaceSubForm(String entityLabel, String filter)throws Exception {
         String eventFilter = "";
         if (filter.equals("eso")){
             eventFilter = "FILTER EXISTS { ?event rdf:type ?type .\n" +
@@ -701,7 +704,7 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
-    static public void readTriplesFromKSforCitedSurfaceForm(String citedLabel){
+    static public void readTriplesFromKSforCitedSurfaceForm(String citedLabel)throws Exception {
 
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
@@ -726,7 +729,7 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
-    static public void readTriplesFromKSforAuthorSurfaceForm(String authorLabel){
+    static public void readTriplesFromKSforAuthorSurfaceForm(String authorLabel)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
@@ -754,7 +757,7 @@ public class TrigKSTripleReader {
 
 
 
-    static public void readTriplesFromKSforTopic(String topic){
+    static public void readTriplesFromKSforTopic(String topic)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n" +
                 "PREFIX eurovoc: <http://eurovoc.europa.eu/> \n" +
@@ -778,7 +781,7 @@ public class TrigKSTripleReader {
     }
 
 
-    public static void readTriplesFromKs(String sparqlQuery){
+    public static void readTriplesFromKs(String sparqlQuery)throws Exception {
         //System.out.println("serviceEndpoint = " + serviceEndpoint);
         //System.out.println("sparqlQuery = " + sparqlQuery);
         //System.out.println("user = " + user);
@@ -942,8 +945,12 @@ public class TrigKSTripleReader {
             }
         }
 
-        readTriplesFromKSforEntityAndEvent("dbp:Company","fn:Arriving");
-       // readTriplesFromKSforEventType("fn:Arriving");
+        try {
+            readTriplesFromKSforEntityAndEvent("dbp:Company","fn:Arriving");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // readTriplesFromKSforEventType("fn:Arriving");
 
         //readTriplesFromKSforEntity("Airbus", "");
         long estimatedTime = System.currentTimeMillis() - startTime;

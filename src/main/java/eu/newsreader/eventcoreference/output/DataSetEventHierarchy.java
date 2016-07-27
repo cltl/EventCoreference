@@ -48,6 +48,7 @@ public class DataSetEventHierarchy {
         EsoReader esoReader = new EsoReader();
         esoReader.parseFile(esoPath);
         HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEventCountTypeTsv (eventPath, "eso");
+        HashMap<String, ArrayList<String>> cntIli = readTypeEventCountTsv (eventPath, "ili");
         HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
         System.out.println("Cumulating scores");
@@ -65,7 +66,7 @@ public class DataSetEventHierarchy {
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
             //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
-            esoReader.simpleTaxonomy.htmlTableTree(fos, "event", "eso:",tops, 1, cnt, cntPredicates);
+            esoReader.simpleTaxonomy.htmlTableTree(fos, "event", "eso:",tops, 1, cnt, cntPredicates, cntIli);
             str = "</div></div>\n";
             str += TreeStaticHtml.formEnd;
             str += TreeStaticHtml.bodyEnd;
@@ -207,8 +208,63 @@ public class DataSetEventHierarchy {
                                         map.put(field, phrases);
                                     }
                                 }
-
                             }
+                        }
+
+                    }
+                }
+            }
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
+        return map;
+    }
+
+    static public HashMap<String, ArrayList<String>> readTypeEventCountTsv (String filePath, String prefix) {
+        HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+        try {
+            InputStreamReader isr = null;
+            if (filePath.toLowerCase().endsWith(".gz")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (filePath.toLowerCase().endsWith(".bz2")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new CBZip2InputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                FileInputStream fis = new FileInputStream(filePath);
+                isr = new InputStreamReader(fis);
+            }
+            if (isr!=null) {
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                while (in.ready() && (inputLine = in.readLine()) != null) {
+                    // System.out.println(inputLine);
+                    inputLine = inputLine.trim();
+                    if (inputLine.trim().length() > 0) {
+                        String[] fields = inputLine.split("\t");
+                        if (fields.length > 2) {
+                            String f1 = fields[0];
+                            ArrayList<String> types = new ArrayList<String>();
+                            for (int i = 2; i < fields.length; i++) {
+                                String field = fields[i];
+                                if (field.startsWith(prefix) && !types.contains(field)) {
+                                    types.add(field);
+                                }
+                            }
+                           // System.out.println("types.toString() = " + types.toString());
+                            map.put(f1, types);
                         }
 
                     }
