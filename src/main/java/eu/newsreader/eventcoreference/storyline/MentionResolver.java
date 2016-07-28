@@ -326,7 +326,7 @@ public class MentionResolver {
         NafTokenLayerIndex nafTokenLayerIndex = new NafTokenLayerIndex(urls);
         //NafTokenLayerIndex nafTokenLayerIndex = new NafTokenLayerIndex();
         nafTokenLayerIndex.parseFile(pathToTokenIndex);
-        System.out.println("nafTokenLayerIndex.tokenMap.size() = " + nafTokenLayerIndex.tokenMap.size());
+        //System.out.println("nafTokenLayerIndex.tokenMap.size() = " + nafTokenLayerIndex.tokenMap.size());
         Set keySet = sourceUriList.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
