@@ -3,34 +3,218 @@ package eu.newsreader.eventcoreference.storyline;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafWordForm;
 import eu.newsreader.eventcoreference.util.Util;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * Created by piek on 20/07/16.
  */
-public class NafTokenLayerIndex {
+public class NafTokenLayerIndex extends DefaultHandler {
 
     public HashMap<String, ArrayList<KafWordForm>>  tokenMap;
+    private String value = "";
+    private KafWordForm kafWordForm;
+    private ArrayList<KafWordForm> kafWordForms;
+    private String urlString;
+    private Vector<String> uriFilter;
+
+    static public void main (String[] args) {
+        String folder = "";
+        String filter = "";
+        folder = "/Users/piek/Desktop/NWR-INC/WorldBank/data/spanish/output-7-v2";
+        filter = ".naf";
+        try {
+            createTokenIndex(new File(folder), filter);
+        }  catch (IOException e) {
+            e.printStackTrace();
+        }
+/*
+        String file = "/Users/piek/Desktop/NWR-INC/query/worldbank/data/en_token.index";
+        NafTokenLayerIndex nafTokenLayerIndex = new NafTokenLayerIndex();
+        nafTokenLayerIndex.parseFile(file);
+        System.out.println("nafTokenLayerIndex.tokenMap.size() = " + nafTokenLayerIndex.tokenMap.size());
+*/
+    }
 
     public NafTokenLayerIndex () {
         tokenMap = new HashMap<String, ArrayList<KafWordForm>>();
+        init();
     }
 
-    void createTokenIndex (File folder, String filter) {
-        ArrayList<File> nafFiles = Util.makeRecursiveFileList(folder, filter);
-        KafSaxParser kafSaxParser = new KafSaxParser();
-        for (int i = 0; i < nafFiles.size(); i++) {
-            File file = nafFiles.get(i);
-            kafSaxParser.parseFile(file);
-            String uri = kafSaxParser.getKafMetaData().getUrl();
-            tokenMap.put(uri, kafSaxParser.kafWordFormList);
+    public NafTokenLayerIndex (Vector<String> uriList) {
+        tokenMap = new HashMap<String, ArrayList<KafWordForm>>();
+        init();
+        uriFilter = uriList;
+       // System.out.println("uriList.toString() = " + uriList.toString());
+    }
+
+    void init() {
+        kafWordForms = new ArrayList<KafWordForm>();
+        kafWordForm = new KafWordForm();
+        urlString = "";
+        uriFilter = new Vector<String>();
+    }
+
+    public boolean parseFile(String source)
+    {
+        return parseFile(new File (source));
+    }
+
+    public boolean parseFile(File source)
+    {
+        try
+        {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setValidating(false);
+            SAXParser parser = factory.newSAXParser();
+            parser.parse(source, this);
+            return true;
+        }
+        catch (FactoryConfigurationError factoryConfigurationError)
+        {
+            factoryConfigurationError.printStackTrace();
+        }
+        catch (ParserConfigurationException e)
+        {
+            e.printStackTrace();
+        }
+        catch (SAXException e)
+        {
+            //System.out.println("last value = " + previousvalue);
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            // e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void startElement(String uri, String localName,
+                             String qName, Attributes attributes)
+            throws SAXException {
+        value = "";
+        if ((qName.equalsIgnoreCase("text"))) {
+            kafWordForms = new ArrayList<KafWordForm>();
+        }
+        else if (qName.equalsIgnoreCase("wf")) {
+            kafWordForm = new KafWordForm();
+            String wid = "";
+            String sentenceId = "";
+            for (int i = 0; i < attributes.getLength(); i++) {
+                String name = attributes.getQName(i);
+                if (name.equalsIgnoreCase("wid")) {
+                    wid = attributes.getValue(i).trim();
+                    kafWordForm.setWid(wid);
+                }
+                else if (name.equalsIgnoreCase("id")) {
+                    wid = attributes.getValue(i).trim();
+                    kafWordForm.setWid(wid);
+                }
+                else if (name.equalsIgnoreCase("para")) {
+                    kafWordForm.setPara(attributes.getValue(i).trim());
+                }
+                else if (name.equalsIgnoreCase("page")) {
+                    kafWordForm.setPage(attributes.getValue(i).trim());
+                }
+                else if (name.equalsIgnoreCase("sent")) {
+                    sentenceId = attributes.getValue(i).trim();
+                    kafWordForm.setSent(sentenceId);
+                }
+                else if (name.equalsIgnoreCase("charoffset")) {
+                    kafWordForm.setCharOffset(attributes.getValue(i).trim());
+                }
+                else if (name.equalsIgnoreCase("charlength")) {
+                    kafWordForm.setCharLength(attributes.getValue(i).trim());
+                }
+                else if (name.equalsIgnoreCase("offset")) {
+                    kafWordForm.setCharOffset(attributes.getValue(i).trim());
+                }
+                else if (name.equalsIgnoreCase("length")) {
+                    kafWordForm.setCharLength(attributes.getValue(i).trim());
+                }
+                else {
+                    //  System.out.println("414 ********* FOUND UNKNOWN Attribute " + name + " *****************");
+                }
+            }
         }
     }
 
-/*    public void writeNafToStream(OutputStream stream)
+
+    public void endElement(String uri, String localName, String qName)
+            throws SAXException {
+        if (qName.equals("text")) {
+
+            if (uriFilter.contains(urlString)) {
+                tokenMap.put(urlString, kafWordForms);
+            }
+            else {
+            }
+            urlString = "";
+            kafWordForms = new ArrayList<KafWordForm>();
+        }
+        else if (qName.equals("wf")) {
+            kafWordForm.setWf(value);
+            kafWordForms.add(kafWordForm);
+            kafWordForm = new KafWordForm();
+        }
+        else if (qName.equals("url")) {
+            urlString = value;
+        }
+    }
+
+    public void characters(char ch[], int start, int length)
+            throws SAXException {
+        value += new String(ch, start, length);
+    }
+
+    static void createTokenIndex (File folder, String filter) throws IOException {
+        File indexFile = new File(folder+"/"+"token.index");
+        OutputStream stream = new FileOutputStream(indexFile);
+
+        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<index>\n";
+        stream.write(str.getBytes());
+
+        ArrayList<File> nafFiles = Util.makeRecursiveFileList(folder, filter);
+
+        KafSaxParser kafSaxParser = new KafSaxParser();
+        for (int f = 0; f < nafFiles.size(); f++) {
+            File file = nafFiles.get(f);
+            if (f%100==0) System.out.println("file.getName() = " + file.getName());
+            kafSaxParser.parseFile(file);
+
+            String uri = kafSaxParser.getKafMetaData().getUrl();
+            if (kafSaxParser.kafWordFormList.size()>0) {
+                str = "<text>\n";
+                str += "<url><![CDATA["+uri+"]]></url>\n";
+                for (int i = 0; i < kafSaxParser.kafWordFormList.size(); i++) {
+                    KafWordForm kaf  = kafSaxParser.kafWordFormList.get(i);
+                    //<wf id="w1" length="10" offset="0" para="1" sent="1">Resolucion</wf>
+                    str += "<wf id=\""+kaf.getWid()+"\" length=\""+kaf.getCharLength()+"\" offset=\""+kaf.getCharOffset()+"\"><![CDATA["+kaf.getWf()+"]]></wf>\n";
+                }
+                str += "</text>\n";
+                stream.write(str.getBytes());
+            }
+        }
+        str = "</index>\n";
+        stream.write(str.getBytes());
+    }
+
+
+/*    public void writeNafToStream(OutputStream stream, String uri, ArrayList<KafWordForm> tokens)
     {
         try
         {
@@ -41,249 +225,17 @@ public class NafTokenLayerIndex {
             Document xmldoc = impl.createDocument(null, "NAF", null);
             xmldoc.setXmlStandalone(false);
             Element root = xmldoc.getDocumentElement();
-            root.setAttribute("version", NAFVERSION);
-            root.setAttribute("xml:lang", kafMetaData.getLanguage());
-            root.appendChild(kafMetaData.toNafHeaderXML(xmldoc));
 
-            if (!rawText.isEmpty())  {
-                Element text = xmldoc.createElement("raw");
-                text.setTextContent(rawText);
-                root.appendChild(text);
-            }
-            if (this.kafWordFormList.size()>0) {
+            if (tokens.size()>0) {
                 Element text = xmldoc.createElement("text");
-                for (int i = 0; i < this.kafWordFormList.size(); i++) {
-                    KafWordForm kaf  = kafWordFormList.get(i);
-                    //System.out.println("kaf.getWf() = " + kaf.getWf());
+                text.setAttribute("uri", uri);
+                for (int i = 0; i < tokens.size(); i++) {
+                    KafWordForm kaf  = tokens.get(i);
                     text.appendChild(kaf.toNafXML(xmldoc));
                 }
                 root.appendChild(text);
             }
 
-            if (this.kafTermList.size()>0) {
-                Element terms = xmldoc.createElement("terms");
-                for (int i = 0; i < this.kafTermList.size(); i++) {
-                    KafTerm kaf  = kafTermList.get(i);
-                    kaf.setTokenString(AddTokensAsCommentsToSpans.getTokenString(this, kaf.getSpans()));
-                    terms.appendChild(kaf.toNafXML(xmldoc));
-                }
-                root.appendChild(terms);
-            }
-
-            if (this.kafDepList.size()>0) {
-                Element deps = xmldoc.createElement("deps");
-                for (int i = 0; i < this.kafDepList.size(); i++) {
-                    KafDep kaf  = kafDepList.get(i);
-                    String commentString = kaf.getTokensString(this);
-                    Comment comment = xmldoc.createComment(commentString);
-                    deps.appendChild(comment);
-                    /// the next checks are needed because some parser create reference to nonexisting elements
-                    if ((this.getTerm(kaf.from)!=null) && (this.getTerm(kaf.to)!=null)) {
-                        deps.appendChild(kaf.toNafXML(xmldoc));
-                    }
-                }
-                root.appendChild(deps);
-            }
-
-            if (this.kafChunkList.size()>0) {
-                Element chunks = xmldoc.createElement("chunks");
-                for (int i = 0; i < this.kafChunkList.size(); i++) {
-                    KafChunk kaf  = kafChunkList.get(i);
-                    kaf.setTokenString(this);
-                    /// the next checks are needed because some parser create reference to nonexisting elements
-                    boolean nullSpan = false;
-                    for (int j = 0; j < kaf.getSpans().size(); j++) {
-                        String span = kaf.getSpans().get(j);
-                        if (this.getTerm(span)==null) {
-                            nullSpan = true;
-                            break;
-                        }
-                    }
-                    if (this.getTerm(kaf.getHead())!=null) {
-                        if (!nullSpan) chunks.appendChild(kaf.toNafXML(xmldoc));
-                    }
-                }
-                root.appendChild(chunks);
-            }
-
-            if (kafOpinionArrayList.size()>0) {
-                Element opinions = xmldoc.createElement("opinions");
-                for (int i = 0; i < this.kafOpinionArrayList.size(); i++){
-                    KafOpinion kaf  =  kafOpinionArrayList.get(i);
-                    kaf.setTokenStrings(this);
-                    opinions.appendChild(kaf.toNafXML(xmldoc));
-                }
-                root.appendChild(opinions);
-            }
-
-            if (kafEntityArrayList.size()>0) {
-                Element entities = xmldoc.createElement("entities");
-                for (int i = 0; i < this.kafEntityArrayList.size(); i++) {
-                    KafEntity kaf  = kafEntityArrayList.get(i);
-                    kaf.setTokenStrings(this);
-                    entities.appendChild(kaf.toNafXML(xmldoc));
-                }
-                root.appendChild(entities);
-            }
-
-            if (kafPropertyArrayList.size()>0) {
-                Element properties = xmldoc.createElement("properties");
-                for (int i = 0; i < this.kafPropertyArrayList.size(); i++) {
-                    KafProperty kaf  = kafPropertyArrayList.get(i);
-                    kaf.setTokenStrings(this);
-                    properties.appendChild(kaf.toNafXML(xmldoc));
-                }
-                root.appendChild(properties);
-            }
-
-            if (kafCorefenceArrayList.size()>0) {
-                Element coreferences = xmldoc.createElement("coreferences");
-                for (int i = 0; i < this.kafCorefenceArrayList.size(); i++) {
-                    KafCoreferenceSet kaf  = kafCorefenceArrayList.get(i);
-                    kaf.setTokenStrings(this);
-                    coreferences.appendChild(kaf.toNafXML(xmldoc));
-                }
-                root.appendChild(coreferences);
-            }
-
-            if (kafConstituencyTrees.size()>0) {
-                Element constituency = xmldoc.createElement("constituency");
-                for (int i = 0; i < kafConstituencyTrees.size(); i++) {
-                    KafConstituencyTree constituencyTree = kafConstituencyTrees.get(i);
-                    constituencyTree.addComments(this);
-                    constituency.appendChild(constituencyTree.toNafXML(xmldoc));
-                }
-                root.appendChild(constituency);
-            }
-            if (kafCountryArrayList.size()>0) {
-                Element locations = xmldoc.createElement("locations");
-                for (int i = 0; i < kafCountryArrayList.size(); i++) {
-                    GeoCountryObject geoCountryObject = kafCountryArrayList.get(i);
-                    locations.appendChild(geoCountryObject.toNafXML(xmldoc));
-                }
-                for (int i = 0; i < kafPlaceArrayList.size(); i++) {
-                    GeoPlaceObject geoPlaceObject = kafPlaceArrayList.get(i);
-                    locations.appendChild(geoPlaceObject.toNafXML(xmldoc));
-                }
-                root.appendChild(locations);
-            }
-
-            if (kafDateArrayList.size()>0) {
-                Element dates = xmldoc.createElement("dates");
-                for (int i = 0; i < kafDateArrayList.size(); i++) {
-                    ISODate isoDate = kafDateArrayList.get(i);
-                    dates.appendChild(isoDate.toNafXML(xmldoc));
-                }
-                root.appendChild(dates);
-            }
-
-
-            if (kafEventArrayList.size()>0) {
-                Element events  = xmldoc.createElement("srl");
-
-                for (int i = 0; i < kafEventArrayList.size(); i++) {
-                    KafEvent event = kafEventArrayList.get(i);
-                    event.setTokenString(AddTokensAsCommentsToSpans.getTokenStringFromTermIds(this, event.getSpanIds()));
-                    for (int j = 0; j < event.getParticipants().size(); j++) {
-                        KafParticipant kafParticipant = event.getParticipants().get(j);
-                        kafParticipant.setTokenString(AddTokensAsCommentsToSpans.getTokenStringFromTermIds(this, kafParticipant.getSpanIds()));
-                    }
-                    events.appendChild(event.toNafXML(xmldoc));
-                }
-                root.appendChild(events);
-            }
-
-
-            if (kafTimexLayer.size()>0) {
-                Element timexLayer = xmldoc.createElement("timeExpressions");
-
-                for (int i = 0; i < kafTimexLayer.size(); i++) {
-                    KafTimex timex = kafTimexLayer.get(i);
-                    timex.setTokenString(AddTokensAsCommentsToSpans.getTokenString(this, timex.getSpans()));
-                    timexLayer.appendChild(timex.toNafXML(xmldoc));
-                }
-
-                root.appendChild(timexLayer);
-            }
-
-            if (kafClinks.size()>0) {
-                Element clinksLayer = xmldoc.createElement("causalRelations");
-
-                for (int i = 0; i < kafClinks.size(); i++) {
-                    KafEventRelation eventRelation = kafClinks.get(i);
-                    clinksLayer.appendChild(eventRelation.toNafXML(xmldoc, "clink"));
-                }
-
-                root.appendChild(clinksLayer);
-            }
-
-            if (kafTlinks.size()>0 || kafPredicateAnchorArrayList.size()>0) {
-                Element tlinksLayer = xmldoc.createElement("temporalRelations");
-
-                for (int i = 0; i < kafTlinks.size(); i++) {
-                    KafEventRelation eventRelation = kafTlinks.get(i);
-                    tlinksLayer.appendChild(eventRelation.toNafXML(xmldoc, "tlink"));
-                }
-
-                for (int i = 0; i < kafPredicateAnchorArrayList.size(); i++) {
-                    KafPredicateAnchor predicateAnchor = kafPredicateAnchorArrayList.get(i);
-                    tlinksLayer.appendChild(predicateAnchor.toNafXML(xmldoc));
-                }
-                root.appendChild(tlinksLayer);
-            }
-
-            if (kafFactualityLayer.size()>0) {
-                Element factualities = xmldoc.createElement("factualitylayer");
-
-                for (int i = 0; i < kafFactualityLayer.size(); i++) {
-                    KafFactuality kafFactuality = kafFactualityLayer.get(i);
-                    kafFactuality.setTokenString(this);
-                    factualities.appendChild((kafFactuality.toNafXML(xmldoc)));
-                }
-                root.appendChild(factualities);
-            }
-
-            if (kafAttributionArrayList.size()>0) {
-                Element factualities = xmldoc.createElement("attribution");
-
-                for (int i = 0; i < kafAttributionArrayList.size(); i++) {
-                    KafStatement kafStatement = kafAttributionArrayList.get(i);
-                    kafStatement.setTokenString(this);
-                    factualities.appendChild((kafStatement.toNafXML(xmldoc)));
-                }
-                root.appendChild(factualities);
-            }
-
-            if (kafTopicsArrayList.size()>0) {
-                Element topics = xmldoc.createElement("topics");
-
-                for (int i = 0; i < kafTopicsArrayList.size(); i++) {
-                    KafTopic kafTopic = kafTopicsArrayList.get(i);
-                    topics.appendChild((kafTopic.toNafXML(xmldoc)));
-                }
-                root.appendChild(topics);
-            }
-
-            if (kafMarkablesArrayList.size()>0) {
-                Element markables = xmldoc.createElement("markables");
-
-                for (int i = 0; i < kafMarkablesArrayList.size(); i++) {
-                    KafMarkable kafMarkable = kafMarkablesArrayList.get(i);
-                    kafMarkable.setTokenString(this);
-                    markables.appendChild((kafMarkable.toNafXML(xmldoc)));
-                }
-                root.appendChild(markables);
-            }
-
-*//*       @deprecated
-            Element tunits = xmldoc.createElement("tunits");
-            for (int i = 0; i < this.kafDiscourseList.size(); i++) {
-                KafTextUnit kaf  =  kafDiscourseList.get(i);
-                tunits.appendChild(kaf.toNafXML(xmldoc));
-            }
-            root.appendChild(tunits);
-
-*//*
             // Serialisation through Tranform.
             DOMSource domSource = new DOMSource(xmldoc);
             TransformerFactory tf = TransformerFactory.newInstance();
@@ -309,5 +261,6 @@ public class NafTokenLayerIndex {
             e.printStackTrace();
         }
     }*/
+
 
 }

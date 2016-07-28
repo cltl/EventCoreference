@@ -64,6 +64,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         String esoFile = "";
         String euroVocFile = "";
         String euroVocBlackListFile = "";
+        String pathToTokenIndex = "";
         fnLevel = 0;
         esoLevel = 0;
         for (int i = 0; i < args.length; i++) {
@@ -76,6 +77,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             }
             else if (arg.equals("--entity") && args.length>(i+1)) {
                 entityQuery = args[i+1];
+            }
+            else if (arg.equals("--tokens") && args.length>(i+1)) {
+                pathToTokenIndex = args[i+1];
             }
             else if (arg.equals("--source") && args.length>(i+1)) {
                 sourceQuery = args[i+1];
@@ -340,7 +344,12 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                     if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sparqlQuery.isEmpty()) {
                         //  rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
                         //   System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
-                        MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
+                        if (pathToTokenIndex.isEmpty()) {
+                            MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
+                        }
+                        else {
+                            MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex);
+                        }
                     }
 
                 }
