@@ -2844,11 +2844,13 @@ public class Util {
                 new LinkedList<Map.Entry<String, Integer>>(unsortMap.entrySet());
         for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
             Map.Entry<String, Integer> entry = it.next();
+            //System.out.println("entry.getKey() = " + entry.getKey());
             if (entry.getValue()>topValue) {
                 topValue = entry.getValue();
                 topKey = entry.getKey();
             }
         }
+      //  System.out.println("topKey = " + topKey);
         return topKey;
     }
 

@@ -191,6 +191,7 @@ public class JsonFromCat extends DefaultHandler {
     ArrayList<String> spans;
     public HashMap<String, String> termToCorefMap;
     public HashMap<String, String> eventToStoryMap;
+    public HashMap<String, String> instanceToStoryMap;
     public HashMap<String, ArrayList<KafTerm>> eventCorefMap;
     public HashMap<String, ArrayList<String>> storyMap;
     public HashMap<String, ArrayList<ActorLink>> eventActorLinksMap;
@@ -220,72 +221,362 @@ public class JsonFromCat extends DefaultHandler {
         initAll();
     }
 
-    public void makeGroup (ArrayList<String> coveredEvents, ArrayList<String> group, String eventId) {
-            if (eventPlotLinksMap.containsKey(eventId)) {
-                ArrayList<PlotLink> plotLinks = eventPlotLinksMap.get(eventId);
-                for (int j = 0; j < plotLinks.size(); j++) {
-                    PlotLink plotLink = plotLinks.get(j);
-                    String otherEventId = "";
-                    if (!plotLink.getSource().equals(eventId)) {
-                        otherEventId = plotLink.getSource();
-                    }
-                    else {
-                        otherEventId = plotLink.getTarget();
-                    }
-                    if (!group.contains(otherEventId)) {
-                        group.add(otherEventId);
-                        coveredEvents.add(otherEventId);
-                        makeGroup(coveredEvents, group,otherEventId);
-                    }
-                }
-            }
-            if (eventTimeLinksMap.containsKey(eventId)) {
-                ArrayList<TimeLink> tlinks = eventTimeLinksMap.get(eventId);
-                for (int i = 0; i < tlinks.size(); i++) {
-                    TimeLink timeLink = tlinks.get(i);
-                    String otherEventId = "";
-                    if (!timeLink.getSource().equals(eventId)) {
-                        otherEventId = timeLink.getSource();
-                    }
-                    else {
-                        otherEventId = timeLink.getTarget();
-                    }
-                    if (!group.contains(otherEventId)) {
-                        group.add(otherEventId);
-                        coveredEvents.add(otherEventId);
-                        makeGroup(coveredEvents, group,otherEventId);
+
+    public void makeGroupsForInstance () {
+        HashMap<String, ArrayList<String>> groupings = new HashMap<String, ArrayList<String>>();
+        Set keySet = eventCorefMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String corefId1 = keys.next();
+            ArrayList<String> group = new ArrayList<String>();
+            group.add(corefId1);
+            Iterator<String> keys2 = keySet.iterator();
+            while (keys2.hasNext()) {
+                String corefId2 = keys2.next();
+                if (!corefId1.equals(corefId2)) {
+                    if (areRelated(corefId1, corefId2)) {
+                        group.add(corefId2);
                     }
                 }
             }
-            if (eventLocationLinksMap.containsKey(eventId)) {
-                ArrayList<LocationLink> lLinks = eventLocationLinksMap.get(eventId);
-                for (int i = 0; i < lLinks.size(); i++) {
-                    LocationLink locationLink = lLinks.get(i);
-                    String otherEventId = "";
-                    if (!locationLink.getSource().equals(eventId)) {
-                        otherEventId = locationLink.getSource();
+            groupings.put(corefId1, group);
+        }
+        System.out.println("before chaining groupings.size() = " + groupings.size());
+        chainGroupings(groupings);
+        System.out.println("after chaining groupings = " + groupings.size());
+        keySet = groupings.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<String> corefIds = groupings.get(key);
+            if (corefIds.size()>0) {
+                String climax = getClimaxEvent(corefIds);
+                if (climax.isEmpty()) {
+                    climax = key;
+                }
+                if (!climax.isEmpty()) {
+                    System.out.println("climax = " + climax);
+                    for (int i = 0; i < corefIds.size(); i++) {
+                        String coref = corefIds.get(i);
+                        instanceToStoryMap.put(coref, climax);
                     }
-                    else {
-                        otherEventId = locationLink.getTarget();
-                    }
-                    if (!group.contains(otherEventId)) {
-                        group.add(otherEventId);
-                        coveredEvents.add(otherEventId);
-                        makeGroup(coveredEvents, group,otherEventId);
-                    }
+                }
+                else {
+
                 }
             }
             else {
-                System.out.println("No relation for eventId = " + eventId);
+               // System.out.println("absorbed key = " + key);
             }
+        }
+    }
+    public int getClimaxScore (String corefId) {
+       int cnt = 0;
+        if (eventCorefMap.containsKey(corefId)) {
+            ArrayList<KafTerm> eventTerms = eventCorefMap.get(corefId);
+            for (int j = 0; j < eventTerms.size(); j++) {
+                KafTerm eventTerm = eventTerms.get(j);
+                String eventId = eventTerm.getTid();
+                if (eventPlotLinksMap.containsKey(eventId)) {
+                    ArrayList<PlotLink> plotLinks = eventPlotLinksMap.get(eventId);
+                    for (int k = 0; k < plotLinks.size(); k++) {
+                        PlotLink plotLink = plotLinks.get(k);
+                        if (plotLink.getSource().equals(eventId) && plotLink.getRelType().equalsIgnoreCase("FALLING_ACTION")) {
+                            cnt++;
+                        }
+                        else if (plotLink.getTarget().equals(eventId) && plotLink.getRelType().equalsIgnoreCase("PRECONDITION")) {
+                            cnt++;
+                        }
+                    }
+                }
+            }
+        }
+        return cnt;
     }
 
-    public void makeGroups () {
-        /*
+    public String getClimaxEvent (ArrayList<String> corefIds) {
+        String climax = "";
+        int max = 0;
+        for (int i = 0; i < corefIds.size(); i++) {
+            String corefId = corefIds.get(i);
+            int cnt = getClimaxScore(corefId);
+            if (cnt>max) {
+                climax = corefId;
+                max = cnt;
+            }
+        }
+        return climax;
+    }
+
+
+    public void chainGroupings (HashMap<String, ArrayList<String>> groupings) {
+        boolean CHAIN = false;
+        Set keySet = groupings.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key1 = keys.next();
+            ArrayList<String> group1 = groupings.get(key1);
+            Iterator<String> keys2 = keySet.iterator();
+            while (keys2.hasNext()) {
+                String key2 = keys2.next();
+                if (!key2.equals(key1)) {
+                    ArrayList<String> group2 = groupings.get(key2);
+                    if (!Collections.disjoint(group1, group2)) {
+                        ///absorb;
+                        for (int i = 0; i < group2.size(); i++) {
+                            String corefId = group2.get(i);
+                            if (!group1.contains(corefId)) {
+                                //System.out.println("adding corefId = " + corefId);
+                                group1.add(corefId);
+                                CHAIN = true;
+                            }
+                        }
+                        groupings.put(key2, new ArrayList<String>());
+                        groupings.put(key1, group1);
+                    }
+                }
+            }
+        }
+        if (CHAIN) {
+            chainGroupings(groupings);
+        }
+    }
+
+    public boolean areRelated (String corefId1, String corefId2) {
+        if (this.eventCorefMap.containsKey(corefId1) && this.eventCorefMap.containsKey(corefId2)) {
+            ArrayList<KafTerm> eventTerms1 = this.eventCorefMap.get(corefId1);
+            ArrayList<String> relatedMentions = new ArrayList<String>();
+            for (int i = 0; i < eventTerms1.size(); i++) {
+                KafTerm eventTerm = eventTerms1.get(i);
+                String eventId = eventTerm.getTid();
+                if (eventPlotLinksMap.containsKey(eventId)) {
+                    ArrayList<PlotLink> plotLinks = eventPlotLinksMap.get(eventId);
+                    for (int j = 0; j < plotLinks.size(); j++) {
+                        PlotLink plotLink = plotLinks.get(j);
+                        String otherEventId = "";
+                        if (!plotLink.getSource().equals(eventId)) {
+                            otherEventId = plotLink.getSource();
+                        } else {
+                            otherEventId = plotLink.getTarget();
+                        }
+                        if (!relatedMentions.contains(otherEventId)) {
+                            relatedMentions.add(otherEventId);
+                        }
+                    }
+                }
+                if (eventTimeLinksMap.containsKey(eventId)) {
+                    ArrayList<TimeLink> tlinks = eventTimeLinksMap.get(eventId);
+                    for (int j = 0; j < tlinks.size(); j++) {
+                        TimeLink timeLink = tlinks.get(j);
+                        String otherEventId = "";
+                        if (!timeLink.getSource().equals(eventId)) {
+                            otherEventId = timeLink.getSource();
+                        } else {
+                            otherEventId = timeLink.getTarget();
+                        }
+                        if (!relatedMentions.contains(otherEventId)) {
+                            relatedMentions.add(otherEventId);
+                        }
+                    }
+                }
+                if (eventLocationLinksMap.containsKey(eventId)) {
+                    ArrayList<LocationLink> lLinks = eventLocationLinksMap.get(eventId);
+                    for (int j = 0; j < lLinks.size(); j++) {
+                        LocationLink locationLink = lLinks.get(j);
+                        String otherEventId = "";
+                        if (!locationLink.getSource().equals(eventId)) {
+                            otherEventId = locationLink.getSource();
+                        } else {
+                            otherEventId = locationLink.getTarget();
+                        }
+                        if (!relatedMentions.contains(otherEventId)) {
+                            relatedMentions.add(otherEventId);
+                        }
+                    }
+                }
+            }
+            if (relatedMentions.size()>0) {
+                ArrayList<KafTerm> eventTerms2 = this.eventCorefMap.get(corefId2);
+                for (int i = 0; i < eventTerms2.size(); i++) {
+                    KafTerm term = eventTerms2.get(i);
+                    if (relatedMentions.contains(term.getTid())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
+
+/*    public void makeInstanceGroups () {
+        *//*
             We determine the climax from the Plot links
             - if relType="FALLING_ACTION" then source is climax event
             - if relType="PRECONDITION" then target is climax
-         */
+         *//*
+        ArrayList<String> coveredEvents = new ArrayList<String>();
+
+        Set keySet = eventCorefMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String corefId = keys.next();
+            ArrayList<String> group = new ArrayList<String>();
+            makeInstanceGroup(coveredEvents,group, corefId);
+        }
+
+        keySet = eventToStoryMap.keySet();
+        keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String eventId = keys.next();
+            String storyId = eventToStoryMap.get(eventId);
+            if (storyMap.containsKey(storyId)) {
+                ArrayList<String> eventIds = storyMap.get(storyId);
+                if (!eventIds.contains(eventId)) {
+                    eventIds.add(eventId);
+                    storyMap.put(storyId, eventIds);
+                }
+            }
+            else {
+                ArrayList<String> eventIds = new ArrayList<String>();
+                eventIds.add(eventId);
+                storyMap.put(storyId, eventIds);
+            }
+        }
+    }
+
+    public String makeInstanceGroup (ArrayList<String> coveredEvents, ArrayList<String> group, String corefId) {
+        String storyId = corefId;
+        if (this.eventCorefMap.containsKey(corefId)) {
+            ArrayList<KafTerm> eventTerms = this.eventCorefMap.get(corefId);
+            ArrayList<String> relatedMentions = new ArrayList<String>();
+            for (int i = 0; i < eventTerms.size(); i++) {
+                KafTerm eventTerm = eventTerms.get(i);
+                String eventId = eventTerm.getTid();
+                if (!group.contains(eventId) && !coveredEvents.contains(eventId)) {
+                    coveredEvents.add(eventId);
+                    group.add(eventId);
+                    System.out.println("extending group = " + group);
+                    if (eventPlotLinksMap.containsKey(eventId)) {
+                        ArrayList<PlotLink> plotLinks = eventPlotLinksMap.get(eventId);
+                        for (int j = 0; j < plotLinks.size(); j++) {
+                            PlotLink plotLink = plotLinks.get(j);
+                            String otherEventId = "";
+                            if (!plotLink.getSource().equals(eventId)) {
+                                otherEventId = plotLink.getSource();
+                            } else {
+                                otherEventId = plotLink.getTarget();
+                            }
+                            if (!relatedMentions.contains(otherEventId)) {
+                                relatedMentions.add(otherEventId);
+                            }
+                        }
+                    }
+                    if (eventTimeLinksMap.containsKey(eventId)) {
+                        ArrayList<TimeLink> tlinks = eventTimeLinksMap.get(eventId);
+                        for (int j = 0; j < tlinks.size(); j++) {
+                            TimeLink timeLink = tlinks.get(j);
+                            String otherEventId = "";
+                            if (!timeLink.getSource().equals(eventId)) {
+                                otherEventId = timeLink.getSource();
+                            } else {
+                                otherEventId = timeLink.getTarget();
+                            }
+                            if (!relatedMentions.contains(otherEventId)) {
+                                relatedMentions.add(otherEventId);
+                            }
+                        }
+                    }
+                    if (eventLocationLinksMap.containsKey(eventId)) {
+                        ArrayList<LocationLink> lLinks = eventLocationLinksMap.get(eventId);
+                        for (int j = 0; j < lLinks.size(); j++) {
+                            LocationLink locationLink = lLinks.get(j);
+                            String otherEventId = "";
+                            if (!locationLink.getSource().equals(eventId)) {
+                                otherEventId = locationLink.getSource();
+                            } else {
+                                otherEventId = locationLink.getTarget();
+                            }
+                            if (!relatedMentions.contains(otherEventId)) {
+                                relatedMentions.add(otherEventId);
+                            }
+                        }
+                    }
+                }
+                else {
+                    System.out.println("Covered eventId = " + eventId);
+                }
+            }
+            System.out.println("BEFORE RECURSING");
+            System.out.println("storyId = " + storyId);
+            System.out.println("group = " + group);
+            if (relatedMentions.size()==0) {
+                //// no relations, group is just the coref terms
+                System.out.println("NO RELATED MENTIONS");
+            }
+            else {
+                System.out.println("relatedMentions = " + relatedMentions);
+                boolean TAKEN = false;
+                for (int i = 0; i < relatedMentions.size(); i++) {
+                    String eventId = relatedMentions.get(i);
+                    if (eventToStoryMap.containsKey(eventId)) {
+                        //// related event is already assigned
+                        storyId = eventToStoryMap.get(eventId);
+                        System.out.println("already exists storyId = " + storyId);
+                        TAKEN = true;
+                        break; /// this means we take the first
+                    }
+                }
+                if (!TAKEN) {
+                    /// related events were not considered, we recurse to extend the group
+                    for (int i = 0; i < relatedMentions.size(); i++) {
+                        String eventId = relatedMentions.get(i);
+                        System.out.println("eventId = " + eventId);
+*//*
+                        coveredEvents.add(eventId);
+                        group.add(eventId);
+*//*
+                        if (termToCorefMap.containsKey(eventId)) {
+                            String relatedCorefId = termToCorefMap.get(eventId);
+                            System.out.println("relatedCorefId = " + relatedCorefId);
+                            storyId = makeInstanceGroup(coveredEvents, group, relatedCorefId);
+                            System.out.println("storyId = " + storyId);
+                            //// this means we take the last instance
+                        }
+                        else {
+                            System.out.println("could not map eventId to coref Map= " + eventId);
+                        }
+                    }
+                    System.out.println("AFTER RECURSING");
+                    System.out.println("group = " + group);
+                    System.out.println("storyId = " + storyId);
+                }
+                else {
+                    System.out.println("ALL NEW");
+                }
+            }
+            System.out.println("Adding complete group = " + group);
+            System.out.println("To the storyId = " + storyId);
+            for (int i = 0; i < group.size(); i++) {
+                String eventId = group.get(i);
+                eventToStoryMap.put(eventId, storyId);
+            }
+        }
+        else {
+            System.out.println("Cannot find the corefId = " + corefId);
+        }
+        return storyId;
+    }
+
+
+
+    public void makeGroups () {
+        *//*
+            We determine the climax from the Plot links
+            - if relType="FALLING_ACTION" then source is climax event
+            - if relType="PRECONDITION" then target is climax
+         *//*
         ArrayList<String> group = new ArrayList<String>();
         ArrayList<String> coveredEvents = new ArrayList<String>();
         Set keySet = eventPlotLinksMap.keySet();
@@ -297,18 +588,17 @@ public class JsonFromCat extends DefaultHandler {
                 group.add(key);
                 coveredEvents.add(key);
                 makeGroup(coveredEvents, group, key);
-                System.out.println("group.size() = " + group.size());
-                System.out.println("coveredEvents = " + coveredEvents.size());
-                if (group.size() > 0) {
-                    storyMap.put(key, group);
-                }
+                //System.out.println("group.size() = " + group.size());
+               // System.out.println("coveredEvents = " + coveredEvents.size());
+                storyMap.put(key, group);
             }
         }
 
-        /*
+
+        *//*
             Now we have story entries based on the climax event, we see if we can attach more through the tlinks
-         */
-/*        for (int i = 0; i < timeLinks.size(); i++) {
+         *//*
+*//*        for (int i = 0; i < timeLinks.size(); i++) {
             TimeLink timeLink = timeLinks.get(i);
             if (!timeLink.getRelType().equalsIgnoreCase("includes")) {
                 //// any other relation than "includes"; check if target or source is a climaxEvent
@@ -373,7 +663,7 @@ public class JsonFromCat extends DefaultHandler {
                     }
                 }
             }
-        }*/
+        }*//*
         keySet = storyMap.keySet();
         keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -381,18 +671,78 @@ public class JsonFromCat extends DefaultHandler {
             ArrayList<String> eventIds = storyMap.get(storyKey);
             for (int i = 0; i < eventIds.size(); i++) {
                 String eventId = eventIds.get(i);
-                System.out.println("eventId = " + eventId+":"+storyKey);
+              //  System.out.println("eventId = " + eventId+":"+storyKey);
                 eventToStoryMap.put(eventId, storyKey);
             }
         }
     }
 
+
+    public void makeGroup (ArrayList<String> coveredEvents, ArrayList<String> group, String eventId) {
+        if (eventPlotLinksMap.containsKey(eventId)) {
+            ArrayList<PlotLink> plotLinks = eventPlotLinksMap.get(eventId);
+            for (int j = 0; j < plotLinks.size(); j++) {
+                PlotLink plotLink = plotLinks.get(j);
+                String otherEventId = "";
+                if (!plotLink.getSource().equals(eventId)) {
+                    otherEventId = plotLink.getSource();
+                }
+                else {
+                    otherEventId = plotLink.getTarget();
+                }
+                if (!group.contains(otherEventId)) {
+                    group.add(otherEventId);
+                    coveredEvents.add(otherEventId);
+                    makeGroup(coveredEvents, group,otherEventId);
+                }
+            }
+        }
+        if (eventTimeLinksMap.containsKey(eventId)) {
+            ArrayList<TimeLink> tlinks = eventTimeLinksMap.get(eventId);
+            for (int i = 0; i < tlinks.size(); i++) {
+                TimeLink timeLink = tlinks.get(i);
+                String otherEventId = "";
+                if (!timeLink.getSource().equals(eventId)) {
+                    otherEventId = timeLink.getSource();
+                }
+                else {
+                    otherEventId = timeLink.getTarget();
+                }
+                if (!group.contains(otherEventId)) {
+                    group.add(otherEventId);
+                    coveredEvents.add(otherEventId);
+                    makeGroup(coveredEvents, group,otherEventId);
+                }
+            }
+        }
+        if (eventLocationLinksMap.containsKey(eventId)) {
+            ArrayList<LocationLink> lLinks = eventLocationLinksMap.get(eventId);
+            for (int i = 0; i < lLinks.size(); i++) {
+                LocationLink locationLink = lLinks.get(i);
+                String otherEventId = "";
+                if (!locationLink.getSource().equals(eventId)) {
+                    otherEventId = locationLink.getSource();
+                }
+                else {
+                    otherEventId = locationLink.getTarget();
+                }
+                if (!group.contains(otherEventId)) {
+                    group.add(otherEventId);
+                    coveredEvents.add(otherEventId);
+                    makeGroup(coveredEvents, group,otherEventId);
+                }
+            }
+        }
+    }
+
+
+
     public void makeGroupsOrg () {
-        /*
+        *//*
             We determine the climax from the Plot links
             - if relType="FALLING_ACTION" then source is climax event
             - if relType="PRECONDITION" then target is climax
-         */
+         *//*
 
         for (int i = 0; i < plotLinks.size(); i++) {
             PlotLink plotLink = plotLinks.get(i);
@@ -429,9 +779,9 @@ public class JsonFromCat extends DefaultHandler {
             }
         }
 
-        /*
+        *//*
             Now we have story entries based on the climax event, we see if we can attach more through the tlinks
-         */
+         *//*
         for (int i = 0; i < timeLinks.size(); i++) {
             TimeLink timeLink = timeLinks.get(i);
             if (!timeLink.getRelType().equalsIgnoreCase("includes")) {
@@ -458,9 +808,9 @@ public class JsonFromCat extends DefaultHandler {
             }
         }
 
-        /*
+        *//*
             Finally if an event occurs at the same location as the climax event we add it as well
-         */
+         *//*
          HashMap<String, ArrayList<String>> locationMap = new HashMap<String, ArrayList<String>>();
          for (int i = 0; i < locationLinks.size(); i++) {
             LocationLink locationLink = locationLinks.get(i);
@@ -509,7 +859,7 @@ public class JsonFromCat extends DefaultHandler {
                 eventToStoryMap.put(eventId, storyKey);
             }
         }
-    }
+    }*/
 
 
     void initAll() {
@@ -528,6 +878,7 @@ public class JsonFromCat extends DefaultHandler {
         spans = new ArrayList<String>();
         termToCorefMap = new HashMap<String, String>();
         eventToStoryMap = new HashMap<String, String>();
+        instanceToStoryMap = new HashMap<String, String>();
         eventCorefMap = new HashMap<String, ArrayList<KafTerm>>();
         storyMap = new HashMap<String, ArrayList<String>>();
         kafWordFormArrayList = new ArrayList<KafWordForm>();
@@ -638,6 +989,7 @@ public class JsonFromCat extends DefaultHandler {
                 aLinks.add(actorLink);
                 eventActorLinksMap.put(eventId, aLinks);
             }
+            //System.out.println("eventActorLinksMap = " + eventActorLinksMap.size());
         }
         for (int i = 0; i < locationLinks.size(); i++) {
             LocationLink locationLink = locationLinks.get(i);
@@ -953,18 +1305,22 @@ public class JsonFromCat extends DefaultHandler {
     public void buildEventCorefMap () {
         for (int i = 0; i < eventTermArrayList.size(); i++) {
             KafTerm eventTerm = eventTermArrayList.get(i);
+            String corefId = eventTerm.getTid(); /// this is for singletons
             if (termToCorefMap.containsKey(eventTerm.getTid())) {
-                String corefId = termToCorefMap.get(eventTerm.getTid());
-                if (eventCorefMap.containsKey(corefId)) {
-                    ArrayList<KafTerm> events = eventCorefMap.get(corefId);
-                    events.add(eventTerm);
-                    eventCorefMap.put(corefId,events);
-                }
-                else {
-                    ArrayList<KafTerm> events = new ArrayList<KafTerm>();
-                    events.add(eventTerm);
-                    eventCorefMap.put(corefId,events);
-                }
+                 corefId = termToCorefMap.get(eventTerm.getTid());
+            }
+            else {
+                termToCorefMap.put(corefId, corefId); //// singleton
+            }
+            if (eventCorefMap.containsKey(corefId)) {
+                ArrayList<KafTerm> events = eventCorefMap.get(corefId);
+                events.add(eventTerm);
+                eventCorefMap.put(corefId,events);
+            }
+            else {
+                ArrayList<KafTerm> events = new ArrayList<KafTerm>();
+                events.add(eventTerm);
+                eventCorefMap.put(corefId,events);
             }
         }
     }
@@ -1059,18 +1415,6 @@ public class JsonFromCat extends DefaultHandler {
             Map<String, Integer> storyCount = new HashMap<String, Integer>();
             for (int i = 0; i < eventTerms.size(); i++) {
                 KafTerm eventTerm = eventTerms.get(i);
-                String storyId = eventTerm.getTid();
-                if (eventToStoryMap.containsKey(eventTerm.getTid())) {
-                    storyId =  eventToStoryMap.get(eventTerm.getTid());
-                }
-                if (storyCount.containsKey(storyId)) {
-                    Integer cnt = storyCount.get(storyId);
-                    cnt++;
-                    storyCount.put(storyId, cnt);
-                }
-                else {
-                    storyCount.put(storyId, 1);
-                }
                 String eventPhrase = eventTerm.getTokenString().replaceAll(" ", "_");
                 if (!eventPhrase.isEmpty()) {
                     if (eventMentionMap.containsKey(eventTerm.getTid())) {
@@ -1090,13 +1434,17 @@ public class JsonFromCat extends DefaultHandler {
                             String targetId = actorLink.getTarget();
                             if (actorMap.containsKey(targetId)) {
                                 KafTerm actor = actorMap.get(targetId);
-                                String actorString = "ac:" + actor.getTokenString().replaceAll(" ", "_");
+                                String actorString = "act:" + actor.getTokenString().replaceAll(" ", "_");
                                 if (!actorString.isEmpty()) {
-                                    if (!actorString.contains(actorString)) {
+                                    if (!actorStrings.contains(actorString)) {
+                                       // System.out.println("actorString = " + actorString);
                                         actors.append("actor:", actorString);
                                         actorStrings.add(actorString);
                                     }
                                 }
+                            }
+                            else {
+                             //  System.out.println("Could not find targetId = " + targetId);
                             }
                         }
                     }
@@ -1163,35 +1511,28 @@ public class JsonFromCat extends DefaultHandler {
             if (actors.length() == 0) {
                 actors.append("actor:", "noactors:");
             }
-            eventObject.put("actors", actors);
-            String timeString = "";
-            Collections.sort(timeStrings);
-            if (timeStrings.size()>0) timeString = timeStrings.get(timeStrings.size()-1);
-            if (timeString.isEmpty()) {
-                //////
-                timeString = "20160101";
-                System.out.println("No timeString, timeStrings = " + timeStrings.toString());
+            else {
+                eventObject.put("actors", actors);
+                String timeString = "";
+                Collections.sort(timeStrings);
+                if (timeStrings.size() > 0) timeString = timeStrings.get(timeStrings.size() - 1);
+                if (timeString.isEmpty()) {
+                    //////
+                    timeString = "20160101";
+                    //System.out.println("No timeString, timeStrings = " + timeStrings.toString());
+                }
+
+                String group = instanceToStoryMap.get(eventCorefKey);
+                int groupScore = getClimaxScore(group);
+                int score = getClimaxScore(eventCorefKey);
+                eventObject.put("time", timeString);
+                eventObject.put("event", eventCorefKey);
+                eventObject.put("group", groupScore + ":[" + group + "]");
+                eventObject.put("groupName", "[" + group + "]");
+                eventObject.put("groupScore", groupScore);
+                eventObject.put("climax", score);
+                events.add(eventObject);
             }
-            String topGroup = Util.getLastTop(storyCount);
-           // System.out.println("topGroup = " + topGroup);
-            Integer cnt = 1;
-            if (storyMap.containsKey(topGroup)) {
-                cnt = storyMap.get(topGroup).size();
-            }
-            String score = new Integer(cnt).toString();
-            if (score.length()==1) {
-               score= "00"+score;
-            }
-            else if (score.length()==2) {
-                score= "0"+score;
-            }
-            eventObject.put("time", timeString);
-            eventObject.put("event", eventCorefKey);
-            eventObject.put("group", score+":[" + topGroup + "]");
-            eventObject.put("groupName", "[" + topGroup + "]");
-            eventObject.put("groupScore", score);
-            eventObject.put("climax", 4);
-            events.add(eventObject);
 
         }
 
@@ -1243,15 +1584,47 @@ public class JsonFromCat extends DefaultHandler {
         }
     }
 
+    static void writeJsonObjectArray (String pathToFolder,
+                                                        String project,
+                                                        ArrayList<JSONObject> objects) {
+        try {
+            try {
+                JSONObject timeLineObject = JsonEvent.createTimeLineProperty(new File(pathToFolder).getName(), project);
+                timeLineObject.append("event_cnt", objects.size());
+
+                for (int j = 0; j < objects.size(); j++) {
+                    JSONObject jsonObject = objects.get(j);
+                    timeLineObject.append("events", jsonObject);
+                }
+
+                File folder = new File(pathToFolder);
+                String outputFile = folder.getAbsolutePath() + "/" + "contextual.timeline.json";
+                OutputStream jsonOut = new FileOutputStream(outputFile);
+
+                String str = "{ \"timeline\":\n";
+                jsonOut.write(str.getBytes());
+                jsonOut.write(timeLineObject.toString(0).getBytes());
+                str ="}\n";
+                jsonOut.write(str.getBytes());
+                //// OR simply
+                // jsonOut.write(timeLineObject.toString().getBytes());
+                jsonOut.close();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     static public void main (String[] args) {
+        String demo = "/Users/piek/Desktop/StorylineWorkshop/UncertaintyVisualizationGold/app/data";
         String folder = "";
         String pathToCatFile = "";
-        String pathToFtDataFile = "";
         String fileExtension = "";
-       // pathToCatFile = "/Users/piek/Desktop/StorylineWorkshop/merge_37/37_9ecbplus.xml";
-        pathToFtDataFile = "/Users/piek/Desktop/NWR-INC/financialtimes/data/poll.data";
-        folder = "/Users/piek/Desktop/StorylineWorkshop/merge_37";
+        //pathToCatFile = "/Users/piek/Desktop/StorylineWorkshop/ECB-manual/ECBplus_Topic37CAT/37_9ecbplus.xml";
+        folder = "/Users/piek/Desktop/StorylineWorkshop/ECB-manual/ECBplus_Topic37CAT";
         fileExtension = ".xml";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -1266,11 +1639,6 @@ public class JsonFromCat extends DefaultHandler {
         System.out.println("fileExtension = " + fileExtension);
         System.out.println("folder = " + folder);
         JsonFromCat jsonFromCat = new JsonFromCat();
-        ArrayList<JSONObject> structuredEvents = null;
-        if (!pathToFtDataFile.isEmpty()) {
-            HashMap<String, ArrayList<ReadFtData.DataFt>> dataFtMap = ReadFtData.readData(pathToFtDataFile);
-            structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
-        }
 
         if (!pathToCatFile.isEmpty()) {
             File catFile = new File (pathToCatFile);
@@ -1280,22 +1648,22 @@ public class JsonFromCat extends DefaultHandler {
             jsonFromCat.getActorLinks();
             jsonFromCat.buildEventCorefMap();
             jsonFromCat.buildLinkMaps();
+            jsonFromCat.buildTermMaps();
             try {
                 jsonFromCat.buildMentionMap();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            jsonFromCat.makeGroups();
+            jsonFromCat.makeGroupsForInstance();
             System.out.println("jsonFromCat.eventTermArrayList = " + jsonFromCat.eventTermArrayList.size());
             System.out.println("jsonFromCat.eventCorefMap = " + jsonFromCat.eventCorefMap.size());
-            System.out.println("jsonFromCat.storyMap = " + jsonFromCat.storyMap.size());
             ArrayList<JSONObject> events = null;
             try {
                 events = jsonFromCat.getJsonObjectsFromCorefsets();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            jsonFromCat.writeJsonObjectArrayWithStructuredData(folder, "ecb*", events,"polls", structuredEvents);
+            jsonFromCat.writeJsonObjectArray(demo, "ecb*", events);
         }
         else if (!folder.isEmpty()) {
             ArrayList<File> files = Util.makeFlatFileList(new File(folder), fileExtension);
@@ -1318,16 +1686,14 @@ public class JsonFromCat extends DefaultHandler {
 
             }
             try {
-                jsonFromCat.makeGroups();
+                jsonFromCat.makeGroupsForInstance();
                 events = jsonFromCat.getJsonObjectsFromCorefsets();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            System.out.println("events.size() = " + events.size());
             System.out.println("jsonFromCat.eventCorefMap = " + jsonFromCat.eventCorefMap.size());
-            System.out.println("jsonFromCat.storyMap = " + jsonFromCat.storyMap.size());
-            System.out.println("jsonFromCat.eventToStoryMap = " + jsonFromCat.eventToStoryMap.size());
-            jsonFromCat.writeJsonObjectArrayWithStructuredData(folder, "ecb*", events,"polls", structuredEvents);
+            System.out.println("jsonFromCat.instanceToStoryMap.size() = " + jsonFromCat.instanceToStoryMap.size());
+            jsonFromCat.writeJsonObjectArray(demo, "ecb*", events);
         }
         System.out.println("DONE.");
     }
