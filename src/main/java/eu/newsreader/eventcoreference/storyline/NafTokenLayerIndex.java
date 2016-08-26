@@ -36,6 +36,15 @@ public class NafTokenLayerIndex extends DefaultHandler {
         String filter = "";
         folder = "/Users/piek/Desktop/NWR-INC/WorldBank/data/spanish/output-7-v2";
         filter = ".naf";
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("--folder") && args.length>(i+1)) {
+                folder = args[i+1];
+            }
+            else if (arg.equals("--extension") && args.length>(i+1)) {
+                filter = args[i+1];
+            }
+        }
         try {
             createTokenIndex(new File(folder), filter);
         }  catch (IOException e) {
