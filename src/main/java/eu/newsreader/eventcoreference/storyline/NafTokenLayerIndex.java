@@ -50,12 +50,6 @@ public class NafTokenLayerIndex extends DefaultHandler {
         }  catch (IOException e) {
             e.printStackTrace();
         }
-/*
-        String file = "/Users/piek/Desktop/NWR-INC/query/worldbank/data/en_token.index";
-        NafTokenLayerIndex nafTokenLayerIndex = new NafTokenLayerIndex();
-        nafTokenLayerIndex.parseFile(file);
-        System.out.println("nafTokenLayerIndex.tokenMap.size() = " + nafTokenLayerIndex.tokenMap.size());
-*/
     }
 
     public NafTokenLayerIndex () {
