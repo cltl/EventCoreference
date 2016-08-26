@@ -11,7 +11,7 @@ RESOURCES="$( cd $ROOT && cd .. && pwd)"/vua-resources
 NAF=$1
 EXT=".naf"
 
-java -Xmx3000m -cp $LIB/EventCoreference-v3.1.2-jar-with-dependencies.jar eu.newsreader.eventcoreference.storyline --folder $NAF --extension $EXT
+java -Xmx3000m -cp $LIB/EventCoreference-v3.1.2-jar-with-dependencies.jar eu.newsreader.eventcoreference.storyline.NafTokenLayerIndex --folder $NAF --extension $EXT
 
 
 
