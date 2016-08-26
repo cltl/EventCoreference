@@ -34,8 +34,8 @@ public class NafTokenLayerIndex extends DefaultHandler {
     static public void main (String[] args) {
         String folder = "";
         String filter = "";
-        folder = "/Users/piek/Desktop/NWR-INC/WorldBank/data/spanish/output-7-v2";
-        filter = ".naf";
+       // folder = "/Users/piek/Desktop/NWR-INC/WorldBank/data/spanish/output-7-v2";
+       // filter = ".naf";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--folder") && args.length>(i+1)) {
@@ -200,6 +200,9 @@ public class NafTokenLayerIndex extends DefaultHandler {
             kafSaxParser.parseFile(file);
 
             String uri = kafSaxParser.getKafMetaData().getUrl();
+            if (uri.isEmpty()) {
+                uri = file.getName();
+            }
             if (kafSaxParser.kafWordFormList.size()>0) {
                 str = "<text>\n";
                 str += "<url><![CDATA["+uri+"]]></url>\n";
