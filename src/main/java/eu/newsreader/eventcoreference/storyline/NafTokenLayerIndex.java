@@ -185,7 +185,7 @@ public class NafTokenLayerIndex extends DefaultHandler {
     }
 
     static void createTokenIndex (File folder, String filter) throws IOException {
-        File indexFile = new File(folder+"/"+"token.index");
+        File indexFile = new File("token.index");
         OutputStream stream = new FileOutputStream(indexFile);
 
         String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<index>\n";

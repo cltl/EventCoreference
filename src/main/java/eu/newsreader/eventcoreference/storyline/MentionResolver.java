@@ -420,13 +420,13 @@ public class MentionResolver {
                         }
                     }
                     else if (wordForms==null || offsetBegin==null) {
+                        System.out.println("uString = " + uString);
                         mObject.append("snippet", "Could not find the original text.");
                         mObject.append("snippet_char", 0);
                         mObject.append("snippet_char", 0);
                     }
                 }
             }
-            //break;
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
         System.out.println(" * Time elapsed to get text snippets from KS:"+estimatedTime/1000.0);

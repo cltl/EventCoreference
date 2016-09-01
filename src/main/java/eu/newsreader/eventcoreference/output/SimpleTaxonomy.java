@@ -3,6 +3,8 @@ package eu.newsreader.eventcoreference.output;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.*;
@@ -487,10 +489,10 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
     }
 
     public void  htmlTableTree (OutputStream fos, String type, String ns, ArrayList<String> tops,
-                                  int level,
-                                  HashMap<String, Integer> typeCounts,
-                                  HashMap<String, ArrayList<PhraseCount>> phrases,
-                                  HashMap<String, ArrayList<String>> iliMap) throws IOException {
+                                 int level,
+                                 HashMap<String, Integer> typeCounts,
+                                 HashMap<String, ArrayList<PhraseCount>> phrases,
+                                 HashMap<String, ArrayList<String>> iliMap) throws IOException {
         String str = "";
         level++;
         for (int i = 0; i < tops.size(); i++) {
@@ -501,7 +503,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                 if (typeCounts.containsKey(top)) {
                     cnt = typeCounts.get(top);
                 }
-              //  System.out.println(top+ ":" + cnt);
+                //  System.out.println(top+ ":" + cnt);
                 if (cnt>0) {
                     str += "<div id=\"row\">";
                     for (int j = 2; j < level; j++) {
@@ -602,11 +604,11 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     fos.write(str.getBytes());
                     if (superToSub.containsKey(top)) {
                         ArrayList<String> children = superToSub.get(top);
-                       // System.out.println(top+ ":" + cnt+", children:"+children.size());
+                        // System.out.println(top+ ":" + cnt+", children:"+children.size());
                         htmlTableTree(fos, type, ns, children, level, typeCounts, phrases, iliMap);
                     }
                     else {
-                      //  System.out.println("has no children top = " + top);
+                        //  System.out.println("has no children top = " + top);
                     }
                 }
                 else {
@@ -614,8 +616,116 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                 }
             }
             else {
-             //   System.out.println("ns = " + ns);
-             //   System.out.println("top = " + top);
+                //   System.out.println("ns = " + ns);
+                //   System.out.println("top = " + top);
+            }
+        }
+    }
+
+    public void  jsonTree (JSONObject tree, String type, String ns, ArrayList<String> tops,
+                                 int level,
+                                 HashMap<String, Integer> typeCounts,
+                                 HashMap<String, ArrayList<PhraseCount>> phrases,
+                                 HashMap<String, ArrayList<String>> iliMap) throws IOException, JSONException {
+        level++;
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            if (top.startsWith(ns) || ns.isEmpty()) {
+                Integer cnt = 0;
+                if (typeCounts.containsKey(top)) {
+                    cnt = typeCounts.get(top);
+                }
+                if (cnt>0) {
+                    String ref = "";
+                    String name = top;
+                    if (top.startsWith("http")) {
+                        int idx = top.lastIndexOf("/");
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
+                        }
+                        ref =  name;
+                    }
+                    else if (top.startsWith("dbp:")) {
+                        int idx = top.lastIndexOf(":");
+                        if (idx > -1) {
+                            name = top.substring(idx + 1);
+                        }
+                        ref = "http://dbpedia.org/ontology/" + name;
+                    }
+
+                    int instances = 0;
+                    if (phrases.containsKey(top)) {
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                        instances = phraseCounts.size();
+                    }
+
+                    JSONObject node = new JSONObject();
+                   // node.put("level", new Integer(level).toString());
+                    node.put("name", name);
+                    node.put("type", type);
+                    node.put("url", ref);
+                    node.put("instance_count", instances);
+                    node.put("mention_count", cnt);
+
+                    if (phrases.containsKey(top)) {
+
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                        Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
+                            @Override
+                            public int compare(PhraseCount p1, PhraseCount p2) {
+
+                                return p2.getCount().compareTo(p1.getCount());
+                            }
+                        });
+                        for (int j = 0; j < phraseCounts.size(); j++) {
+                            PhraseCount phraseCount = phraseCounts.get(j);
+                            if (phraseCount.getCount()>0) {
+                                JSONObject phraseCountJsonObject = new JSONObject();
+                                int idx = phraseCount.getPhrase().lastIndexOf("/");
+                                name = phraseCount.getPhrase().trim();
+                                if (idx > -1) {
+                                    name = phraseCount.getPhrase().substring(idx + 1);
+                                }
+                                phraseCountJsonObject.put("name", name);
+                                phraseCountJsonObject.put("mention_count", phraseCount.getCount());
+                                if (iliMap!=null) {
+                                    if (iliMap.containsKey(name)) {
+                                        ArrayList<String> ilis = iliMap.get(name);
+                                        for (int k = 0; k < ilis.size(); k++) {
+                                            String ili = ilis.get(k);
+                                            phraseCountJsonObject.append("ili", ili);
+                                        }
+                                    } else {
+                                        //System.out.println("could not find iliString = " + iliString);
+                                    }
+                                }
+                                phraseCountJsonObject.put("url", phraseCount.getPhrase().trim());
+/*                                if (phraseCount.getPhrase().indexOf("dbpedia")>-1) {
+                                    phraseCountJsonObject.put("url", phraseCount.getPhrase());
+                                }
+                                else {
+                                }*/
+                                node.append("instances", phraseCountJsonObject);
+                            }
+                        }
+                    };
+                    if (superToSub.containsKey(top)) {
+                        ArrayList<String> children = superToSub.get(top);
+                        // System.out.println(top+ ":" + cnt+", children:"+children.size());
+                        jsonTree(node, type, ns, children, level, typeCounts, phrases, iliMap);
+                    }
+                    else {
+                        //  System.out.println("has no children top = " + top);
+                    }
+                    tree.append("children", node);
+                }
+                else {
+                    //// no use for this class
+                }
+            }
+            else {
+                //   System.out.println("ns = " + ns);
+                //   System.out.println("top = " + top);
             }
         }
     }

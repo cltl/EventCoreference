@@ -3,6 +3,8 @@ package eu.newsreader.eventcoreference.output;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -56,7 +58,15 @@ public class DataSetSources {
             str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
+            OutputStream jsonOut = new FileOutputStream(citedPath+".words.json");
+            JSONObject tree = new JSONObject();
+            simpleTaxonomy.jsonTree(tree, "source", "",tops, 1, cnt, cntPredicates, null);
+            //jsonOut.write(tree.toString().getBytes());
+            jsonOut.write(tree.toString(0).getBytes());
+            jsonOut.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 

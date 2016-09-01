@@ -4,6 +4,8 @@ import eu.newsreader.eventcoreference.input.EsoReader;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -28,8 +30,8 @@ public class DataSetEventHierarchy {
         eventPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.event.xls";
         title = "PostNL ESO ontology events";
 
-        eventPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.event.xls";
-        title = "Brexit ESO ontology events";
+       // eventPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.event.xls";
+       // title = "Brexit ESO ontology events";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--eso") && args.length>(i+1)) {
@@ -72,24 +74,18 @@ public class DataSetEventHierarchy {
             str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
+            OutputStream jsonOut = new FileOutputStream(eventPath+".words.json");
+            JSONObject tree = new JSONObject();
+            esoReader.simpleTaxonomy.jsonTree(tree, "event", "eso:",tops, 1, cnt, cntPredicates, cntIli);
+            //jsonOut.write(tree.toString().getBytes());
+
+            jsonOut.write(tree.toString(0).getBytes());
+            jsonOut.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-/*        str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
-        str += "<div id=\"container\">\n";
-        str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt);
-        str += "</div>\n";
-        str += TreeStaticHtml.bodyEnd;
-        //System.out.println(str);
-        //esoReader.printTree(tops, 0, cnt);
-
-        try {
-            OutputStream fos = new FileOutputStream(eventPath+".overview.html");
-            fos.write(str.getBytes());
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
     }
 

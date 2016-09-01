@@ -270,6 +270,7 @@ public class JsonFromCat extends DefaultHandler {
             }
         }
     }
+
     public int getClimaxScore (String corefId) {
        int cnt = 0;
         if (eventCorefMap.containsKey(corefId)) {
@@ -1521,17 +1522,18 @@ public class JsonFromCat extends DefaultHandler {
                     timeString = "20160101";
                     //System.out.println("No timeString, timeStrings = " + timeStrings.toString());
                 }
-
-                String group = instanceToStoryMap.get(eventCorefKey);
-                int groupScore = getClimaxScore(group);
-                int score = getClimaxScore(eventCorefKey);
-                eventObject.put("time", timeString);
-                eventObject.put("event", eventCorefKey);
-                eventObject.put("group", groupScore + ":[" + group + "]");
-                eventObject.put("groupName", "[" + group + "]");
-                eventObject.put("groupScore", groupScore);
-                eventObject.put("climax", score);
-                events.add(eventObject);
+                else {
+                    String group = instanceToStoryMap.get(eventCorefKey);
+                    int groupScore = getClimaxScore(group);
+                    int score = getClimaxScore(eventCorefKey);
+                    eventObject.put("time", timeString);
+                    eventObject.put("event", eventCorefKey);
+                    eventObject.put("group", groupScore + ":[" + group + "]");
+                    eventObject.put("groupName", "[" + group + "]");
+                    eventObject.put("groupScore", groupScore);
+                    eventObject.put("climax", score);
+                    events.add(eventObject);
+                }
             }
 
         }
