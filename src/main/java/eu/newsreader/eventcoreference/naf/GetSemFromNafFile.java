@@ -54,17 +54,8 @@ public class GetSemFromNafFile {
     static public void main(String[] args) {
         Log.setLog4j("jena-log4j.properties");
         String pathToNafFile = "";
-        //"/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/test/4KJ5-2R90-TX51-F3C4.xml.1a0sdakjs.xml";
         ALL = true;
-        pathToNafFile = "/Users/piek/Desktop/NWR/Wikinews/Cross-lingual-pip3/spanish-wikinews/corpus_apple/58772_Apple_Inc._doubled_its_profits.xml.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/29/29_10ecb.xml.naf.fix.coref";
-        pathToNafFile = "/Users/piek/Desktop/nl.naf.xml";
-        pathToNafFile = "/Users/piek/Desktop/short_text.out.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.v6/45/45_1ecb.xml.naf.fix.xml.newpred.coref";
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/100095.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/118719.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/financialtimes/data/brexit6-SAMPLE/0a22a1be-f246-11e3-ac7a-00144feabdc0.naf";
-        //pathToNafFile = "/Users/piek/Desktop/ISO-WG5/more-than-two_sentences.out.naf.xml";
+        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/426115_relink_dominant.naf";
         String sourceFrameFile = "";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source.txt";
@@ -73,6 +64,7 @@ public class GetSemFromNafFile {
         grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical-nl.txt";
         grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical.txt";
         String project = "";
+        project = "test";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-file") && args.length > (i + 1)) {
