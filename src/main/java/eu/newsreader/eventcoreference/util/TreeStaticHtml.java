@@ -4,19 +4,114 @@ package eu.newsreader.eventcoreference.util;
  * Created by piek on 15/04/16.
  */
 public class TreeStaticHtml {
+    static final String scripts =
+            "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js\"></script>\n" +
+            "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>\n" +
+            "\n" +
+            "<script type=\"text/javascript\">\n" +
+            "    function clearValues()\n" +
+            "    {\n" +
+            "        var elem = document.getElementById('queryform').elements;\n" +
+            "        for(var i = 0; i < elem.length; i++)\n" +
+            "        {\n" +
+            "            if (elem[i].checked) elem[i].checked=false;\n" +
+            "           \n" +
+            "        }\n" +
+            "    }\n" +
+            "</script>\n" +
+            "\n" +
+            "<script language=\"javascript\"> \n" +
+            "function toggle() {\n" +
+            "\tvar ele = document.getElementById(\"cell\");\n" +
+            "\tvar text = document.getElementById(\"displayText\");\n" +
+            "\tif(ele.style.display == \"block\") {\n" +
+            "    \tele.style.display = \"none\";\n" +
+            "\t\ttext.innerHTML = \"show\";\n" +
+            "  \t}\n" +
+            "\telse {\n" +
+            "\t\tele.style.display = \"block\";\n" +
+            "\t\ttext.innerHTML = \"hide\";\n" +
+            "\t}\n" +
+            "} \n" +
+            "</script>\n" +
+            "\n" +
+            "<script type=\"text/javascript\">\n" +
+            "            function showDiv(message) {\n" +
+            "                if(document.getElementById('queryform').style.display == 'block'){\n" +
+            "                    document.getElementById('queryform').style.display = \"none\";\n" +
+            "                }\n" +
+            "                else{\n" +
+            "                    document.getElementById('queryform').style.display = \"block\";\n" +
+            "                }\n" +
+            "            }\n" +
+            "</script>" +
+            "    <script type=\"text/javascript\">\n" +
+                    "\n" +
+                    "    var accordionItems = new Array();\n" +
+                    "\n" +
+                    "    function init() {\n" +
+                    "      console.log('init has been loaded')\n" +
+                    "      // Grab the accordion items from the page\n" +
+                    "      var divs = document.getElementsByTagName( 'div' );\n" +
+                    "      for ( var i = 0; i < divs.length; i++ ) {\n" +
+                    "        if ( divs[i].className == 'accordionItem' ) accordionItems.push( divs[i] );\n" +
+                    "      }\n" +
+                    "\n" +
+                    "      // Assign onclick events to the accordion item headings\n" +
+                    "      for ( var i = 0; i < accordionItems.length; i++ ) {\n" +
+                    "        console.log('assigning onclick events to headings')\n" +
+                    "        console.log(accordionItems[i]);\n" +
+                    "\n" +
+                    "        var h2 = getFirstChildWithTagName( accordionItems[i], 'H2' );\n" +
+                    "        h2.onclick = toggleItem;\n" +
+                    "      }\n" +
+                    "\n" +
+                    "      // Hide all accordion item bodies except the first\n" +
+                    "      for ( var i = 1; i < accordionItems.length; i++ ) {\n" +
+                    "        accordionItems[i].className = 'accordionItem hide';\n" +
+                    "      }\n" +
+                    "    }\n" +
+                    "\n" +
+                    "    function toggleItem() {\n" +
+                    "\t\tconsole.log('bladerdeeg')    \n" +
+                    "      var itemClass = this.parentNode.className;\n" +
+                    "\n" +
+                    "      // Hide all items\n" +
+                    "      for ( var i = 0; i < accordionItems.length; i++ ) {\n" +
+                    "        accordionItems[i].className = 'accordionItem hide';\n" +
+                    "      }\n" +
+                    "\n" +
+                    "      // Show this item if it was previously hidden\n" +
+                    "      if ( itemClass == 'accordionItem hide' ) {\n" +
+                    "        this.parentNode.className = 'accordionItem';\n" +
+                    "      }\n" +
+                    "    }\n" +
+                    "\n" +
+                    "    function getFirstChildWithTagName( element, tagName ) {\n" +
+                    "      console.log('getFirstChildWithTagName is called')\n" +
+                    "      for ( var i = 0; i < element.childNodes.length; i++ ) {\n" +
+                    "        if ( element.childNodes[i].nodeName == tagName ) return element.childNodes[i];\n" +
+                    "      }\n" +
+                    "    }\n" +
+                    "    </script>";
 
     static public final String makeHeader(String title, String scripts) {
-        String header = makeHeaderWithScripts(scripts)+title+header1;
+        String header = makeHeaderWithScripts(scripts)+title+"</title>\n" +
+                "\" +"+header1;
         return header;
     }
 
     static public final String makeHeader(String title) {
-        String header = makeHeaderWithoutScripts()+title+header1;
+        String header = makeHeaderWithoutScripts()+title+"</title>\n" +
+                        scripts+header1;
         return header;
     }
 
     static public final String makeScripts () {
-        String str = "<script type=\"text/javascript\">\n" +
+        String str =
+                "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js\"></script>\n" +
+                "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>\n" +
+                "<script type=\"text/javascript\">\n" +
                 "    function getValues()\n" +
                 "    {\n" +
                 "        var str = '';\n" +
@@ -102,10 +197,17 @@ public class TreeStaticHtml {
         return str;
     }
 
-    static public final String header1 = "</title>\n" +
+    static public final String header1 =
             " \n" +
             "<style>\n" +
-            "body {font-family: \"Lato\", sans-serif;}\n" +
+            "/*body {font-family: \"Lato\", sans-serif;}*/\n" +
+            "    body { font-size: 80%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif; }\n" +
+            "    .accordionItem h2 { margin: 0; font-size: 1.1em; padding: 0.4em; color: #fff; background-color: #944; border-bottom: 1px solid #66d; }\n" +
+            "    .accordionItem h2:hover { cursor: pointer; }\n" +
+            "    .accordionItem div { margin: 0; padding: 1em 0.4em; background-color: #eef; border-bottom: 1px solid #66d; }\n" +
+            "    .accordionItem.hide h2 { color: #000; background-color: #88f; }\n" +
+            "    .accordionItem.hide div { display: none; }\n" +
+            "    .accordionItem.hide #cell2 {display:none;}\n"  +
             "\n" +
             "ul.tab {\n" +
             "    list-style-type: none;\n" +
@@ -191,6 +293,14 @@ public class TreeStaticHtml {
             "\t   /*  border: 2px solid #F78181; */\n" +
             "    \tdisplay: table-cell;\n" +
             "\t\t}\n" +
+
+            "#cell2 {\n" +
+            "\t\tfont-family: verdana,arial,sans-serif;\n" +
+            "\t    font-size:9px;\n" +
+            "\t\twidth:3px;\n" +
+            "\t   border: 2px solid #F78181; \n" +
+            "    \tdisplay: table-cell;\n" +
+            "\t\t}\n"+
             "</style>"+
             "\n" +
             "\n" +
@@ -232,6 +342,13 @@ public class TreeStaticHtml {
             "\t\tbackground:#F3E2A9;\n" +
             "    display: table-cell;\n" +
             "\t\t}\n" +
+            "#cell2 {\n" +
+            "\t\tfont-family: verdana,arial,sans-serif;\n" +
+            "\t    font-size:11px;\n" +
+            "\t\twidth:30px;\n" +
+            "\t   /*  border: 2px solid #F78181; */\n" +
+            "    \tdisplay: table-cell;\n" +
+            "\t\t}\n"+
             "\t#cell {\n" +
 
             "\t\tfont-family: verdana,arial,sans-serif;\n" +
@@ -267,7 +384,7 @@ public class TreeStaticHtml {
             "            \t</div>";
 
     static public String makeBodyStart(String title, int nDocs, int nEvents, int nEntities, int nSources) {
-        String bodyStart = "<body>\n" +
+        String bodyStart = "<body onload=\"init()\">\n" +
                 "\n" +
                 "<p>NewsReader Storyteller</p>\n" +
                 "<h1>"+title+"</h1>\n" +
@@ -280,6 +397,7 @@ public class TreeStaticHtml {
                 "\n" +
                 "<FORM ID=\"queryform\" NAME=\"queryform\" action='/' method=\"POST\"> \n" +
                 "<input type='submit' value='Search'/>\n" +
+                "<input TYPE=\"button\" NAME=\"clear\" Value=\"Clear\" onClick=\"clearValues()\"/>\n"+
                 "\n" +
                 "<ul class=\"tab\">\n" +
                 "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Entities')\">Entities</a></li>\n" +
@@ -327,4 +445,54 @@ public class TreeStaticHtml {
         String tb = "<INPUT TYPE=\"checkbox\" NAME=\""+type+"\" VALUE=\""+value+"\">";
         return tb;
     }
+
+    static final String toggleJavaScript = "    <script type=\"text/javascript\">\n" +
+            "\n" +
+            "    var accordionItems = new Array();\n" +
+            "\n" +
+            "    function init() {\n" +
+            "      console.log('init has been loaded')\n" +
+            "      // Grab the accordion items from the page\n" +
+            "      var divs = document.getElementsByTagName( 'div' );\n" +
+            "      for ( var i = 0; i < divs.length; i++ ) {\n" +
+            "        if ( divs[i].className == 'accordionItem' ) accordionItems.push( divs[i] );\n" +
+            "      }\n" +
+            "\n" +
+            "      // Assign onclick events to the accordion item headings\n" +
+            "      for ( var i = 0; i < accordionItems.length; i++ ) {\n" +
+            "        console.log('assigning onclick events to headings')\n" +
+            "        console.log(accordionItems[i]);\n" +
+            "\n" +
+            "        var h2 = getFirstChildWithTagName( accordionItems[i], 'H2' );\n" +
+            "        h2.onclick = toggleItem;\n" +
+            "      }\n" +
+            "\n" +
+            "      // Hide all accordion item bodies except the first\n" +
+            "      for ( var i = 1; i < accordionItems.length; i++ ) {\n" +
+            "        accordionItems[i].className = 'accordionItem hide';\n" +
+            "      }\n" +
+            "    }\n" +
+            "\n" +
+            "    function toggleItem() {\n" +
+            "\t\tconsole.log('bladerdeeg')    \n" +
+            "      var itemClass = this.parentNode.className;\n" +
+            "\n" +
+            "      // Hide all items\n" +
+            "      for ( var i = 0; i < accordionItems.length; i++ ) {\n" +
+            "        accordionItems[i].className = 'accordionItem hide';\n" +
+            "      }\n" +
+            "\n" +
+            "      // Show this item if it was previously hidden\n" +
+            "      if ( itemClass == 'accordionItem hide' ) {\n" +
+            "        this.parentNode.className = 'accordionItem';\n" +
+            "      }\n" +
+            "    }\n" +
+            "\n" +
+            "    function getFirstChildWithTagName( element, tagName ) {\n" +
+            "      console.log('getFirstChildWithTagName is called')\n" +
+            "      for ( var i = 0; i < element.childNodes.length; i++ ) {\n" +
+            "        if ( element.childNodes[i].nodeName == tagName ) return element.childNodes[i];\n" +
+            "      }\n" +
+            "    }\n" +
+            "    </script>\n";
 }

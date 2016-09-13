@@ -41,6 +41,11 @@ public class DataSetEntityHierarchy {
         SimpleTaxonomy simpleTaxonomy = new SimpleTaxonomy();
         simpleTaxonomy.readSimpleTaxonomyFromDbpFile(hierarchyPath);
         ArrayList<String> tops = simpleTaxonomy.getTops();
+        /*
+        tops = new ArrayList<String>();
+        tops.add("Organisation");
+        tops.add("Place");
+        tops.add("Person");*/
         System.out.println("tops.toString() = " + tops.toString());
         HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEntityCountTypeTsv (simpleTaxonomy, entityPath, "//dbpedia.org/");
         HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
@@ -59,7 +64,7 @@ public class DataSetEntityHierarchy {
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
             simpleTaxonomy.htmlTableTree(fos, "entity", "dbp:",tops, 1, cnt, cntPredicates);
-            str = "</div></div>\n";
+            //str = "</div></div>\n";
             str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
@@ -176,7 +181,7 @@ http://nl.dbpedia.org/resource/Maxime_Verhagen	96	http://wikidata.dbpedia.org/re
                         nextEntity = fields[0];
                         nextCount = fields[1];
                         nextType = fields[2];
-                        if (nextType.indexOf(prefix) > -1) {
+                        if (nextType.indexOf(prefix) > -1 || nextType.indexOf("cltl.nl") >-1) {
                             int idx = nextType.lastIndexOf("/");
                             if (idx > -1) nextType = "dbp:" + nextType.substring(idx + 1);
                             if (entity.isEmpty()) {

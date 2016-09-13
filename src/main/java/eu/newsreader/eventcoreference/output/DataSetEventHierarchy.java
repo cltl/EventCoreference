@@ -69,7 +69,7 @@ public class DataSetEventHierarchy {
             fos.write(str.getBytes());
             //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
             esoReader.simpleTaxonomy.htmlTableTree(fos, "event", "eso:",tops, 1, cnt, cntPredicates, cntIli);
-            str = "</div></div>\n";
+            //str = "</div></div>\n";
             str += TreeStaticHtml.formEnd;
             str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
