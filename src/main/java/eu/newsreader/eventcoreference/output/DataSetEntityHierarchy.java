@@ -23,6 +23,7 @@ public class DataSetEntityHierarchy {
         String hierarchyPath = "";
         String entityPath = "";
         String title = "";
+        String querypath = "";
         hierarchyPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/counted_types_unsorted.tsv";
         entityPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.dbp.types.tsv";
         title = "PostNL DBp ontology for entities";
@@ -36,6 +37,9 @@ public class DataSetEntityHierarchy {
             }
             else if (arg.equals("--title") && args.length>(i+1)) {
                 title = args[i+1];
+            }
+            else if (arg.equals("--path") && args.length>(i+1)) {
+                querypath = args[i+1];
             }
         }
         SimpleTaxonomy simpleTaxonomy = new SimpleTaxonomy();
@@ -59,7 +63,7 @@ public class DataSetEntityHierarchy {
         try {
             OutputStream fos = new FileOutputStream(entityPath+".words.html");
             //String scripts = TreeStaticHtml.makeScripts(cnt.size(), cntPredicates.size());
-            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, 0, 0, 0, 0);
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, querypath, 0, 0, 0, 0);
             str += "<div id=\"Events\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());

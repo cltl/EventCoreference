@@ -383,7 +383,7 @@ public class TreeStaticHtml {
             "            \t<p>Ontology coverage</p> \n" +
             "            \t</div>";
 
-    static public String makeBodyStart(String title, int nDocs, int nEvents, int nEntities, int nSources) {
+    static public String makeBodyStart(String title, String path, int nDocs, int nEvents, int nEntities, int nSources) {
         String bodyStart = "<body onload=\"init()\">\n" +
                 "\n" +
                 "<p>NewsReader Storyteller</p>\n" +
@@ -395,7 +395,7 @@ public class TreeStaticHtml {
                 "<div id=\"row\"><div id=\"cell\">Nr. of sources</div><div id=\"cell\">876</div></div>\n" +
                 "</div>"+
                 "\n" +
-                "<FORM ID=\"queryform\" NAME=\"queryform\" action='/' method=\"POST\"> \n" +
+                "<FORM ID=\"queryform\" NAME=\"queryform\" action='/"+path+"' method=\"POST\"> \n" +
                 "<input type='submit' value='Search'/>\n" +
                 "<input TYPE=\"button\" NAME=\"clear\" Value=\"Clear\" onClick=\"clearValues()\"/>\n"+
                 "\n" +

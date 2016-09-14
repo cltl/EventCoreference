@@ -26,6 +26,7 @@ public class DataSetEventHierarchy {
         String esoPath = "";
         String eventPath = "";
         String title = "";
+        String querypath = "";
         esoPath = "/Users/piek/Desktop/NWR/eso/ESO.v2/ESO_V2_Final.owl";
         eventPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.event.xls";
         title = "PostNL ESO ontology events";
@@ -42,6 +43,9 @@ public class DataSetEventHierarchy {
             }
             else if (arg.equals("--title") && args.length>(i+1)) {
                 title = args[i+1];
+            }
+            else if (arg.equals("--path") && args.length>(i+1)) {
+                querypath = args[i+1];
             }
         }
         System.out.println("esoPath = " + esoPath);
@@ -63,7 +67,7 @@ public class DataSetEventHierarchy {
             OutputStream fos = new FileOutputStream(eventPath+".words.html");
             int nPhrases = totalPhrases(cntPredicates);
             //String scripts = TreeStaticHtml.makeScripts();
-            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, 0, 0, 0, 0);
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title,querypath, 0, 0, 0, 0);
             str += "<div id=\"Events\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());

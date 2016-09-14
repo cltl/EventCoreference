@@ -23,6 +23,7 @@ public class DataSetSources {
         String citedPath = "";
         String authorPath = "";
         String title = "";
+        String querypath = "";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--cite") && args.length>(i+1)) {
@@ -33,6 +34,9 @@ public class DataSetSources {
             }
             else if (arg.equals("--title") && args.length>(i+1)) {
                 title = args[i+1];
+            }
+            else if (arg.equals("--path") && args.length>(i+1)) {
+                querypath = args[i+1];
             }
         }
         HashMap<String, ArrayList<PhraseCount>> cntPredicates = new HashMap<String, ArrayList<PhraseCount>>();
@@ -49,7 +53,7 @@ public class DataSetSources {
         try {
             OutputStream fos = new FileOutputStream(citedPath+".words.html");
             //String scripts = TreeStaticHtml.makeScripts(cnt.size(), cntPredicates.size());
-            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, 0, 0, 0, 0);
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, querypath, 0, 0, 0, 0);
             str += "<div id=\"Events\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
