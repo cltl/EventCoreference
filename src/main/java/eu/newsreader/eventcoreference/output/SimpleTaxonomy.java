@@ -766,7 +766,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         }
                         tb = TreeStaticHtml.makeTickBox(type, topName);
                         //ref = "<a href=\"" + top + "\">" + name + "</a>";
-                        ref =  topName;
+                        ref =  "<a href=\"" + top + "\">" + topName + "\n";
                     } else if (top.startsWith("dbp:")) {
                         int idx = top.lastIndexOf(":");
                         if (idx > -1) {
@@ -775,17 +775,24 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         tb = TreeStaticHtml.makeTickBox(type, topName, top);
                         ref = "<a href=\"http://dbpedia.org/ontology/" + topName + "\">" + topName + "\n";
                     }
+                    else if (top.startsWith("eso:")) {
+                        int idx = top.lastIndexOf(":");
+                        if (idx > -1) {
+                            topName = top.substring(idx + 1);
+                        }
+                        tb = TreeStaticHtml.makeTickBox(type, topName, top);
+                        ref = "<a href=\"http://www.newsreader-project/ontology/eso/" + topName + "\">" + topName + "\n";
+                    }
                     int instances = 0;
                     if (phrases.containsKey(top)) {
                         ArrayList<PhraseCount> phraseCounts = phrases.get(top);
                         instances = phraseCounts.size();
                     }
-                    String toggle = makeToggle(top);
 
                     if (cnt > 0) {
                         str += "<div id=\"cell\">" + ref + ":" + instances+";"+ cnt+"</a>"+tb+"</div>";
                     } else {
-                        str += "<div id=\"cell\">" + ref + tb+toggle+"</div>";
+                        str += "<div id=\"cell\">" + ref +"</a>"+ tb+"</div>";
                     }
                     str += "\n</h2>\n";
                     for (int j = 2; j < level; j++) {

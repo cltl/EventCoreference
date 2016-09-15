@@ -326,7 +326,8 @@ public class MentionResolver {
         NafTokenLayerIndex nafTokenLayerIndex = new NafTokenLayerIndex(urls);
         //NafTokenLayerIndex nafTokenLayerIndex = new NafTokenLayerIndex();
         nafTokenLayerIndex.parseFile(pathToTokenIndex);
-        //System.out.println("nafTokenLayerIndex.tokenMap.size() = " + nafTokenLayerIndex.tokenMap.size());
+        /*System.out.println("pathToTokenIndex = " + pathToTokenIndex);
+        System.out.println("nafTokenLayerIndex.tokenMap.size() = " + nafTokenLayerIndex.tokenMap.size());   */
         Set keySet = sourceUriList.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -420,7 +421,7 @@ public class MentionResolver {
                         }
                     }
                     else if (wordForms==null || offsetBegin==null) {
-                        System.out.println("uString = " + uString);
+                     //   System.out.println("uString = " + uString);
                         mObject.append("snippet", "Could not find the original text.");
                         mObject.append("snippet_char", 0);
                         mObject.append("snippet_char", 0);

@@ -394,6 +394,15 @@ public class TreeStaticHtml {
                 "<div id=\"row\"><div id=\"cell\">Nr. of entities</div><div id=\"cell\"></div></div>\n" +
                 "<div id=\"row\"><div id=\"cell\">Nr. of sources</div><div id=\"cell\">876</div></div>\n" +
                 "</div>"+
+                "<hr>\n" +
+                "<p>\n" +
+                "<div>\n" +
+                "\n" +
+                "{% if finished %}\n" +
+                "<b>Result</b>: <font size=0.5>{{query}}</font>\n" +
+                "{% endif %}\n" +
+                "</div>\n" +
+                "<hr>"+
                 "\n" +
                 "<FORM ID=\"queryform\" NAME=\"queryform\" action='/"+path+"' method=\"POST\"> \n" +
                 "<input type='submit' value='Search'/>\n" +
