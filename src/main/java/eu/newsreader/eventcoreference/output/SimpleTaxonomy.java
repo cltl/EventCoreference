@@ -415,11 +415,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         level--;
                     } else {
                         str += accordion+ "<h2>\n";
-
-                        //str += "<div id=\"row\">";
                         for (int j = 2; j < level; j++) {
                             str += "<div id=\"cell\"></div>";
-
                         }
                         String ref = top;
                         String tb = TreeStaticHtml.makeTickBox(type, top);
@@ -454,8 +451,6 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                             str += "<div id=\"cell\">" + ref + tb + "</div>";
                         }
                         str += "\n</h2>\n";
-                        //str += "</div>\n";
-                       // str += "<div id=\"row\">";
                         for (int j = 2; j < level; j++) {
                             str += "<div id=\"cell\"></div>";
 
@@ -463,6 +458,172 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         fos.write(str.getBytes());
                         str = "";
 
+                        int children = 0;
+                        if (phrases.containsKey(top)) {
+                            ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                            Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
+                                @Override
+                                public int compare(PhraseCount p1, PhraseCount p2) {
+
+                                    return p2.getCount().compareTo(p1.getCount());
+                                }
+                            });
+                            String phraseString = "[";
+                            int collength = 0;
+                            int max = phraseCounts.get(0).getCount();
+                            for (int j = 0; j < phraseCounts.size(); j++) {
+                                PhraseCount phraseCount = phraseCounts.get(j);
+                                //if ((phraseCount.getCount()*100)/max>=0) {
+                                if (phraseCount.getCount() > 0) {
+                                    children++;
+                                    int idx = phraseCount.getPhrase().lastIndexOf("/");
+                                    String name = phraseCount.getPhrase();
+                                    if (idx > -1) {
+                                        name = phraseCount.getPhrase().substring(idx + 1);
+                                    }
+                                    if (name.length() > 50) {
+                                        int pos = name.indexOf(" ", 50);
+                                        if (pos > 0) {
+                                            name = name.substring(0, pos) + " etc.";
+                                        }
+                                    }
+                                    tb = TreeStaticHtml.makeTickBox(type, name);
+                                    if (phraseCount.getPhrase().indexOf("dbpedia") > -1) {
+                                        tb = TreeStaticHtml.makeTickBox(type, name, "dbpedia:" + name);
+                                        ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + tb + "</a>";
+                                    } else {
+
+                                        ref = name + ":" + phraseCount.getCount() + tb;
+                                    }
+
+
+                                    collength += ref.length();
+                                    phraseString += ref;
+                                    if (j < phraseCounts.size() - 1) {
+                                        phraseString += ", ";
+                                    }
+                                    if (collength > colmax) {
+                                        phraseString += "\n";
+                                        collength = 0;
+                                    }
+                                }
+                            }
+                            phraseString += "]";
+                            str =   "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
+                            fos.write(str.getBytes());
+                        }
+                        else {
+                        }
+                        str = "</div>\n"; // closing accordion
+                        fos.write(str.getBytes());
+                    }
+                    if (superToSub.containsKey(top)) {
+                        ArrayList<String> children = superToSub.get(top);
+                       // System.out.println(top+ ":" + cnt+", children:"+children.size());
+                        htmlTableTree(fos, type, ns, children, level, typeCounts, phrases);
+                    }
+                    else {
+                      //  System.out.println("has no children top = " + top);
+                    }
+                }
+                else {
+                    //// no use for this class
+                }
+            }
+            else {
+             //   System.out.println("ns = " + ns);
+             //   System.out.println("top = " + top);
+            }
+        }
+    }
+
+
+    public void  htmlTableTreeSupressEmptyLeaves (OutputStream fos, String type, String ns, ArrayList<String> tops,
+                                  int level,
+                                  HashMap<String, Integer> typeCounts,
+                                  HashMap<String, ArrayList<PhraseCount>> phrases) throws IOException {
+        level++;
+        ArrayList<PhraseCount> countedTops = new ArrayList<PhraseCount>();
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            Integer cnt = 0;
+            if (typeCounts.containsKey(top)) {
+                cnt = typeCounts.get(top);
+            }
+            PhraseCount phraseCount = new PhraseCount(top, cnt);
+            countedTops.add(phraseCount);
+        }
+        Collections.sort(countedTops, new Comparator<PhraseCount>() {
+            @Override
+            public int compare(PhraseCount p1, PhraseCount p2) {
+
+                return p2.getCount().compareTo(p1.getCount());
+            }
+        });
+
+        for (int i = 0; i < countedTops.size(); i++) {
+            PhraseCount topCount = countedTops.get(i);
+            String top = topCount.getPhrase();
+            String topName = "";
+            String parent = "";
+            if (top.startsWith(ns) || ns.isEmpty()) {
+                Integer cnt = topCount.getCount();
+              //  System.out.println(top+ ":" + cnt);
+                if (cnt>0) {
+                    if (top.indexOf("Agent") > -1) {
+                        level--;
+                        level--;
+                    } else {
+                        parent += accordion+ "<h2>\n";
+
+                        //str += "<div id=\"row\">";
+                        for (int j = 2; j < level; j++) {
+                            parent += "<div id=\"cell\"></div>";
+
+                        }
+                        String ref = top;
+                        String tb = TreeStaticHtml.makeTickBox(type, top);
+                        if (top.startsWith("http")) {
+                            int idx = top.lastIndexOf("/");
+                            //String name = top;
+                            if (idx > -1) {
+                                topName = top.substring(idx + 1);
+                            }
+                            tb = TreeStaticHtml.makeTickBox(type, topName);
+                            //ref = "<a href=\"" + top + "\">" + name + "</a>";
+                            ref = topName;
+                        } else if (top.startsWith("dbp:")) {
+                            int idx = top.lastIndexOf(":");
+                            //String name = top;
+                            if (idx > -1) {
+                                topName = top.substring(idx + 1);
+                            }
+                            tb = TreeStaticHtml.makeTickBox(type, topName, top);
+                            ref = "<a href=\"http://dbpedia.org/ontology/" + topName + "\">" + topName;
+                        }
+                        int instances = 0;
+                        if (phrases.containsKey(top)) {
+                            ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                            instances = phraseCounts.size();
+                        }
+                       // String toggle = makeToggle(topName);
+
+                        if (cnt > 0) {
+                            parent += "<div id=\"cell\">" + ref + ":" + instances + ";" + cnt +"</a>"+ tb + "</div>";
+                        } else {
+                            parent += "<div id=\"cell\">" + ref + tb + "</div>";
+                        }
+                        parent += "\n</h2>\n";
+                        for (int j = 2; j < level; j++) {
+                            parent += "<div id=\"cell\"></div>";
+
+                        }
+/*
+                        fos.write(str.getBytes());
+                        str = "";
+*/
+
+                        int children = 0;
                         if (phrases.containsKey(top)) {
                             ArrayList<PhraseCount> phraseCounts = phrases.get(top);
                             Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
@@ -479,6 +640,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 PhraseCount phraseCount = phraseCounts.get(j);
                                 //if ((phraseCount.getCount()*100)/max>=0) {
                                 if (phraseCount.getCount() > 1) {
+                                    children++;
                                     int idx = phraseCount.getPhrase().lastIndexOf("/");
                                     String name = phraseCount.getPhrase();
                                     if (idx > -1) {
@@ -519,14 +681,20 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
 /*                            str =   "<div id=\""+"collapse"+topName+"\">\n" +
                                     "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
                             str += "</div>\n";*/
-                            str =   "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
-                            fos.write(str.getBytes());
-                            //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
-
+                            if (children>0) {
+                                parent +=   "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
+                                //parent += "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
+                                //fos.write(parent.getBytes());
+                                fos.write(parent.getBytes());
+                                //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
+                            }
+                        }
+                        else {
+                            //fos.write(parent.getBytes());
                         }
                         //str = "</div>\n"; //closing row
-                        str = "</div>\n"; // closing accordion
-                        fos.write(str.getBytes());
+                        parent = "</div>\n"; // closing accordion
+                        fos.write(parent.getBytes());
                     }
                     if (superToSub.containsKey(top)) {
                         ArrayList<String> children = superToSub.get(top);

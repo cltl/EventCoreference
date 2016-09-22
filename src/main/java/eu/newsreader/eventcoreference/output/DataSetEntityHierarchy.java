@@ -68,6 +68,7 @@ public class DataSetEntityHierarchy {
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
             simpleTaxonomy.htmlTableTree(fos, "entity", "dbp:",tops, 1, cnt, cntPredicates);
+            //simpleTaxonomy.htmlTableTreeSupressEmptyLeaves(fos, "entity", "dbp:",tops, 1, cnt, cntPredicates);
             //str = "</div></div>\n";
             str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
@@ -204,14 +205,16 @@ http://nl.dbpedia.org/resource/Maxime_Verhagen	96	http://wikidata.dbpedia.org/re
                                 }*/
                                 if (!child.isEmpty()) {
                                     PhraseCount phraseCount = new PhraseCount(entity, Integer.parseInt(count));
-                                    if (map.containsKey(child)) {
-                                        ArrayList<PhraseCount> phrases = map.get(child);
-                                        phrases.add(phraseCount);
-                                        map.put(child, phrases);
-                                    } else {
-                                        ArrayList<PhraseCount> phrases = new ArrayList<PhraseCount>();
-                                        phrases.add(phraseCount);
-                                        map.put(child, phrases);
+                                    if (phraseCount.getCount()>1) {
+                                        if (map.containsKey(child)) {
+                                            ArrayList<PhraseCount> phrases = map.get(child);
+                                            phrases.add(phraseCount);
+                                            map.put(child, phrases);
+                                        } else {
+                                            ArrayList<PhraseCount> phrases = new ArrayList<PhraseCount>();
+                                            phrases.add(phraseCount);
+                                            map.put(child, phrases);
+                                        }
                                     }
                                 }
                                 /// now we clean the stuff to start a new data structure
