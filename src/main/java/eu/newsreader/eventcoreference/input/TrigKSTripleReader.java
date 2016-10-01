@@ -435,6 +435,10 @@ public class TrigKSTripleReader {
                 if (!types.isEmpty()) types += ";";
                 types += field;
             }
+            else if (field.indexOf("//cltl.nl/")>-1) {
+                if (!types.isEmpty()) types += ";";
+                types += field;
+            }
             else if (field.indexOf("dbpedia:")>-1) {
                 if (!instances.isEmpty()) instances += ";";
                 instances += field;
@@ -447,6 +451,11 @@ public class TrigKSTripleReader {
         if (!labels.isEmpty()) readTriplesFromKSforEntityLabel(labels);
         if (!types.isEmpty()) readTriplesFromKSforEntityType(types);
         if (!instances.isEmpty()) readTriplesFromKSforEntityInstance(instances);
+    }
+
+    static public void readTriplesFromKSforSurfaceString(String entityQuery)throws Exception {
+        readTriplesFromKSforEntityLabel(entityQuery);
+        readTriplesFromKSforEventLabel(entityQuery);
     }
 
     static public void readTriplesFromKSforSource(String sourceQuery)throws Exception {
@@ -719,13 +728,12 @@ public class TrigKSTripleReader {
                 "?mention grasp:hasAttribution ?attribution.\n" +
                 "?attribution grasp:wasAttributedTo ?cite.\n" +
                 makeSubStringLabelFilter("?cite", citedLabel) +
-               // "FILTER (regex(str(?cite), \"Agral\")) .\n" +
                 "} LIMIT 1000 }\n" +
                 "?event ?relation ?object .\n" +
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event";
-        // System.out.println("sparqlQuery = " + sparqlQuery);
+        System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
@@ -742,15 +750,15 @@ public class TrigKSTripleReader {
                 "{SELECT distinct ?event WHERE { \n" +
                 "?event gaf:denotedBy ?mention.\n" +
                 "?mention grasp:hasAttribution ?attribution.\n" +
-                "?attribution prov:wasAttributedTo ?author .\n" +
+                "?attribution prov:wasAttributedTo ?doc .\n" +
+                "?doc prov:wasAttributedTo ?author .\n"  +
                 makeSubStringLabelFilter("?author", authorLabel) +
-                // "FILTER (regex(str(?author), \"u\"))\n" +
                 "} LIMIT 1000 }\n" +
                 "?event ?relation ?object .\n" +
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event";
-        //System.out.println("sparqlQuery = " + sparqlQuery);
+        System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 

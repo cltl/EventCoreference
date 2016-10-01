@@ -29,6 +29,7 @@ public class GetSemFromNaf {
     static public boolean DOMINANTURI = true;
     static public int MINEVENTLABELSIZE = 1;
     static final public String ID_SEPARATOR = "#";
+   // static final public String ID_SEPARATOR = "/";
     static final public String URI_SEPARATOR = "_";
     static public HashMap<String, String> eurovoc = new HashMap<String, String>();
 
@@ -76,11 +77,11 @@ public class GetSemFromNaf {
 
 
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
-        String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
+        String baseUrl = kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH") + ID_SEPARATOR;
         String entityUri = ResourcesUri.nwrdata + project + "/entities/";
         if (!baseUrl.toLowerCase().startsWith("http")) {
            //  System.out.println("baseUrl = " + baseUrl);
-            baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
+            baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH") + ID_SEPARATOR;
         }
         processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         if (ADDITIONALROLES) {

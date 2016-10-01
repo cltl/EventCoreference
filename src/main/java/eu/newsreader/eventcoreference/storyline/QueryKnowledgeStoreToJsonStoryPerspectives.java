@@ -54,10 +54,10 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         String pathToILIfile = "";
         String sparqlQuery = "";
         String eventQuery = "";
+        String wordQuery = "";
         String sourceQuery = "";
         String entityQuery = "";
         String kslimit = "500";
-        String pathToRawTextIndexFile = "";
         String pathToFtDataFile = "";
         String blackListFile = "";
         String fnFile = "";
@@ -71,6 +71,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             String arg = args[i];
             if (arg.equals("--sparql") && args.length>(i+1)) {
                 sparqlQuery = args[i+1];
+            }
+            else if (arg.equals("--word") && args.length>(i+1)) {
+                wordQuery = args[i+1];
             }
             else if (arg.equals("--event") && args.length>(i+1)) {
                 eventQuery = args[i+1];
@@ -145,9 +148,6 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             }
             else if (arg.equals("--ili") && args.length>(i+1)) {
                 pathToILIfile = args[i+1];
-            }
-            else if (arg.equals("--raw-text") && args.length>(i+1)) {
-                pathToRawTextIndexFile = args[i+1];
             }
             else if (arg.equals("--black-list") && args.length>(i+1)) {
                 blackListFile = args[i+1];
@@ -239,12 +239,15 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 ksQueryError += e.getCause();
             }
         }
-        else if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sourceQuery.isEmpty()) {
+        else if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sourceQuery.isEmpty() || !wordQuery.isEmpty()) {
             if (!eventQuery.isEmpty()) {
                 System.out.println(" * querying KnowledgeStore for event = " + eventQuery);
             }
             if (!entityQuery.isEmpty()) {
                 System.out.println(" * querying KnowledgeStore for entity = " + entityQuery);
+            }
+            if (!wordQuery.isEmpty()) {
+                System.out.println(" * querying KnowledgeStore for word = " + wordQuery);
             }
             if (!sourceQuery.isEmpty()) {
                 System.out.println(" * querying KnowledgeStore for source = " + sourceQuery);
@@ -277,6 +280,14 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             else if (!sourceQuery.isEmpty()) {
                 try {
                     TrigKSTripleReader.readTriplesFromKSforSource(sourceQuery);
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
+            }
+            else if (!wordQuery.isEmpty()) {
+                try {
+                    TrigKSTripleReader.readTriplesFromKSforSurfaceString(wordQuery);
                 } catch (Exception e) {
                     ksQueryError = e.getMessage();
                     ksQueryError += e.getCause();
@@ -337,22 +348,13 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                     structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
                 }
 
-                if (!pathToRawTextIndexFile.isEmpty()) {
-                    // rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
-                    MentionResolver.ReadFileToUriTextArrayList(pathToRawTextIndexFile, jsonObjects);
-                } else {
-                    if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sparqlQuery.isEmpty()) {
-                        //  rawTextArrayList = MentionResolver.createRawTextIndexFromMentions(jsonObjects, KS, KSuser, KSpass);
-                        //   System.out.println("Getting the text snippets for: " + jsonObjects.size()+ " events");
-                        if (pathToTokenIndex.isEmpty()) {
-                            MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
-                        }
-                        else {
-                            MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex);
-                        }
-                    }
-
+                if (pathToTokenIndex.isEmpty()) {
+                    MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
                 }
+                else {
+                    MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex);
+                }
+
                 nEvents = jsonObjects.size();
                 nActors = JsonStoryUtil.countActors(jsonObjects);
                 nMentions = JsonStoryUtil.countMentions(jsonObjects);

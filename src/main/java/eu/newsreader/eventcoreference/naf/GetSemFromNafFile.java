@@ -55,7 +55,7 @@ public class GetSemFromNafFile {
         Log.setLog4j("jena-log4j.properties");
         String pathToNafFile = "";
         ALL = true;
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/426115_relink_dominant.naf";
+        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/test/426115_relink_dominant.naf";
         String sourceFrameFile = "";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source.txt";

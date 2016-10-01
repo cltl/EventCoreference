@@ -1362,40 +1362,24 @@ public class Util {
             kafEntity.setTokenStrings(kafSaxParser);
             String aUri = null;
             try {
-                //String cleanLabel = kafEntity.getTokenString().replaceAll(" ", "_");
                 String cleanLabel = keepAlphaNumeric(kafEntity.getTokenString().trim());
+                //cleanLabel = kafEntity.getTokenString().replaceAll(" ", "_");
                 //cleanLabel = cleanLabel.replaceAll("\'", "");
                 aUri = URLEncoder.encode(cleanLabel, "UTF-8");
                 if (!aUri.isEmpty()) {
-/*
-                    if (aUri.indexOf("Schreyer")>-1) {
-                        System.out.println("aUri = " + aUri);
-                        System.out.println("kafEntity = " + kafEntity.getTokenString());
-                    }
-*/
                     semObject.addPhraseCounts(aUri);
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
-    //    System.out.println("semObject.getPhrase() = " + semObject.getPhraseCounts().toString());
         uri = semObject.getTopPhraseAsLabel().trim();
         if (uri.isEmpty()) {
-          //  System.out.println("semObject.getPhraseCounts().size() = " + semObject.getPhraseCounts().size());
-            for (int i = 0; i < semObject.getPhraseCounts().size(); i++) {
-                PhraseCount phraseCount = semObject.getPhraseCounts().get(i);
-            //    System.out.println("phraseCount = " + phraseCount);
-            }
             uri = semObject.getPhrase();
         }
-/*
-        if (uri.indexOf("Schreyer")>-1)
-            System.out.println("semObject uri = " + uri);
-*/
-
         return uri;
     }
+
     /**
      * Returns the span id that is the head of a constituent of a participant in the SRL layer
      * @param kafParticipant

@@ -25,6 +25,13 @@ public class SimpleTaxonomy {
         return str;
     }
 
+
+    static public void main (String[] args) {
+        String hierarchyPath = "/Users/piek/Desktop/NWR-INC/dasym/stats-4-normalised/DBpediaHierarchy_parent_child.tsv";
+        SimpleTaxonomy simpleTaxonomy = new SimpleTaxonomy();
+        simpleTaxonomy.readSimpleTaxonomyFromDbpFile(hierarchyPath);
+    }
+
     public SimpleTaxonomy () {
         subToSuper = new HashMap<String, String>();
         superToSub = new HashMap<String, ArrayList<String>>();
@@ -82,6 +89,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	OrganisationMember	SportsTeamMember
 www.w3.org/2002/07/owl#Thing	Agent	Person	Orphan
 www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
      */
+                        System.out.println("inputLine = " + inputLine);
                         String[] fields = inputLine.split("\t");
                         if (fields.length > 1) {
                             for (int i = 0; i < fields.length-1; i++) {
@@ -92,6 +100,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 } catch (NumberFormatException e) {
                                    // e.printStackTrace();
                                     //So only if fields[i+1] is not a count!
+                                    System.out.println("subClass = " + subClass);
                                     String superClass = "dbp:"+fields[i];
                                     //System.out.println("subClass = " + subClass);
                                     //System.out.println("superClass = " + superClass);
@@ -113,14 +122,16 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 }
                             }
                         }
-
+                        else {
+                            System.out.println("Skipping line:"+inputLine);
+                        }
                     }
                 }
             }
         } catch (IOException e) {
             //e.printStackTrace();
         }
-        printTree();
+        //printTree();
     }
 
     public ArrayList<String> getTops () {

@@ -31,7 +31,8 @@ public class TrigStats {
     static HashMap<String, PhraseCount> eventLabelWithoutFNMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> eventLabelWithoutILIMap = new HashMap<String, PhraseCount>();
     static HashMap<String, ArrayList<String>> eventMap = new HashMap<String, ArrayList<String>>();
-    static HashMap<String, ArrayList<String>> entityMap = new HashMap<String, ArrayList<String>>();
+    static HashMap<String, ArrayList<String>> lightEntityMap = new HashMap<String, ArrayList<String>>();
+    static HashMap<String, ArrayList<String>> darkEntityMap = new HashMap<String, ArrayList<String>>();
     static HashMap<String, PhraseCount> esoMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> fnMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> iliMap = new HashMap<String, PhraseCount>();
@@ -143,7 +144,7 @@ public class TrigStats {
     static public void main (String[] args) {
         String folderpath = "";
         String type = "instance";
-        folderpath = "/Users/piek/Desktop/NWR-INC/financialtimes/data/brexit6.naf";
+        folderpath = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample_grasp";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
@@ -174,10 +175,12 @@ public class TrigStats {
             if (type.equalsIgnoreCase("dbp") || type.toLowerCase().endsWith(".dbp")) {
                 updateMap(key, m, dbpMap);
                 ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
-                updateMentionMap(key, entityMap, mentionLabels);
+                updateMentionMap(key, lightEntityMap, mentionLabels);
             }
             else if (type.equalsIgnoreCase("en")) {
                 updateMap(key, m, enMap);
+                ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                updateMentionMap(key, darkEntityMap, mentionLabels);
             }
             else if (type.equalsIgnoreCase("ne")) {
                 updateMap(key, m, neMap);
@@ -242,11 +245,11 @@ public class TrigStats {
         File folderParent = inputFolder.getParentFile();
         String outputFile = "";
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".entities.xls";
-        dumpSortedMap(enMap, outputFile);
+        dumpSortedMap(darkEntityMap, enMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".nonentities.xls";
         dumpSortedMap(neMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".dbp.xls";
-        dumpSortedMap(entityMap, dbpMap, outputFile);
+        dumpSortedMap(lightEntityMap, dbpMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabels.xls";
         dumpSortedMap(eventLabelMap, outputFile);
         outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOeso.xls";
