@@ -382,11 +382,13 @@ public class TrigKSTripleReader {
 
     static public String makeSubStringLabelFilter(String variable, String query) {
         //FILTER ( regex(str(?entlabel), "Bank") || regex(str(?entlabel), "Dank")) .
-
+        //http://www.newsreader-project.eu/provenance/author/Algemeen+Dagblad
         String filter = "FILTER (";
         String[] fields = query.split(";");
         for (int i = 0; i < fields.length; i++) {
-            String field = fields[i].replace('^', ' ');;
+            String field = fields[i].replace('^', ' ');
+            field = field.replace('_', '.');
+            field = field.replace('+', '.');
             if (i>0)  filter +=" || ";
             filter += "regex(str("+variable+"), \""+field+"\")";
         }
@@ -733,11 +735,12 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event";
-        System.out.println("sparqlQuery = " + sparqlQuery);
+        //System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
     static public void readTriplesFromKSforAuthorSurfaceForm(String authorLabel)throws Exception {
+        //http://www.newsreader-project.eu/provenance/author/Algemeen+Dagblad
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
@@ -758,7 +761,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event";
-        System.out.println("sparqlQuery = " + sparqlQuery);
+        //System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
