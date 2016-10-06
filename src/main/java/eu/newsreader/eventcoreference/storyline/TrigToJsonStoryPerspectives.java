@@ -64,6 +64,7 @@ public class TrigToJsonStoryPerspectives {
         String esoFile = "";
         String euroVocFile = "";
         String euroVocBlackListFile = "";
+        String pathToTokenIndex = "";
         fnLevel = 0;
         esoLevel = 0;
         for (int i = 0; i < args.length; i++) {
@@ -81,6 +82,10 @@ public class TrigToJsonStoryPerspectives {
                     EVENTSCHEMA = fields[0];
                     entityQuery = fields[1];
                 }
+            }
+
+            else if (arg.equals("--tokens") && args.length>(i+1)) {
+                pathToTokenIndex = args[i+1];
             }
             else if (arg.equals("--entity") && args.length>(i+1)) {
                 entityQuery = args[i+1];
@@ -276,13 +281,10 @@ public class TrigToJsonStoryPerspectives {
                 }
             }
 
-
-            if (!pathToFtDataFile.isEmpty()) {
-                HashMap<String, ArrayList<ReadFtData.DataFt>> dataFtMap = ReadFtData.readData(pathToFtDataFile);
-                structuredEvents = ReadFtData.convertFtDataToJsonEventArray(dataFtMap);
+            if (!pathToTokenIndex.isEmpty()) {
+                MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex);
             }
-
-            if (!pathToRawTextIndexFile.isEmpty()) {
+            else if (!pathToRawTextIndexFile.isEmpty()) {
                // rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
                 MentionResolver.ReadFileToUriTextArrayList(pathToRawTextIndexFile, jsonObjects);
             }

@@ -2,6 +2,7 @@ package eu.newsreader.eventcoreference.storyline;
 
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.kyotoproject.kaf.KafWordForm;
+import eu.newsreader.eventcoreference.naf.ResourcesUri;
 import eu.newsreader.eventcoreference.util.Util;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -34,6 +35,7 @@ public class NafTokenLayerIndex extends DefaultHandler {
     static public void main (String[] args) {
         String folder = "";
         String filter = "";
+        String project = "";
        // folder = "/Users/piek/Desktop/NWR-INC/WorldBank/data/spanish/output-7-v2";
        // filter = ".naf";
         for (int i = 0; i < args.length; i++) {
@@ -44,9 +46,12 @@ public class NafTokenLayerIndex extends DefaultHandler {
             else if (arg.equals("--extension") && args.length>(i+1)) {
                 filter = args[i+1];
             }
+            else if (arg.equals("--project") && args.length>(i+1)) {
+                project = args[i+1];
+            }
         }
         try {
-            createTokenIndex(new File(folder), filter);
+            createTokenIndex(new File(folder), filter, project);
         }  catch (IOException e) {
             e.printStackTrace();
         }
@@ -184,7 +189,7 @@ public class NafTokenLayerIndex extends DefaultHandler {
         value += new String(ch, start, length);
     }
 
-    static void createTokenIndex (File folder, String filter) throws IOException {
+    static void createTokenIndex (File folder, String filter, String project) throws IOException {
         File indexFile = new File("token.index");
         OutputStream stream = new FileOutputStream(indexFile);
 
@@ -199,17 +204,25 @@ public class NafTokenLayerIndex extends DefaultHandler {
             if (f%100==0) System.out.println("file.getName() = " + file.getName());
             kafSaxParser.parseFile(file);
 
-            String uri = kafSaxParser.getKafMetaData().getUrl();
+            String baseUrl = kafSaxParser.getKafMetaData().getUrl();
+            if (baseUrl.isEmpty()) {
+                baseUrl = ResourcesUri.nwrdata + project + "/" + file.getName();
+            }
+            else if (!baseUrl.toLowerCase().startsWith("http")) {
+                //  System.out.println("baseUrl = " + baseUrl);
+                baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl();
+            }
+            /*String uri = kafSaxParser.getKafMetaData().getUrl();
             if (uri.isEmpty()) {
                 uri = file.getName();
-            }
+            }*/
             if (kafSaxParser.kafWordFormList.size()>0) {
                 str = "<text>\n";
-                str += "<url><![CDATA["+uri+"]]></url>\n";
+                str += "<url><![CDATA["+baseUrl+"]]></url>\n";
                 for (int i = 0; i < kafSaxParser.kafWordFormList.size(); i++) {
                     KafWordForm kaf  = kafSaxParser.kafWordFormList.get(i);
                     //<wf id="w1" length="10" offset="0" para="1" sent="1">Resolucion</wf>
-                    str += "<wf id=\""+kaf.getWid()+"\" length=\""+kaf.getCharLength()+"\" offset=\""+kaf.getCharOffset()+"\"><![CDATA["+kaf.getWf()+"]]></wf>\n";
+                    str += "<wf id=\""+kaf.getWid()+"\" sent=\""+kaf.getSent()+"\" length=\""+kaf.getCharLength()+"\" offset=\""+kaf.getCharOffset()+"\"><![CDATA["+kaf.getWf()+"]]></wf>\n";
                 }
                 str += "</text>\n";
                 stream.write(str.getBytes());

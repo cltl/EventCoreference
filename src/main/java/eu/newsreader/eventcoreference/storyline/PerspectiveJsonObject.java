@@ -206,6 +206,7 @@ public class PerspectiveJsonObject {
         }
         return object;
     }
+
     public void setDefaultPerspectiveValue () {
         attribution.add("certain");
         attribution.add("confirm");
@@ -216,7 +217,11 @@ public class PerspectiveJsonObject {
         ArrayList<String> normValues = new ArrayList<String>();
         String normValue = "";
 
-        // if (!value.equals("u_u_u") && !value.equals("CERTAIN_NON_FUTURE_POS")) {
+/*
+         if (value.equals("u_u_u") || value.equals("CERTAIN_NON_FUTURE_POS")) {
+             return normValues;
+         }
+*/
 
         //System.out.println("value = " + value);
         if (value.toLowerCase().equals("u_u_u") || (value.equals("u_u_u_u"))) {

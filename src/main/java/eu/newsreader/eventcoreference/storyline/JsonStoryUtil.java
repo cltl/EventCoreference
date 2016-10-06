@@ -1832,6 +1832,7 @@ public class JsonStoryUtil {
         PerspectiveJsonObject perspectiveJsonObject = new PerspectiveJsonObject();
         String author = "";
         String cite = "";
+       // System.out.println("Start");
         ArrayList<String> perspectives = new ArrayList<String>();
         if (trigTripleData.tripleMapGrasp.containsKey(mentionUri)) {
             ArrayList<Statement> perspectiveTriples = trigTripleData.tripleMapGrasp.get(mentionUri);
@@ -1860,7 +1861,7 @@ public class JsonStoryUtil {
                                         if (idx > -1) {
                                             author = author.substring(idx + 1);
                                         }
-                                        //  System.out.println("author source = " + source);
+                                     //   System.out.println("author source = " + author);
                                     }
                                 } else {
                                     //// it is not the document so a cited source
@@ -1915,6 +1916,7 @@ public class JsonStoryUtil {
             }
 
             if (perspectives.size() > 0) {
+              //  System.out.println("final author = " + author);
                 perspectiveJsonObject = new PerspectiveJsonObject(perspectives, author, cite, "", "", "", mentionUri, null);
             }
         }
@@ -1991,7 +1993,8 @@ public class JsonStoryUtil {
                         for (int x = 0; x < subauthorfields.size(); x++) {
                             String subfield = subauthorfields.get(x);
                             // System.out.println("subfield = " + subfield);
-                            if (!subfield.toLowerCase().endsWith("correspondent")
+                            //// Financial Times hack
+/*                            if (!subfield.toLowerCase().endsWith("correspondent")
                                     && !subfield.toLowerCase().endsWith("reporter")
                                     && !subfield.toLowerCase().endsWith("editor")
                                     && !subfield.toLowerCase().startsWith("in+")
@@ -2004,7 +2007,15 @@ public class JsonStoryUtil {
                                 perspective.put("source", author);
                                 //  System.out.println("source = " + source);
                                 mentionObject.append("perspective", perspective);
-                            }
+                            }*/
+                            String author = JsonStoryUtil.normalizeSourceValue(subfield);
+                            author = "author:" + JsonStoryUtil.cleanAuthor(author);
+                            JSONObject perspective = new JSONObject();
+                            JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                            perspective.put("attribution", attribution);
+                            perspective.put("source", author);
+                            //  System.out.println("source = " + source);
+                            mentionObject.append("perspective", perspective);
                         }
                     }
                 }
@@ -2040,13 +2051,20 @@ public class JsonStoryUtil {
                         String mention = JsonStoryUtil.getStringValueforMention(uriString, offsetArray);
                         PerspectiveJsonObject perspectiveJsonObject = getPerspectiveObjectForEvent(trigTripleData, mention, meta);
 
-                        //System.out.println("mention event = " + mention);
-                        if (perspectiveJsonObject!=null) {
+                        if (perspectiveJsonObject != null) {
                             addPerspectiveToMention(mentionObject, perspectiveJsonObject);
-                        }
-                        else {
+                        } else {
 
                         }
+
+/*                        if (perspectiveJsonObject.getAttribution().size()>0) {
+                            //System.out.println("mention event = " + mention);
+                            if (perspectiveJsonObject != null) {
+                                addPerspectiveToMention(mentionObject, perspectiveJsonObject);
+                            } else {
+
+                            }
+                        }*/
                     } catch (JSONException e) {
                         // e.printStackTrace();
                     }
