@@ -289,7 +289,7 @@ public class TrigKSTripleReader {
             try {
                 mMentions = (JSONArray) mEvent.get("mentions");
             } catch (JSONException e) {
-                e.printStackTrace();
+               // e.printStackTrace();
             }
             if (mMentions!=null) {
                 for (int m = 0; m < mMentions.length(); m++) {
@@ -300,10 +300,18 @@ public class TrigKSTripleReader {
                         String mention = JsonStoryUtil.getURIforMention(uriString, offsetArray);
                         if (perspectiveMap.containsKey(mention)) {
                             ArrayList<PerspectiveJsonObject> perspectiveJsonObjects = perspectiveMap.get(mention);
-                            for (int j = 0; j < perspectiveJsonObjects.size(); j++) {
-                                PerspectiveJsonObject perspectiveJsonObject = perspectiveJsonObjects.get(j);
-                                JsonStoryUtil.addPerspectiveToMention(mentionObject, perspectiveJsonObject);
-
+                            ArrayList<PerspectiveJsonObject> nonDefaultPerspectives = PerspectiveJsonObject.keepNonDefaultPerspectives(perspectiveJsonObjects);
+                            if (nonDefaultPerspectives.size()>0) {
+                                for (int j = 0; j < nonDefaultPerspectives.size(); j++) {
+                                    PerspectiveJsonObject perspectiveJsonObject = nonDefaultPerspectives.get(j);
+                                    JsonStoryUtil.addPerspectiveToMention(mentionObject, perspectiveJsonObject);
+                                }
+                            }
+                            else {
+                                for (int j = 0; j < perspectiveJsonObjects.size(); j++) {
+                                    PerspectiveJsonObject perspectiveJsonObject = perspectiveJsonObjects.get(j);
+                                    JsonStoryUtil.addPerspectiveToMention(mentionObject, perspectiveJsonObject);
+                                }
                             }
                         }
                         else {
@@ -765,6 +773,73 @@ public class TrigKSTripleReader {
         readTriplesFromKs(sparqlQuery);
     }
 
+    /**
+     *
+     PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/>
+     PREFIX owltime: <http://www.w3.org/TR/owl-time#>
+     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+     PREFIX grasp: <http://groundedannotationframework.org/grasp#>
+     PREFIX gaf:   <http://groundedannotationframework.org/gaf#>
+     PREFIX prov:  <http://www.w3.org/ns/prov#>
+     SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime
+     WHERE {
+     {SELECT distinct ?event WHERE {
+     ?event gaf:denotedBy ?mention.
+     ?mention grasp:hasAttribution ?attribution.
+     ?attribution rdf:value ?value .
+     FILTER (regex(str(?value), "UNCERTAIN")) .
+     } LIMIT 10 }
+     ?event ?relation ?object .
+     OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }
+     OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }
+     OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event
+     */
+    static public void readTriplesFromKSforGraspValue(String graspValue)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
+                "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
+                "PREFIX prov:  <http://www.w3.org/ns/prov#>\n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event gaf:denotedBy ?mention.\n" +
+                "?mention grasp:hasAttribution ?attribution.\n" +
+                "?attribution rdf:value ?value .\n" +
+                makeSubStringLabelFilter("?value", graspValue) +
+                "} LIMIT 1000 }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event";
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        readTriplesFromKs(sparqlQuery);
+    }
+
+    /*
+         PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/>
+     PREFIX owltime: <http://www.w3.org/TR/owl-time#>
+     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+     PREFIX grasp: <http://groundedannotationframework.org/grasp#>
+     PREFIX gaf:   <http://groundedannotationframework.org/gaf#>
+     PREFIX prov:  <http://www.w3.org/ns/prov#>
+     SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime
+     WHERE {
+     {SELECT distinct ?event WHERE {
+     ?event gaf:denotedBy ?mention.
+     ?mention grasp:hasAttribution ?attribution.
+     ?attribution rdf:value ?doc .
+     FILTER (regex(str(?doc), "UNCERTAIN")) .
+     } LIMIT 10 }
+     ?event ?relation ?object .
+     OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }
+     OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }
+     OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event
+     */
 
 
 
@@ -869,17 +944,6 @@ public class TrigKSTripleReader {
             else // Instances
             {
                 instanceRelations.add(s);
-/*
-                if (isEventUri(currentEvent)) {
-                    if (isDenotedByRelation(relString)) {
-                        getTenSubjectProperties(objUri, trigTripleData);
-                    }
-                }
-                else {
-                   // System.out.println("currentEvent = " + currentEvent);
-                }
-*/
-
             }
 
             if (!oldEvent.equals("")) {

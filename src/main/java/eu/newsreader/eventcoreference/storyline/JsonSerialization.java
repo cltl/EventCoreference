@@ -318,15 +318,14 @@ public class JsonSerialization {
 
                 for (int j = 0; j < objects.size(); j++) {
                     JSONObject jsonObject = objects.get(j);
-/*
-                    String instance = jsonObject.getString("instance");
-                    if (instance.equalsIgnoreCase("http://www.newsreader-project.eu/data/dasym/426985.naf.topic#ev8")) {
-                        JSONObject actors = (JSONObject) jsonObject.get("actors");
-                        System.out.println("actors = " + actors.toString()  );
+                    jsonObject.remove("classes");
+                    jsonObject.remove("topics");
+                    try {
+                        jsonObject.get("mentions");
+                        timeLineObject.append("events", jsonObject);
+                    } catch (JSONException e) {
+                      //  e.printStackTrace();
                     }
-*/
-
-                    timeLineObject.append("events", jsonObject);
                 }
 
                 for (int j = 0; j < mentions.size(); j++) {

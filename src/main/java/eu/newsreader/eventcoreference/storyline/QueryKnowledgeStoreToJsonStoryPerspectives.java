@@ -55,6 +55,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         String sparqlQuery = "";
         String eventQuery = "";
         String wordQuery = "";
+        String graspQuery = "";
         String sourceQuery = "";
         String entityQuery = "";
         String kslimit = "500";
@@ -86,6 +87,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             }
             else if (arg.equals("--source") && args.length>(i+1)) {
                 sourceQuery = args[i+1];
+            }
+            else if (arg.equals("--grasp") && args.length>(i+1)) {
+                graspQuery = args[i+1];
             }
             else if (arg.equals("--year") && args.length>(i+1)) {
                 year = args[i+1];
@@ -239,7 +243,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 ksQueryError += e.getCause();
             }
         }
-        else if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sourceQuery.isEmpty() || !wordQuery.isEmpty()) {
+        else if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sourceQuery.isEmpty() || !wordQuery.isEmpty() || !graspQuery.isEmpty()) {
             if (!eventQuery.isEmpty()) {
                 System.out.println(" * querying KnowledgeStore for event = " + eventQuery);
             }
@@ -251,6 +255,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             }
             if (!sourceQuery.isEmpty()) {
                 System.out.println(" * querying KnowledgeStore for source = " + sourceQuery);
+            }
+            if (!graspQuery.isEmpty()) {
+                System.out.println(" * querying KnowledgeStore for perspective = " + graspQuery);
             }
 
             if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
@@ -280,6 +287,14 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             else if (!sourceQuery.isEmpty()) {
                 try {
                     TrigKSTripleReader.readTriplesFromKSforSource(sourceQuery);
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
+            }
+            else if (!graspQuery.isEmpty()) {
+                try {
+                    TrigKSTripleReader.readTriplesFromKSforGraspValue(graspQuery);
                 } catch (Exception e) {
                     ksQueryError = e.getMessage();
                     ksQueryError += e.getCause();

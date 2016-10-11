@@ -295,28 +295,34 @@ public class MentionResolver {
             try {
                 String eventId = jsonObject.getString("instance");
                 eventIdObjectMap.put(eventId, i);
-                JSONArray mentions = (JSONArray) jsonObject.get("mentions");
-                for (int j = 0; j < mentions.length(); j++) {
-                    JSONObject mObject  = mentions.getJSONObject(j);
-                    String uString = mObject.getString("uri");
-                    if (!urls.contains(uString)) {
-                        urls.add(uString);
-                    }
-                    if (sourceUriList.containsKey(uString)) {
-                        ArrayList<String> eventIds = sourceUriList.get(uString);
-                        if (!eventIds.contains(eventId)) {
+                JSONArray mentions = null;
+                try {
+                    mentions = (JSONArray) jsonObject.get("mentions");
+                } catch (JSONException e) {
+                    //e.printStackTrace();
+                }
+                if (mentions!=null) {
+                    for (int j = 0; j < mentions.length(); j++) {
+                        JSONObject mObject = mentions.getJSONObject(j);
+                        String uString = mObject.getString("uri");
+                        if (!urls.contains(uString)) {
+                            urls.add(uString);
+                        }
+                        if (sourceUriList.containsKey(uString)) {
+                            ArrayList<String> eventIds = sourceUriList.get(uString);
+                            if (!eventIds.contains(eventId)) {
+                                eventIds.add(eventId);
+                                sourceUriList.put(uString, eventIds);
+                            }
+                        } else {
+                            ArrayList<String> eventIds = new ArrayList<String>();
                             eventIds.add(eventId);
                             sourceUriList.put(uString, eventIds);
                         }
                     }
-                    else {
-                        ArrayList<String> eventIds = new ArrayList<String>();
-                        eventIds.add(eventId);
-                        sourceUriList.put(uString, eventIds);
-                    }
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+              //  e.printStackTrace();
             }
         }
 

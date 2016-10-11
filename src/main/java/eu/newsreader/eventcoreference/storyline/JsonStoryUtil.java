@@ -809,7 +809,7 @@ public class JsonStoryUtil {
                 JSONArray mentions = jsonObject.getJSONArray("mentions");
                 nMentions+=mentions.length();
             } catch (JSONException e) {
-                e.printStackTrace();
+              //  e.printStackTrace();
             }
         }
         return nMentions;

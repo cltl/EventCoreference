@@ -737,11 +737,11 @@ public class JsonFromRdf {
 
     static JSONObject getMentionsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
         JSONObject jsonClassesObject = new JSONObject();
-
+        String predicate = "";
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
 
-            String predicate = statement.getPredicate().getURI();
+            predicate = statement.getPredicate().getURI();
             if (predicate.endsWith("#denotedBy")) {
                 String object = "";
                 if (statement.getObject().isLiteral()) {
@@ -752,6 +752,13 @@ public class JsonFromRdf {
                 jsonClassesObject.append("mentions", getMentionObjectFromMentionURI(object));
             }
         }
+        /*try {
+            jsonClassesObject.get("mentions");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.out.println("No mentions for predicate = "+predicate);
+
+        }*/
         return jsonClassesObject;
     }
 

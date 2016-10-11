@@ -329,4 +329,19 @@ public class PerspectiveJsonObject {
      62878       <factVal resource="nwr:attributionTense" value="NON_FUTURE"/>
      74938       <factVal resource="nwr:attributionTense" value="UNDERSPECIFIED"/>
      */
+
+
+    static public ArrayList<PerspectiveJsonObject> keepNonDefaultPerspectives (ArrayList<PerspectiveJsonObject> perspectiveJsonObjects) {
+        ArrayList<PerspectiveJsonObject> newObjects = new ArrayList<PerspectiveJsonObject>();
+        for (int i = 0; i < perspectiveJsonObjects.size(); i++) {
+            PerspectiveJsonObject perspectiveJsonObject = perspectiveJsonObjects.get(i);
+            if (perspectiveJsonObject.getAttribution().contains("uncertain") ||
+                perspectiveJsonObject.getAttribution().contains("negative") ||
+                perspectiveJsonObject.getAttribution().contains("future") ||
+                perspectiveJsonObject.getAttribution().contains("deny")) {
+                newObjects.add(perspectiveJsonObject);
+            }
+        }
+        return newObjects;
+    }
 }
