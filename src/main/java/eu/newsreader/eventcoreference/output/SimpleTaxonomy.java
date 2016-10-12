@@ -14,7 +14,7 @@ import java.util.zip.GZIPInputStream;
  * Created by piek on 29/05/16.
  */
 public class SimpleTaxonomy {
-    static final int colmax = 350;
+    static final int colmax = 650;
     static final int colmaxevents = 150;
     public HashMap<String, String> subToSuper = new HashMap<String, String>();
     public HashMap<String, ArrayList<String>> superToSub = new HashMap<String, ArrayList<String>>();
@@ -421,7 +421,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                 Integer cnt = topCount.getCount();
               //  System.out.println(top+ ":" + cnt);
                 if (cnt>0) {
-                    if (top.indexOf("Agent") > -1) {
+                   // if (top.indexOf("Agent") > -1) {
+                    if (top.indexOf("NOTSKIP") > -1) {
                         level--;
                         level--;
                     } else {
@@ -457,9 +458,12 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                        // String toggle = makeToggle(topName);
 
                         if (cnt > 0) {
-                            str += "<div id=\"cell\">" + ref + ":" + instances + ";" + cnt +"</a>"+ tb + "</div>";
+                            str += "<div id=\"cell\">" + ref + ":" + instances + ";" + cnt +"</a>";
+                            if (instances>0) str += tb;
+                            str +=  "</div>";
                         } else {
-                            str += "<div id=\"cell\">" + ref + tb + "</div>";
+                           // str += "<div id=\"cell\">" + ref + tb + "</div>";
+                            str += "<div id=\"cell\">" + ref + "</div>";
                         }
                         str += "\n</h2>\n";
                         for (int j = 2; j < level; j++) {

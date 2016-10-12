@@ -202,10 +202,10 @@ public class TreeStaticHtml {
             "<style>\n" +
             "/*body {font-family: \"Lato\", sans-serif;}*/\n" +
             "    body { font-size: 80%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif; }\n" +
-            "    .accordionItem h2 { margin: 0; font-size: 1.1em; padding: 0.4em; color: #fff; background-color: #944; border-bottom: 1px solid #66d; }\n" +
+            "    .accordionItem h2 { margin: 0; font-size: 1.0em; padding: 0.2em; color: #fff; background-color: #944; border-bottom: 1px solid #66d; }\n" +
             "    .accordionItem h2:hover { cursor: pointer; }\n" +
-            "    .accordionItem div { margin: 0; padding: 1em 0.4em; background-color: #eef; border-bottom: 1px solid #66d; }\n" +
-            "    .accordionItem.hide h2 { color: #000; background-color: #88f; }\n" +
+            "    .accordionItem div { margin: 0; padding: em 0.2em; background-color: #eef; border-bottom: 1px solid #66d; }\n" +
+            "    .accordionItem.hide h2 { color: #000; background-color: #f0f0f5; }\n" +
             "    .accordionItem.hide div { display: none; }\n" +
             "    .accordionItem.hide #cell2 {display:none;}\n"  +
             "\n" +
@@ -290,7 +290,7 @@ public class TreeStaticHtml {
             "\t\tfont-family: verdana,arial,sans-serif;\n" +
             "\t    font-size:11px;\n" +
             "\t\twidth:30px;\n" +
-            "\t   /*  border: 2px solid #F78181; */\n" +
+            "\t   /*  border: 2px solid #944; */\n" +
             "    \tdisplay: table-cell;\n" +
             "\t\t}\n" +
 
@@ -298,7 +298,8 @@ public class TreeStaticHtml {
             "\t\tfont-family: verdana,arial,sans-serif;\n" +
             "\t    font-size:9px;\n" +
             "\t\twidth:3px;\n" +
-            "\t   border: 2px solid #F78181; \n" +
+           // "\t   border: 2px solid #F78181; \n" +
+            "\t   border: 2px solid #944; \n" +
             "    \tdisplay: table-cell;\n" +
             "\t\t}\n"+
             "</style>"+

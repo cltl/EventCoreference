@@ -62,15 +62,12 @@ public class DataSetEntityHierarchy {
 
         try {
             OutputStream fos = new FileOutputStream(entityPath+".words.html");
-            //String scripts = TreeStaticHtml.makeScripts(cnt.size(), cntPredicates.size());
             String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, querypath, 0, 0, 0, 0);
             str += "<div id=\"Events\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
             simpleTaxonomy.htmlTableTree(fos, "entity", "dbp:",tops, 1, cnt, cntPredicates);
-            //simpleTaxonomy.htmlTableTreeSupressEmptyLeaves(fos, "entity", "dbp:",tops, 1, cnt, cntPredicates);
-            //str = "</div></div>\n";
-            str += TreeStaticHtml.bodyEnd;
+            str = TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
             OutputStream jsonOut = new FileOutputStream(entityPath+".words.json");
