@@ -284,7 +284,7 @@ public class TrigToJsonStoryPerspectives {
             }
 
             if (!pathToTokenIndex.isEmpty()) {
-                MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex, log);
+                log += MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex);
             }
             else if (!pathToRawTextIndexFile.isEmpty()) {
                // rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);

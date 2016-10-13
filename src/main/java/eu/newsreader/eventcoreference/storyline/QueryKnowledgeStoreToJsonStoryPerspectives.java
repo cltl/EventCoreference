@@ -369,7 +369,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                     MentionResolver.createSnippetIndexFromMentions(jsonObjects, KSSERVICE, KS, KSuser, KSpass);
                 }
                 else {
-                    MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex, log);
+                    log += MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex);
                 }
 
                 nEvents = jsonObjects.size();

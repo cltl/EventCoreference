@@ -285,8 +285,9 @@ public class MentionResolver {
     }
 
 
-    static void createSnippetIndexFromMentions (ArrayList<JSONObject> objects,
-                                                String pathToTokenIndex, String log) throws JSONException {
+    static String createSnippetIndexFromMentions (ArrayList<JSONObject> objects,
+                                                String pathToTokenIndex) throws JSONException {
+        String log = "";
         HashMap<String, ArrayList<String>> sourceUriList = new HashMap<String, ArrayList<String>>();
         Vector<String> urls = new Vector<String>();
         HashMap<String, Integer> eventIdObjectMap = new HashMap<String, Integer>();
@@ -436,9 +437,8 @@ public class MentionResolver {
             }
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
-        log += " -- Time elapsed to get snippets:"+estimatedTime/1000.0;
-
-
+        log = " -- Time elapsed to get snippets from "+sourceUriList.size()+" source documents:"+estimatedTime/1000.0;
+        return log;
     }
 
     static void createSnippetIndexFromMentions (ArrayList<JSONObject> objects,
