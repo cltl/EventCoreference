@@ -809,13 +809,17 @@ public class TrigKSTripleReader {
                 "?event gaf:denotedBy ?mention.\n" +
                 "?mention grasp:hasAttribution ?attribution.\n" +
                 "?attribution rdf:value ?value .\n" +
-                makeSubStringLabelFilter("?value", graspValue) +
+                makeSubStringLabelFilter("?value", graspValue) +"\n";
+        if (graspValue.indexOf("FUTURE")>-1) {
+            sparqlQuery += "FILTER(!CONTAINS(STR(?value), \"NON_FUTURE\"))\n";
+        }
+        sparqlQuery +=
                 "} LIMIT 1000 }\n" +
                 "?event ?relation ?object .\n" +
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }} ORDER BY ?event";
-        //System.out.println("sparqlQuery = " + sparqlQuery);
+       // System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
