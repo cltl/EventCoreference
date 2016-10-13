@@ -288,7 +288,7 @@ public class JsonStoryUtil {
             JSONObject jsonObject = sortedObjects.next();
             selectedEvents.add(jsonObject);
         }
-        System.out.println("Events above climax threshold = " + climaxObjects.size());
+      //  System.out.println("Events above climax threshold = " + climaxObjects.size());
         sortedObjects = climaxObjects.iterator();
         ArrayList<String> coveredEvents = new ArrayList<String>();
         int eventCounter = 0;

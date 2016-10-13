@@ -332,7 +332,7 @@ public class TrigKSTripleReader {
             }
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
-        System.out.println(" * Perspective Time elapsed:"+estimatedTime/1000.0);
+       // System.out.println(" -- Time elapsed adding perspective :"+estimatedTime/1000.0);
     }
 
 
@@ -960,8 +960,8 @@ public class TrigKSTripleReader {
             }
             oldEvent=currentEvent;
         }
-        System.out.println(" * instance statements = "+trigTripleData.tripleMapInstances.size());
-        System.out.println(" * sem statements = " + trigTripleData.tripleMapOthers.size());
+     //   System.out.println(" * instance statements = "+trigTripleData.tripleMapInstances.size());
+     //   System.out.println(" * sem statements = " + trigTripleData.tripleMapOthers.size());
     }
 
     private static boolean isEventUri (String subject) {

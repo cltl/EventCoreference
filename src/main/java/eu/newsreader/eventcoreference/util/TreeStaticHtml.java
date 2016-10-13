@@ -286,20 +286,21 @@ public class TreeStaticHtml {
             "\t\tbackground:#F3E2A9;\n" +
             "    display: table-cell;\n" +
             "\t\t}\n" +
+
             "\t#cell {\n" +
             "\t\tfont-family: verdana,arial,sans-serif;\n" +
-            "\t    font-size:11px;\n" +
-            "\t\twidth:30px;\n" +
+            "\t    font-size:14px;\n" +
+            "\t\twidth:100px;\n" +
             "\t   /*  border: 2px solid #944; */\n" +
             "    \tdisplay: table-cell;\n" +
             "\t\t}\n" +
 
             "#cell2 {\n" +
             "\t\tfont-family: verdana,arial,sans-serif;\n" +
-            "\t    font-size:9px;\n" +
-            "\t\twidth:3px;\n" +
-           // "\t   border: 2px solid #F78181; \n" +
-            "\t   border: 2px solid #944; \n" +
+            "\t    font-size:12px;\n" +
+            "\t    min-width:1000px;\n" +
+            "\t    max-width:1000px;\n" +
+            "\t   /*border: 2px solid #944;*/ \n" +
             "    \tdisplay: table-cell;\n" +
             "\t\t}\n"+
             "</style>"+

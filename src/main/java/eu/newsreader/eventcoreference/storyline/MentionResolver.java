@@ -286,7 +286,7 @@ public class MentionResolver {
 
 
     static void createSnippetIndexFromMentions (ArrayList<JSONObject> objects,
-                                                String pathToTokenIndex) throws JSONException {
+                                                String pathToTokenIndex, String log) throws JSONException {
         HashMap<String, ArrayList<String>> sourceUriList = new HashMap<String, ArrayList<String>>();
         Vector<String> urls = new Vector<String>();
         HashMap<String, Integer> eventIdObjectMap = new HashMap<String, Integer>();
@@ -326,7 +326,7 @@ public class MentionResolver {
             }
         }
 
-        System.out.println(" * Getting sourcedocuments for unique sources = " + sourceUriList.size());
+       // System.out.println(" * Getting sourcedocuments for unique sources = " + sourceUriList.size());
         long startTime = System.currentTimeMillis();
 
         NafTokenLayerIndex nafTokenLayerIndex = new NafTokenLayerIndex(urls);
@@ -436,7 +436,7 @@ public class MentionResolver {
             }
         }
         long estimatedTime = System.currentTimeMillis() - startTime;
-        System.out.println(" * Time elapsed to get text snippets from KS:"+estimatedTime/1000.0);
+        log += " -- Time elapsed to get snippets:"+estimatedTime/1000.0;
 
 
     }

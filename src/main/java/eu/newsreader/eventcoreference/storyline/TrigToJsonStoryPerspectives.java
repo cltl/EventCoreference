@@ -47,6 +47,7 @@ public class TrigToJsonStoryPerspectives {
     static String EVENTSCHEMA = "";
     static EuroVoc euroVoc = new EuroVoc();
     static EuroVoc euroVocBlackList = new EuroVoc();
+    static String log = "";
 
     static public void main (String[] args) {
         trigTripleData = new TrigTripleData();
@@ -65,6 +66,7 @@ public class TrigToJsonStoryPerspectives {
         String euroVocFile = "";
         String euroVocBlackListFile = "";
         String pathToTokenIndex = "";
+        log = "";
         fnLevel = 0;
         esoLevel = 0;
         for (int i = 0; i < args.length; i++) {
@@ -282,7 +284,7 @@ public class TrigToJsonStoryPerspectives {
             }
 
             if (!pathToTokenIndex.isEmpty()) {
-                MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex);
+                MentionResolver.createSnippetIndexFromMentions(jsonObjects, pathToTokenIndex, log);
             }
             else if (!pathToRawTextIndexFile.isEmpty()) {
                // rawTextArrayList = Util.ReadFileToUriTextArrayList(pathToRawTextIndexFile);
