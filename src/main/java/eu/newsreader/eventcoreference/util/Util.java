@@ -2762,7 +2762,7 @@ public class Util {
         return l3;
     }
 
-    static public ArrayList<String> getDifference (String s1, ArrayList<String> l1, ArrayList<String> l2) {
+/*    static public ArrayList<String> getDifference (String s1, ArrayList<String> l1, ArrayList<String> l2) {
         ArrayList<String> l3 = new ArrayList<String>();
         for (int i = 0; i < l1.size(); i++) {
             String s = l1.get(i);
@@ -2771,7 +2771,7 @@ public class Util {
             }
         }
         return l3;
-    }
+    }*/
 
     static public String fixUri (String inputLine) {
         /// PeterShaffyPeterShaffyPeterShaffy
