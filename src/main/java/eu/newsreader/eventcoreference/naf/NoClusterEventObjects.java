@@ -335,7 +335,7 @@ public class NoClusterEventObjects {
                 try {
                     eventFos.writeObject(compositeEvent);
                 } catch (IOException e) {
-                   //  e.printStackTrace();
+                    // e.printStackTrace();
                 }
                 os.flush();
                 os.close();

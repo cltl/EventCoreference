@@ -127,9 +127,10 @@ public class GetSemFromNaf {
                     KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
                     if (Util.hasCorefTargetArrayList(event.getSpans(), kafCoreferenceSet.getSetsOfSpans())) {
                         /// we want the event data
-                        /** Piek, 26-Oct-2017, took this out since it results in exploding mention sets for large coreference sets.
-/*                        ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
-                        semEvent.addNafMentions(mentionArrayList);*/
+                        /** Piek, 26-Oct-2017, took this out since it results in exploding mention sets with duplicates for large coreference sets.  **/
+                        /*ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
+                        semEvent.addNafMentions(mentionArrayList);
+                        System.out.println("mentionArrayList.size() = " + mentionArrayList.size());*/
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
                         semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
                         semEvent.setTopics(kafSaxParser.kafTopicsArrayList);

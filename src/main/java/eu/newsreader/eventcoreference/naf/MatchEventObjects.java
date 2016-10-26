@@ -153,6 +153,9 @@ public class MatchEventObjects {
                 VERBOSEMENTIONS = true;
             }
         }
+        if (DEBUG>0) {
+            System.out.println("DEBUG = " + DEBUG);
+        }
         if (!pathToSourceDataFile.isEmpty()) {
             sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
          //   System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
@@ -643,7 +646,7 @@ public class MatchEventObjects {
     public static void readCompositeEventArrayListFromObjectFile (File file, HashMap<String,CompositeEvent> events) {
         if (file.exists() ) {
             int cnt = 0;
-            if (DEBUG==2) System.out.println("file = " + file.getName());
+            if (DEBUG==1) System.out.println("file = " + file.getName());
             try {
                 InputStream fis = new FileInputStream(file);
 
@@ -676,7 +679,7 @@ public class MatchEventObjects {
                     e.printStackTrace();
                 }
             }
-            if (DEBUG==2) System.out.println(file.getName()+" nr objects read = " + cnt);
+            if (DEBUG==1) System.out.println(file.getName()+" nr objects read = " + cnt);
         }
     }
 
@@ -969,7 +972,7 @@ public class MatchEventObjects {
                            int phraseMatchThreshold,
                            int conceptMatchThreshold,
                            ArrayList<String> roleNeededArrayList) {
-       // System.out.println("eventIds = " + eventIds.size());
+        if (DEBUG==1) System.out.println("eventIds = " + eventIds.size());
         ArrayList<String> modifiedEvents = new ArrayList<String>();
         ArrayList<String> processedEvents = new ArrayList<String>();
         for (int i = 0; i < eventIds.size(); i++) {
@@ -982,7 +985,7 @@ public class MatchEventObjects {
             if (myCompositeEvent==null) {
                 continue;
             }
-            //System.out.println("eventId = " + eventId);
+            if (DEBUG>1) System.out.println("eventId = " + eventId);
             String mergedEventId = "";
 
             /// We first match this event with all other events that have the same ILI references
@@ -996,7 +999,9 @@ public class MatchEventObjects {
                     ArrayList<KafSense> hyperReferences = getHyperILIreferences(myCompositeEvent.getEvent());
                     iliReferences.addAll(hyperReferences);
                 }
-
+                if (DEBUG>0) {
+                    System.out.println("iliReferences = " + iliReferences.size());
+                }
                 if (iliReferences.size() > 0) {
                     for (int j = 0; j < iliReferences.size(); j++) {
                         KafSense kafSense = iliReferences.get(j);
@@ -1048,7 +1053,7 @@ public class MatchEventObjects {
                 }
             }
             if (mergedEventId.isEmpty()) {
-             //   if (DEBUG==2) System.out.println("NO MATCH");
+                //if (DEBUG==2) System.out.println("NO MATCH");
             }
             else {
                 if (!modifiedEvents.contains(mergedEventId)) modifiedEvents.add(mergedEventId);
@@ -1056,9 +1061,10 @@ public class MatchEventObjects {
                 if (CROSSDOC) {
                     if (!crossDocCorefSet.contains(mergedEventId)) crossDocCorefSet.add(mergedEventId);
                 }
-            //    if (DEBUG==2) System.out.println("MATCH");
+               // if (DEBUG==2) System.out.println("MATCH");
                 //System.out.println("mergedEventId = " + mergedEventId);
             }
+            if (DEBUG>1) System.out.println("Event i = " + i);
         }
 
         if (modifiedEvents.size()>0) {
@@ -1079,7 +1085,7 @@ public class MatchEventObjects {
                            int phraseMatchThreshold,
                            int conceptMatchThreshold,
                            ArrayList<String> roleNeededArrayList) {
-       // System.out.println("eventIds = " + eventIds.size());
+        if (DEBUG==1) System.out.println("eventIds = " + eventIds.size());
         ArrayList<String> modifiedEvents = new ArrayList<String>();
         ArrayList<String> processedEvents = new ArrayList<String>();
         for (int i = 0; i < eventIds.size(); i++) {
@@ -1106,7 +1112,9 @@ public class MatchEventObjects {
                     ArrayList<KafSense> hyperReferences = getHyperILIreferences(myCompositeEvent.getEvent());
                     iliReferences.addAll(hyperReferences);
                 }
-
+                if (DEBUG==1) {
+                    System.out.println("iliReferences = " + iliReferences.size());
+                }
                 if (iliReferences.size() > 0) {
                     for (int j = 0; j < iliReferences.size(); j++) {
                         KafSense kafSense = iliReferences.get(j);
@@ -1172,7 +1180,7 @@ public class MatchEventObjects {
 
             //////////////
             if (!MATCH) {
-                //if (DEBUG==2) System.out.println("NO MATCH");
+                if (DEBUG==2) System.out.println("NO MATCH");
             }
             else {
                 if (!modifiedEvents.contains(myCompositeEvent.getEvent().getId())) modifiedEvents.add(myCompositeEvent.getEvent().getId());
@@ -1180,7 +1188,7 @@ public class MatchEventObjects {
                 if (CROSSDOC) {
                     if (!crossDocCorefSet.contains(myCompositeEvent.getEvent().getId())) crossDocCorefSet.add(myCompositeEvent.getEvent().getId());
                 }
-                //if (DEBUG==2) System.out.println("MATCH");
+                if (DEBUG==2) System.out.println("MATCH");
                 //System.out.println("mergedEventId = " + mergedEventId);
             }
         }
