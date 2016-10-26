@@ -2734,13 +2734,39 @@ public class Util {
         return vector;
     }
 
-
+    static public void addNewReferences (ArrayList<KafSense> refsNew, ArrayList<KafSense> refs) {
+        for (int i = 0; i < refsNew.size(); i++) {
+            KafSense kafSense = refsNew.get(i);
+            boolean match = false;
+            for (int j = 0; j < refs.size(); j++) {
+                KafSense sense = refs.get(j);
+                if (kafSense.getSensecode().equals(sense.getSensecode())) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                refs.add(kafSense);
+            }
+        }
+    }
 
     static public ArrayList<String> getDifference (ArrayList<String> l1, ArrayList<String> l2) {
         ArrayList<String> l3 = new ArrayList<String>();
         for (int i = 0; i < l1.size(); i++) {
             String s = l1.get(i);
             if (!l2.contains(s)) {
+                l3.add(s);
+            }
+        }
+        return l3;
+    }
+
+    static public ArrayList<String> getDifference (String s1, ArrayList<String> l1, ArrayList<String> l2) {
+        ArrayList<String> l3 = new ArrayList<String>();
+        for (int i = 0; i < l1.size(); i++) {
+            String s = l1.get(i);
+            if (!l2.contains(s) && !s1.equals(s)) {
                 l3.add(s);
             }
         }
