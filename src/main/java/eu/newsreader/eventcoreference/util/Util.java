@@ -1149,10 +1149,13 @@ public class Util {
      * @return
      */
     static public boolean matchAllOfAnyMentionSpans(ArrayList<String> spans, SemObject semObject) {
+       // System.out.println("semObject.getNafMentions().size() = " + semObject.getNafMentions().size());
         for (int i = 0; i < semObject.getNafMentions().size(); i++) {
             ArrayList<NafMention> mentions = semObject.getNafMentions();
             for (int j = 0; j < mentions.size(); j++) {
                 NafMention nafMention = mentions.get(j);
+                // System.out.println("nafMention.getTermsIds().toString() = " + nafMention.getTermsIds().toString());
+                // System.out.println("spans.toString() = " + spans.toString());
                 boolean localmatch = true;
                 for (int k = 0; k < spans.size(); k++) {
                     String spanId = spans.get(k);
@@ -2074,6 +2077,22 @@ public class Util {
         return mentionURIs;
     }
 
+    static public ArrayList<NafMention> getNafMentionArrayListFromCoreferenceSet (String baseUri,
+                                                                                           KafSaxParser kafSaxParser,
+                                                                                           KafCoreferenceSet corefSet) {
+        ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
+        for (int i = 0; i < corefSet.getSetsOfSpans().size(); i++) {
+            ArrayList<CorefTarget> corefTargets = corefSet.getSetsOfSpans().get(i);
+            NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
+            if (!hasMention(mentionURIs, mention)) {
+                // System.out.println("corefTargets.toString() = " + corefTargets.toString());
+                mentionURIs.add(mention);
+            }
+        }
+        return mentionURIs;
+    }
+
+    @Deprecated
     static public ArrayList<NafMention> getNafMentionArrayListFromPredicatesAndCoreferences (String baseUri,
                                                                                            KafSaxParser kafSaxParser,
                                                                                            KafEvent kafEvent) {

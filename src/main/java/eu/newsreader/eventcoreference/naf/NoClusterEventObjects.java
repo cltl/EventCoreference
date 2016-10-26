@@ -280,7 +280,7 @@ public class NoClusterEventObjects {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-      //  System.out.println("nafFileName = " + nafFileName);
+       // System.out.println("nafFileName = " + nafFileName);
         GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations,
                 ADDITIONALROLES, DOCTIME, CONTEXTTIME);
 
@@ -298,10 +298,8 @@ public class NoClusterEventObjects {
             if (!compositeEvent.isValid() && !ALL) {
                 continue;
             }
-           // System.out.println("lcs:"+compositeEvent.getEvent().getLcs().toString());
-          //  System.out.println("hypers:"+compositeEvent.getEvent().getHypers().toString());
-
-            //    System.out.println("appending to timeFile.getName() = " + timeFile.getName());
+            //System.out.println("lcs:"+compositeEvent.getEvent().getLcs().toString());
+            //System.out.println("hypers:"+compositeEvent.getEvent().getHypers().toString());
             File randomFile = null;
             if (!nafFileName.isEmpty()) {
                 randomFile = new File(allFolder.getAbsolutePath() + "/" + nafFileName + ".obj");
@@ -323,7 +321,7 @@ public class NoClusterEventObjects {
                 try {
                     eventFos.writeObject(compositeEvent);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                  //  e.printStackTrace();
                 }
                 os.flush();
                 os.close();
@@ -337,7 +335,7 @@ public class NoClusterEventObjects {
                 try {
                     eventFos.writeObject(compositeEvent);
                 } catch (IOException e) {
-                     e.printStackTrace();
+                   //  e.printStackTrace();
                 }
                 os.flush();
                 os.close();

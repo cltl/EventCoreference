@@ -871,6 +871,32 @@ public class TrigKSTripleReader {
     }
 
 
+    public static ArrayList<String> readEventIdsFromKs(String sparqlQuery)throws Exception {
+        ArrayList<String> eventIds = new ArrayList<String>();
+        //System.out.println("serviceEndpoint = " + serviceEndpoint);
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        //System.out.println("user = " + user);
+        //System.out.println("pass = " + pass);
+        HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
+
+        Property inDateTimeProperty = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time#inDateTime");
+        Property beginTimeProperty = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time#hasBeginning");
+        Property endTimeProperty = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time#hasEnd");
+
+
+        QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
+        ResultSet resultset = x.execSelect();
+        while (resultset.hasNext()) {
+            QuerySolution solution = resultset.nextSolution();
+            String currentEvent = solution.get("event").toString();
+            if (!eventIds.contains(currentEvent)) {
+                eventIds.add(currentEvent);
+            }
+        }
+        return eventIds;
+    }
+
+
     public static void readTriplesFromKs(String sparqlQuery)throws Exception {
         //System.out.println("serviceEndpoint = " + serviceEndpoint);
         //System.out.println("sparqlQuery = " + sparqlQuery);

@@ -87,15 +87,16 @@ public class GetSemFromNaf {
         if (ADDITIONALROLES) {
             processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
         }
+        //System.out.println("semActors = " + semActors.size());
         processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
-
+        //System.out.println("semTimes = " + semTimes.size());
         processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
-
+        //System.out.println("semEvents = " + semEvents.size());
         //// THIS FIX IS NEEDED BECAUSE SOMETIMES SRL GENERATES IDENTICAL SPANS FOR PREDICATES AND ACTORS. WE REMOVE EVENTS THAT ARE IDENTICAL WITH ACTORS
         //Util.filterOverlapEventsEntities(semEvents, semActors);
 
-        processNafFileForRelations(baseUrl,
-                kafSaxParser, semEvents, semActors, semTimes, semRelations);
+        processNafFileForRelations(baseUrl, kafSaxParser, semEvents, semActors, semTimes, semRelations);
+        //System.out.println("semRelations = " + semRelations.size());
     }
 
 
@@ -116,6 +117,9 @@ public class GetSemFromNaf {
                 //// this is an event coreference set
                 //// no we get all the predicates for this set.
                 SemEvent semEvent = new SemEvent();
+                ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromCoreferenceSet(baseUrl, kafSaxParser, kafCoreferenceSet);
+                semEvent.addNafMentions(mentionArrayList);
+               // System.out.println("mentionArrayList.size() = " + mentionArrayList.size());
                 semEvent.addHypers(kafCoreferenceSet.getHypernymFromExternalReferences());
                 semEvent.addLcses(kafCoreferenceSet.getLcsFromExternalReferences());
                 semEvent.addConcepts(kafCoreferenceSet.getDirectExternalReferences());
@@ -123,8 +127,9 @@ public class GetSemFromNaf {
                     KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
                     if (Util.hasCorefTargetArrayList(event.getSpans(), kafCoreferenceSet.getSetsOfSpans())) {
                         /// we want the event data
-                        ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
-                        semEvent.addNafMentions(mentionArrayList);
+                        /** Piek, 26-Oct-2017, took this out since it results in exploding mention sets for large coreference sets.
+/*                        ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
+                        semEvent.addNafMentions(mentionArrayList);*/
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
                         semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
                         semEvent.setTopics(kafSaxParser.kafTopicsArrayList);
@@ -145,6 +150,7 @@ public class GetSemFromNaf {
                 }
             }
         }
+
        // System.out.println("semEvents.size() = " + semEvents.size());
     }
 
@@ -1201,7 +1207,7 @@ public class GetSemFromNaf {
                     break;
                 }
             }
-           // System.out.println("semEventId = " + semEventId);
+         //   System.out.println("semEventId = " + semEventId);
             if (semEventId.isEmpty()) {
                 //// this is an event without SRL representation, which is not allowed
                 // SHOULD NEVER OCCUR
@@ -1222,15 +1228,14 @@ public class GetSemFromNaf {
                     }
                     else {
                       //  System.out.println("valid kafParticipant.getRole() = " + kafParticipant.getRole());
-
                     }
 
                         //// we take all objects above threshold
                     ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
-                    //  System.out.println("semObjects.size() = " + semObjects.size());
+                     // System.out.println("semObjects.size() = " + semObjects.size());
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
-                     //   System.out.println("semObject.getUniquePhrases().toString() = " + semObject.getUniquePhrases().toString());
+                       // System.out.println("semObject.getUniquePhrases().toString() = " + semObject.getUniquePhrases().toString());
                         if (semObject != null) {
                             SemRelation semRelation = new SemRelation();
                             String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
@@ -1252,10 +1257,15 @@ public class GetSemFromNaf {
                             semRelation.setSubject(semEventId);
                             semRelation.setObject(semObject.getId());
                             semRelations.add(semRelation);
+                           /* System.out.println("semRelation.getPredicates() = " + semRelation.getPredicates().size());
+                            System.out.println("semRelation.getNafMentions() = " + semRelation.getNafMentions().size());
+                            System.out.println("semRelation.subject = " + semRelation.getSubject());
+                            System.out.println("semRelation.object = " + semRelation.getObject());*/
                         }
                         else {
-                            System.out.println();
+                            System.out.println("SemObject is null");
                         }
+                       // System.out.println("semRelations = " + semRelations.size());
                     }
                 }
             }
