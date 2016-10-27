@@ -924,7 +924,7 @@ public class MatchEventObjects {
         while (keys.hasNext()) {
             String key = keys.next();
             CompositeEvent myCompositeEvent = myCompositeEvents.get(key);
-            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equals("ili")) {
+            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("ili")) {
                 ArrayList<KafSense> iliReferences = getILIreferences(myCompositeEvent.getEvent());
                 if (LCS) {
                     ArrayList<KafSense> lcsReferences = getLcsILIreferences(myCompositeEvent.getEvent());
@@ -999,7 +999,7 @@ public class MatchEventObjects {
             String mergedEventId = "";
 
             /// We first match this event with all other events that have the same ILI references
-            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equals("ili")) {
+            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("ili")) {
                 ArrayList<KafSense> iliReferences = getILIreferences(myCompositeEvent.getEvent());
                 if (LCS) {
                     ArrayList<KafSense> lcsReferences = getLcsILIreferences(myCompositeEvent.getEvent());
@@ -1126,7 +1126,7 @@ public class MatchEventObjects {
 
             /// We first match this event with all other events that have the same ILI references
             ArrayList<KafSense> iliReferences = getILIreferences(myCompositeEvent.getEvent());
-            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equals("ili")) {
+            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("ili")) {
                 if (LCS) {
                     ArrayList<KafSense> lcsReferences = getLcsILIreferences(myCompositeEvent.getEvent());
                     iliReferences.addAll(lcsReferences);
