@@ -2946,4 +2946,38 @@ public class Util {
         System.out.println("lastName = " + lastName);
         return lastName;
     }
+
+    public static boolean isSimpleQuery (String[] args) {
+        int q = 0;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equalsIgnoreCase("--entity")) {
+               q++;
+            }
+            else if (arg.equalsIgnoreCase("--event")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--grasp")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--year")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--topic")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--source")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--word")) {
+                q++;
+            }
+        }
+        if (q>1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 }

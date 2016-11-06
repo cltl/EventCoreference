@@ -119,7 +119,6 @@ public class GetSemFromNaf {
                 SemEvent semEvent = new SemEvent();
                 ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromCoreferenceSet(baseUrl, kafSaxParser, kafCoreferenceSet);
                 semEvent.addNafMentions(mentionArrayList);
-               // System.out.println("mentionArrayList.size() = " + mentionArrayList.size());
                 semEvent.addHypers(kafCoreferenceSet.getHypernymFromExternalReferences());
                 semEvent.addLcses(kafCoreferenceSet.getLcsFromExternalReferences());
                 semEvent.addConcepts(kafCoreferenceSet.getDirectExternalReferences());
@@ -127,31 +126,27 @@ public class GetSemFromNaf {
                     KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
                     if (Util.hasCorefTargetArrayList(event.getSpans(), kafCoreferenceSet.getSetsOfSpans())) {
                         /// we want the event data
-                        /** Piek, 26-Oct-2017, took this out since it results in exploding mention sets with duplicates for large coreference sets.  **/
+                        /** Piek, 26-Oct-2017, took this out since it results in exploding mention sets with duplicates for large coreference sets = set size^2.  **/
                         /*ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
-                        semEvent.addNafMentions(mentionArrayList);
-                        System.out.println("mentionArrayList.size() = " + mentionArrayList.size());*/
+                        semEvent.addNafMentions(mentionArrayList);*/
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
                         semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
-                        semEvent.setTopics(kafSaxParser.kafTopicsArrayList);
-                        semEvent.getUriForTopicLabel(eurovoc);
+                        semEvent.setTopics(kafSaxParser.kafTopicsArrayList); /// we assign all the topics (assigned to the document) to this event
+                        semEvent.getUriForTopicLabel(eurovoc); /// we obtain the eurovoc URL for the topic label
                      //   semEvent.addConceptsExcept(event.getExternalReferences(), "WordNet");  /// these are concepts added by the SRL except for the WordNet references since we assume they come from the coreference sets
                     }
                 }
                 semEvent.addPhraseCountsForMentions(kafSaxParser);
                 String eventName = semEvent.getTopPhraseAsLabel();
                 if (eventName.length() >= MINEVENTLABELSIZE) {
-                    //semEvent.setId(baseUrl+event.getId());
-                    //semEvent.setId(baseUrl + eventName + "Event");
-                    String eventId = kafCoreferenceSet.getCoid().replace("coevent", "ev");
-                    semEvent.setId(baseUrl + eventId);   // shorter form for triple store
+                    String eventId = kafCoreferenceSet.getCoid().replace("coevent", "ev");// shorter form for saving space in triple store
+                    semEvent.setId(baseUrl + eventId);
                     semEvent.addFactuality(kafSaxParser);
                     semEvent.setIdByDBpediaReference();
                     semEvents.add(semEvent);
                 }
             }
         }
-
        // System.out.println("semEvents.size() = " + semEvents.size());
     }
 

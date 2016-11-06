@@ -500,7 +500,7 @@ public class MentionResolver {
                     System.out.println("kafWordForm.toString() = " + kafWordForm.toString());
                 }*/
             } catch (Exception e) {
-                // e.printStackTrace();
+                 e.printStackTrace();
             }
             ArrayList<String> eventIds = sourceUriList.get(key);
             for (int i = 0; i < eventIds.size(); i++) {
@@ -595,77 +595,6 @@ public class MentionResolver {
         System.out.println(" * Time elapsed to get text snippets from KS:"+estimatedTime/1000.0);
     }
 
- /*   static void addSnippetToEventMentions (JSONObject jsonObject) throws JSONException {
-            JSONArray myMentions = jsonObject.getJSONArray("mentions");
-            for (int m = 0; m < myMentions.length(); m++) {
-                JSONObject mentionObject = (JSONObject) myMentions.get(m);
-                String uri = mentionObject.getString("uri");
-                JSONArray offsetArray = mentionObject.getJSONArray("char");
-                Integer offsetBegin =  null;
-                try {
-                    offsetBegin = Integer.parseInt(offsetArray.getString(0));
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-                Integer offsetEnd = null;
-                try {
-                    offsetEnd = Integer.parseInt(offsetArray.getString(1));
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-                if (rawTextMap.containsKey(uri) && offsetBegin!=null && offsetEnd!=null) {
-                    String text = rawTextMap.get(uri);
-                    String newText = text;
-                    int offsetLength = (offsetEnd-offsetBegin);
-                    int textStart = 0;
-                    int textEnd = offsetBegin+offsetLength+nContext;
-                    //System.out.println("offsetBegin = " + offsetBegin);
-                    //System.out.println("offsetEnd = " + offsetEnd);
-                    //System.out.println("offsetLength = " + offsetLength);
-                    if (offsetBegin>nContext) {
-                        textStart = offsetBegin-nContext;
-                        int idx = text.lastIndexOf(" ",textStart);
-                        if (idx>-1 && idx<textStart) {
-                            //  System.out.println("idx = " + idx);
-                            //  System.out.println("textStart = " + textStart);
-                            if (offsetBegin>(textStart-idx)+nContext) {
-                                offsetBegin = (textStart-idx)+nContext;
-                                textStart = idx;
-                            }
-                            else {
-                                textStart = 0;
-                            }
-                        }
-                        else {
-                            offsetBegin = nContext;
-                        }
-                        offsetEnd = offsetBegin+offsetLength;
-                    }
-                    int idx = text.indexOf(" ", textEnd);
-                    if (idx>-1) textEnd = idx;
-                    if (text.length()<=textEnd) {
-                        textEnd = text.length()-1;
-                    }
-
-                    newText = text.substring(textStart, textEnd);
-                    if (offsetEnd>=newText.length()) {
-                        offsetBegin = newText.length()-offsetLength;
-                        offsetEnd = newText.length()-1;
-                    }
-                    try {
-                        mentionObject.append("snippet", newText);
-                        mentionObject.append("snippet_char", offsetBegin);
-                        mentionObject.append("snippet_char", offsetEnd);
-                        //jsonObject.append("mentions", newMentionObject);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    // jsonObject.append("mentions", mentionObject);
-                }
-            }
-    }*/
 
     static public void ReadFileToUriTextArrayList(String fileName, ArrayList<JSONObject> events) {
         HashMap<String, String> rawTextMap = new HashMap<String, String>();

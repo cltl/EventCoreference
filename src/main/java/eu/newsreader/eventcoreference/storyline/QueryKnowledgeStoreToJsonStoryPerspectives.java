@@ -8,10 +8,7 @@ import eu.newsreader.eventcoreference.util.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by piek on 1/3/14.
@@ -236,51 +233,226 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
 
         long startTime = System.currentTimeMillis();
         String ksQueryError = "";
-        if (!sparqlQuery.isEmpty()) {
-          //  System.out.println(" * queried with SPARQL = " + sparqlQuery);
-            try {
-                TrigKSTripleReader.readTriplesFromKs(sparqlQuery);
-            } catch (Exception e) {
-                ksQueryError = e.getMessage();
-                ksQueryError += e.getCause();
-            }
+        if (!eventQuery.isEmpty()) {
+            log += " -- queried for event = " + eventQuery;
         }
-        else if (!eventQuery.isEmpty() || !entityQuery.isEmpty() || !sourceQuery.isEmpty() || !wordQuery.isEmpty() || !graspQuery.isEmpty()) {
-            if (!eventQuery.isEmpty()) {
-               log += " -- queried for event = " + eventQuery;
-            }
+        if (!entityQuery.isEmpty()) {
+            log +=  " -- queried for entity = " + entityQuery;
+        }
+        if (!wordQuery.isEmpty()) {
+            log += " -- queried for word = " + wordQuery;
+        }
+        if (!sourceQuery.isEmpty()) {
+            log += " -- queried for source = " + sourceQuery;
+        }
+        if (!year.isEmpty()) {
+            log += " -- queried for year = " + year;
+        }
+        if (!graspQuery.isEmpty()) {
+            log += " -- queried for perspective = " + graspQuery;
+        }
+        if (!Util.isSimpleQuery(args)) {
+            ///// complex query so we combine identifiers
+            ArrayList<String> ids = new ArrayList<String>();
+            ArrayList<String> entityBasedIds = new ArrayList<String>();
+            ArrayList<String> yearBasedIds = new ArrayList<String>();
+            ArrayList<String> eventBasedIds = new ArrayList<String>();
+            ArrayList<String> stringBasedIds = new ArrayList<String>();
+            ArrayList<String> sourceBasedIds = new ArrayList<String>();
+            String sparql = "";
+/*
+            System.out.println("entityQuery = " + entityQuery);
             if (!entityQuery.isEmpty()) {
-                log +=  " -- queried for entity = " + entityQuery;
+                try {
+                    //split query into types, instances and labels
+                    //
+                    String labels = TrigKSTripleReader.getLabelQueryforEntity(entityQuery);
+                    String types = TrigKSTripleReader.getTypeQueryforEntity(entityQuery);
+                    String instances = TrigKSTripleReader.getInstanceQueryforEntity(entityQuery);
+                    if (!labels.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforEntityLabel(labels, ids);
+                        entityBasedIds = TrigKSTripleReader.readEventIdsFromKs(sparql);
+                    }
+                    if (!instances.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforEntityInstance(instances, ids);
+                        entityBasedIds.addAll(TrigKSTripleReader.readEventIdsFromKs(sparql));
+                    }
+                    if (!types.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforEntityType(types, ids);
+                        entityBasedIds.addAll(TrigKSTripleReader.readEventIdsFromKs(sparql));
+                    }
+                    ids = entityBasedIds;
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
             }
-            if (!wordQuery.isEmpty()) {
-                log += " -- queried for word = " + wordQuery;
-            }
-            if (!sourceQuery.isEmpty()) {
-                log += " -- queried for source = " + sourceQuery;
-            }
-            if (!graspQuery.isEmpty()) {
-                log += " -- queried for perspective = " + graspQuery;
+*/
+            System.out.println("ids = " + ids.size());
+            System.out.println("eventQuery = " + eventQuery);
+            if (!eventQuery.isEmpty()) {
+                try {
+                    //@split query into labels and types
+                    String labels = TrigKSTripleReader.getLabelQueryforEvent(eventQuery);
+                    String types = TrigKSTripleReader.getTypeQueryforEvent(eventQuery);
+                    if (!labels.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforEventLabel(labels, ids);
+                        eventBasedIds = TrigKSTripleReader.readEventIdsFromKs(sparql);
+                    }
+                    if (!types.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforEventType(types, ids);
+                        eventBasedIds.addAll(TrigKSTripleReader.readEventIdsFromKs(sparql));
+                    }
+                    ids = eventBasedIds;
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
             }
 
-            if (!entityQuery.isEmpty() && eventQuery.isEmpty()) {
+            System.out.println("ids = " + ids.size());
+            System.out.println("entityQuery = " + entityQuery);
+            if (!entityQuery.isEmpty()) {
                 try {
-                    TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
+                    //split query into types, instances and labels
+                    //
+                    String labels = TrigKSTripleReader.getLabelQueryforEntity(entityQuery);
+                    String types = TrigKSTripleReader.getTypeQueryforEntity(entityQuery);
+                    String instances = TrigKSTripleReader.getInstanceQueryforEntity(entityQuery);
+                    if (!labels.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforEntityLabel(labels, ids);
+                        entityBasedIds = TrigKSTripleReader.readEventIdsFromKs(sparql);
+                    }
+                    if (!instances.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforEntityInstance(instances, ids);
+                        entityBasedIds.addAll(TrigKSTripleReader.readEventIdsFromKs(sparql));
+                    }
+                    if (!types.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforEntityType(types, ids);
+                        entityBasedIds.addAll(TrigKSTripleReader.readEventIdsFromKs(sparql));
+                    }
+                    ids = entityBasedIds;
                 } catch (Exception e) {
                     ksQueryError = e.getMessage();
                     ksQueryError += e.getCause();
                 }
             }
-            else if (entityQuery.isEmpty() && !eventQuery.isEmpty()) {
+
+            System.out.println("ids = " + ids.size());
+            System.out.println("year = " + year);
+
+            if (!year.isEmpty()) {
+                try {
+                    sparql = TrigKSTripleReader.makeQueryforYears(year, ids);
+                    ids = TrigKSTripleReader.readEventIdsFromKs(sparql);
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
+            }
+
+            System.out.println("ids = " + ids.size());
+            System.out.println("source = " + year);
+            if (!sourceQuery.isEmpty()) {
+                try {
+                    String sources = TrigKSTripleReader.getsource(sourceQuery);
+                    if (!sources.isEmpty()) {
+                        sparql = TrigKSTripleReader.makeQueryforAuthorSurfaceForm(sources, ids);
+                        sourceBasedIds = TrigKSTripleReader.readEventIdsFromKs(sparql);
+                        sparql = TrigKSTripleReader.makeQueryforCitedSurfaceForm(sources, ids);
+                        sourceBasedIds.addAll(TrigKSTripleReader.readEventIdsFromKs(sparql));
+                        ids = sourceBasedIds;
+                    }
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
+            }
+            System.out.println("ids = " + ids.size());
+            System.out.println("grasp = " + year);
+
+            if (!graspQuery.isEmpty()) {
+                try {
+                    sparql = TrigKSTripleReader.makeQueryforGraspValue(graspQuery, ids);
+                    ids = TrigKSTripleReader.readEventIdsFromKs(sparql);
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
+            }
+
+            System.out.println("ids = " + ids.size());
+            System.out.println("word = " + year);
+
+            if (!wordQuery.isEmpty()) {
+                try {
+                    sparql = TrigKSTripleReader.makeQueryforEntityLabel(wordQuery, ids);
+                    stringBasedIds = TrigKSTripleReader.readEventIdsFromKs(sparql);
+                    sparql = TrigKSTripleReader.makeQueryforEventLabel(wordQuery, ids);
+                    stringBasedIds.addAll(TrigKSTripleReader.readEventIdsFromKs(sparql));
+                    ids = stringBasedIds;
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
+            }
+
+    /*      if (entityBasedIds.size()>0) {
+                if (ids.size()==0) { ids = entityBasedIds; }
+                else { ids.retainAll(entityBasedIds);}
+            }
+            if (eventBasedIds.size()>0) {
+                if (ids.size()==0) { ids = eventBasedIds;}
+                else {ids.retainAll(eventBasedIds); }
+            }
+            if (sparqlBasedIds.size()>0) {
+                if (ids.size()==0) {ids = sparqlBasedIds; }
+                else {ids.retainAll(sparqlBasedIds); }
+            }
+            if (sourceBasedIds.size()>0) {
+                if (ids.size()==0) {ids = sourceBasedIds;  }
+                else { ids.retainAll(sourceBasedIds);}
+            }
+            if (perspectiveBasedIds.size()>0) {
+                if (ids.size()==0) { ids = perspectiveBasedIds;}
+                else { ids.retainAll(perspectiveBasedIds);}
+            }
+            if (stringBasedIds.size()>0) {
+                if (ids.size()==0) { ids = stringBasedIds; }
+                else { ids.retainAll(stringBasedIds); }
+            }*/
+
+            System.out.println("eventIds.size() = " + ids.size());
+
+            if (ids.size() > 0) {
+                String query = TrigKSTripleReader.makeSparqlQueryForEventArrayDataFromKs(ids);
+                try {
+                    TrigKSTripleReader.getEventDataFromKs(query);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        else {
+            //// we have a simple query so we get the results directly
+            if (!sparqlQuery.isEmpty()) {
+                //  System.out.println(" * queried with SPARQL = " + sparqlQuery);
+                try {
+                    TrigKSTripleReader.readTriplesFromKs(sparqlQuery);
+                } catch (Exception e) {
+                    ksQueryError = e.getMessage();
+                    ksQueryError += e.getCause();
+                }
+            } else if (!entityQuery.isEmpty()) {
+                    try {
+                        TrigKSTripleReader.readTriplesFromKSforEntity(entityQuery);
+                    } catch (Exception e) {
+                        ksQueryError = e.getMessage();
+                        ksQueryError += e.getCause();
+                    }
+            } else if (!eventQuery.isEmpty()) {
                 try {
                     TrigKSTripleReader.readTriplesFromKSforEvents(eventQuery);
-                } catch (Exception e) {
-                    ksQueryError = e.getMessage();
-                    ksQueryError += e.getCause();
-                }
-            }
-            else if (!entityQuery.isEmpty() && !eventQuery.isEmpty()) {
-                try {
-                    TrigKSTripleReader.readTriplesFromKSforEntityAndEvent(entityQuery, eventQuery);
                 } catch (Exception e) {
                     ksQueryError = e.getMessage();
                     ksQueryError += e.getCause();
@@ -293,16 +465,14 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                     ksQueryError = e.getMessage();
                     ksQueryError += e.getCause();
                 }
-            }
-            else if (!graspQuery.isEmpty()) {
+            } else if (!graspQuery.isEmpty()) {
                 try {
                     TrigKSTripleReader.readTriplesFromKSforGraspValue(graspQuery);
                 } catch (Exception e) {
                     ksQueryError = e.getMessage();
                     ksQueryError += e.getCause();
                 }
-            }
-            else if (!wordQuery.isEmpty()) {
+            } else if (!wordQuery.isEmpty()) {
                 try {
                     TrigKSTripleReader.readTriplesFromKSforSurfaceString(wordQuery);
                 } catch (Exception e) {
@@ -311,6 +481,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
             }
         }
+
         if (!ksQueryError.isEmpty())  {
             log +=  " -- Error querying KnowledgeStore:"+ksQueryError;
         }

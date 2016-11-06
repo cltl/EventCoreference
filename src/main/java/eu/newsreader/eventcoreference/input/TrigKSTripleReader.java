@@ -388,6 +388,19 @@ public class TrigKSTripleReader {
         return filter;
     }
 
+    static public String makeYearFilter(String variable, String query) {
+
+        String filter = "FILTER (";
+        String[] fields = query.split(";");
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].replace('^', ' ');;
+            if (i>0)  filter +=" || ";
+            filter += "regex(str("+variable+"), \"^"+field+"$\")";
+        }
+        filter += ") .\n" ;
+        return filter;
+    }
+
     static public String makeSubStringLabelFilter(String variable, String query) {
         //FILTER ( regex(str(?entlabel), "Bank") || regex(str(?entlabel), "Dank")) .
         //http://www.newsreader-project.eu/provenance/author/Algemeen+Dagblad
@@ -468,6 +481,18 @@ public class TrigKSTripleReader {
         readTriplesFromKSforEventLabel(entityQuery);
     }
 
+
+    static public String getsource (String sourceQuery) {
+        String [] fields = sourceQuery.split(";");
+        String sources = "";
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+            if (!sources.isEmpty()) sources += ";";
+            sources += field;
+        }
+        return sources;
+    }
+
     static public void readTriplesFromKSforSource(String sourceQuery)throws Exception {
         String [] fields = sourceQuery.split(";");
        // System.out.println("entityQuery = " + entityQuery);
@@ -503,7 +528,412 @@ public class TrigKSTripleReader {
         if (!types.isEmpty()) readTriplesFromKSforEventType(types);
     }
 
+    static public String getLabelQueryforEvent(String entityQuery) {
+        String labels = "";
+        String [] fields = entityQuery.split(";");
+        // System.out.println("entityQuery = " + entityQuery);
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+            // field = multiwordFix(field);
+            if (field.indexOf(":")==-1) {
+                if (!labels.isEmpty()) labels += ";";
+                labels += field;
+            }
+        }
+        return labels;
+    }
 
+    static public String getTypeQueryforEvent(String entityQuery) {
+        String labels = "";
+        String [] fields = entityQuery.split(";");
+        // System.out.println("entityQuery = " + entityQuery);
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+            // field = multiwordFix(field);
+            if (field.indexOf(":")>-1) {
+                if (!labels.isEmpty()) labels += ";";
+                labels += field;
+            }
+        }
+        return labels;
+    }
+
+    static public String getLabelQueryforEntity(String entityQuery) {
+        String labels = "";
+        String [] fields = entityQuery.split(";");
+        // System.out.println("entityQuery = " + entityQuery);
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+            // field = multiwordFix(field);
+            if (field.indexOf("dbp:")==-1 && field.indexOf("//cltl.nl/")==-1 && field.indexOf("dbpedia:")==-1) {
+                if (!labels.isEmpty()) labels += ";";
+                labels += field;
+            }
+        }
+        return labels;
+    }
+
+    static public String getTypeQueryforEntity(String entityQuery) {
+        String labels = "";
+        String [] fields = entityQuery.split(";");
+        // System.out.println("entityQuery = " + entityQuery);
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+            // field = multiwordFix(field);
+            if (field.indexOf("dbp:")>-1 || field.indexOf("//cltl.nl/")>-1) {
+                if (!labels.isEmpty()) labels += ";";
+                labels += field;
+            }
+        }
+        return labels;
+    }
+
+    static public String getInstanceQueryforEntity(String entityQuery) {
+        String labels = "";
+        String [] fields = entityQuery.split(";");
+        // System.out.println("entityQuery = " + entityQuery);
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+            // field = multiwordFix(field);
+            if (field.indexOf("dbpedia:")>-1) {
+                if (!labels.isEmpty()) labels += ";";
+                labels += field;
+            }
+        }
+        return labels;
+    }
+
+    static public void makeQueryforEntity(String entityQuery)throws Exception {
+        String types = "";
+        String instances = "";
+        String labels = "";
+        String [] fields = entityQuery.split(";");
+        // System.out.println("entityQuery = " + entityQuery);
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].trim().replace('^', ' ');
+            // field = multiwordFix(field);
+            if (field.indexOf("dbp:")>-1) {
+                if (!types.isEmpty()) types += ";";
+                types += field;
+            }
+            else if (field.indexOf("//cltl.nl/")>-1) {
+                if (!types.isEmpty()) types += ";";
+                types += field;
+            }
+            else if (field.indexOf("dbpedia:")>-1) {
+                if (!instances.isEmpty()) instances += ";";
+                instances += field;
+            }
+            else {
+                if (!labels.isEmpty()) labels += ";";
+                labels += field;
+            }
+        }
+        if (!labels.isEmpty()) readTriplesFromKSforEntityLabel(labels);
+        if (!types.isEmpty()) readTriplesFromKSforEntityType(types);
+        if (!instances.isEmpty()) readTriplesFromKSforEntityInstance(instances);
+    }
+
+    static public String makeQueryforEntityLabel(String entityLabel, ArrayList<String> eventIds)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event  \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                //makeLabelFilter("?entlabel",entityLabel) +
+                makeSubStringLabelFilter("?entlabel",entityLabel) +
+                "?ent rdfs:label ?entlabel .\n" +
+                "?event sem:hasActor ?ent .\n";
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery+= "} LIMIT "+limit+" }}\n";
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        return sparqlQuery;
+    }
+
+
+    static public String makeQueryforEntityType(String entityType, ArrayList<String> eventIds)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event sem:hasActor ?ent .\n" +
+                makeTypeFilter("?ent", entityType);
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery +="} LIMIT "+limit+" }}\n" ;
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        return sparqlQuery;
+    }
+
+    static public String makeQueryforEntityInstance(String entityType, ArrayList<String> eventIds)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                makeInstanceFilter("?event", entityType);
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery += "} LIMIT "+limit+" }}\n" ;
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        return sparqlQuery;
+    }
+
+    static public String makeQueryforEventType(String eventType, ArrayList<String> eventIds)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                makeTypeFilter("?event", eventType);
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery += "} LIMIT "+limit+" }}\n" ;
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        return sparqlQuery;
+    }
+
+    static public String makeQueryforEventLabel(String eventLabel, ArrayList<String> eventIds)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                makeLabelFilter("?eventlabel",eventLabel);
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery += "} LIMIT "+limit+" }}\n" ;
+       // System.out.println("sparqlQuery = " + sparqlQuery);
+        return sparqlQuery;
+    }
+
+    //@TODO make years filter
+    static public String makeQueryforYears(String year, ArrayList<String> eventIds)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                makeYearFilter("?eventlabel",year);
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery += "} LIMIT "+limit+" }}\n" ;
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        return sparqlQuery;
+    }
+
+    static public String makeQueryforCitedSurfaceForm(String citedLabel, ArrayList<String> eventIds)throws Exception {
+
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
+                "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event gaf:denotedBy ?mention.\n" +
+                "?mention grasp:hasAttribution ?attribution.\n" +
+                "?attribution grasp:wasAttributedTo ?cite.\n" +
+                makeSubStringLabelFilter("?cite", citedLabel);
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery += "} LIMIT "+limit+" }}\n" ;
+        return sparqlQuery;
+    }
+
+    static public String makeQueryforAuthorSurfaceForm(String authorLabel, ArrayList<String> eventIds)throws Exception {
+        //http://www.newsreader-project.eu/provenance/author/Algemeen+Dagblad
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
+                "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
+                "PREFIX prov:  <http://www.w3.org/ns/prov#>\n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event gaf:denotedBy ?mention.\n" +
+                "?mention grasp:hasAttribution ?attribution.\n" +
+                "?attribution prov:wasAttributedTo ?doc .\n" +
+                "?doc prov:wasAttributedTo ?author .\n"  +
+                makeSubStringLabelFilter("?author", authorLabel);
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery += "} LIMIT "+limit+" }}\n" ;
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        return  sparqlQuery;
+    }
+
+    static public String makeQueryforGraspValue(String graspValue, ArrayList<String> eventIds)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
+                "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
+                "PREFIX prov:  <http://www.w3.org/ns/prov#>\n" +
+                "SELECT ?event \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event gaf:denotedBy ?mention.\n" +
+                "?mention grasp:hasAttribution ?attribution.\n" +
+                "?attribution rdf:value ?value .\n" +
+                makeSubStringLabelFilter("?value", graspValue) +"\n";
+                if (graspValue.indexOf("FUTURE")>-1) {
+                    sparqlQuery += "FILTER(!CONTAINS(STR(?value), \"NON_FUTURE\"))\n";
+                }
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery += "} LIMIT "+limit+" }}\n" ;
+               //  System.out.println("sparqlQuery = " + sparqlQuery);
+                 return sparqlQuery;
+    }
+
+    static public String makeQueryforTopic(String topic, ArrayList<String> eventIds)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \n" +
+                "PREFIX eurovoc: <http://eurovoc.europa.eu/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                "?event skos:relatedMatch eurovoc:" + topic + " .\n";
+                if (eventIds.size()>0) {
+                    sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
+                    for (int i = 0; i < eventIds.size(); i++) {
+                        String evenId = eventIds.get(i);
+                        sparqlQuery += "<" + evenId + ">\n";
+                    }
+                    sparqlQuery+= "}";
+                }
+                sparqlQuery += "} LIMIT "+limit+" }\n";
+        // System.out.println("sparqlQuery = " + sparqlQuery);
+        return sparqlQuery;
+    }
+
+    public static ArrayList<String> readEventIdsFromKs(String sparqlQuery)throws Exception {
+        ArrayList<String> eventIds = new ArrayList<String>();
+        //System.out.println("serviceEndpoint = " + serviceEndpoint);
+        //System.out.println("sparqlQuery = " + sparqlQuery);
+        //System.out.println("user = " + user);
+        //System.out.println("pass = " + pass);
+        HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
+
+        QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
+        ResultSet resultset = x.execSelect();
+        while (resultset.hasNext()) {
+            QuerySolution solution = resultset.nextSolution();
+            //System.out.println("solution.toString() = " + solution.toString());
+            //( ?event = <http://www.newsreader-project.eu/data/Dasym-Pilot/425819_relink_dominant.naf#ev24> )
+            String currentEvent = solution.get("event").toString();
+            //System.out.println("currentEvent = " + currentEvent);
+            //http://www.newsreader-project.eu/data/Dasym-Pilot/425819_relink_dominant.naf#ev24
+            if (!eventIds.contains(currentEvent)) {
+                eventIds.add(currentEvent);
+            }
+        }
+        return eventIds;
+    }
+
+    /////////////////////////////////////
     static public void readTriplesFromKSforEntityLabel(String entityLabel)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
@@ -525,6 +955,7 @@ public class TrigKSTripleReader {
         //System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
+
 
     static public void readTriplesFromKSforEntityType(String entityType)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
@@ -738,7 +1169,7 @@ public class TrigKSTripleReader {
                 "?mention grasp:hasAttribution ?attribution.\n" +
                 "?attribution grasp:wasAttributedTo ?cite.\n" +
                 makeSubStringLabelFilter("?cite", citedLabel) +
-                "} LIMIT 1000 }\n" +
+                "} LIMIT "+limit+" }\n" +
                 "?event ?relation ?object .\n" +
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
@@ -764,7 +1195,7 @@ public class TrigKSTripleReader {
                 "?attribution prov:wasAttributedTo ?doc .\n" +
                 "?doc prov:wasAttributedTo ?author .\n"  +
                 makeSubStringLabelFilter("?author", authorLabel) +
-                "} LIMIT 1000 }\n" +
+                "} LIMIT "+limit+" }\n" +
                 "?event ?relation ?object .\n" +
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
@@ -814,7 +1245,7 @@ public class TrigKSTripleReader {
             sparqlQuery += "FILTER(!CONTAINS(STR(?value), \"NON_FUTURE\"))\n";
         }
         sparqlQuery +=
-                "} LIMIT 1000 }\n" +
+                "} LIMIT "+limit+" }\n" +
                 "?event ?relation ?object .\n" +
                 "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
@@ -871,8 +1302,66 @@ public class TrigKSTripleReader {
     }
 
 
-    public static ArrayList<String> readEventIdsFromKs(String sparqlQuery)throws Exception {
-        ArrayList<String> eventIds = new ArrayList<String>();
+
+    /*
+    PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/>
+PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#>
+PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/>
+PREFIX ili: <http://globalwordnet.org/ili/>
+PREFIX dbp: <http://dbpedia.org/ontology/>
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+PREFIX owltime: <http://www.w3.org/TR/owl-time#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime
+WHERE {
+	{SELECT distinct ?event
+	 WHERE {
+			VALUES ?event
+			 	{<http://digikrant-archief.fd.nl/vw/txt.do?id=FD-20140305-01018019#ev50>
+	 				<http://digikrant-archief.fd.nl/vw/txt.do?id=FD-20140305-01018019#ev51>}
+			}
+	}
+	?event ?relation ?object .
+	OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }
+	OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }
+	OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }
+} ORDER BY ?event
+     */
+    public static String makeSparqlQueryForEventArrayDataFromKs (ArrayList<String> eventIds) {
+        String sparqQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "\t{SELECT distinct ?event\n" +
+                "\t WHERE {\n" +
+                "\t\t\tVALUES ?event\n" +
+                "\t\t\t \t{";
+                for (int i = 0; i < eventIds.size(); i++) {
+                    String evenId =  eventIds.get(i);
+                    sparqQuery += "<"+evenId+">\n";
+                }
+/*                <http://www.ft.com/thing/b0d8195c-eb8d-11e5-888e-2eadd5fbc4a4#ev101>\n" +
+                "\t \t\t\t\t<http://www.ft.com/thing/bb5a999a-c67b-11e5-808f-8231cd71622e#ev129>\n" +
+                "\t  \t\t\t\t<http://www.ft.com/thing/e5c73d14-92cd-11e5-94e6-c5413829caa5#ev57>"*/
+                sparqQuery += "\t\t\t}}}\n" +
+                "\t?event ?relation ?object .\n" +
+                "\tOPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "\tOPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "\tOPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }\n" +
+                "} ORDER BY ?event";
+        //System.out.println("sparqQuery = " + sparqQuery);
+        return sparqQuery;
+    }
+
+    public static void getEventDataFromKs(String sparqlQuery)throws Exception {
         //System.out.println("serviceEndpoint = " + serviceEndpoint);
         //System.out.println("sparqlQuery = " + sparqlQuery);
         //System.out.println("user = " + user);
@@ -886,20 +1375,93 @@ public class TrigKSTripleReader {
 
         QueryExecution x = QueryExecutionFactory.sparqlService(serviceEndpoint, sparqlQuery, authenticator);
         ResultSet resultset = x.execSelect();
+        String oldEvent="";
+        ArrayList<Statement> instanceRelations = new ArrayList<Statement>();
+        ArrayList<Statement> otherRelations = new ArrayList<Statement>();
         while (resultset.hasNext()) {
             QuerySolution solution = resultset.nextSolution();
+            String relString = solution.get("relation").toString();
             String currentEvent = solution.get("event").toString();
-            if (!eventIds.contains(currentEvent)) {
-                eventIds.add(currentEvent);
+            RDFNode obj = solution.get("object");
+            String objUri = obj.toString();
+            Statement s = createStatement((Resource) solution.get("event"), ResourceFactory.createProperty(relString), obj);
+            if (isSemRelation(relString) || isESORelation(relString) || isFNRelation(relString) || isPBRelation(relString))
+            {
+                otherRelations.add(s);
+                if (isSemTimeRelation(relString)) {
+                    if (solution.get("indatetime")!=null){
+//                            System.out.println("in " + solution.get("indatetime"));
+                        String uri = ((Resource) obj).getURI();
+                        Statement s2 = createStatement((Resource) obj, inDateTimeProperty, solution.get("indatetime"));
+                        if (trigTripleData.tripleMapInstances.containsKey(uri)) {
+                            ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(uri);
+                            triples.add(s2);
+                            trigTripleData.tripleMapInstances.put(uri, triples);
+                        } else {
+                            ArrayList<Statement> triples = new ArrayList<Statement>();
+                            triples.add(s2);
+                            trigTripleData.tripleMapInstances.put(uri, triples);
+                        }
+                    }
+                    else {
+                        if (solution.get("begintime")!=null){
+//                            System.out.println("begin " + solution.get("begintime"));
+                            String uri = ((Resource) obj).getURI();
+                            Statement s2 = createStatement((Resource) obj, beginTimeProperty, solution.get("begintime"));
+                            if (trigTripleData.tripleMapInstances.containsKey(uri)) {
+                                ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(uri);
+                                triples.add(s2);
+                                trigTripleData.tripleMapInstances.put(uri, triples);
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                triples.add(s2);
+                                trigTripleData.tripleMapInstances.put(uri, triples);
+                            }
+                        }
+                        else if (solution.get("endtime")!=null) {
+//                            System.out.println("end " + solution.get("endtime"));
+                            String uri = ((Resource) obj).getURI();
+                            Statement s2 = createStatement((Resource) solution.get("object"), endTimeProperty, solution.get("endtime"));
+                            if (trigTripleData.tripleMapInstances.containsKey(uri)) {
+                                ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(uri);
+                                triples.add(s2);
+                                trigTripleData.tripleMapInstances.put(uri, triples);
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                triples.add(s2);
+                                trigTripleData.tripleMapInstances.put(uri, triples);
+                            }
+                        }
+                    }
+                }
             }
+            else // Instances
+            {
+                instanceRelations.add(s);
+            }
+
+            if (!oldEvent.equals("")) {
+                if (!currentEvent.equals(oldEvent)){
+                    if (instanceRelations.size()>0){
+                        trigTripleData.tripleMapInstances.put(oldEvent, instanceRelations);
+                    }
+                    if (otherRelations.size()>0){
+                        trigTripleData.tripleMapOthers.put(oldEvent, otherRelations);
+                    }
+                    instanceRelations = new ArrayList<Statement>();
+                    otherRelations = new ArrayList<Statement>();
+                }
+            }
+            oldEvent=currentEvent;
         }
-        return eventIds;
+     //   System.out.println(" * instance statements = "+trigTripleData.tripleMapInstances.size());
+     //   System.out.println(" * sem statements = " + trigTripleData.tripleMapOthers.size());
     }
 
 
     public static void readTriplesFromKs(String sparqlQuery)throws Exception {
         //System.out.println("serviceEndpoint = " + serviceEndpoint);
-        //System.out.println("sparqlQuery = " + sparqlQuery);
+        System.out.println("sparqlQuery = " + sparqlQuery);
         //System.out.println("user = " + user);
         //System.out.println("pass = " + pass);
         HttpAuthenticator authenticator = new SimpleAuthenticator(user, pass.toCharArray());
