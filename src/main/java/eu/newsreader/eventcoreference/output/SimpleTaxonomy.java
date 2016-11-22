@@ -89,7 +89,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	OrganisationMember	SportsTeamMember
 www.w3.org/2002/07/owl#Thing	Agent	Person	Orphan
 www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
      */
-                        System.out.println("inputLine = " + inputLine);
+                       // System.out.println("inputLine = " + inputLine);
                         String[] fields = inputLine.split("\t");
                         if (fields.length > 1) {
                             for (int i = 0; i < fields.length-1; i++) {
@@ -100,7 +100,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 } catch (NumberFormatException e) {
                                    // e.printStackTrace();
                                     //So only if fields[i+1] is not a count!
-                                    System.out.println("subClass = " + subClass);
+                                    //System.out.println("subClass = " + subClass);
                                     String superClass = "dbp:"+fields[i];
                                     //System.out.println("subClass = " + subClass);
                                     //System.out.println("superClass = " + superClass);
@@ -124,6 +124,82 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         }
                         else {
                             System.out.println("Skipping line:"+inputLine);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
+        //printTree();
+    }
+
+    public void readSimpleTaxonomyFromDbpFile (String filePath, Set<String> keySet) {
+        try {
+            InputStreamReader isr = null;
+            System.out.println("filePath = " + filePath);
+            if (filePath.toLowerCase().endsWith(".gz")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (filePath.toLowerCase().endsWith(".bz2")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new CBZip2InputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                FileInputStream fis = new FileInputStream(filePath);
+                isr = new InputStreamReader(fis);
+            }
+            if (isr!=null) {
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                while (in.ready() && (inputLine = in.readLine()) != null) {
+                    // System.out.println(inputLine);
+                    inputLine = inputLine.trim();
+                    if (inputLine.trim().length() > 0) {
+                             /*
+<http://dbpedia.org/resource/Abraham_Lincoln__1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/TimePeriod> .
+<http://dbpedia.org/resource/Abraham_Lincoln__2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/TimePeriod> .
+<http://dbpedia.org/resource/Abraham_Lincoln__3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/TimePeriod> .
+<http://dbpedia.org/resource/Austroasiatic_languages> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<http://dbpedia.org/resource/Afroasiatic_languages> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+     */
+                        // System.out.println("inputLine = " + inputLine);
+                        String[] fields = inputLine.split("\t");
+                        if (fields.length == 3) {
+                            String className = fields[0];
+                            className = className.substring(className.lastIndexOf("/"));
+                            System.out.println("className = " + className);
+                            if (keySet.contains(className)) {
+                                String subClass = "dbp:" + className;
+                                className = fields[2];
+                                className = className.substring(className.lastIndexOf("/"));
+                                String superClass = "dbp:" + className;
+                                if (!subClass.equals(superClass)) {
+                                    subToSuper.put(subClass, superClass);
+                                    if (superToSub.containsKey(superClass)) {
+                                        ArrayList<String> subs = superToSub.get(superClass);
+                                        if (!subs.contains(subClass)) {
+                                            subs.add(subClass);
+                                            superToSub.put(superClass, subs);
+                                        }
+                                    } else {
+                                        ArrayList<String> subs = new ArrayList<String>();
+                                        subs.add(subClass);
+                                        superToSub.put(superClass, subs);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -476,6 +552,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         int children = 0;
                         if (phrases.containsKey(top)) {
                             ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                            if (top.toLowerCase().indexOf("disease")>-1) System.out.println("phrases = " + phraseCounts.toString());
                             Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
                                 @Override
                                 public int compare(PhraseCount p1, PhraseCount p2) {
@@ -524,7 +601,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 }
                             }
                             phraseString += "]";
-                            str =   "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
+                            str =   "<div id=\"cell2\"  class=\"collapse\"><p>" + phraseString + "</p></div>\n";
                             fos.write(str.getBytes());
                         }
                         else {
@@ -697,7 +774,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                     "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
                             str += "</div>\n";*/
                             if (children>0) {
-                                parent +=   "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
+                                parent +=   "<div id=\"cell2\"  class=\"collapse\"><p>" + phraseString + "</p></div>\n";
                                 //parent += "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
                                 //fos.write(parent.getBytes());
                                 fos.write(parent.getBytes());
@@ -871,7 +948,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
 /*                            str =   "<div id=\""+"collapse"+topName+"\">\n" +
                                     "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
                             str += "</div>\n";*/
-                            str =   "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
+                            str =   "<div id=\"cell2\"  class=\"collapse\"><p>" + phraseString + "</p></div>\n";
                             fos.write(str.getBytes());
                             //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
 
@@ -987,6 +1064,9 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
 
                     if (phrases.containsKey(top)) {
                         ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                        if (top.toLowerCase().indexOf("disease")>-1) {
+                            System.out.println("phraseCounts.toString() = " + phraseCounts.toString());
+                        }
                         Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
                             @Override
                             public int compare(PhraseCount p1, PhraseCount p2) {
@@ -1038,7 +1118,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         }
                         phraseString += "]";
                         //str = "<div id=\"cell\"><p>" + phraseString + "</p></div>";
-                        str =   "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
+                        str =   "<div id=\"cell2\"  class=\"collapse\"><p>" + phraseString + "</p></div>\n";
                         fos.write(str.getBytes());
                         //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
 
@@ -1197,7 +1277,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                         phraseString += "]";
                         //str = "<div id=\"cell\"><p>" + phraseString + "</p></div>";
                         str =   "<div id=\""+"collapse"+topName+"\">\n" +
-                                "<div id=\"cell2\"  class=\"collapse\" style=\"white-space: pre;\"><p>" + phraseString + "</p></div>\n";
+                                "<div id=\"cell2\"  class=\"collapse\"><p>" + phraseString + "</p></div>\n";
                         str += "</div>\n";
                         fos.write(str.getBytes());
                         //str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";

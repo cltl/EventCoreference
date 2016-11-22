@@ -288,9 +288,10 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
             }
 */
-            System.out.println("ids = " + ids.size());
-            System.out.println("eventQuery = " + eventQuery);
             if (!eventQuery.isEmpty()) {
+                System.out.println("ids = " + ids.size());
+                System.out.println("eventQuery = " + eventQuery);
+
                 try {
                     //@split query into labels and types
                     String labels = TrigKSTripleReader.getLabelQueryforEvent(eventQuery);
@@ -310,9 +311,10 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
             }
 
-            System.out.println("ids = " + ids.size());
-            System.out.println("entityQuery = " + entityQuery);
             if (!entityQuery.isEmpty()) {
+
+                System.out.println("ids = " + ids.size());
+                System.out.println("entityQuery = " + entityQuery);
                 try {
                     //split query into types, instances and labels
                     //
@@ -338,10 +340,11 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
             }
 
-            System.out.println("ids = " + ids.size());
-            System.out.println("year = " + year);
-
             if (!year.isEmpty()) {
+
+                System.out.println("ids = " + ids.size());
+                System.out.println("year = " + year);
+
                 try {
                     sparql = TrigKSTripleReader.makeQueryforYears(year, ids);
                     ids = TrigKSTripleReader.readEventIdsFromKs(sparql);
@@ -351,9 +354,10 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
             }
 
-            System.out.println("ids = " + ids.size());
-            System.out.println("source = " + year);
             if (!sourceQuery.isEmpty()) {
+
+                System.out.println("ids = " + ids.size());
+                System.out.println("source = " + sourceQuery);
                 try {
                     String sources = TrigKSTripleReader.getsource(sourceQuery);
                     if (!sources.isEmpty()) {
@@ -368,10 +372,11 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                     ksQueryError += e.getCause();
                 }
             }
-            System.out.println("ids = " + ids.size());
-            System.out.println("grasp = " + year);
 
             if (!graspQuery.isEmpty()) {
+
+                System.out.println("ids = " + ids.size());
+                System.out.println("grasp = " + graspQuery);
                 try {
                     sparql = TrigKSTripleReader.makeQueryforGraspValue(graspQuery, ids);
                     ids = TrigKSTripleReader.readEventIdsFromKs(sparql);
@@ -381,10 +386,11 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
             }
 
-            System.out.println("ids = " + ids.size());
-            System.out.println("word = " + year);
 
             if (!wordQuery.isEmpty()) {
+
+                System.out.println("ids = " + ids.size());
+                System.out.println("word = " + wordQuery);
                 try {
                     sparql = TrigKSTripleReader.makeQueryforEntityLabel(wordQuery, ids);
                     stringBasedIds = TrigKSTripleReader.readEventIdsFromKs(sparql);
@@ -422,7 +428,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 else { ids.retainAll(stringBasedIds); }
             }*/
 
-            System.out.println("eventIds.size() = " + ids.size());
+            System.out.println("final nr. of events = " + ids.size());
 
             if (ids.size() > 0) {
                 String query = TrigKSTripleReader.makeSparqlQueryForEventArrayDataFromKs(ids);

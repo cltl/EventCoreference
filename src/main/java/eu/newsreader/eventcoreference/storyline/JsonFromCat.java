@@ -1621,12 +1621,13 @@ public class JsonFromCat extends DefaultHandler {
 
 
     static public void main (String[] args) {
-        String demo = "/Users/piek/Desktop/StorylineWorkshop/UncertaintyVisualizationGold/app/data";
+        String demo = "/Users/piek/Desktop/WorkshopsConferences/StorylineWorkshop/UncertaintyVisualizationGold/app/data";
         String folder = "";
         String pathToCatFile = "";
         String fileExtension = "";
+
         //pathToCatFile = "/Users/piek/Desktop/StorylineWorkshop/ECB-manual/ECBplus_Topic37CAT/37_9ecbplus.xml";
-        folder = "/Users/piek/Desktop/StorylineWorkshop/ECB-manual/ECBplus_Topic37CAT";
+        folder = "/Users/piek/Desktop/WorkshopsConferences/StorylineWorkshop/ECB-manual/ECBStar-mergeT37";
         fileExtension = ".xml";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
