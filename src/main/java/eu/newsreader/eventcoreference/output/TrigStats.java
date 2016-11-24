@@ -21,9 +21,12 @@ import static eu.newsreader.eventcoreference.storyline.JsonFromRdf.getValue;
  */
 public class TrigStats {
 
+    static public String STAT = "";
+
     static HashMap<String, PhraseCount> dbpMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> enMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> neMap = new HashMap<String, PhraseCount>();
+    static HashMap<String, PhraseCount> topicMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> authMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> citeMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> eventLabelMap = new HashMap<String, PhraseCount>();
@@ -232,6 +235,9 @@ public class TrigStats {
             else if (arg.equals("--type") && args.length>(i+1)) {
                 type = args[i+1];
             }
+            else if (arg.equals("--stat") && args.length>(i+1)) {
+                STAT = args[i+1];
+            }
         }
         File inputFolder = new File(folderpath);
         System.out.println("inputFolder = " + inputFolder);
@@ -251,102 +257,134 @@ public class TrigStats {
             ArrayList<Statement> instanceTriples = trigTripleData.tripleMapInstances.get(key);
             int m = countMentions(instanceTriples);
             String type = getInstanceType(key);
-            if (type.equalsIgnoreCase("dbp") || type.toLowerCase().endsWith(".dbp")) {
-                updateMap(key, m, dbpMap);
-                ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
-                updateMentionMap(key, lightEntityMap, mentionLabels);
+           // System.out.println("type = " + type);
+            if (STAT.isEmpty() || STAT.equals("dbp")) {
+                if (type.equalsIgnoreCase("dbp") || type.toLowerCase().endsWith(".dbp")) {
+                    updateMap(key, m, dbpMap);
+                    ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    updateMentionMap(key, lightEntityMap, mentionLabels);
+                }
             }
-            else if (type.equalsIgnoreCase("en")) {
-                updateMap(key, m, enMap);
-                ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
-                updateMentionMap(key, darkEntityMap, mentionLabels);
+            else if (STAT.isEmpty() || STAT.equals("en")) {
+                if (type.equalsIgnoreCase("en")) {
+                    updateMap(key, m, enMap);
+                    ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    updateMentionMap(key, darkEntityMap, mentionLabels);
+                }
             }
-            else if (type.equalsIgnoreCase("ne")) {
-                updateMap(key, m, neMap);
-                ArrayList<String> types = getSkosRelatedValuesFromInstanceStatement(instanceTriples);
-                updateCountMap(key, nonEntityMap, types);
-            }
-            else if (key.indexOf("#ev")>-1) {
-                ///this is an event
 
-                ArrayList<String> eso = getTypeValuesFromInstanceStatement(instanceTriples, "eso");
-                for (int i = 0; i < eso.size(); i++) {
-                    String s = eso.get(i);
-                    updateMap(s, m, esoMap);
+            else if (STAT.isEmpty() || STAT.equals("ne")) {
+                if (type.equalsIgnoreCase("ne")) {
+                    updateMap(key, m, neMap);
+                    ArrayList<String> types = getSkosRelatedValuesFromInstanceStatement(instanceTriples);
+                    updateCountMap(key, nonEntityMap, types);
                 }
-                ArrayList<String> fn = getTypeValuesFromInstanceStatement(instanceTriples, "fn");
-                for (int i = 0; i < fn.size(); i++) {
-                    String s = fn.get(i);
-                    updateMap(s, m, fnMap);
+            }
+            else if (STAT.isEmpty() || STAT.equals("event")) {
+                if (key.indexOf("#ev") > -1) {
+                    ///this is an event
+                    ArrayList<String> eso = getTypeValuesFromInstanceStatement(instanceTriples, "eso");
+                    for (int i = 0; i < eso.size(); i++) {
+                        String s = eso.get(i);
+                        updateMap(s, m, esoMap);
+                    }
+                    ArrayList<String> fn = getTypeValuesFromInstanceStatement(instanceTriples, "fn");
+                    for (int i = 0; i < fn.size(); i++) {
+                        String s = fn.get(i);
+                        updateMap(s, m, fnMap);
+                    }
+                    ArrayList<String> ili = getTypeValuesFromInstanceStatement(instanceTriples, "ili");
+                    for (int i = 0; i < ili.size(); i++) {
+                        String s = ili.get(i);
+                        updateMap(s, m, iliMap);
+                    }
+                    ArrayList<String> labels = getLabelsFromInstanceStatement(instanceTriples);
+                    for (int i = 0; i < labels.size(); i++) {
+                        String s = labels.get(i);
+                        updateMap(s, m, eventLabelMap);
+                        if (ili.size() == 0) {
+                            updateMap(s, m, eventLabelWithoutILIMap);
+                        }
+                        if (eso.size() == 0) {
+                            updateMap(s, m, eventLabelWithoutESOMap);
+                        }
+                        if (fn.size() == 0) {
+                            updateMap(s, m, eventLabelWithoutFNMap);
+                        }
+                        ArrayList<String> types = new ArrayList<String>();
+                        if (eventMap.containsKey(s)) {
+                            types = eventMap.get(s);
+                        }
+                        for (int j = 0; j < ili.size(); j++) {
+                            String s1 = ili.get(j);
+                            if (!types.contains(s1)) {
+                                types.add(s1);
+                            }
+                        }
+                        for (int j = 0; j < eso.size(); j++) {
+                            String s1 = eso.get(j);
+                            if (!types.contains(s1)) {
+                                types.add(s1);
+                            }
+                        }
+                        for (int j = 0; j < fn.size(); j++) {
+                            String s1 = fn.get(j);
+                            if (!types.contains(s1)) {
+                                types.add(s1);
+                            }
+                        }
+                        eventMap.put(s, types);
+                    }
                 }
-                ArrayList<String> ili = getTypeValuesFromInstanceStatement(instanceTriples, "ili");
-                for (int i = 0; i < ili.size(); i++) {
-                    String s = ili.get(i);
-                    updateMap(s, m, iliMap);
-                }
-                ArrayList<String> labels = getLabelsFromInstanceStatement(instanceTriples);
-                for (int i = 0; i < labels.size(); i++) {
-                    String s = labels.get(i);
-                    updateMap(s, m, eventLabelMap);
-                    if (ili.size()==0) {
-                        updateMap(s, m, eventLabelWithoutILIMap);
+            }
+            else if (STAT.isEmpty() || STAT.equals("topic")) {
+                if (key.indexOf("#ev") > -1) {
+                    ///this is an event
+                    ArrayList<String> skos = getSkosValuesFromInstanceStatement(instanceTriples);
+                    for (int i = 0; i < skos.size(); i++) {
+                        String s = skos.get(i);
+                        updateMap(s, m, topicMap);
                     }
-                    if (eso.size()==0) {
-                        updateMap(s, m, eventLabelWithoutESOMap);
-                    }
-                    if (fn.size()==0) {
-                        updateMap(s, m, eventLabelWithoutFNMap);
-                    }
-                    ArrayList<String> types = new ArrayList<String>();
-                    if (eventMap.containsKey(s)) {
-                        types = eventMap.get(s);
-                    }
-                    for (int j = 0; j < ili.size(); j++) {
-                        String s1 = ili.get(j);
-                        if (!types.contains(s1)) {
-                            types.add(s1);
-                        }
-                    }
-                    for (int j = 0; j < eso.size(); j++) {
-                        String s1 = eso.get(j);
-                        if (!types.contains(s1)) {
-                            types.add(s1);
-                        }
-                    }
-                    for (int j = 0; j < fn.size(); j++) {
-                        String s1 = fn.get(j);
-                        if (!types.contains(s1)) {
-                            types.add(s1);
-                        }
-                    }
-                    eventMap.put(s, types);
                 }
             }
         }
         File folderParent = inputFolder.getParentFile();
         String outputFile = "";
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".entities.xls";
-        dumpSortedMap(darkEntityMap, enMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".nonentities.xls";
-        dumpSortedCountMap(nonEntityMap, neMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".dbp.xls";
-        dumpSortedMap(lightEntityMap, dbpMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabels.xls";
-        dumpSortedMap(eventLabelMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOeso.xls";
-        dumpSortedMap(eventLabelWithoutESOMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOfn.xls";
-        dumpSortedMap(eventLabelWithoutFNMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOili.xls";
-        dumpSortedMap(eventLabelWithoutILIMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eso.xls";
-        dumpSortedMap(esoMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".fn.xls";
-        dumpSortedMap(fnMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".ili.xls";
-        dumpSortedMap(iliMap, outputFile);
-        outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event.xls";
-        dumpTypeMap(eventMap, eventLabelMap, outputFile);
+
+        if (STAT.isEmpty() || STAT.equals("en")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".entities.xls";
+            dumpSortedMap(darkEntityMap, enMap, outputFile);
+        }
+        if (STAT.isEmpty() || STAT.equals("ne")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".nonentities.xls";
+            dumpSortedCountMap(nonEntityMap, neMap, outputFile);
+        }
+        if (STAT.isEmpty() || STAT.equals("dbp")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".dbp.xls";
+            dumpSortedMap(lightEntityMap, dbpMap, outputFile);
+        }
+        if (STAT.isEmpty() || STAT.equals("event")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventlabels.xls";
+            dumpSortedMap(eventLabelMap, outputFile);
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventlabelsNOeso.xls";
+            dumpSortedMap(eventLabelWithoutESOMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOfn.xls";
+            dumpSortedMap(eventLabelWithoutFNMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOili.xls";
+            dumpSortedMap(eventLabelWithoutILIMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eso.xls";
+            dumpSortedMap(esoMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".fn.xls";
+            dumpSortedMap(fnMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".ili.xls";
+            dumpSortedMap(iliMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event.xls";
+            dumpTypeMap(eventMap, eventLabelMap, outputFile);
+        }
+        if (STAT.isEmpty() || STAT.equals("topic")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".topics.xls";
+            dumpSortedMap(topicMap, outputFile);
+        }
     }
 
     static void processGrasp (File inputFolder, ArrayList<File> files) {
@@ -402,6 +440,32 @@ public class TrigStats {
                         if (!result.contains(value)) {
                             result.add(value);
                         }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    static ArrayList<String> getSkosValuesFromInstanceStatement (ArrayList<Statement> statements) {
+        ArrayList<String> result = new ArrayList<String>();
+        for (int i = 0; i < statements.size(); i++) {
+            Statement statement = statements.get(i);
+            String predicate = statement.getPredicate().getURI();
+            if (predicate.endsWith("#relatedMatch")) {
+                String object = "";
+                if (statement.getObject().isLiteral()) {
+                    object = statement.getObject().asLiteral().toString();
+                } else if (statement.getObject().isURIResource()) {
+                    object = statement.getObject().asResource().getURI();
+                }
+                String[] values = object.split(",");
+                for (int j = 0; j < values.length; j++) {
+                    String value = values[j];
+                    String property = JsonFromRdf.getNameSpaceString(value);
+                    value = property + ":" + getValue(value);
+                    if (!result.contains(value)) {
+                        result.add(value);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.objects.PhraseCount;
+import eu.newsreader.eventcoreference.util.EuroVoc;
 import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.json.JSONException;
@@ -16,10 +17,13 @@ import java.util.zip.GZIPInputStream;
 public class SimpleTaxonomy {
     static final int colmax = 650;
     static final int colmaxevents = 150;
+    public HashMap<String, ArrayList<String>> conceptToLabels = new HashMap<String, ArrayList<String>>();
+    public HashMap<String, String> labelToConcept = new HashMap<String, String>();
+    public HashMap<String, String> conceptToPrefLabel = new HashMap<String, String>();
     public HashMap<String, String> subToSuper = new HashMap<String, String>();
     public HashMap<String, ArrayList<String>> superToSub = new HashMap<String, ArrayList<String>>();
     static final String buttons1 = "<button type=\"button\" onclick=\"document.getElementById('cell2').style.display='table-cell'\">Show</button>\n";
-    static final String accordion = "<div class=\"accordionItem\">\n";
+    static public final String accordion = "<div class=\"accordionItem\">\n";
     public String makeToggle (String id) {
         String str = "<a data-toggle=\"collapse\" href=\"#collapse"+id+"\">Collapsible</a>\n";
         return str;
@@ -35,6 +39,130 @@ public class SimpleTaxonomy {
     public SimpleTaxonomy () {
         subToSuper = new HashMap<String, String>();
         superToSub = new HashMap<String, ArrayList<String>>();
+    }
+
+    public void readSimpleTaxonomyFromSkosFile (String filePath) {
+        //<rdf:Description rdf:about="http://eurovoc.europa.eu/8404">
+        // <skos:broader rdf:resource="http://eurovoc.europa.eu/2467"/>
+        try {
+            InputStreamReader isr = null;
+            if (filePath.toLowerCase().endsWith(".gz")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (filePath.toLowerCase().endsWith(".bz2")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new CBZip2InputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                FileInputStream fis = new FileInputStream(filePath);
+                isr = new InputStreamReader(fis);
+            }
+            if (isr!=null) {
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                String subClass = "";
+                String superClass= "";
+                while (in.ready() && (inputLine = in.readLine()) != null) {
+                    // System.out.println(inputLine);
+                    inputLine = inputLine.trim();
+                    if (inputLine.trim().length() > 0) {
+
+                        //<rdf:Description rdf:about="http://eurovoc.europa.eu/8404">
+                        // <skos:broader rdf:resource="http://eurovoc.europa.eu/2467"/>
+                        int idx_s = inputLine.indexOf("<rdf:Description rdf:about=");
+                        int idx_e = -1;
+                        if (idx_s>-1) {
+                            idx_s = inputLine.indexOf("\"");
+                            idx_e = inputLine.lastIndexOf("\"");
+                            subClass = inputLine.substring(idx_s+1, idx_e);
+                           // System.out.println("subClass = " + subClass);
+                        }
+                        else {
+                            idx_s = inputLine.indexOf("<skos:broader rdf:resource=");
+                            idx_e = -1;
+                            if (idx_s>-1) {
+                                idx_s = inputLine.indexOf("\"");
+                                idx_e = inputLine.lastIndexOf("\"");
+                                superClass = inputLine.substring(idx_s+1, idx_e);
+                                //System.out.println("parent = " + superClass);
+                                if (!subClass.equals(superClass)) {
+                                    subToSuper.put(subClass, superClass);
+                                    if (superToSub.containsKey(superClass)) {
+                                        ArrayList<String> subs = superToSub.get(superClass);
+                                        if (!subs.contains(subClass)) {
+                                            subs.add(subClass);
+                                            superToSub.put(superClass, subs);
+                                        }
+                                    }
+                                    else {
+                                        ArrayList<String> subs = new ArrayList<String>();
+                                        subs.add(subClass);
+                                        superToSub.put(superClass, subs);
+                                    }
+                                }
+                            }
+                            else {
+                                //<skos:prefLabel xml:lang="en">
+                                //<skos:altLabel xml:lang="en">resolution of the European Parliament</skos:altLabel>
+                                idx_s = inputLine.indexOf("skos:prefLabel xml:lang=\"en\">");
+                                idx_e = -1;
+                                if (idx_s>-1) {
+                                    idx_s = inputLine.indexOf(">");
+                                    idx_e = inputLine.lastIndexOf("</");
+                                    String label = inputLine.substring(idx_s+1, idx_e);
+                                    labelToConcept.put(label, subClass);
+                                    conceptToPrefLabel.put(subClass, label);
+                                    if (conceptToLabels.containsKey(subClass)) {
+                                        ArrayList<String> labels = conceptToLabels.get(subClass);
+                                        labels.add(label);
+                                        conceptToLabels.put(subClass, labels);
+                                    }
+                                    else {
+                                        ArrayList<String> labels = new ArrayList<String>();
+                                        labels.add(label);
+                                        conceptToLabels.put(subClass, labels);
+                                    }
+                                }
+                                else {
+                                    idx_s = inputLine.indexOf("skos:altLabel xml:lang=\"en\">");
+                                    idx_e = -1;
+                                    if (idx_s > -1) {
+                                        idx_s = inputLine.indexOf(">");
+                                        idx_e = inputLine.lastIndexOf("</");
+                                        String label = inputLine.substring(idx_s + 1, idx_e);
+                                        labelToConcept.put(label, subClass);
+                                        if (conceptToLabels.containsKey(subClass)) {
+                                            ArrayList<String> labels = conceptToLabels.get(subClass);
+                                            labels.add(label);
+                                            conceptToLabels.put(subClass, labels);
+                                        }
+                                        else {
+                                            ArrayList<String> labels = new ArrayList<String>();
+                                            labels.add(label);
+                                            conceptToLabels.put(subClass, labels);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
+        //printTree();
     }
 
     public void readSimpleTaxonomyFromDbpFile (String filePath) {
@@ -628,6 +756,133 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
             }
         }
     }
+
+    public void  htmlTableTopicTree (OutputStream fos, String type, ArrayList<String> tops,
+                                int level,
+                                HashMap<String, Integer> typeCounts,
+                                HashMap<String, ArrayList<PhraseCount>> phrases) throws IOException {
+        String str = "";
+        level++;
+        ArrayList<PhraseCount> countedTops = new ArrayList<PhraseCount>();
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            Integer cnt = 0;
+            if (typeCounts.containsKey(top)) {
+                cnt = typeCounts.get(top);
+            }
+            PhraseCount phraseCount = new PhraseCount(top, cnt);
+            countedTops.add(phraseCount);
+        }
+        Collections.sort(countedTops, new Comparator<PhraseCount>() {
+            @Override
+            public int compare(PhraseCount p1, PhraseCount p2) {
+
+                return p2.getCount().compareTo(p1.getCount());
+            }
+        });
+
+        for (int i = 0; i < countedTops.size(); i++) {
+                PhraseCount topCount = countedTops.get(i);
+                String top = topCount.getPhrase();
+                String topName = "";
+                str  = "";
+                Integer cnt = topCount.getCount();
+            if (cnt>0) {
+                //  System.out.println(top+ ":" + cnt);
+                // if (top.indexOf("Agent") > -1) {
+                if (top.indexOf("NOTSKIP") > -1) {
+                    level--;
+                    level--;
+                } else {
+                    str += accordion + "<h2>\n";
+                    for (int j = 2; j < level; j++) {
+                        str += "<div id=\"cell\"></div>";
+                    }
+                    String ref = top;
+                    if (conceptToPrefLabel.containsKey(top)) {
+                        ref = conceptToPrefLabel.get(top);
+                    }
+
+                    String tb = TreeStaticHtml.makeTickBox(type, top);
+
+                    if (cnt > 0) {
+                        str += "<div id=\"cell\">" + ref + ";" + cnt + "</a>";
+                        str += tb;
+                        str += "</div>";
+                    } else {
+                        // str += "<div id=\"cell\">" + ref + tb + "</div>";
+                        str += "<div id=\"cell\">" + ref + "</div>";
+                    }
+                    str += "\n</h2>\n";
+                    for (int j = 2; j < level; j++) {
+                        str += "<div id=\"cell\"></div>";
+
+                    }
+                    fos.write(str.getBytes());
+                    str = "";
+/*
+                    int children = 0;
+                    if (phrases.containsKey(top)) {
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
+                        Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
+                            @Override
+                            public int compare(PhraseCount p1, PhraseCount p2) {
+
+                                return p2.getCount().compareTo(p1.getCount());
+                            }
+                        });
+                        String phraseString = "[";
+                        int collength = 0;
+                        int max = phraseCounts.get(0).getCount();
+                        for (int j = 0; j < phraseCounts.size(); j++) {
+                            PhraseCount phraseCount = phraseCounts.get(j);
+                            //if ((phraseCount.getCount()*100)/max>=0) {
+                            if (phraseCount.getCount() > 0) {
+                                children++;
+
+                                tb = TreeStaticHtml.makeTickBox(type, phraseCount.getPhrase());
+*//*                                if (phraseCount.getPhrase().indexOf("eurovoc") > -1) {
+                                    tb = TreeStaticHtml.makeTickBox(type, name, "eurovoc:" + name);
+                                    ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + tb + "</a>";
+                                } else {
+
+                                    ref = name + ":" + phraseCount.getCount() + tb;
+                                }*//*
+
+                                ref = phraseCount.getPhrase() + tb;
+                                phraseString+= ref;
+                                if (j < phraseCounts.size() - 1) {
+                                    phraseString += ", ";
+                                }
+                                *//*collength += ref.length();
+                                phraseString += ref;
+
+                                if (collength > colmax) {
+                                    phraseString += "\n";
+                                    collength = 0;
+                                }*//*
+                            }
+                        }
+                        phraseString += "]";
+                        str =   "<div id=\"cell2\"  class=\"collapse\"><p>" + phraseString + "</p></div>\n";
+                        fos.write(str.getBytes());
+                    }
+                    else {
+                    }*/
+
+                    str += "</div>\n"; // closing accordion
+                    fos.write(str.getBytes());
+                }
+                if (superToSub.containsKey(top)) {
+                    ArrayList<String> children = superToSub.get(top);
+                    htmlTableTopicTree(fos, type, children, level, typeCounts, phrases);
+                } else {
+                    //  System.out.println("has no children top = " + top);
+                }
+            }
+        }
+    }
+
 
 
     public void  htmlTableTreeSupressEmptyLeaves (OutputStream fos, String type, String ns, ArrayList<String> tops,
@@ -1414,18 +1669,39 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
     }
 
     public void cumulateScores (String ns, ArrayList<String> tops,
-                                HashMap<String, Integer> eventCounts ) {
+                                HashMap<String, Integer> eventCounts, EuroVoc euroVoc) {
         for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            if (top.startsWith(ns)) {
+            String top = tops.get(i).trim();
+            if (top.startsWith(ns) || ns.isEmpty()) {
                 if (superToSub.containsKey(top)) {
                     ArrayList<String> children = superToSub.get(top);
-                    cumulateScores(ns, children, eventCounts);
+                    cumulateScores(ns, children, eventCounts, euroVoc);
                     int cCount = 0;
                     for (int j = 0; j < children.size(); j++) {
                         String child =  children.get(j);
-                        if (eventCounts.containsKey(child)) {
-                            cCount += eventCounts.get(child);
+                        if (conceptToLabels.containsKey(child)) {
+                            ArrayList<String> labels = conceptToLabels.get(child);
+                            for (int k = 0; k < labels.size(); k++) {
+                                String label =  labels.get(k);
+                                if (euroVoc.labelUriMap.containsKey(label)) {
+                                    String id = euroVoc.labelUriMap.get(label);
+                                    if (eventCounts.containsKey(id)) {
+                                        cCount += eventCounts.get(id);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (conceptToLabels.containsKey(top)) {
+                        ArrayList<String> labels = conceptToLabels.get(top);
+                        for (int k = 0; k < labels.size(); k++) {
+                            String label =  labels.get(k);
+                            if (euroVoc.labelUriMap.containsKey(label)) {
+                                String id = euroVoc.labelUriMap.get(label);
+                                if (eventCounts.containsKey(id)) {
+                                    cCount += eventCounts.get(id);
+                                }
+                            }
                         }
                     }
                     if (eventCounts.containsKey(top)) {
@@ -1436,6 +1712,49 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     else {
                         eventCounts.put(top, cCount);
                     }
+                    System.out.println("top count = " + cCount);
+                }
+                else {
+                    //  System.out.println("top = " + top);
+                }
+            }
+            else {
+                // System.out.println("ns = " + ns);
+                // System.out.println("top = " + top);
+            }
+        }
+    }
+
+    public void cumulateScores (String ns, ArrayList<String> tops,
+                                HashMap<String, Integer> eventCounts) {
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i).trim();
+            if (top.startsWith(ns) || ns.isEmpty()) {
+                if (superToSub.containsKey(top)) {
+                    ArrayList<String> children = superToSub.get(top);
+                    cumulateScores(ns, children, eventCounts);
+                    int cCount = 0;
+                    for (int j = 0; j < children.size(); j++) {
+                        String child =  children.get(j);
+                        if (eventCounts.containsKey(child)) {
+                            cCount += eventCounts.get(child);
+                        }
+                        else {
+                           // System.out.println("no counts for child = " + child);
+                        }
+                    }
+                    if (eventCounts.containsKey(top)) {
+                        Integer cnt = eventCounts.get(top);
+                        cnt+= cCount;
+                        eventCounts.put(top, cnt);
+                    }
+                    else {
+                        eventCounts.put(top, cCount);
+                    }
+                  //  System.out.println("top count = " + cCount);
+                }
+                else {
+                  //  System.out.println("top = " + top);
                 }
             }
             else {

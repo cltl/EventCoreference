@@ -414,6 +414,7 @@ public class TreeStaticHtml {
                 "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Entities')\">Entities</a></li>\n" +
                 "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Events')\">Events</a></li>\n" +
                 "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Sources')\">Sources</a></li>\n" +
+                "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Topics')\">Topics</a></li>\n" +
                 "</ul>";
         return bodyStart;
     }

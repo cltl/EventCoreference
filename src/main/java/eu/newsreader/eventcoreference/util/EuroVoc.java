@@ -65,7 +65,7 @@ public class EuroVoc {
                 BufferedReader in = new BufferedReader(isr);
                 String inputLine;
                 while (in.ready() && (inputLine = in.readLine()) != null) {
-                    // System.out.println(inputLine);
+                    //parliamentary control	en	http://eurovoc.europa.eu/209346
                     inputLine = inputLine.trim();
                     if (inputLine.trim().length() > 0) {
                         String[] fields = inputLine.split("\t");

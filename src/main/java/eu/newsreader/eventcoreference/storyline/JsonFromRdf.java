@@ -1192,6 +1192,12 @@ static JSONObject getTopicsJSONObjectFromInstanceStatement (ArrayList<Statement>
         else if (value.indexOf("/non-entities/") > -1) {
             property = "ne";
         }
+        else if (value.indexOf("/eurovoc.europa.eu/") > -1) {
+            property = "eurovoc";
+        }
+        else {
+           // System.out.println("value = " + value);
+        }
         return property;
     }
 
