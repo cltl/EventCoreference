@@ -336,8 +336,33 @@ public class TrigKSTripleReader {
     }
 
 
+    public static String makeSparqlQueryInit () {
+        String sparqQueryInit = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "{SELECT distinct ?event WHERE { \n" ;
+        //System.out.println("sparqQuery = " + sparqQuery);
+        return sparqQueryInit;
+    }
 
-
+    public static String makeSparqlQueryEnd () {
+        String sparqQueryEnd = "+\n" +
+                "                } LIMIT "+limit+" }\n" +
+                "                \"\\t?event ?relation ?object .\\n\" +\n" +
+                "                \"\\tOPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\\n\" +\n" +
+                "                \"\\tOPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\\n\" +\n" +
+                "                \"\\tOPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }\\n\" +\n" +
+                "                \"} ORDER BY ?event\"" ;
+        //System.out.println("sparqQuery = " + sparqQuery);
+        return sparqQueryEnd;
+    }
 
     static public String makeTripleQuery (String subjectUri) {
         String subject = subjectUri;

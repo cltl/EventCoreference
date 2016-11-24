@@ -133,7 +133,10 @@ public class TrigTripleReader {
            // if (i==200) break;
             File file = trigFiles.get(i);
             //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
-            System.out.println("file.getName() = " + file.getName());
+            if (i%500==0) {
+                System.out.println("i = " + i);
+            }
+           // System.out.println("file.getName() = " + file.getName());
             try {
                 dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
                 Model namedModel = dataset.getNamedModel(TrigTripleData.instanceGraph);
@@ -146,7 +149,6 @@ public class TrigTripleReader {
                         triples.add(s);
                         trigTripleData.tripleMapInstances.put(subject, triples);
                     } else {
-
                         ArrayList<Statement> triples = new ArrayList<Statement>();
                         triples.add(s);
                         trigTripleData.tripleMapInstances.put(subject, triples);

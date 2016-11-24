@@ -34,7 +34,7 @@ public class DataSetTopicHierarchy {
         String querypath = "";
         hierarchyPath = "/Code/vu/newsreader/vua-resources/eurovoc_in_skos_core_concepts.rdf.gz";
         euroVocFile = "/Code/vu/newsreader/vua-resources/mapping_eurovoc_skos.csv.gz";
-        topicPath = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample_grasp.topics.xls";
+        topicPath = "/Users/piek/Desktop/NWR-INC/dasym/dasym_trig.topics.xls";
         title = "PostNL topics";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];

@@ -794,7 +794,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     level--;
                     level--;
                 } else {
-                    str += accordion + "<h2>\n";
+                    str += "<h2>";
+                    //str += accordion + "<h2>\n";
                     for (int j = 2; j < level; j++) {
                         str += "<div id=\"cell\"></div>";
                     }
@@ -806,18 +807,18 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     String tb = TreeStaticHtml.makeTickBox(type, top);
 
                     if (cnt > 0) {
-                        str += "<div id=\"cell\">" + ref + ";" + cnt + "</a>";
+                        str += "<div id=\"cell\">" +"<a href=\""+top+"\">"+ ref + ";" + cnt + "</a>";
                         str += tb;
                         str += "</div>";
                     } else {
                         // str += "<div id=\"cell\">" + ref + tb + "</div>";
                         str += "<div id=\"cell\">" + ref + "</div>";
                     }
-                    str += "\n</h2>\n";
-                    for (int j = 2; j < level; j++) {
+                    str += "</h2>\n";
+                    /*for (int j = 2; j < level; j++) {
                         str += "<div id=\"cell\"></div>";
 
-                    }
+                    }*/
                     fos.write(str.getBytes());
                     str = "";
 /*
@@ -870,7 +871,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     else {
                     }*/
 
-                    str += "</div>\n"; // closing accordion
+                    //str += "</div>\n"; // closing accordion
                     fos.write(str.getBytes());
                 }
                 if (superToSub.containsKey(top)) {

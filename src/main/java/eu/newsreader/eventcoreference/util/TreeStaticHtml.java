@@ -201,13 +201,20 @@ public class TreeStaticHtml {
             " \n" +
             "<style>\n" +
             "/*body {font-family: \"Lato\", sans-serif;}*/\n" +
-            "    body { font-size: 80%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif; }\n" +
-            "    .accordionItem h2 { margin: 0; font-size: 1.0em; padding: 0.2em; color: #fff; background-color: #944; border-bottom: 1px solid #66d; }\n" +
+                    " body { font-size: 80%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif; }\n" +
+                    "    .accordionItem h2 { margin: 0; font-size: 1.0em; padding: 0.2em; color: #fff; background-color: #944;}\n" +
+                    "    .accordionItem h2:hover { cursor: pointer; }\n" +
+                    "    .accordionItem div { margin: 0; padding: em 0.2em; background-color: #ffffe6;}\n" +
+                    "    .accordionItem.hide h2 { color: #000; background-color: #ffffe6; }\n" +
+                    "    .accordionItem.hide div { display: none; }\n" +
+                    "    .accordionItem.hide #cell2 {display:none;}\n"+
+            "  /*  body { font-size: 80%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif; }\n" +
+            "    .accordionItem h2 { margin: 0; font-size: 1.0em; padding: 0.2em; color: #fff; background-color: #944;   border-bottom: 1px solid #66d; }\n" +
             "    .accordionItem h2:hover { cursor: pointer; }\n" +
-            "    .accordionItem div { margin: 0; padding: em 0.2em; background-color: #eef; border-bottom: 1px solid #66d; }\n" +
+            "    .accordionItem div { margin: 0; padding: em 0.2em; background-color: #eef;  border-bottom: 1px solid #66d;  }\n" +
             "    .accordionItem.hide h2 { color: #000; background-color: #f0f0f5; }\n" +
             "    .accordionItem.hide div { display: none; }\n" +
-            "    .accordionItem.hide #cell2 {display:none;}\n"  +
+            "    .accordionItem.hide #cell2 {display:none;}*/\n"  +
             "\n" +
             "ul.tab {\n" +
             "    list-style-type: none;\n" +
@@ -290,19 +297,41 @@ public class TreeStaticHtml {
             "\t#cell {\n" +
             "\t\tfont-family: verdana,arial,sans-serif;\n" +
             "\t    font-size:14px;\n" +
-            "\t\twidth:100px;\n" +
+            "\t\tbox-shadow: 2px 2px 2px #888888;\n"+
+            "\t\twidth:300px;\n" +
+            "\t   /*  border: 2px solid #944; */\n" +
+            "    \tdisplay: table-cell;\n" +
+            "\t\t}\n" +
+
+
+            "\t#cell1 {\n" +
+            "\t\tfont-family: verdana,arial,sans-serif;\n" +
+            "\t    font-size:14px;\n" +
+            "\t\twidth:300px;\n" +
             "\t   /*  border: 2px solid #944; */\n" +
             "    \tdisplay: table-cell;\n" +
             "\t\t}\n" +
 
             "#cell2 {\n" +
+                    "        border-radius:5px 5px 5px 5px;\n" +
+                    "       /* box-shadow: 10px 10px 5px #888888;*/\n" +
+                    "\t\tfont-family: verdana,arial,sans-serif;\n" +
+                    "\t    font-size:13px;\n" +
+                    "\t    min-width:1000px;\n" +
+                    "\t\tmax-width:1000px;\n" +
+                    "\t    border: 1px solid #944;\n" +
+                    "    \tdisplay: table-cell;\n" +
+                    "\t\t}\n"+
+
+            "#cell3 {\n" +
             "\t\tfont-family: verdana,arial,sans-serif;\n" +
             "\t    font-size:12px;\n" +
-            "\t    min-width:1000px;\n" +
-            "\t    max-width:1000px;\n" +
+            "\t    min-width:500px;\n" +
+            "\t    max-width:500px;\n" +
             "\t   /*border: 2px solid #944;*/ \n" +
             "    \tdisplay: table-cell;\n" +
             "\t\t}\n"+
+
             "</style>"+
             "\n" +
             "\n" +
@@ -414,6 +443,7 @@ public class TreeStaticHtml {
                 "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Entities')\">Entities</a></li>\n" +
                 "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Events')\">Events</a></li>\n" +
                 "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Sources')\">Sources</a></li>\n" +
+                "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Perspectives')\">Perspectives</a></li>\n" +
                 "  <li><a href=\"#\" class=\"tablinks\" onclick=\"openData(event, 'Topics')\">Topics</a></li>\n" +
                 "</ul>";
         return bodyStart;
