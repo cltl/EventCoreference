@@ -341,26 +341,31 @@ public class TrigKSTripleReader {
                 "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
                 "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
+                "PREFIX prov:  <http://www.w3.org/ns/prov#>\n" +
+                "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
+                "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
                 "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
                 "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX dbpedianl: <http://nl.dbpedia.org/resource/> \n" +
                 "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
                 "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
-                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
-                "{SELECT distinct ?event WHERE { \n" ;
-        //System.out.println("sparqQuery = " + sparqQuery);
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime  \n" +
+                //"SELECT ?event ?relation ?object \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                     "?event rdf:type " + "sem:Event" + " .\n";
         return sparqQueryInit;
     }
 
     public static String makeSparqlQueryEnd () {
-        String sparqQueryEnd = "+\n" +
-                "                } LIMIT "+limit+" }\n" +
-                "                \"\\t?event ?relation ?object .\\n\" +\n" +
-                "                \"\\tOPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\\n\" +\n" +
-                "                \"\\tOPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\\n\" +\n" +
-                "                \"\\tOPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }\\n\" +\n" +
-                "                \"} ORDER BY ?event\"" ;
-        //System.out.println("sparqQuery = " + sparqQuery);
+        String sparqQueryEnd =
+                "\n} LIMIT "+limit+" }\n" +
+                "?event ?relation ?object . \n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime } \n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime } \n" +
+                        "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime } \n" +
+                "} ORDER BY ?event" ;
         return sparqQueryEnd;
     }
 
@@ -590,7 +595,7 @@ public class TrigKSTripleReader {
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i].trim().replace('^', ' ');
             // field = multiwordFix(field);
-            if (field.indexOf("dbp:")==-1 && field.indexOf("//cltl.nl/")==-1 && field.indexOf("dbpedia:")==-1) {
+            if (field.indexOf("dbp:")==-1 && field.indexOf("//cltl.nl/")==-1 && field.indexOf("dbpedia:")==-1 && field.indexOf("dbpedianl:")==-1) {
                 if (!labels.isEmpty()) labels += ";";
                 labels += field;
             }
@@ -620,7 +625,7 @@ public class TrigKSTripleReader {
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i].trim().replace('^', ' ');
             // field = multiwordFix(field);
-            if (field.indexOf("dbpedia:")>-1) {
+            if ((field.indexOf("dbpedia:")>-1) || (field.indexOf("dbpedianl:")>-1)) {
                 if (!labels.isEmpty()) labels += ";";
                 labels += field;
             }
@@ -958,6 +963,10 @@ public class TrigKSTripleReader {
         return eventIds;
     }
 
+    /*
+
+
+     */
     /////////////////////////////////////
     static public void readTriplesFromKSforEntityLabel(String entityLabel)throws Exception {
         String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
@@ -1003,7 +1012,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        //System.out.println("sparqlQuery = " + sparqlQuery);
+        System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
@@ -1028,7 +1037,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        //System.out.println("sparqlQuery = " + sparqlQuery);
+        System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
@@ -1053,7 +1062,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-       //  System.out.println("sparqlQuery = " + sparqlQuery);
+         System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 

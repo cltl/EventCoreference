@@ -24,8 +24,8 @@ public class DataSetEntityHierarchy {
         String entityPath = "";
         String title = "";
         String querypath = "";
-        hierarchyPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/counted_types_unsorted.tsv";
-        entityPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.dbp.types.tsv";
+        hierarchyPath = "/Users/piek/Desktop/NWR-INC/dasym/stats-5/DBpediaHierarchy_parent_child.tsv";
+        entityPath = "/Users/piek/Desktop/NWR-INC/dasym/stats-5/dasym_dark_light.tsv";
         title = "PostNL DBp ontology for entities";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -51,7 +51,7 @@ public class DataSetEntityHierarchy {
         tops.add("Place");
         tops.add("Person");*/
         System.out.println("tops.toString() = " + tops.toString());
-        HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEntityCountTypeTsv (simpleTaxonomy, entityPath, "//dbpedia.org/");
+        HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEntityCountTypeTsv (simpleTaxonomy, entityPath, "/dbpedia.org/");
         HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
         System.out.println("Cumulating scores");
