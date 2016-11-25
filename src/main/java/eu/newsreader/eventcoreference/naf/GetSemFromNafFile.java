@@ -55,7 +55,7 @@ public class GetSemFromNafFile {
         Log.setLog4j("jena-log4j.properties");
         String pathToNafFile = "";
         ALL = true;
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/test/426115_relink_dominant.naf";
+        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample/11409_relink_dominant.naf";
         String sourceFrameFile = "";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source.txt";
@@ -65,6 +65,8 @@ public class GetSemFromNafFile {
         grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical.txt";
         String project = "";
         project = "test";
+        String eurovoctestfile = "/Code/vu/newsreader/vua-resources/mapping_eurovoc_skos.csv.gz.label.concept";
+        GetSemFromNaf.initEurovoc(eurovoctestfile, "en");
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-file") && args.length > (i + 1)) {
