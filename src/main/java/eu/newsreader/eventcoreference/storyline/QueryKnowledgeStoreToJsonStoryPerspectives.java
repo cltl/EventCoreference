@@ -20,6 +20,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
 
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static ArrayList<String> blacklist = new ArrayList<String>();
+    static int DEBUG = 0;
     static boolean ALL = false; /// if true we do not filter events
     static boolean SKIPPEVENTS = false; /// if true we we exclude perspective events from the stories
     static boolean MERGE = false;
@@ -55,6 +56,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         String pathToILIfile = "";
         String sparqlQuery = "";
         String eventQuery = "";
+        String topicQuery = "";
         String wordQuery = "";
         String graspQuery = "";
         String authorQuery = "";
@@ -85,6 +87,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             else if (arg.equals("--entity") && args.length>(i+1)) {
                 entityQuery = args[i+1];
             }
+            else if (arg.equals("--topic") && args.length>(i+1)) {
+                topicQuery = args[i+1];
+            }
             else if (arg.equals("--tokens") && args.length>(i+1)) {
                 pathToTokenIndex = args[i+1];
             }
@@ -105,6 +110,13 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             }
             else if (arg.equals("--time") && args.length>(i+1)) {
                 timeGran = args[i+1];
+            }
+            else if (arg.equals("--debug") && args.length>(i+1)) {
+                try {
+                    DEBUG = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
             else if (arg.equals("--actor-intersect") && args.length>(i+1)) {
                 try {
@@ -249,6 +261,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         if (!wordQuery.isEmpty()) {
             log += " -- queried for word = " + wordQuery;
         }
+        if (!topicQuery.isEmpty()) {
+            log += " -- queried for topic = " + topicQuery;
+        }
         if (!authorQuery.isEmpty()) {
             log += " -- queried for author = " + authorQuery;
         }
@@ -320,11 +335,16 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
             }
 
-        /*
+            if (!topicQuery.isEmpty()) {
+                sparql += TrigKSTripleReader.makeTopicFilter("?event", topicQuery);
+            }
+
+         /*
           @TODO implement period filter for events
          */
             if (!year.isEmpty()) {
-                sparql += TrigKSTripleReader.makeYearFilter("?eventlabel", year);
+                sparql += TrigKSTripleReader.makeYearFilter("?time", year) +                            "?ent rdfs:label ?entlabel .\n" +
+                        "?event sem:hasTime ?time .\n";
             }
 
             if (!authorQuery.isEmpty()) {
@@ -362,7 +382,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             }
 
             sparql += TrigKSTripleReader.makeSparqlQueryEnd();
-            //System.out.println("sparql = " + sparql);
+            if (DEBUG>0) System.out.println("sparql = " + sparql);
             try {
                 TrigKSTripleReader.readTriplesFromKs(sparql);
             } catch (Exception e) {

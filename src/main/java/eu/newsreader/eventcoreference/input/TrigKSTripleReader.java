@@ -475,6 +475,19 @@ public class TrigKSTripleReader {
         return filter;
     }
 
+
+    static public String makeTopicFilter(String variable, String query) {
+        String filter = "{ ";
+        String[] fields = query.split(";");
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i].replace('^', ' ');;
+            if (i>0)  filter +=" UNION ";
+            filter += " { "+variable+" skos:relatedMatch <"+field+"> } ";
+        }
+        filter += " }\n" ;
+        return filter;
+    }
+
     static public void readTriplesFromKSforEntity(String entityQuery)throws Exception {
         String types = "";
         String instances = "";
@@ -620,18 +633,20 @@ public class TrigKSTripleReader {
 
     static public String getInstanceQueryforEntity(String entityQuery) {
         String labels = "";
-        String [] fields = entityQuery.split(";");
+        String[] fields = entityQuery.split(";");
         // System.out.println("entityQuery = " + entityQuery);
         for (int i = 0; i < fields.length; i++) {
             String field = fields[i].trim().replace('^', ' ');
             // field = multiwordFix(field);
-            if ((field.indexOf("dbpedia:")>-1) || (field.indexOf("dbpedianl:")>-1)) {
+            if ((field.indexOf("dbpedia:") > -1) || (field.indexOf("dbpedianl:") > -1)) {
                 if (!labels.isEmpty()) labels += ";";
                 labels += field;
             }
         }
         return labels;
     }
+
+
 
     static public void makeQueryforEntity(String entityQuery)throws Exception {
         String types = "";
@@ -986,7 +1001,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        //System.out.println("sparqlQuery = " + sparqlQuery);
+        System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
@@ -1087,7 +1102,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        // System.out.println("sparqlQuery = " + sparqlQuery);
+         System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
