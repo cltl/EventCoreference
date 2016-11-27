@@ -344,6 +344,7 @@ public class TrigKSTripleReader {
                 "PREFIX prov:  <http://www.w3.org/ns/prov#>\n" +
                 "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
                 "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
+                "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
                 "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
                 "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
                 "PREFIX dbpedianl: <http://nl.dbpedia.org/resource/> \n" +
