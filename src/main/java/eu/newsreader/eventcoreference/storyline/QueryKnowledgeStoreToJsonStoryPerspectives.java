@@ -18,6 +18,7 @@ import java.util.Set;
  */
 public class QueryKnowledgeStoreToJsonStoryPerspectives {
 
+    static boolean STRICTSTRING = true;
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();
     static ArrayList<String> blacklist = new ArrayList<String>();
     static int DEBUG = 0;
@@ -81,6 +82,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             else if (arg.equals("--word") && args.length>(i+1)) {
                 wordQuery = args[i+1];
             }
+            else if (arg.equals("--substring")) {
+                STRICTSTRING = false;
+            }
             else if (arg.equals("--event") && args.length>(i+1)) {
                 eventQuery = args[i+1];
             }
@@ -114,6 +118,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             else if (arg.equals("--debug") && args.length>(i+1)) {
                 try {
                     DEBUG = Integer.parseInt(args[i+1]);
+                    TrigKSTripleReader.DEBUG = DEBUG;
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -288,7 +293,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         }
         else if (!wordQuery.isEmpty()) {
             try {
-                TrigKSTripleReader.readTriplesFromKSforSurfaceString(wordQuery);
+                if (STRICTSTRING) TrigKSTripleReader.readTriplesFromKSforSurfaceString(wordQuery);
+                else {TrigKSTripleReader.readTriplesFromKSforSurfaceSubString(wordQuery); }
+
             } catch (Exception e) {
                 ksQueryError = e.getMessage();
                 ksQueryError += e.getCause();
@@ -302,13 +309,20 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 //@split query into labels and types
                 String labels = TrigKSTripleReader.getLabelQueryforEvent(eventQuery);
                 String types = TrigKSTripleReader.getTypeQueryforEvent(eventQuery);
+                sparql += "{";
+
                 if (!labels.isEmpty()) {
-                    sparql += TrigKSTripleReader.makeLabelFilter("?eventlabel", labels) +
-                            "?event rdfs:label ?eventlabel .\n" ;
+                    if (STRICTSTRING) sparql += TrigKSTripleReader.makeLabelConstraint("?event", labels);
+                    else {sparql += TrigKSTripleReader.makeSubStringLabelFilter("?event", labels); }
+                   // sparql += "?event rdfs:label ?eventlabel .\n" ;
                 }
                 if (!types.isEmpty()) {
+                    if (!labels.isEmpty()) {
+                        sparql += " UNION ";
+                    }
                     sparql += TrigKSTripleReader.makeTypeFilter("?event", types);
                 }
+                sparql += "}";
             }
 
             //@TODO We cannot combine different types of constraints per facet as OR
@@ -318,21 +332,33 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 String labels = TrigKSTripleReader.getLabelQueryforEntity(entityQuery);
                 String types = TrigKSTripleReader.getTypeQueryforEntity(entityQuery);
                 String instances = TrigKSTripleReader.getInstanceQueryforEntity(entityQuery);
+                sparql += "?event sem:hasActor ?ent .\n";
+                sparql += "{";
                 if (!labels.isEmpty()) {
                     //makeLabelFilter("?entlabel",entityLabel) +
-                    sparql += TrigKSTripleReader.makeSubStringLabelFilter("?entlabel", labels) +
-                            "?ent rdfs:label ?entlabel .\n" +
-                            "?event sem:hasActor ?ent .\n";
+                    if (STRICTSTRING) {
+                        sparql += TrigKSTripleReader.makeLabelConstraint("?ent", labels);
+                    }
+                    else {
+                        sparql += TrigKSTripleReader.makeSubStringLabelFilter("?entlabel", labels);
+                        sparql += "?ent rdfs:label ?entlabel .\n" ;
+                    }
                 }
-                else if (!instances.isEmpty()) {
-                    sparql += TrigKSTripleReader.makeInstanceFilter("?event", instances) +
-                            "?event sem:hasActor ?ent .";
+                if (!instances.isEmpty()) {
+                    if (!labels.isEmpty()) {
+                        sparql += " UNION ";
+                    }
+                    sparql += TrigKSTripleReader.makeInstanceFilter("?event", instances);
+                           // "?event sem:hasActor ?ent .";
 
                 }
-                else if (!types.isEmpty()) {
-                    sparql += TrigKSTripleReader.makeTypeFilter("?ent", types) +
-                            "?event sem:hasActor ?ent .";
+                if (!types.isEmpty()) {
+                    if (!labels.isEmpty() || !instances.isEmpty()) {
+                        sparql += " UNION ";
+                    }
+                    sparql += TrigKSTripleReader.makeTypeFilter("?ent", types) ;
                 }
+                sparql += "}";
             }
 
             if (!topicQuery.isEmpty()) {
@@ -347,15 +373,29 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                         "?event sem:hasTime ?time .\n";
             }
 
+            /*
+            <https://twitter.com/139786938/status/529378953065422848>
+            prov:wasAttributedTo  nwrauthor:Twitter .
+
+            <https://twitter.com/139786938/status/529378953065422848/source_attribution/Attr10>
+            rdf:value              grasp:CERTAIN_NON_FUTURE_POS , grasp:positive ;
+            grasp:wasAttributedTo  <http://www.newsreader-project.eu/data/Dasym-Pilot/non-entities/hij> .
+             */
             if (!authorQuery.isEmpty()) {
                 String sources = TrigKSTripleReader.getsource(authorQuery);
                 if (!sources.isEmpty()) {
                     sparql +=
                             "?event gaf:denotedBy ?mention.\n" +
                                     "?mention grasp:hasAttribution ?attribution.\n" +
-                                    "?attribution prov:wasAttributedTo ?doc .\n" +
-                                    "?doc prov:wasAttributedTo ?author .\n" +
-                                    TrigKSTripleReader.makeSubStringLabelFilter("?author", sources);
+                                    "?attribution prov:wasAttributedTo ?doc .\n" ;
+                                    //"?doc prov:wasAttributedTo ?author .\n";
+/*
+                    if (STRICTSTRING) sparql += TrigKSTripleReader.makeLabelConstraint("?author", sources);
+                    else {sparql += TrigKSTripleReader.makeSubStringLabelFilter("?author", sources); }
+*/
+
+                    //sparql += TrigKSTripleReader.makeSubStringLabelFilter("?author", sources);
+                    sparql += TrigKSTripleReader.makeAuthorConstraint("?doc", sources);
                 }
             }
 
@@ -365,17 +405,38 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                     sparql +=
                             "?event gaf:denotedBy ?mention.\n" +
                                     "?mention grasp:hasAttribution ?attribution.\n" +
-                                    "?attribution grasp:wasAttributedTo ?cite.\n" +
-                                    TrigKSTripleReader.makeSubStringLabelFilter("?cite", sources);
+                                    "?attribution grasp:wasAttributedTo ?cite.\n";
+/*
+                    if (STRICTSTRING) sparql += TrigKSTripleReader.makeLabelConstraint("?cite", sources);
+                    else {sparql += TrigKSTripleReader.makeSubStringLabelFilter("?cite", sources); }
+*/
+
+                    sparql += TrigKSTripleReader.makeSubStringLabelFilter("?cite", sources);
 
                 }
             }
 
+            /// rdf:value grasp:CERTAIN_NON_FUTURE_POS , grasp:positive ;
+            ///graspQuery = NEG;UNCERTAIN;positive;
             if (!graspQuery.isEmpty()) {
                 sparql += "?event gaf:denotedBy ?mention.\n" +
-                        "?mention grasp:hasAttribution ?attribution.\n" +
-                        "?attribution rdf:value ?value .\n" +
-                        TrigKSTripleReader.makeSubStringLabelFilter("?value", graspQuery) + "\n";
+                        "?mention grasp:hasAttribution ?attribution.\n";
+                if (graspQuery.indexOf("negative") >-1) {
+                    sparql +=  "?attribution rdf:value grasp:negative .\n";
+
+                }
+                if (graspQuery.indexOf("positive") >-1) {
+                    sparql +=  "?attribution rdf:value grasp:positive .\n";
+                }
+                String [] fields = graspQuery.split(";");
+                for (int i = 0; i < fields.length; i++) {
+                    String field = fields[i];
+                    if (!field.toLowerCase().equals(field)) {
+                        ///upper case field
+                        sparql += "?attribution rdf:value ?value .\n" ;
+                        sparql +=  TrigKSTripleReader.makeSubStringLabelFilter("?value", field) + "\n";
+                    }
+                }
                 if (graspQuery.indexOf("FUTURE") > -1) {
                     sparql += "FILTER(!CONTAINS(STR(?value), \"NON_FUTURE\"))\n";
                 }
@@ -431,6 +492,9 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 // System.out.println("eurovoc = " + euroVoc.uriLabelMap.size());
                 if (euroVoc.uriLabelMap.size() > 0) {
                     JsonStoryUtil.renameStories(jsonObjects, euroVoc, euroVocBlackList);
+                }
+                else {
+                    System.out.println("no mappings eurovoc = " + euroVoc.uriLabelMap.size() );
                 }
                 ArrayList<JSONObject> rawTextArrayList = new ArrayList<JSONObject>();
                 ArrayList<JSONObject> structuredEvents = new ArrayList<JSONObject>();

@@ -24,7 +24,7 @@ import static com.hp.hpl.jena.rdf.model.ResourceFactory.createStatement;
  * Created by filipilievski on 2/7/16.
  */
 public class TrigKSTripleReader {
-
+    public static int DEBUG = 0;
     public static int qCount = 0;
     public static String service = "https://knowledgestore2.fbk.eu";
     public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/wikinews-new/sparql";
@@ -342,6 +342,7 @@ public class TrigKSTripleReader {
                 "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
                 "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
                 "PREFIX prov:  <http://www.w3.org/ns/prov#>\n" +
+                "PREFIX nwrauthor: <http://www.newsreader-project.eu/provenance/author/> \n" +
                 "PREFIX grasp: <http://groundedannotationframework.org/grasp#>\n" +
                 "PREFIX gaf:   <http://groundedannotationframework.org/gaf#>\n" +
                 "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
@@ -405,6 +406,8 @@ public class TrigKSTripleReader {
         return triples;
     }
 
+
+
     static public String makeLabelFilter(String variable, String query) {
         //FILTER ( regex(str(?entlabel), "Bank") || regex(str(?entlabel), "Dank")) .
 
@@ -416,6 +419,60 @@ public class TrigKSTripleReader {
             filter += "regex(str("+variable+"), \"^"+field+"$\")";
         }
         filter += ") .\n" ;
+        return filter;
+    }
+
+    static public String makeLabelSingleConstraint(String variable, String query) {
+        //?ent rdfs:label "beleggen" .
+
+        String filter = variable+" rdfs:label \""+query+"\" .\n" ;
+        return filter;
+    }
+
+    static public String makeLabelConstraint(String variable, String query) {
+        //{  { ?ent rdfs:label "Sanddbezorger" }  UNION  { ?ent rdfs:label "InPost" }  UNION  { ?ent rdfs:label "Postbedrijf" }
+
+        String filter = "{ ";
+            String[] fields = query.split(";");
+            for (int i = 0; i < fields.length; i++) {
+                String field = fields[i].replace('^', ' ');;
+                if (i>0)  filter +=" UNION ";
+                filter += " { "+variable+" rdfs:label \""+field+"\" } ";
+            }
+            filter += " }\n" ;
+            return filter;
+    }
+
+    static public String makeAuthorConstraint(String variable, String query) {
+        //{  { ?doc prov:wasAttributedTo nwrauthor:Twitter }  UNION  { ?doc prov:wasAttributedTo nwrauthor:Postbodeforum }  }
+
+        String filter = "{ ";
+            String[] fields = query.split(";");
+            for (int i = 0; i < fields.length; i++) {
+                String field = fields[i].replace('^', ' ');;
+                if (i>0)  filter +=" UNION ";
+                filter += " { "+variable+" prov:wasAttributedTo nwrauthor:"+field+" } ";
+            }
+            filter += " }\n" ;
+            return filter;
+    }
+
+    static public String makeCiteConstraint(String variable, String query) {
+
+        String filter = "{ ";
+            String[] fields = query.split(";");
+            for (int i = 0; i < fields.length; i++) {
+                String field = fields[i].replace('^', ' ');;
+                if (i>0)  filter +=" UNION ";
+                filter += " { "+variable+" grasp:wasAttributedTo nwrcite:"+field+" } ";
+            }
+            filter += " }\n" ;
+            return filter;
+    }
+
+    static public String makeValueConstraint(String variable, String query) {
+        //?value rdfs:value "negative" .
+        String filter = variable+" rdfs:value \""+query+"\" .\n" ;
         return filter;
     }
 
@@ -520,9 +577,14 @@ public class TrigKSTripleReader {
         if (!instances.isEmpty()) readTriplesFromKSforEntityInstance(instances);
     }
 
-    static public void readTriplesFromKSforSurfaceString(String entityQuery)throws Exception {
-        readTriplesFromKSforEntityLabel(entityQuery);
-        readTriplesFromKSforEventLabel(entityQuery);
+    static public void readTriplesFromKSforSurfaceString(String query)throws Exception {
+        readTriplesFromKSforEntityLabel(query);
+        readTriplesFromKSforEventLabel(query);
+    }
+
+    static public void readTriplesFromKSforSurfaceSubString(String query)throws Exception {
+        readTriplesFromKSforEntityLabelSubstring(query);
+        readTriplesFromKSforEventLabelSubstring(query);
     }
 
 
@@ -992,7 +1054,30 @@ public class TrigKSTripleReader {
                 "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
                 "WHERE {\n" +
                 "{SELECT distinct ?event WHERE { \n" +
+                makeLabelConstraint("?ent",entityLabel) +
                 //makeLabelFilter("?entlabel",entityLabel) +
+                //makeSubStringLabelFilter("?entlabel",entityLabel) +
+                //"?ent rdfs:label ?entlabel .\n" +
+                "?event sem:hasActor ?ent .\n" +
+                "} LIMIT "+limit+" }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
+                "} ORDER BY ?event";
+        if (DEBUG>0) System.out.println("sparqlQuery = " + sparqlQuery);
+        readTriplesFromKs(sparqlQuery);
+    }
+
+    /////////////////////////////////////
+    static public void readTriplesFromKSforEntityLabelSubstring(String entityLabel)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
                 makeSubStringLabelFilter("?entlabel",entityLabel) +
                 "?ent rdfs:label ?entlabel .\n" +
                 "?event sem:hasActor ?ent .\n" +
@@ -1002,7 +1087,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-       // System.out.println("sparqlQuery = " + sparqlQuery);
+        if (DEBUG>0) System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 
@@ -1095,7 +1180,33 @@ public class TrigKSTripleReader {
                 "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
                 "WHERE {\n" +
                 "{SELECT distinct ?event WHERE { \n" +
-                makeLabelFilter("?eventlabel",eventLabel) +
+                makeLabelConstraint("?event",eventLabel) +
+                //makeLabelFilter("?eventlabel",eventLabel) +
+                //"?event rdfs:label ?eventlabel .\n" +
+                "} LIMIT "+limit+" }\n" +
+                "?event ?relation ?object .\n" +
+                "OPTIONAL { ?object rdf:type owltime:Instant ; owltime:inDateTime ?indatetime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
+                "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
+                "} ORDER BY ?event";
+        if (DEBUG>0)  System.out.println("sparqlQuery = " + sparqlQuery);
+        readTriplesFromKs(sparqlQuery);
+    }
+
+    static public void readTriplesFromKSforEventLabelSubstring(String eventLabel)throws Exception {
+        String sparqlQuery = "PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/> \n" +
+                "PREFIX eso: <http://www.newsreader-project.eu/domain-ontology#> \n" +
+                "PREFIX fn: <http://www.newsreader-project.eu/ontologies/framenet/> \n" +
+                "PREFIX ili: <http://globalwordnet.org/ili/> \n" +
+                "PREFIX dbp: <http://dbpedia.org/ontology/> \n" +
+                "PREFIX dbpedia: <http://dbpedia.org/resource/> \n" +
+                "PREFIX owltime: <http://www.w3.org/TR/owl-time#> \n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n" +
+                "SELECT ?event ?relation ?object ?indatetime ?begintime ?endtime \n" +
+                "WHERE {\n" +
+                "{SELECT distinct ?event WHERE { \n" +
+                makeSubStringLabelFilter("?eventlabel",eventLabel) +
                 "?event rdfs:label ?eventlabel .\n" +
                 "} LIMIT "+limit+" }\n" +
                 "?event ?relation ?object .\n" +
@@ -1103,7 +1214,7 @@ public class TrigKSTripleReader {
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasBeginning ?begintime }\n" +
                 "OPTIONAL { ?object rdf:type owltime:Interval ; owltime:hasEnd ?endtime }" +
                 "} ORDER BY ?event";
-        // System.out.println("sparqlQuery = " + sparqlQuery);
+        if (DEBUG>0)  System.out.println("sparqlQuery = " + sparqlQuery);
         readTriplesFromKs(sparqlQuery);
     }
 

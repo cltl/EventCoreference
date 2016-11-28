@@ -23,7 +23,7 @@ public class SimpleTaxonomy {
     public HashMap<String, String> subToSuper = new HashMap<String, String>();
     public HashMap<String, ArrayList<String>> superToSub = new HashMap<String, ArrayList<String>>();
     static final String buttons1 = "<button type=\"button\" onclick=\"document.getElementById('cell2').style.display='table-cell'\">Show</button>\n";
-    static public final String accordion = "<div class=\"accordionItem\">\n";
+    static public final String accordion = "<div class=\"accordionItem\">";
     public String makeToggle (String id) {
         String str = "<a data-toggle=\"collapse\" href=\"#collapse"+id+"\">Collapsible</a>\n";
         return str;
@@ -794,10 +794,9 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     level--;
                     level--;
                 } else {
-                    str += "<h2>";
-                    //str += accordion + "<h2>\n";
+                    str += accordion + "<h2>";
                     for (int j = 2; j < level; j++) {
-                        str += "<div id=\"cell\"></div>";
+                        str += "<div id=\"cell4\"></div>";
                     }
                     String ref = top;
                     if (conceptToPrefLabel.containsKey(top)) {
@@ -805,73 +804,19 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     }
 
                     String tb = TreeStaticHtml.makeTickBox(type, top);
+                    //<div class="accordionItem"><h2><div id="cell4"><a href="http://eurovoc.europa.eu/3581">restriction on competition</a></div><div id="cell4">175671<INPUT TYPE="checkbox" NAME="topic" VALUE="http://eurovoc.europa.eu/3581"></div></h2></div>
+                    //<div class="accordionItem"><h2><div id="cell4"><a href="http://eurovoc.europa.eu/2488">import policy</a></div><div id="cell4">6070<INPUT TYPE="checkbox" NAME="topic" VALUE="http://eurovoc.europa.eu/2488"></div></h2></div>
 
                     if (cnt > 0) {
-                        str += "<div id=\"cell\">" +"<a href=\""+top+"\">"+ ref + ";" + cnt + "</a>";
+                        str += "<div id=\"cell4\">" +"<a href=\""+top+"\">"+ ref + "</a></div><div id=\"cell4\">" + cnt;
                         str += tb;
                         str += "</div>";
                     } else {
                         // str += "<div id=\"cell\">" + ref + tb + "</div>";
-                        str += "<div id=\"cell\">" + ref + "</div>";
+                        str += "<div id=\"cell4\">" + ref + "</div>";
                     }
-                    str += "</h2>\n";
-                    /*for (int j = 2; j < level; j++) {
-                        str += "<div id=\"cell\"></div>";
-
-                    }*/
-                    fos.write(str.getBytes());
-                    str = "";
-/*
-                    int children = 0;
-                    if (phrases.containsKey(top)) {
-                        ArrayList<PhraseCount> phraseCounts = phrases.get(top);
-                        Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
-                            @Override
-                            public int compare(PhraseCount p1, PhraseCount p2) {
-
-                                return p2.getCount().compareTo(p1.getCount());
-                            }
-                        });
-                        String phraseString = "[";
-                        int collength = 0;
-                        int max = phraseCounts.get(0).getCount();
-                        for (int j = 0; j < phraseCounts.size(); j++) {
-                            PhraseCount phraseCount = phraseCounts.get(j);
-                            //if ((phraseCount.getCount()*100)/max>=0) {
-                            if (phraseCount.getCount() > 0) {
-                                children++;
-
-                                tb = TreeStaticHtml.makeTickBox(type, phraseCount.getPhrase());
-*//*                                if (phraseCount.getPhrase().indexOf("eurovoc") > -1) {
-                                    tb = TreeStaticHtml.makeTickBox(type, name, "eurovoc:" + name);
-                                    ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + tb + "</a>";
-                                } else {
-
-                                    ref = name + ":" + phraseCount.getCount() + tb;
-                                }*//*
-
-                                ref = phraseCount.getPhrase() + tb;
-                                phraseString+= ref;
-                                if (j < phraseCounts.size() - 1) {
-                                    phraseString += ", ";
-                                }
-                                *//*collength += ref.length();
-                                phraseString += ref;
-
-                                if (collength > colmax) {
-                                    phraseString += "\n";
-                                    collength = 0;
-                                }*//*
-                            }
-                        }
-                        phraseString += "]";
-                        str =   "<div id=\"cell2\"  class=\"collapse\"><p>" + phraseString + "</p></div>\n";
-                        fos.write(str.getBytes());
-                    }
-                    else {
-                    }*/
-
-                    //str += "</div>\n"; // closing accordion
+                    str += "</h2>";
+                    str += "</div>\n"; // closing accordion
                     fos.write(str.getBytes());
                 }
                 if (superToSub.containsKey(top)) {

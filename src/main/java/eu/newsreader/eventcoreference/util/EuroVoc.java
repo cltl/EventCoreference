@@ -37,6 +37,7 @@ public class EuroVoc {
     }
 
     public void readEuroVoc (String filePath, String language) {
+      //  System.out.println("filePath = " + filePath);
         try {
             InputStreamReader isr = null;
             if (filePath.toLowerCase().endsWith(".gz")) {
@@ -67,6 +68,7 @@ public class EuroVoc {
                 while (in.ready() && (inputLine = in.readLine()) != null) {
                     //parliamentary control	en	http://eurovoc.europa.eu/209346
                     inputLine = inputLine.trim();
+                  //  System.out.println("inputLine = " + inputLine);
                     if (inputLine.trim().length() > 0) {
                         String[] fields = inputLine.split("\t");
                         if (fields.length == 3) {

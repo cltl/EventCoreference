@@ -1042,6 +1042,7 @@ public class JsonStoryUtil {
                         }
                         storyTopicMap.put(groupName, givenTopics);
                     }
+                   // System.out.println("groupName = " + groupName);
                 }
             } catch (JSONException e) {
               //  e.printStackTrace();

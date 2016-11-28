@@ -34,7 +34,9 @@ public class DataSetTopicHierarchy {
         String querypath = "";
         hierarchyPath = "/Code/vu/newsreader/vua-resources/eurovoc_in_skos_core_concepts.rdf.gz";
         euroVocFile = "/Code/vu/newsreader/vua-resources/mapping_eurovoc_skos.csv.gz";
-        topicPath = "/Users/piek/Desktop/NWR-INC/dasym/dasym_trig.topics.xls";
+        euroVocFile = "/Code/vu/newsreader/vua-resources/mapping_eurovoc_skos.label.concept.gz";
+        //topicPath = "/Users/piek/Desktop/NWR-INC/dasym/dasym_trig.topics.xls";
+        topicPath = "/Users/piek/Desktop/NWR-INC/dasym/topics/topic.cnt";
         title = "PostNL topics";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -65,7 +67,8 @@ public class DataSetTopicHierarchy {
         ArrayList<String> tops = simpleTaxonomy.getTops();
 
         System.out.println("tops = " + tops.size());
-        HashMap<String, ArrayList<PhraseCount>> cntPredicates = readTopicCountTypeTsv(simpleTaxonomy, topicPath, euroVoc);
+        HashMap<String, ArrayList<PhraseCount>> cntPredicates = readTopicCountTypeGrep(simpleTaxonomy, topicPath, euroVoc);
+       // HashMap<String, ArrayList<PhraseCount>> cntPredicates = readTopicCountTypeTsv(simpleTaxonomy, topicPath, euroVoc);
         HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
         System.out.println("Cumulating scores");
@@ -300,6 +303,99 @@ public class DataSetTopicHierarchy {
                                             map.put(type, phrases);
                                         }
                                     }
+                                }
+                            }
+                        }
+                        else {
+                            System.out.println("Skipping line:"+inputLine);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    static public HashMap<String, ArrayList<PhraseCount>> readTopicCountTypeGrep (SimpleTaxonomy simpleTaxonomy, String filePath, EuroVoc euroVoc) {
+        HashMap<String, ArrayList<PhraseCount>> map = new HashMap<String, ArrayList<PhraseCount>>();
+        try {
+            InputStreamReader isr = null;
+            if (filePath.toLowerCase().endsWith(".gz")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (filePath.toLowerCase().endsWith(".bz2")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new CBZip2InputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                FileInputStream fis = new FileInputStream(filePath);
+                isr = new InputStreamReader(fis);
+            }
+            if (isr!=null) {
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine = "";
+                while (in.ready() && (inputLine = in.readLine()) != null) {
+                    // System.out.println(inputLine);
+                    inputLine = inputLine.trim();
+                    if (inputLine.trim().length() > 0) {
+                        String[] fields = inputLine.split("skos:relatedMatch");
+                        if (fields.length == 2) {
+                            /// eurovoc:675528
+                            String concept = fields[1].trim();
+                            int idx_e = concept.lastIndexOf(">");
+                            if (idx_e>-1) {
+                                concept = concept.substring(1,idx_e);
+                            }
+                            System.out.println("concept = " + concept);
+                            String countString = fields[0].trim();
+                            System.out.println("countString = " + countString);
+                            Integer cnt = -1;
+                            try {
+                                cnt = Integer.parseInt(countString);
+                            } catch (NumberFormatException e) {
+                            }
+                            if (cnt>1) {
+                                //// ignore topics with frequency 1
+                                /*if (euroVoc.uriLabelMap.containsKey(concept)) {
+                                    concept = euroVoc.uriLabelMap.get(concept);
+                                }
+                                else {
+                                   // System.out.println("concept = " + concept);
+                                }*/
+                                if (euroVoc.uriLabelMap.containsKey(concept)) {
+                                    String label = euroVoc.uriLabelMap.get(concept);
+                                    if (simpleTaxonomy.labelToConcept.containsKey(label)) {
+                                        String type = simpleTaxonomy.labelToConcept.get(label);
+                                        PhraseCount phraseCount = new PhraseCount(label, cnt);
+                                        if (map.containsKey(type)) {
+                                            ArrayList<PhraseCount> phrases = map.get(type);
+                                            phrases.add(phraseCount);
+                                            map.put(type, phrases);
+                                        } else {
+                                            ArrayList<PhraseCount> phrases = new ArrayList<PhraseCount>();
+                                            phrases.add(phraseCount);
+                                            map.put(type, phrases);
+                                        }
+                                    }
+                                    else {
+                                        System.out.println("Could not find label = " + label);
+                                    }
+                                }
+                                else {
+                                    System.out.println("Could not find concept = " + concept);
                                 }
                             }
                         }
