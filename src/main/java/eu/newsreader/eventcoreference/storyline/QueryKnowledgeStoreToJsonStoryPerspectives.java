@@ -336,7 +336,12 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 sparql += "{";
                 if (!labels.isEmpty()) {
                     //makeLabelFilter("?entlabel",entityLabel) +
-                    if (STRICTSTRING) {
+                    if (labels.indexOf("*")>-1)  {
+                        labels = labels.replace("*", "");
+                            sparql += TrigKSTripleReader.makeSubStringLabelFilter("?entlabel", labels);
+                            sparql += "?ent rdfs:label ?entlabel .\n" ;
+                    }
+                    else if (STRICTSTRING) {
                         sparql += TrigKSTripleReader.makeLabelConstraint("?ent", labels);
                     }
                     else {
