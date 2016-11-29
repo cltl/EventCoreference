@@ -165,7 +165,14 @@ public class JsonStoryUtil {
         return jsonObjectArrayList;
     }
 
-
+    /**
+     * Removes actors that are below the frequency threshold
+     * @param events
+     * @param entityFilter
+     * @param actorThreshold
+     * @return
+     * @throws JSONException
+     */
     static ArrayList<JSONObject> filterEventsForActors(ArrayList<JSONObject> events,
                                                        String entityFilter,
                                                        int actorThreshold) throws JSONException {
@@ -205,6 +212,7 @@ public class JsonStoryUtil {
                                 }
                             }
                             else {
+                                /// removes too short words
                                 oActorObject.remove(oKey);
                             }
                         }
@@ -231,6 +239,40 @@ public class JsonStoryUtil {
             }
         }
         return jsonObjectArrayList;
+    }
+
+    static void removeTinyActors(ArrayList<JSONObject> events) throws JSONException {
+        /*
+        "actors":{"pb/A0":["http://www.newsreader-project.eu/data/timeline/non-entities/to_a_single_defense_contractor"]}
+         */
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject oEvent = events.get(i);
+            JSONObject oActorObject = null;
+            try {
+                oActorObject = oEvent.getJSONObject("actors");
+                Iterator oKeys = oActorObject.sortedKeys();
+                while (oKeys.hasNext()) {
+                    String oKey = oKeys.next().toString();
+                    try {
+                        JSONArray actors = oActorObject.getJSONArray(oKey);
+                        JSONArray filteredActors = new JSONArray();
+                        for (int j = 0; j < actors.length(); j++) {
+                            String actor = actors.getString(j);
+                            actor = actor.substring(actor.lastIndexOf("/") + 1);
+                            if ((actor.length()<8) && actor.toLowerCase().equals(actor)) {
+                                /// removes too short words
+                                oActorObject.remove(oKey);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                oEvent.put("actors", oActorObject);
+            } catch (JSONException e) {
+                // e.printStackTrace();
+            }
+        }
     }
 
     static ArrayList<JSONObject> filterEventsForBlackList(ArrayList<JSONObject> events, ArrayList<String> blacklist) throws JSONException {

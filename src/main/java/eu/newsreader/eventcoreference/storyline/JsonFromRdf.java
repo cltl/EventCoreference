@@ -463,6 +463,32 @@ public class JsonFromRdf {
                             ns = "co";
                         }
 
+/*                        if (!tooTinyValue(getValue(value))) {
+                            ///// HACK to remove very short lower case actors
+                            if (!ns.isEmpty()) {
+                                value = ns + ":" + getValue(value);
+                            }
+
+                            value = value.replace("+", "_"); //// just to make it look nicer
+                            if (property.equalsIgnoreCase("pb")) {
+                                if (!pbActors.contains(value)) {
+                                    pbActors.add(value);
+                                }
+                            } else if (property.equalsIgnoreCase("fn")) {
+                                if (!fnActors.contains(value)) {
+                                    fnActors.add(value);
+                                }
+                            } else if (property.equalsIgnoreCase("eso")) {
+                                if (!esoActors.contains(value)) {
+                                    esoActors.add(value);
+                                }
+                            }
+                            Triple triple = new Triple();
+                            triple.setPredicate(predicate);
+                            triple.setObject(value);
+                            eventTriples.add(triple);
+                        }*/
+
                         if (!ns.isEmpty()) {
                             value = ns + ":" + getValue(value);
                         }
@@ -472,13 +498,11 @@ public class JsonFromRdf {
                             if (!pbActors.contains(value)) {
                                 pbActors.add(value);
                             }
-                        }
-                        else if (property.equalsIgnoreCase("fn")) {
+                        } else if (property.equalsIgnoreCase("fn")) {
                             if (!fnActors.contains(value)) {
                                 fnActors.add(value);
                             }
-                        }
-                        else if (property.equalsIgnoreCase("eso")) {
+                        } else if (property.equalsIgnoreCase("eso")) {
                             if (!esoActors.contains(value)) {
                                 esoActors.add(value);
                             }
@@ -1215,6 +1239,12 @@ static JSONObject getTopicsJSONObjectFromInstanceStatement (ArrayList<Statement>
                 return predicate;
             }
         }
+    }
+
+    static public boolean tooTinyValue (String predicate) {
+        if (predicate.length()>3) return true;
+        else if (!predicate.toLowerCase().equals(predicate)) return true;
+        return false;
     }
 
     static public String getValueWithoutFrame (String predicate) {

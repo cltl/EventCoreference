@@ -293,7 +293,11 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
         }
         else if (!wordQuery.isEmpty()) {
             try {
-                if (STRICTSTRING) TrigKSTripleReader.readTriplesFromKSforSurfaceString(wordQuery);
+                if (wordQuery.indexOf("*")>-1)  {
+                    String labels = wordQuery.replace("*", "");
+                    TrigKSTripleReader.readTriplesFromKSforSurfaceSubString(labels);
+                }
+                else if (STRICTSTRING) TrigKSTripleReader.readTriplesFromKSforSurfaceString(wordQuery);
                 else {TrigKSTripleReader.readTriplesFromKSforSurfaceSubString(wordQuery); }
 
             } catch (Exception e) {
@@ -424,24 +428,31 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
             /// rdf:value grasp:CERTAIN_NON_FUTURE_POS , grasp:positive ;
             ///graspQuery = NEG;UNCERTAIN;positive;
             if (!graspQuery.isEmpty()) {
+                boolean UNION = false;
                 sparql += "?event gaf:denotedBy ?mention.\n" +
-                        "?mention grasp:hasAttribution ?attribution.\n";
+                        "?mention grasp:hasAttribution ?attribution.\n" +
+                        "?attribution rdf:value ?value .\n" ;
+                sparql += "{\n";
                 if (graspQuery.indexOf("negative") >-1) {
-                    sparql +=  "?attribution rdf:value grasp:negative .\n";
-
+                    sparql +=  "{ ?attribution rdf:value grasp:negative } \n";
+                    UNION = true;
                 }
                 if (graspQuery.indexOf("positive") >-1) {
-                    sparql +=  "?attribution rdf:value grasp:positive .\n";
+                    if (UNION) sparql += " UNION ";
+                    sparql +=  "{ ?attribution rdf:value grasp:positive }\n";
+                    UNION = true;
                 }
                 String [] fields = graspQuery.split(";");
                 for (int i = 0; i < fields.length; i++) {
                     String field = fields[i];
                     if (!field.toLowerCase().equals(field)) {
                         ///upper case field
-                        sparql += "?attribution rdf:value ?value .\n" ;
-                        sparql +=  TrigKSTripleReader.makeSubStringLabelFilter("?value", field) + "\n";
+                        if (UNION) sparql += " UNION ";
+                        sparql +=  "{ "+TrigKSTripleReader.makeSubStringLabelUnionFilter("?value", field) +" }"+ "\n";
+                        UNION = true;
                     }
                 }
+                sparql += " }\n";
                 if (graspQuery.indexOf("FUTURE") > -1) {
                     sparql += "FILTER(!CONTAINS(STR(?value), \"NON_FUTURE\"))\n";
                 }
@@ -453,6 +464,10 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 TrigKSTripleReader.readTriplesFromKs(sparql);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            if (DEBUG>0) {
+                System.out.println(" * instance statements = "+TrigKSTripleReader.trigTripleData.tripleMapInstances.size());
+                System.out.println(" * sem statements = " + TrigKSTripleReader.trigTripleData.tripleMapOthers.size());
             }
         }
 
@@ -476,6 +491,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                     jsonObjects = JsonStoryUtil.filterEventsForActors(jsonObjects, entityFilter, actorThreshold);
                     //   System.out.println("Events after actor count filter = " + jsonObjects.size());
                 }
+                //JsonStoryUtil.removeTinyActors(jsonObjects);
 
 /*
             jsonObjects = JsonStoryUtil.removePerspectiveEvents(trigTripleData, jsonObjects);

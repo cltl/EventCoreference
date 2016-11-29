@@ -407,6 +407,15 @@ public class TrigKSTripleReader {
     }
 
 
+    static public String makeValidUriString (String label) {
+        String valid = label;
+        valid = valid.replace('^', ' ');
+        valid = valid.replace('_', '.');
+        valid = valid.replace('+', '.');
+        valid = valid.replace('(', '.');
+        valid = valid.replace(')', '.');
+        return valid;
+    }
 
     static public String makeLabelFilter(String variable, String query) {
         //FILTER ( regex(str(?entlabel), "Bank") || regex(str(?entlabel), "Dank")) .
@@ -495,13 +504,25 @@ public class TrigKSTripleReader {
         String filter = "FILTER (";
         String[] fields = query.split(";");
         for (int i = 0; i < fields.length; i++) {
-            String field = fields[i].replace('^', ' ');
-            field = field.replace('_', '.');
-            field = field.replace('+', '.');
+            String field = makeValidUriString(fields[i]);
             if (i>0)  filter +=" || ";
             filter += "regex(str("+variable+"), \""+field+"\")";
         }
         filter += ") .\n" ;
+        return filter;
+    }
+
+    static public String makeSubStringLabelUnionFilter(String variable, String query) {
+        //FILTER ( regex(str(?entlabel), "Bank") || regex(str(?entlabel), "Dank")) .
+        //http://www.newsreader-project.eu/provenance/author/Algemeen+Dagblad
+        String filter = "FILTER (";
+        String[] fields = query.split(";");
+        for (int i = 0; i < fields.length; i++) {
+            String field = makeValidUriString(fields[i]);
+            if (i>0)  filter +=" || ";
+            filter += "regex(str("+variable+"), \""+field+"\")";
+        }
+        filter += ") \n" ;
         return filter;
     }
 
@@ -525,7 +546,7 @@ public class TrigKSTripleReader {
         String filter = "{ ";
         String[] fields = query.split(";");
         for (int i = 0; i < fields.length; i++) {
-            String field = fields[i].replace('^', ' ');;
+            String field = makeValidUriString(fields[i]);
             if (i>0)  filter +=" UNION ";
             filter += " { "+variable+" sem:hasActor "+field+" } ";
         }
