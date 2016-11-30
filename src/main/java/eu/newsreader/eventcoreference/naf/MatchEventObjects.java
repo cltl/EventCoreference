@@ -1107,7 +1107,7 @@ public class MatchEventObjects {
                            int phraseMatchThreshold,
                            int conceptMatchThreshold,
                            ArrayList<String> roleNeededArrayList) {
-        if (DEBUG==1) System.out.println("eventIds = " + eventIds.size());
+        if (DEBUG>0) System.out.println("eventIds = " + eventIds.size());
         ArrayList<String> modifiedEvents = new ArrayList<String>();
         ArrayList<String> processedEvents = new ArrayList<String>();
         for (int i = 0; i < eventIds.size(); i++) {
@@ -1169,8 +1169,15 @@ public class MatchEventObjects {
                     if (!mergedEventId.isEmpty()) {
                         /// we found another eventId that fits the identity criteria
                         /// we have a match and the event is absorbed, no need to continue
-
-                        break;
+                        if (DEBUG>0) {
+                            System.out.println("SYNSET MATCH");
+                            System.out.println("mergedEventId = " + mergedEventId);
+                        }
+                    }
+                    else {
+                        if (DEBUG>0) {
+                            System.out.println("NO MATCH");
+                        }
                     }
                 }
             }
@@ -1202,11 +1209,14 @@ public class MatchEventObjects {
                         roleNeededArrayList);
                 if (!mergedEventId.isEmpty()) {
                     /// we have a match and the event is absorbed, no need to continue
-                     break;
+                    if (DEBUG>0) {
+                        System.out.println("LEMMA MATCH");
+                        System.out.println("mergedEventId = " + mergedEventId);
+                    }
                 }
             }
             if (mergedEventId.isEmpty()) {
-                if (DEBUG==2) System.out.println("NO MATCH");
+                if (DEBUG>1) System.out.println("NO MATCH");
             }
             else {
                 if (!modifiedEvents.contains(mergedEventId)) modifiedEvents.add(mergedEventId);
@@ -1214,8 +1224,10 @@ public class MatchEventObjects {
                 if (CROSSDOC) {
                     if (!crossDocCorefSet.contains(mergedEventId)) crossDocCorefSet.add(mergedEventId);
                 }
-                // if (DEBUG==2) System.out.println("MATCH");
-                //System.out.println("mergedEventId = " + mergedEventId);
+                if (DEBUG>1) {
+                    System.out.println("MATCH");
+                    System.out.println("mergedEventId = " + mergedEventId);
+                }
             }
             if (DEBUG>1) System.out.println("Event i = " + i);
         }
@@ -1224,7 +1236,7 @@ public class MatchEventObjects {
             if (DEBUG>1) System.out.println("matched events = " + modifiedEvents.size());
             /// something was merged so we need to compare again
             ///iterate
-            //System.out.println("ITERATING:"+modifiedEvents.size());
+            if (DEBUG>1) System.out.println("ITERATING:"+modifiedEvents.size());
             chaining3(allCompositeEvents, conceptEventMap, modifiedEvents, phraseMatchThreshold, conceptMatchThreshold, roleNeededArrayList);
         }
         else {
