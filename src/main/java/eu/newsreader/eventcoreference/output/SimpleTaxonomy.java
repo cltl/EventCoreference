@@ -1291,7 +1291,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                     name = phraseCount.getPhrase().substring(idx + 1);
                                 }
                                 String iliString = name;
-                                if (iliMap.containsKey(name)) {
+                                /*if (iliMap.containsKey(name)) {
                                     ArrayList<String> ilis = iliMap.get(name);
                                     for (int k = 0; k < ilis.size(); k++) {
                                         String ili = ilis.get(k);
@@ -1300,7 +1300,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                 }
                                 else {
                                     //System.out.println("could not find iliString = " + iliString);
-                                }
+                                }*/
                                 tb = TreeStaticHtml.makeTickBox(type, iliString);
                                 if (phraseCount.getPhrase().indexOf("dbpedia")>-1) {
                                     tb = TreeStaticHtml.makeTickBox(type, name, "dbpedia:"+name);
