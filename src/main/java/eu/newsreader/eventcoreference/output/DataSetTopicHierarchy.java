@@ -4,6 +4,8 @@ import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.EuroVoc;
 import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.*;
@@ -14,7 +16,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class DataSetTopicHierarchy {
     static EuroVoc euroVoc = new EuroVoc();
-
+    static boolean GREP = false;
     /*
     if (!eurovocBlackList.startsWith(topic)) {
                                 if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
@@ -55,6 +57,9 @@ public class DataSetTopicHierarchy {
             else if (arg.equals("--path") && args.length>(i+1)) {
                 querypath = args[i+1];
             }
+            else if (arg.equals("--grep")) {
+                GREP = true;
+            }
         }
 
 
@@ -67,8 +72,13 @@ public class DataSetTopicHierarchy {
         ArrayList<String> tops = simpleTaxonomy.getTops();
 
         System.out.println("tops = " + tops.size());
-        HashMap<String, ArrayList<PhraseCount>> cntPredicates = readTopicCountTypeGrep(simpleTaxonomy, topicPath, euroVoc);
-       // HashMap<String, ArrayList<PhraseCount>> cntPredicates = readTopicCountTypeTsv(simpleTaxonomy, topicPath, euroVoc);
+        HashMap<String, ArrayList<PhraseCount>> cntPredicates = new HashMap<String, ArrayList<PhraseCount>>();
+        if (GREP) {
+            cntPredicates = readTopicCountTypeGrep(simpleTaxonomy, topicPath, euroVoc);
+        }
+        else {
+            cntPredicates = readTopicCountTypeTsv(simpleTaxonomy, topicPath, euroVoc);
+        }
         HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
         System.out.println("Cumulating scores");
@@ -91,7 +101,16 @@ public class DataSetTopicHierarchy {
             str = TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
+
+            OutputStream jsonOut = new FileOutputStream(topicPath+".words.json");
+            JSONObject tree = new JSONObject();
+            simpleTaxonomy.jsonTree(tree, "topic", "", tops, 1, cnt, cntPredicates, null);
+            //jsonOut.write(tree.toString().getBytes());
+            jsonOut.write(tree.toString(0).getBytes());
+            jsonOut.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }

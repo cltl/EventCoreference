@@ -200,22 +200,6 @@ public class TreeStaticHtml {
     static public final String header1 =
             " \n" +
             "<style>\n" +
-            "/*body {font-family: \"Lato\", sans-serif;}*/\n" +
-                    " body { font-size: 80%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif; }\n" +
-                    "    .accordionItem h2 { margin: 0; font-size: 1.0em; padding: 0.2em; color: #fff; background-color: #944;}\n" +
-                    "    .accordionItem h2:hover { cursor: pointer; }\n" +
-                    "    .accordionItem div { margin: 0; padding: em 0.2em; background-color: #ffffe6;}\n" +
-                    "    .accordionItem.hide h2 { color: #000; background-color: #ffffe6; }\n" +
-                    "    .accordionItem.hide div { display: none; }\n" +
-                    "    .accordionItem.hide #cell2 {display:none;}\n"+
-            "  /*  body { font-size: 80%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif; }\n" +
-            "    .accordionItem h2 { margin: 0; font-size: 1.0em; padding: 0.2em; color: #fff; background-color: #944;   border-bottom: 1px solid #66d; }\n" +
-            "    .accordionItem h2:hover { cursor: pointer; }\n" +
-            "    .accordionItem div { margin: 0; padding: em 0.2em; background-color: #eef;  border-bottom: 1px solid #66d;  }\n" +
-            "    .accordionItem.hide h2 { color: #000; background-color: #f0f0f5; }\n" +
-            "    .accordionItem.hide div { display: none; }\n" +
-            "    .accordionItem.hide #cell2 {display:none;}*/\n"  +
-            "\n" +
             "ul.tab {\n" +
             "    list-style-type: none;\n" +
             "    margin: 0;\n" +
@@ -294,25 +278,61 @@ public class TreeStaticHtml {
             "    display: table-cell;\n" +
             "\t\t}\n" +
 
-            "\t#cell {\n" +
-            "\t\tfont-family: verdana,arial,sans-serif;\n" +
-            "\t    font-size:14px;\n" +
-            "\t\tbox-shadow: 2px 2px 2px #888888;\n"+
-            "\t\twidth:300px;\n" +
-            "\t   /*  border: 2px solid #944; */\n" +
-            "    \tdisplay: table-cell;\n" +
-            "\t\t}\n" +
-
-
-            "\t#cell1 {\n" +
-            "\t\tfont-family: verdana,arial,sans-serif;\n" +
-            "\t    font-size:14px;\n" +
-            "\t\twidth:300px;\n" +
-            "\t   /*  border: 2px solid #944; */\n" +
-            "    \tdisplay: table-cell;\n" +
-            "\t\t}\n" +
-
-            "#cell2 {\n" +
+           "    body { font-size: 80%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif;}\n" +
+                    "    .accordionItem h2 { margin: 0; font-size: 1.0em; padding: 0.2em; color: #fff; background-color:#454545; }\n" +
+                    "    .accordionItem h2:hover { cursor: pointer; }\n" +
+                    "    .accordionItem div { margin: 0; padding: 0.2em; background-color: #FDFEFE; }\n" +
+                    "    .accordionItem.hide h2 { color: #FDFEFE; background-color: #FDFEFE; }\n" +
+                    "    .accordionItem.hide div { display: none; }\n" +
+                    "    .accordionItem.hide #cell2 {display:none;}\n" +
+                    "    \n" +
+                    "    \n" +
+                    "\t#container {\n" +
+                    "\t  \twidth: 80%;\n" +
+                    "\t  \tmargin: auto;\n" +
+                    "\t\tpadding:1em;\n" +
+                    "\t\tdisplay: inline;\n" +
+                    "\t\t/*display: table;*/\n" +
+                    "\t\tborder: none;\n" +
+                    "\t}\n" +
+                    "  \t#row  {\n" +
+                    "    \tdisplay: table-row;\n" +
+                    "    \tborder: none;\n" +
+                    "\n" +
+                    "   \t\t/* box-shadow: 10px 10px 5px #888888;*/\n" +
+                    "    }\n" +
+                    "\t#left {\n" +
+                    "\t\twidth:150px;\n" +
+                    "\t\tpadding:1em;\n" +
+                    "\t\tbackground:#F3E2A9;\n" +
+                    "\t\tdisplay: none;\n" +
+                    "\t\t}\n" +
+                    "\t#right {\n" +
+                    "\t\twidth:250px;\n" +
+                    "\t\tpadding:1em;\n" +
+                    "\t\tbackground:#F3E2A9;\n" +
+                    "    display: none;\n" +
+                    "\t\t}\n" +
+                    "\t#cell {\n" +
+                    "\t\tfont-family: verdana,arial,sans-serif;\n" +
+                    "\t\tbox-shadow: 2px 2px 2px #888888;\n" +
+                    "\t    font-size:12px;\n" +
+                    "\t    color:#944; \n" +
+                    "\t\twidth:100px;\n" +
+                    "\t/*    border: 1px solid #F78181; */\n" +
+                    "    \tdisplay: table-cell;\n" +
+                    "\t\t}\n" +
+                    "\t\t\n" +
+                    "\t#cell1 {\n" +
+                    "\t\tfont-family: verdana,arial,sans-serif;\n" +
+                    "\t    font-size:12px;\n" +
+                    "\t\twidth:100px;\n" +
+                    "\t\tcolor:#944; \n" +
+                    "\n" +
+                    "\t   /*  border: 2px solid #944; */\n" +
+                    "    \tdisplay: table-cell;\n" +
+                    "\t\t}\n" +
+                    "\t#cell2 {\n" +
                     "        border-radius:5px 5px 5px 5px;\n" +
                     "       /* box-shadow: 10px 10px 5px #888888;*/\n" +
                     "\t\tfont-family: verdana,arial,sans-serif;\n" +
@@ -321,16 +341,59 @@ public class TreeStaticHtml {
                     "\t\tmax-width:1000px;\n" +
                     "\t    border: 1px solid #944;\n" +
                     "    \tdisplay: table-cell;\n" +
-                    "\t\t}\n"+
+                    "\t\t}\n" +
+                    "\t\t\n" +
+                    "\t#cell3 {\n" +
+                    "        box-shadow: 5px 5px 1px #888888;\n" +
+                    "\t\tfont-family: verdana,arial,sans-serif;\n" +
+                    "\t\tpadding:0.3em;\n" +
+                    "\t    font-size:13px;\n" +
+                    "\t    min-width:300px;\n" +
+                    "\t\tmax-width:300px;\n" +
+                    "\t    border: 2px solid #944;\n" +
+                    "    \tdisplay: table-cell;\n" +
+                    "\t\t}\n" +
+                    "\t\t\t\t\n" +
+                    "\t#cell4 {\n" +
+                    "\t\tfont-family: verdana,arial,sans-serif;\n" +
+                    "\t\tbox-shadow: 2px 2px 2px #888888;\n" +
+                    "\t    font-size:12px;\n" +
+                    "\t    color:#944; \n" +
+                    "\t\twidth:250px;\n" +
+                    "\t/*    border: 1px solid #F78181; */\n" +
+                    "    \tdisplay: table-cell;\n" +
+                    "\t\t}\n" +
+                    "\t\t\n" +
+                    "\t#cell5 {\n" +
+                    "        box-shadow: 5px 5px 1px #888888;\n" +
+                    "\t\tfont-family: verdana,arial,sans-serif;\n" +
+                    "\t\tpadding:0.3em;\n" +
+                    "\t    font-size:13px;\n" +
+                    "\t    min-width:200px;\n" +
+                    "\t\tmax-width:200px;\n" +
+                    "\t    border: 2px solid #944;\n" +
+                    "\t\tdisplay: table-cell;\n" +
+                    "\t\t}\n" +
+                    "\t\t\n" +
+                    "\t\t#cell6 {\n" +
+                    "\t\tfont-family: verdana,arial,sans-serif;\n" +
+                    "\t\tpadding:0.3em;\n" +
+                    "\t\tfont-size:13px;\n" +
+                    "\t\tmin-width:800px;\n" +
+                    "\t\tmax-width:800px;\n" +
+                    "\t\tdisplay: table-cell;"+
 
-            "#cell3 {\n" +
-            "\t\tfont-family: verdana,arial,sans-serif;\n" +
-            "\t    font-size:12px;\n" +
-            "\t    min-width:500px;\n" +
-            "\t    max-width:500px;\n" +
-            "\t   /*border: 2px solid #944;*/ \n" +
-            "    \tdisplay: table-cell;\n" +
-            "\t\t}\n"+
+                    "\t\t}"+
+                    "\t\t\t\n" +
+                    "\t#cell7 {\n" +
+                    "\t\tfont-family: verdana,arial,sans-serif;\n" +
+                    "\t\tbox-shadow: 2px 2px 2px #888888;\n" +
+                    "\t    font-size:12px;\n" +
+                    "\t    color:#944; \n" +
+                    "\t\twidth:100px;\n" +
+                    "\t/*    border: 1px solid #F78181; */\n" +
+                    "    \tdisplay: table-cell;\n" +
+                    "\t\t}"+
 
             "</style>"+
             "\n" +

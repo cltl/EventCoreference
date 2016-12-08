@@ -662,7 +662,9 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                        // String toggle = makeToggle(topName);
 
                         if (cnt > 0) {
-                            str += "<div id=\"cell\">" + ref + ":" + instances + ";" + cnt +"</a>";
+
+                            //str += "<div id=\"cell\">" + ref + ":" + instances + ";" + cnt +"</a>";
+                            str += "<div id=\"cell\">" + ref + "</a></div><div id=\"cell7\">" + instances + ";"+cnt;
                             if (instances>0) str += tb;
                             str +=  "</div>";
                         } else {
@@ -713,7 +715,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                         ref = "<a href=\"" + phraseCount.getPhrase() + "\">" + name + ":" + phraseCount.getCount() + tb + "</a>";
                                     } else {
 
-                                        ref = name + ":" + phraseCount.getCount() + tb;
+                                        ref = name.replace("+","_") + ":" + phraseCount.getCount() + tb;
                                     }
 
 
@@ -808,7 +810,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     //<div class="accordionItem"><h2><div id="cell4"><a href="http://eurovoc.europa.eu/2488">import policy</a></div><div id="cell4">6070<INPUT TYPE="checkbox" NAME="topic" VALUE="http://eurovoc.europa.eu/2488"></div></h2></div>
 
                     if (cnt > 0) {
-                        str += "<div id=\"cell4\">" +"<a href=\""+top+"\">"+ ref + "</a></div><div id=\"cell4\">" + cnt;
+                        str += "<div id=\"cell4\">" +"<a href=\""+top+"\">"+ ref + "</a></div><div id=\"cell7\">" + cnt;
                         str += tb;
                         str += "</div>";
                     } else {
@@ -1251,7 +1253,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     }
 
                     if (cnt > 0) {
-                        str += "<div id=\"cell\">" + ref + ":" + instances+";"+ cnt+"</a>"+tb+"</div>";
+                        str += "<div id=\"cell\">" + ref + "</a></div><div id=\"cell7\">" + instances + ";"+cnt+tb+"</div>";
+                       // str += "<div id=\"cell\">" + ref + ":" + instances+";"+ cnt+"</a>"+tb+"</div>";
                     } else {
                         str += "<div id=\"cell\">" + ref +"</a>"+ tb+"</div>";
                     }
@@ -1506,11 +1509,162 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
         }
     }
 
-    public void  jsonTree (JSONObject tree, String type, String ns, ArrayList<String> tops,
+    public void  jsonTree (JSONObject tree, String gType, String ns, ArrayList<String> tops,
                                  int level,
                                  HashMap<String, Integer> typeCounts,
                                  HashMap<String, ArrayList<PhraseCount>> phrases,
                                  HashMap<String, ArrayList<String>> iliMap) throws IOException, JSONException {
+
+
+        level++;
+        ArrayList<PhraseCount> countedTops = new ArrayList<PhraseCount>();
+        for (int i = 0; i < tops.size(); i++) {
+            String top = tops.get(i);
+            Integer cnt = 0;
+            if (typeCounts.containsKey(top)) {
+                cnt = typeCounts.get(top);
+            }
+            PhraseCount phraseCount = new PhraseCount(top, cnt);
+            countedTops.add(phraseCount);
+        }
+        Collections.sort(countedTops, new Comparator<PhraseCount>() {
+            @Override
+            public int compare(PhraseCount p1, PhraseCount p2) {
+
+                return p2.getCount().compareTo(p1.getCount());
+            }
+        });
+        for (int i = 0; i < countedTops.size(); i++) {
+            PhraseCount topCount = countedTops.get(i);
+            if (topCount.getPhrase().startsWith(ns) || ns.isEmpty()) {
+                if (topCount.getCount()>0) {
+                    String ref = "";
+                    String type = gType;
+
+                    String name = topCount.getPhrase();
+                    if (topCount.getPhrase().indexOf("dbpedia")>-1 && topCount.getPhrase().indexOf("resource")>-1) {
+                        int idx = topCount.getPhrase().lastIndexOf("/");
+                        if (idx > -1) {
+                            name = topCount.getPhrase().substring(idx + 1);
+                        }
+                        ref =  name;
+                        type =gType+"Instance";
+                    }
+                    else if (topCount.getPhrase().startsWith("dbp:")) {
+                        int idx = topCount.getPhrase().lastIndexOf(":");
+                        if (idx > -1) {
+                            name = topCount.getPhrase().substring(idx + 1);
+                        }
+                        ref = "http://dbpedia.org/ontology/" + name;
+                        type = gType+"Type";
+                    }
+                    else if (topCount.getPhrase().indexOf("ontology")>-1) {
+                        int idx = topCount.getPhrase().lastIndexOf(":");
+                        if (idx > -1) {
+                            name = topCount.getPhrase().substring(idx + 1);
+                        }
+                        ref = "http://dbpedia.org/ontology/" + name;
+                        type = gType+"Type";
+                    }
+                    else if (topCount.getPhrase().indexOf("eso")>-1) {
+                        int idx = topCount.getPhrase().lastIndexOf(":");
+                        if (idx > -1) {
+                            name = topCount.getPhrase().substring(idx + 1);
+                        }
+                        ref = "eso:" + name;
+                        type = gType+"Type";
+                    }
+                    else if (topCount.getPhrase().indexOf("eurovoc")>-1) {
+                        ref = name;
+                        type = gType+"Type";
+                    }
+
+                    int instances = 0;
+                    if (phrases.containsKey(topCount.getPhrase())) {
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(topCount.getPhrase());
+                        instances = phraseCounts.size();
+                    }
+
+                    JSONObject node = new JSONObject();
+                   // node.put("level", new Integer(level).toString());
+                    if (!name.isEmpty()) node.put("name", name);
+                    node.put("query", topCount.getPhrase());
+                    if (!type.isEmpty()) node.put("type", type);
+                    if (!ref.isEmpty()) node.put("url", ref);
+                    node.put("child_count", instances);
+                    node.put("mention_count", topCount.getCount());
+
+                    if (phrases.containsKey(topCount.getPhrase())) {
+
+                        ArrayList<PhraseCount> phraseCounts = phrases.get(topCount.getPhrase());
+                        Collections.sort(phraseCounts, new Comparator<PhraseCount>() {
+                            @Override
+                            public int compare(PhraseCount p1, PhraseCount p2) {
+                                return p2.getCount().compareTo(p1.getCount());
+                            }
+                        });
+                        for (int j = 0; j < phraseCounts.size(); j++) {
+                            PhraseCount phraseCount = phraseCounts.get(j);
+                            if (phraseCount.getCount()>0) {
+                                JSONObject phraseCountJsonObject = new JSONObject();
+                                int idx = phraseCount.getPhrase().lastIndexOf("/");
+                                name = phraseCount.getPhrase().trim();
+                                if (idx > -1) {
+                                    name = phraseCount.getPhrase().substring(idx + 1);
+                                }
+                                phraseCountJsonObject.put("name", name.replace("+","_"));
+                                phraseCountJsonObject.put("type", gType+"Phrase");
+                                if (!name.isEmpty()) phraseCountJsonObject.put("query", name);
+                                phraseCountJsonObject.put("mention_count", phraseCount.getCount());
+                                /*if (iliMap!=null) {
+                                    if (iliMap.containsKey(name)) {
+                                        ArrayList<String> ilis = iliMap.get(name);
+                                        for (int k = 0; k < ilis.size(); k++) {
+                                            String ili = ilis.get(k);
+                                            phraseCountJsonObject.append("ili", ili);
+                                        }
+                                    } else {
+                                        //System.out.println("could not find iliString = " + iliString);
+                                    }
+                                }*/
+                                if (!ref.isEmpty()) phraseCountJsonObject.put("parent", ref);
+/*                                if (phraseCount.getPhrase().indexOf("dbpedia")>-1) {
+                                    phraseCountJsonObject.put("url", phraseCount.getPhrase());
+                                }
+                                else {
+                                }*/
+                                node.append("instances", phraseCountJsonObject);
+                            }
+                        }
+                    };
+                    if (superToSub.containsKey(topCount.getPhrase())) {
+                        ArrayList<String> children = superToSub.get(topCount.getPhrase());
+                        // System.out.println(top+ ":" + cnt+", children:"+children.size());
+                        jsonTree(node, gType, ns, children, level, typeCounts, phrases, iliMap);
+                    }
+                    else {
+                        //  System.out.println("has no children top = " + top);
+                    }
+                    tree.append("children", node);
+                }
+                else {
+                    //// no use for this class
+                }
+            }
+            else {
+                //   System.out.println("ns = " + ns);
+                //   System.out.println("top = " + top);
+            }
+        }
+    }
+
+    public void  jsonTreeBU (JSONObject tree, String type, String ns, ArrayList<String> tops,
+                                 int level,
+                                 HashMap<String, Integer> typeCounts,
+                                 HashMap<String, ArrayList<PhraseCount>> phrases,
+                                 HashMap<String, ArrayList<String>> iliMap) throws IOException, JSONException {
+
+
         level++;
         for (int i = 0; i < tops.size(); i++) {
             String top = tops.get(i);
@@ -1546,6 +1700,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                     JSONObject node = new JSONObject();
                    // node.put("level", new Integer(level).toString());
                     node.put("name", name);
+                    node.put("query", top);
                     node.put("type", type);
                     node.put("url", ref);
                     node.put("instance_count", instances);
@@ -1571,6 +1726,8 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                     name = phraseCount.getPhrase().substring(idx + 1);
                                 }
                                 phraseCountJsonObject.put("name", name);
+                                phraseCountJsonObject.put("type", type);
+                                phraseCountJsonObject.put("query", name);
                                 phraseCountJsonObject.put("mention_count", phraseCount.getCount());
                                 if (iliMap!=null) {
                                     if (iliMap.containsKey(name)) {
@@ -1583,7 +1740,7 @@ www.w3.org/2002/07/owl#Thing	Agent	Person	Philosopher
                                         //System.out.println("could not find iliString = " + iliString);
                                     }
                                 }
-                                phraseCountJsonObject.put("url", phraseCount.getPhrase().trim());
+                                phraseCountJsonObject.put("parent", ref);
 /*                                if (phraseCount.getPhrase().indexOf("dbpedia")>-1) {
                                     phraseCountJsonObject.put("url", phraseCount.getPhrase());
                                 }
