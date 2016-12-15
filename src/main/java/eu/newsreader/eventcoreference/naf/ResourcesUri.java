@@ -13,6 +13,7 @@ public class ResourcesUri {
     final static public String nwrtime = "http://www.newsreader-project.eu/time/";
     final static public String nwrdata = "http://www.newsreader-project.eu/data/";
     final static public String nwrauthor = "http://www.newsreader-project.eu/provenance/author/";
+    final static public String nwrcite = "http://www.newsreader-project.eu/provenance/cite/";
     final static public String nwrpublisher = "http://www.newsreader-project.eu/provenance/publisher/";
     final static public String nwrmagazine = "http://www.newsreader-project.eu/provenance/magazine/";
     final static public String nwrsourceowner = "http://www.newsreader-project.eu/provenance/sourceowner/";

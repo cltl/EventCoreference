@@ -95,6 +95,7 @@ public class GetPerspectiveRelations {
                     communicationVector,
                     grammaticalVector);
             if (FILTERA0) perspectiveObjects = selectSourceEntityToPerspectives(kafSaxParser, perspectiveObjects, semActors);
+            else augmentPerspectivesWithSourceEntity(kafSaxParser, perspectiveObjects, semActors);
             return perspectiveObjects;
         }
 
@@ -126,7 +127,7 @@ public class GetPerspectiveRelations {
                     for (int k = 0; k < perspectiveObject.getTargetEventMentions().size(); k++) {
                         NafMention nafMention = perspectiveObject.getTargetEventMentions().get(k);
                         if (nafMention.sameMention(eventMention)) {
-                           hasPerspective = true;
+                            hasPerspective = true;
                             break;
                         }
                     }
@@ -149,6 +150,26 @@ public class GetPerspectiveRelations {
             return authorPerspectiveObjects;
         }
 
+        static boolean authorPerspective (KafSaxParser kafSaxParser, String tokenString) {
+            /// English
+            if (tokenString.equalsIgnoreCase("i")) return true;
+            if (tokenString.equalsIgnoreCase("we")) return true;
+            if (tokenString.equalsIgnoreCase("us")) return true;
+            if (tokenString.equalsIgnoreCase("me")) return true;
+            if (tokenString.equalsIgnoreCase("our")) return true;
+            if (tokenString.equalsIgnoreCase("mine")) return true;
+            if (tokenString.equalsIgnoreCase("my")) return true;
+            /// Dutch
+            if (tokenString.equalsIgnoreCase("ik")) return true;
+            if (tokenString.equalsIgnoreCase("we")) return true;
+            if (tokenString.equalsIgnoreCase("wij")) return true;
+            if (tokenString.equalsIgnoreCase("ons")) return true;
+            if (tokenString.equalsIgnoreCase("onze")) return true;
+            if (tokenString.equalsIgnoreCase("mijn")) return true;
+            if (tokenString.equalsIgnoreCase("mij")) return true;
+            if (tokenString.equalsIgnoreCase("me")) return true;
+            return false;
+        }
        static public void getPerspective(KafSaxParser kafSaxParser, String project, ArrayList<PerspectiveObject> perspectives, ArrayList<SemObject> semEvents,
                                     Vector<String> contextualVector,
                                     Vector<String> communicationVector,
@@ -194,42 +215,38 @@ public class GetPerspectiveRelations {
 
                             sourceParticipant.setTokenStrings(kafSaxParser);
                             targetParticipant.setTokenStrings(kafSaxParser);
-                            PerspectiveObject perspectiveObject = new PerspectiveObject();
-                            perspectiveObject.setDocumentUri(baseUri);
-                            perspectiveObject.setPredicateId(kafEvent.getId());
-                            perspectiveObject.setEventString(kafEvent.getTokenString());
-                            perspectiveObject.setPredicateConcepts(kafEvent.getExternalReferences());
-                            perspectiveObject.setPredicateSpanIds(kafEvent.getSpanIds());
-                            perspectiveObject.setSource(sourceParticipant);
-                            perspectiveObject.setTarget(targetParticipant);
-                            perspectiveObject.setCueMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
-                            perspectiveObject.setNafMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
-                            for (int j = 0; j < semEvents.size(); j++) {
-                                SemObject semEvent = semEvents.get(j);
-                                for (int k = 0; k < semEvent.getNafMentions().size(); k++) {
-                                    NafMention nafMention = semEvent.getNafMentions().get(k);
-                                    if (!Collections.disjoint(targetParticipant.getSpanIds(), nafMention.getTermsIds())) {
-                                       // System.out.println("nafMention.getOpinions().size() = " + nafMention.getOpinions().size());
-                                       // System.out.println("nafMention.getTermsIds() = " + nafMention.getTermsIds());
-                                       // System.out.println("targetParticipant.getSpanIds() = " + targetParticipant.getSpanIds());
-                                        perspectiveObject.addTargetEventMention(nafMention);
-                                    }
-                                }
+                            if (!authorPerspective(kafSaxParser, sourceParticipant.getTokenString())) {
+                                //// first person pronoun references are attributed to the author
 
-                            }
-                            /*for (int j = 0; j < kafSaxParser.getKafEventArrayList().size(); j++) {
-                                if (j!=i) {
-                                    KafEvent event = kafSaxParser.getKafEventArrayList().get(j);
-                                    if (!Collections.disjoint(targetParticipant.getSpanIds(), event.getSpanIds())) {
-                                        /// this event is embedded inside the target
-                                        NafMention nafMention = Util.getNafMentionForTermIdArrayList(baseUri, kafSaxParser, event.getSpanIds());
-                                        //nafMention.addFactuality(kafSaxParser);  /// already done when SemEvent is created
-                                        perspectiveObject.addTargetEventMention(nafMention);
+                                PerspectiveObject perspectiveObject = new PerspectiveObject();
+                                perspectiveObject.setDocumentUri(baseUri);
+                                perspectiveObject.setPredicateId(kafEvent.getId());
+                                perspectiveObject.setEventString(kafEvent.getTokenString());
+                                perspectiveObject.setPredicateConcepts(kafEvent.getExternalReferences());
+                                perspectiveObject.setPredicateSpanIds(kafEvent.getSpanIds());
+                                perspectiveObject.setSource(sourceParticipant);
+                                perspectiveObject.setTarget(targetParticipant);
+                                perspectiveObject.setCueMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
+                                perspectiveObject.setNafMention(baseUri, kafSaxParser, kafEvent.getSpanIds());
+                                for (int j = 0; j < semEvents.size(); j++) {
+                                    SemObject semEvent = semEvents.get(j);
+                                    for (int k = 0; k < semEvent.getNafMentions().size(); k++) {
+                                        NafMention nafMention = semEvent.getNafMentions().get(k);
+                                        if (!Collections.disjoint(targetParticipant.getSpanIds(), nafMention.getTermsIds())) {
+                                            // System.out.println("nafMention.getOpinions().size() = " + nafMention.getOpinions().size());
+                                            // System.out.println("nafMention.getTermsIds() = " + nafMention.getTermsIds());
+                                            // System.out.println("targetParticipant.getSpanIds() = " + targetParticipant.getSpanIds());
+                                            perspectiveObject.addTargetEventMention(nafMention);
+                                        }
                                     }
+
                                 }
-                            }*/
-                            perspectiveObjectArrayList.add(perspectiveObject);
-                      //}
+                                perspectiveObjectArrayList.add(perspectiveObject);
+                                //}
+                            }
+                            else {
+                                ////first person pronouns are skipped and left to the author perspectives
+                            }
                     }
                 }
             }
@@ -343,6 +360,28 @@ public class GetPerspectiveRelations {
             }
             return sourcePerspectives;
         }
+    /**
+     * Filters perspectives to select those that match with a given actor
+     * @param kafSaxParser
+     * @param perspectives
+     * @param actors
+     * @return
+     */
+        static public void augmentPerspectivesWithSourceEntity (KafSaxParser kafSaxParser,
+                                                                                     ArrayList<PerspectiveObject> perspectives,
+                                                                                     ArrayList<SemObject> actors) {
+            for (int i = 0; i < perspectives.size(); i++) {
+                PerspectiveObject perspectiveObject = perspectives.get(i);
+                for (int j = 0; j < actors.size(); j++) {
+                    SemObject semActor = actors.get(j);
+                    if (Util.matchAllSpansOfAnObjectMentionOrTheRoleHead(kafSaxParser, perspectiveObject.getSource(), semActor)) {
+                        //System.out.println("semObject.getURI() = " + semActor.getURI());
+                        perspectiveObject.setSourceEntity((SemActor)semActor);
+                    }
+                }
+            }
+        }
+
 
     public static void perspectiveRelationsToTrig (String pathToTrigFile, ArrayList<PerspectiveObject> perspectiveObjects) {
         try {
