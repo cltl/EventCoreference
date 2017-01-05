@@ -1253,10 +1253,6 @@ public class GetSemFromNaf {
                             semRelation.setSubject(semEventId);
                             semRelation.setObject(semObject.getId());
                             semRelations.add(semRelation);
-                           /* System.out.println("semRelation.getPredicates() = " + semRelation.getPredicates().size());
-                            System.out.println("semRelation.getNafMentions() = " + semRelation.getNafMentions().size());
-                            System.out.println("semRelation.subject = " + semRelation.getSubject());
-                            System.out.println("semRelation.object = " + semRelation.getObject());*/
                         }
                         else {
                             System.out.println("SemObject is null");

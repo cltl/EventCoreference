@@ -23,6 +23,7 @@ import java.util.Vector;
 /**
  * Created by piek on 20/07/16.
  */
+@Deprecated
 public class NafTokenLayerIndex extends DefaultHandler {
 
     public HashMap<String, ArrayList<KafWordForm>>  tokenMap;

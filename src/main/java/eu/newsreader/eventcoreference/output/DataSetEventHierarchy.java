@@ -18,6 +18,7 @@ import static eu.newsreader.eventcoreference.output.DataSetEntityHierarchy.total
 /**
  * Created by piek on 15/04/16.
  */
+@Deprecated
 public class DataSetEventHierarchy {
 
 

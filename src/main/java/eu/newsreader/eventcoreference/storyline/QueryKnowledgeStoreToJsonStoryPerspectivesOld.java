@@ -13,6 +13,7 @@ import java.util.*;
 /**
  * Created by piek on 1/3/14.
  */
+@Deprecated
 public class QueryKnowledgeStoreToJsonStoryPerspectivesOld {
 
     static HashMap<String, ArrayList<String>> iliMap = new HashMap<String, ArrayList<String>>();

@@ -22,6 +22,7 @@ import java.util.*;
 /**
  * Created by piek on 1/3/14.
  */
+@Deprecated
 public class TrigToJsonTimeLine {
 
 

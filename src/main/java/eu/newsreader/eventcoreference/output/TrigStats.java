@@ -19,6 +19,7 @@ import static eu.newsreader.eventcoreference.storyline.JsonFromRdf.getValue;
 /**
  * Created by piek on 12/05/16.
  */
+@Deprecated
 public class TrigStats {
 
     static public String STAT = "";

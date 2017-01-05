@@ -15,6 +15,7 @@ import java.util.Set;
 /**
  * Created by piek on 1/3/14.
  */
+@Deprecated
 public class TrigToJsonStoryPerspectives {
 
     static TrigTripleData trigTripleData = new TrigTripleData();

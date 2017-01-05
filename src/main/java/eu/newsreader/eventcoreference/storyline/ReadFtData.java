@@ -12,6 +12,7 @@ import java.util.Set;
 /**
  * Created by piek on 07/04/16.
  */
+@Deprecated
 public class ReadFtData {
     static public class DataFt {
         private String date;

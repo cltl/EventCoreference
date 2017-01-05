@@ -17,6 +17,7 @@ import java.util.*;
 /**
  * Created by piek on 10/22/14.
  */
+@Deprecated
 public class GetTimeLinesFromNafFolder {
     //NEEDS TO BE REBUILT. GETSEMFROMNAF IS OUT OF DATE
 

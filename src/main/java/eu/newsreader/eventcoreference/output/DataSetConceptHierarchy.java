@@ -16,6 +16,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * Created by piek on 29/05/16.
  */
+@Deprecated
 public class DataSetConceptHierarchy {
 
 

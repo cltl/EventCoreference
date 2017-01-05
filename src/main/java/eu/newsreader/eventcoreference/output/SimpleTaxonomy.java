@@ -14,6 +14,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * Created by piek on 29/05/16.
  */
+@Deprecated
 public class SimpleTaxonomy {
     static final int colmax = 650;
     static final int colmaxevents = 150;

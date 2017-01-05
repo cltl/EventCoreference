@@ -14,6 +14,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * Created by piek on 29/05/16.
  */
+@Deprecated
 public class DataSetTopicHierarchy {
     static EuroVoc euroVoc = new EuroVoc();
     static boolean GREP = false;

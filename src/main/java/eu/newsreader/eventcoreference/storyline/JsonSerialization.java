@@ -13,6 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by piek on 17/02/16.
  */
+@Deprecated
 public class JsonSerialization {
 
     static void writeJsonObjectArray (String pathToFolder, String project, ArrayList<JSONObject> objects) {

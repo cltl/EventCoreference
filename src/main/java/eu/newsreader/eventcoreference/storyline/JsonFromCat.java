@@ -20,6 +20,7 @@ import java.util.*;
 /**
  * Created by piek on 27/06/16.
  */
+@Deprecated
 public class JsonFromCat extends DefaultHandler {
     public class CatLink {
         private String source;

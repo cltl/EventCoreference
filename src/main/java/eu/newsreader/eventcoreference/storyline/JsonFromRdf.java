@@ -20,6 +20,7 @@ import static eu.newsreader.eventcoreference.storyline.JsonStoryUtil.normalizeSo
 /**
  * Created by piek on 17/02/16.
  */
+@Deprecated
 public class JsonFromRdf {
 
     static public String getTimeAnchor (HashMap<String, ArrayList<Statement>> tripleMapInstances,

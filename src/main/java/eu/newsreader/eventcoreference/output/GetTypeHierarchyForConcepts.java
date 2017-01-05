@@ -9,6 +9,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * Created by piek on 06/12/2016.
  */
+@Deprecated
 public class GetTypeHierarchyForConcepts {
 
 

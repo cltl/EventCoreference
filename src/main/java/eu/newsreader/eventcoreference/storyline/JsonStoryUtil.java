@@ -20,6 +20,7 @@ import static eu.newsreader.eventcoreference.input.TrigKSTripleReader.makeTriple
 /**
  * Created by piek on 17/02/16.
  */
+@Deprecated
 public class JsonStoryUtil {
 
     static public int nMergedEvents = 0;

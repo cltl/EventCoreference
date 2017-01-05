@@ -8,6 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by piek on 14/04/16.
  */
+@Deprecated
 public class PerspectiveJsonObject {
 
     private String event = "";

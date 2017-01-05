@@ -18,6 +18,7 @@ import java.util.Vector;
 /**
  * Created by piek on 10/22/14.
  */
+@Deprecated
 public class GetTimeLinesFromNaf {
 
     //NEEDS TO BE REBUILT. GETSEMFROMNAF IS OUT OF DATE
@@ -49,6 +50,7 @@ public class GetTimeLinesFromNaf {
             kafWordForm.setSent(sentenceInt.toString());
         }
     }
+
     static public void main (String [] args) {
         //String pathToNafFile = args[0];
         String pathToNafFile = "";

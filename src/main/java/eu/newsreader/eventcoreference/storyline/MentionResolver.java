@@ -14,6 +14,7 @@ import java.util.*;
 /**
  * Created by piek on 09/02/16.
  */
+@Deprecated
 public class MentionResolver {
     static final int nContext = 75;
     final String USER_AGENT = "Mozilla/5.0";

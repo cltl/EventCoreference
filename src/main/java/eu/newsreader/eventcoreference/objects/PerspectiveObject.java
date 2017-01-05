@@ -327,12 +327,10 @@ doc-uri
                         //  e.printStackTrace();
                     }
                     if (!uri.isEmpty()) {
-                        //targetResource = ds.getDefaultModel().createResource(uri);
                         targetResource = model.createResource(uri);
                     }
                 }
                 else {
-                   // targetResource = ds.getDefaultModel().createResource(sourceEntity.getURI());
                     targetResource = model.createResource(sourceEntity.getURI());
                 }
                 if (targetResource!=null) {
@@ -341,7 +339,6 @@ doc-uri
                     mentionSubject.addProperty(property, attributionSubject);
                     if (!cueMention.toString().isEmpty()) {
                         property = model.createProperty(ResourcesUri.grasp, "generatedBy");
-                        //Resource object = ds.getDefaultModel().createResource(this.cueMention.toString());
                         Resource object = model.createResource(this.cueMention.toString());
                         mentionSubject.addProperty(property, object);
                         mentionSubject.addProperty(RDFS.comment, model.createLiteral(cueMention.getSentenceText()));
