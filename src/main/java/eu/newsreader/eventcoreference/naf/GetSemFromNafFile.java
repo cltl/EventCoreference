@@ -56,6 +56,10 @@ public class GetSemFromNafFile {
         String pathToNafFile = "";
         ALL = true;
         pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample/425051_relink_dominant.naf";
+        pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/16#New_York_Magazine#2015-03-02.naf";
+        pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#ANSA.it#20161010T000000.naf";
+        //pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#Centers_for_Disease_Control_and_Prevention#2015-01-23.naf";
+        pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/9##20161111T000000.naf";
         String sourceFrameFile = "";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source.txt";

@@ -455,7 +455,7 @@ public class QueryKnowledgeStoreToJsonStoryPerspectives {
                 }
                 sparql += " }\n";
                 if (graspQuery.indexOf("FUTURE") > -1) {
-                    sparql += "FILTER(!CONTAINS(STR(?value), \"NON_FUTURE\"))\n";
+                    sparql += "FILTER(!CONTAINS(STR(?value), \"NONFUTURE\"))\n";
                 }
             }
 

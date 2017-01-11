@@ -997,7 +997,7 @@ public class TrigKSTripleReader {
                 "?attribution rdf:value ?value .\n" +
                 makeSubStringLabelFilter("?value", graspValue) +"\n";
                 if (graspValue.indexOf("FUTURE")>-1) {
-                    sparqlQuery += "FILTER(!CONTAINS(STR(?value), \"NON_FUTURE\"))\n";
+                    sparqlQuery += "FILTER(!CONTAINS(STR(?value), \"NONFUTURE\"))\n";
                 }
                 if (eventIds.size()>0) {
                     sparqlQuery += "\t\t\tVALUES ?event\n" + "\t\t\t\t{";
@@ -1424,7 +1424,7 @@ public class TrigKSTripleReader {
                 "?attribution rdf:value ?value .\n" +
                 makeSubStringLabelFilter("?value", graspValue) +"\n";
         if (graspValue.indexOf("FUTURE")>-1) {
-            sparqlQuery += "FILTER(!CONTAINS(STR(?value), \"NON_FUTURE\"))\n";
+            sparqlQuery += "FILTER(!CONTAINS(STR(?value), \"NONFUTURE\"))\n";
         }
         sparqlQuery +=
                 "} LIMIT "+limit+" }\n" +

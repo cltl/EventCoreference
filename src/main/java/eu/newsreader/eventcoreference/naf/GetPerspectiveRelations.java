@@ -352,9 +352,13 @@ public class GetPerspectiveRelations {
                 for (int j = 0; j < actors.size(); j++) {
                     SemObject semActor = actors.get(j);
                     if (Util.matchAllSpansOfAnObjectMentionOrTheRoleHead(kafSaxParser, perspectiveObject.getSource(), semActor)) {
-                        //System.out.println("semObject.getURI() = " + semActor.getURI());
+                     //   System.out.println("semObject.getURI() = " + semActor.getURI());
                         perspectiveObject.setSourceEntity((SemActor)semActor);
                         sourcePerspectives.add(perspectiveObject);
+                    }
+                    else {
+                     //   System.out.println("perspectiveObject.Source = " + perspectiveObject.getSourceEntity().getURI());
+
                     }
                 }
             }
@@ -375,8 +379,11 @@ public class GetPerspectiveRelations {
                 for (int j = 0; j < actors.size(); j++) {
                     SemObject semActor = actors.get(j);
                     if (Util.matchAllSpansOfAnObjectMentionOrTheRoleHead(kafSaxParser, perspectiveObject.getSource(), semActor)) {
-                        //System.out.println("semObject.getURI() = " + semActor.getURI());
+                      //  System.out.println("semObject.getURI() = " + semActor.getURI());
                         perspectiveObject.setSourceEntity((SemActor)semActor);
+                    }
+                    else {
+                      //  System.out.println("perspectiveObject.Source = " + perspectiveObject.getSource());
                     }
                 }
             }
