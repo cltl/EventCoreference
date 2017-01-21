@@ -19,6 +19,21 @@ import java.util.ArrayList;
  */
 public class PerspectiveObject {
 
+    /*
+    - attribution to quoted source:
+
+        https://github.com/cltl/GRaSP/blob/master/ontology/grasp.rdf#:wasAttributedTo
+        (grasp:wasAttributedTo)
+
+   - attribution coming from doc:
+
+        https://www.w3.org/TR/prov-o/#wasDerivedFrom (prov:wasDerivedFrom)
+
+    - attribution from doc to author:
+
+        https://www.w3.org/TR/prov-o/#wasAttributedTo (prov:wasAttributedTo)
+
+     */
     private NafMention nafMention;
     private NafMention cueMention;
     private String documentUri;
