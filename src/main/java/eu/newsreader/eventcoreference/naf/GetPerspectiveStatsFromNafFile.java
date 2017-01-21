@@ -108,15 +108,13 @@ public class GetPerspectiveStatsFromNafFile {
             "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
             "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>"
     ;
-
+    static NafSemParameters nafSemParameters = new NafSemParameters();
     static PerspectiveStats sourceValues = new PerspectiveStats();
     static PerspectiveStats documentValues = new PerspectiveStats();
 
     static public void main(String[] args) {
+        nafSemParameters = new NafSemParameters(args);
         String pathToNafFile = "";
-        String sourceFrameFile = "";
-        String contextualFrameFile = "";
-        String grammaticalFrameFile = "";
         String project = "";
         String extension = "";
         String query = "";
@@ -130,30 +128,10 @@ public class GetPerspectiveStatsFromNafFile {
                 project = args[i + 1];
             } else if (arg.equals("--query") && args.length > (i + 1)) {
                 query = args[i + 1];
-            } else if (arg.equals("--source-frames") && args.length > (i + 1)) {
-                sourceFrameFile = args[i + 1];
-            } else if (arg.equals("--grammatical-frames") && args.length > (i + 1)) {
-                grammaticalFrameFile = args[i + 1];
-            } else if (arg.equals("--contextual-frames") && args.length > (i + 1)) {
-                contextualFrameFile = args[i + 1];
             }
         }
 
 
-/*
-        pathToNafFile = "/Code/vu/newsreader/EventCoreference/carheaderexample";
-        project = "cars";
-        extension = ".xml";
-        sourceFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/source.txt";
-        grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/grammatical.txt";
-        contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/resources/contextual.txt";
-*/
-
-
-
-        sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
-        grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
-        contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
         try {
             File nafFile = new File(pathToNafFile);
             OutputStream valueStats = new FileOutputStream(pathToNafFile+".values"+".xls");
@@ -343,12 +321,9 @@ public class GetPerspectiveStatsFromNafFile {
         GetSemFromNaf.processNafFileForRelations(baseUrl,
                 kafSaxParser, semEvents, semActors, semTimes, semRelations);
         ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
-                project,
                 semActors,
                 semEvents,
-                contextualVector,
-                sourceVector,
-                grammaticalVector);
+                nafSemParameters);
         ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(kafSaxParser,
                 project, sourcePerspectives, semEvents);
 

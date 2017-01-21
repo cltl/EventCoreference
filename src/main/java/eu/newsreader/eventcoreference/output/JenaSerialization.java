@@ -166,7 +166,7 @@ public class JenaSerialization {
       //  System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
     }
 
-    static public void addJenaPerspectiveObjects(String attrBase, String namespace,
+    static public void addJenaPerspectiveObjects(String attrBase, String namespace, String predicate,
                                             ArrayList<PerspectiveObject> perspectiveObjects, int cnt) {
         HashMap<String, ArrayList<PerspectiveObject>> map = new HashMap<String, ArrayList<PerspectiveObject>>();
         for (int i = 0; i < perspectiveObjects.size(); i++) {
@@ -192,12 +192,13 @@ public class JenaSerialization {
             kCnt++;
             String attrId = attrBase + "attr"+kCnt+"_" + cnt;
             ArrayList<PerspectiveObject> sourcePerspectives = map.get(key);
-            addToJenaDataSet(graspModel, namespace, attrId, sourcePerspectives, key);
+            addToJenaDataSet(graspModel, namespace, predicate, attrId, sourcePerspectives, key);
         }
     }
 
 
-    static public void addToJenaDataSet (Model model, String ns, String attrId, ArrayList<PerspectiveObject> perspectives, String sourceURI) {
+    static public void addToJenaDataSet (Model model, String ns, String predicate,
+                                         String attrId, ArrayList<PerspectiveObject> perspectives, String sourceURI) {
         /*
         mentionId2      hasAttribution         attributionId1
                         gaf:generatedBy        mentionId3
@@ -282,7 +283,7 @@ doc-uri
       //  System.out.println("mentionMap.size() = " + mentionMap.size());
         if (mentionMap.size()>0) {
             Resource sourceResource = model.createResource(sourceURI);
-            Property property = model.createProperty(ns, "wasAttributedTo");
+            Property property = model.createProperty(ns, predicate);
             Resource attributionSubject = model.createResource(attrId);
             attributionSubject.addProperty(property, sourceResource);
 
@@ -310,7 +311,9 @@ doc-uri
         }
     }
 
-    static public void addToJenaDataSet2 (Model model, String ns, String attrId, ArrayList<PerspectiveObject> perspectives, String sourceURI) {
+    static public void addToJenaDataSet2 (Model model, String ns,
+                                          String attrId, ArrayList<PerspectiveObject> perspectives,
+                                          String sourceURI) {
         /*
         mentionId2      hasAttribution         attributionId1
                         gaf:generatedBy        mentionId3
@@ -605,9 +608,9 @@ doc-uri
             addJenaCompositeEvents(semEvents, null, false, false);
             addDocMetaData(kafSaxParser);
             String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
-            addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, sourcePerspectiveObjects, 1);
+            addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo",sourcePerspectiveObjects, 1);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
-            addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
+            addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, "isDerivedFrom", authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
         try {
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
         } catch (Exception e) {

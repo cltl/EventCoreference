@@ -12,7 +12,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -55,27 +54,19 @@ public class ClusterEventObjects {
             "--frame-relations      <path>   <@DEPRECATED path to FrameNet file with relations>\n" +
             "--microstories         <integer><@DEPRECATED Number of sentences to restrict the analysis>\n" +
             "--bridging                      <@DEPRECATED Whether or not microstories are extended through bridging relations>\n";
-    static public Vector<String> sourceVector = null;
-    static public Vector<String> grammaticalVector = null;
-    static public Vector<String> contextualVector = null;
+
     static public FrameNetReader frameNetReader = new FrameNetReader();
-    static public final int TIMEEXPRESSIONMAX = 5;
     static public boolean MICROSTORIES = false;
     static public Integer SENTENCERANGE = 0;
     static public boolean BRIDGING = false;
     static public boolean FIXCOREF = false;
     static public String done = "";
-    static public boolean ADDITIONALROLES = false;
-    static public boolean PERSPECTIVE = false;
-    static public boolean ALL = false;
     static public boolean RAWTEXTINDEX = false;
     static public String TIME = "";
-
-    static boolean DOCTIME = true;
-    static boolean CONTEXTTIME = true;
-
+    static NafSemParameters nafSemParameters = new NafSemParameters();
 
     static public void main (String [] args) {
+        nafSemParameters = new NafSemParameters(args);
         if (args.length==0) {
             System.out.println(USAGE);
             System.out.println("NOW RUNNING WITH DEFAULT SETTINGS");
@@ -88,11 +79,7 @@ public class ClusterEventObjects {
         //String pathToNafFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup/ian-test";
         //String pathToEventFolder = "/Users/piek/Desktop/NWR/NWR-DATA/worldcup";
        // String pathToNafFolder = "/Code/vu/newsreader/EventCoreference/LN_football_test_out-tiny";
-        String projectName  = "";
         String extension = "";
-        String sourceFrameFile = "";
-        String contextualFrameFile = "";
-        String grammaticalFrameFile = "";
         String fnFile = "";
         int fnLevel = 0;
 /*
@@ -113,31 +100,13 @@ public class ClusterEventObjects {
             else if (arg.equals("--extension") && args.length>(i+1)) {
                 extension = args[i+1];
             }
-            else if (arg.equals("--project") && args.length>(i+1)) {
-                projectName = args[i+1];
-            }
-            else if (arg.equals("--non-entities")) {
-                ADDITIONALROLES = true;
-            }
             else if (arg.equals("--bridging")) {
                 BRIDGING = true;
             }
             else if (arg.equals("--fix-coref")) {
                 FIXCOREF = true;
             }
-            else if (arg.equals("--perspective")) {
-                PERSPECTIVE = true;
-            }
-            else if (arg.equals("--all")) {
-                ALL = true;
-            }
 
-            else if (arg.equals("--no-doc-time")) {
-                DOCTIME = false;
-            }
-            else if (arg.equals("--no-context-time")) {
-                CONTEXTTIME = false;
-            }
             else if (arg.equals("--raw-text")) {
                 RAWTEXTINDEX = true;
             }
@@ -155,37 +124,11 @@ public class ClusterEventObjects {
                     e.printStackTrace();
                 }
             }
-            else if (arg.equals("--source-frames") && args.length>(i+1)) {
-                sourceFrameFile = args[i+1];
-            }
-            else if (arg.equals("--grammatical-frames") && args.length>(i+1)) {
-                grammaticalFrameFile = args[i+1];
-            }
-            else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
-                contextualFrameFile = args[i+1];
-            }
-
             else if (arg.equals("--time") && args.length>(i+1)) {
                 TIME = args[i+1];
             }
             else if (arg.equals("--rename") && args.length>(i+1)) {
                 done = args[i+1];
-            }
-            else if (arg.equals("--eurovoc-en") && args.length > (i + 1)) {
-                String pathToEurovocFile = args[i+1];
-                GetSemFromNaf.initEurovoc(pathToEurovocFile, "en");
-            }
-            else if (arg.equals("--eurovoc-nl") && args.length > (i + 1)) {
-                String pathToEurovocFile = args[i+1];
-                GetSemFromNaf.initEurovoc(pathToEurovocFile, "nl");
-            }
-            else if (arg.equals("--eurovoc-es") && args.length > (i + 1)) {
-                String pathToEurovocFile = args[i+1];
-                GetSemFromNaf.initEurovoc(pathToEurovocFile, "es");
-            }
-            else if (arg.equals("--eurovoc-it") && args.length > (i + 1)) {
-                String pathToEurovocFile = args[i+1];
-                GetSemFromNaf.initEurovoc(pathToEurovocFile, "it");
             }
         }
 
@@ -195,10 +138,6 @@ public class ClusterEventObjects {
             System.out.println("frameNetReader sub= " + frameNetReader.subToSuperFrame.size());
             System.out.println("frameNetReader super= " + frameNetReader.superToSubFrame.size());
         }
-        //// read resources
-        sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
-        grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
-        contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
 /*
         System.out.println("sourceVector = " + sourceVector.size());
         System.out.println("contextualVector = " + contextualVector.size());
@@ -206,7 +145,7 @@ public class ClusterEventObjects {
 */
 
         try {
-            processFolderEvents(projectName, new File(pathToNafFolder), new File(pathToEventFolder), extension);
+            processFolderEvents(nafSemParameters.getPROJECT(), new File(pathToNafFolder), new File(pathToEventFolder), extension);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -299,7 +238,7 @@ public class ClusterEventObjects {
             }
             if (FIXCOREF) {
                 //// NEED A FIX
-                Util.fixSourceEventCoreferenceSets(kafSaxParser, contextualVector, sourceVector, grammaticalVector);
+                Util.fixSourceEventCoreferenceSets(kafSaxParser, nafSemParameters);
             }
 
           //  System.out.println("kafSaxParser.getKafMetaData().getUrl() = " + kafSaxParser.getKafMetaData().getUrl());
@@ -343,8 +282,8 @@ public class ClusterEventObjects {
         ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
       //  System.out.println("nafFileName = " + nafFileName);
-        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes,
-                semRelations, ADDITIONALROLES, DOCTIME, CONTEXTTIME);
+        GetSemFromNaf.processNafFile(nafSemParameters, kafSaxParser, semEvents, semActors, semTimes,
+                semRelations);
 
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
@@ -357,11 +296,11 @@ public class ClusterEventObjects {
             ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
            // ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
             CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
-            if (!compositeEvent.isValid() && !ALL) {
+            if (!compositeEvent.isValid() && !nafSemParameters.isALL()) {
                 continue;
             }
             ///////// DIVISION IN BASIC EVENT TYPES
-            String eventType = FrameTypes.setEventTypeString(compositeEvent.getEvent(),contextualVector, sourceVector, grammaticalVector);
+            String eventType = FrameTypes.setEventTypeString(compositeEvent.getEvent(),nafSemParameters);
             File folder = contextualFolder;
             if (!eventType.isEmpty()) {
                 if (eventType.equalsIgnoreCase(FrameTypes.SOURCE)) {
@@ -392,7 +331,7 @@ public class ClusterEventObjects {
                     //String timePhrase = "timeless";
                     //treeSet.add(timePhrase);
                     continue;
-                } else if (outputTimes.size() > TIMEEXPRESSIONMAX) {
+                } else if (outputTimes.size() > nafSemParameters.getTIMEEXPRESSIONMAX()) {
 /*
                 String timePhrase = "timeless";
                 treeSet.add(timePhrase);
@@ -660,16 +599,12 @@ public class ClusterEventObjects {
             os.close();
         }
 
-        if (PERSPECTIVE) {
+        if (nafSemParameters.isPERSPECTIVE()) {
             ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
             perspectiveObjects = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
-                    project,
                     semActors,
-                    semEvents,
-                    contextualVector,
-                    sourceVector,
-                    grammaticalVector);
+                    semEvents, nafSemParameters);
 
             if (perspectiveObjects.size() > 0) {
                 String perspectiveFilePath = nafFilePath + ".perspective.trig";

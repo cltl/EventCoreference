@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.*;
+import eu.newsreader.eventcoreference.naf.NafSemParameters;
 import eu.newsreader.eventcoreference.objects.*;
 
 import java.io.*;
@@ -268,15 +269,12 @@ public class Util {
     }
 
 
-    static public void fixSourceEventCoreferenceSets(KafSaxParser kafSaxParser,
-                                                     Vector<String> contextualVector,
-                                                     Vector<String> sourceVector,
-                                                     Vector<String> grammaticalVector) {
+    static public void fixSourceEventCoreferenceSets(KafSaxParser kafSaxParser, NafSemParameters nafSemParameters) {
         ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
             if (kafCoreferenceSet.getType().toLowerCase().startsWith("event") && kafCoreferenceSet.getSetsOfSpans().size()>1) {
-                ArrayList<String> eventTypes = FrameTypes.getEventTypeArrayList(kafSaxParser, kafCoreferenceSet, contextualVector, sourceVector, grammaticalVector);
+                ArrayList<String> eventTypes = FrameTypes.getEventTypeArrayList(kafSaxParser, kafCoreferenceSet,  nafSemParameters.getContextualVector(), nafSemParameters.getSourceVector(), nafSemParameters.getGrammaticalVector());
                 if (eventTypes.contains(FrameTypes.SOURCE)) {
                     //we need a fix since sources are usually never coreferential within one source
                     /// mention based events

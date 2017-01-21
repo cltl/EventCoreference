@@ -22,14 +22,11 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class GetSemFromNaf {
-
-    static public boolean DOCTIME = true;
-    static public boolean CONTEXTTIME = true;
-    static public boolean POCUS = true;
-    static public boolean DOMINANTURI = true;
-    static public int MINEVENTLABELSIZE = 1;
+    static NafSemParameters nafSemParameters = new NafSemParameters();
+    static  boolean POCUS = true;
+    static  boolean DOMINANTURI = true;
+    static  int MINEVENTLABELSIZE = 1;
     static final public String ID_SEPARATOR = "#";
-   // static final public String ID_SEPARATOR = "/";
     static final public String URI_SEPARATOR = "_";
     static public HashMap<String, String> eurovoc = new HashMap<String, String>();
 
@@ -42,25 +39,20 @@ public class GetSemFromNaf {
 
     /**
      * This is the standard function to interpret a NAF file to create SemObjects and SemRelations
-     * @param project
      * @param kafSaxParser
      * @param semEvents
      * @param semActors
      * @param semTimes
      * @param semRelations
      */
-    static public void processNafFile(String project, KafSaxParser kafSaxParser,
+    static public void processNafFile(NafSemParameters setNafSemParameters, KafSaxParser kafSaxParser,
                                       ArrayList<SemObject> semEvents,
                                       ArrayList<SemObject> semActors,
                                       ArrayList<SemTime> semTimes,
-                                      ArrayList<SemRelation> semRelations,
-                                      boolean ADDITIONALROLES,
-                                      boolean doctime,
-                                      boolean contexttime
+                                      ArrayList<SemRelation> semRelations
     ) {
 
-        DOCTIME = doctime;
-        CONTEXTTIME = contexttime;
+        nafSemParameters = setNafSemParameters;
         /// @deprecated since it is included in the event-coref module for NAF
         //// THIS FIX IS NEEDED BECAUSE SOME OF THE COREF SETS ARE TOO BIG
         //fixEventCoreferenceSets(kafSaxParser);
@@ -78,19 +70,24 @@ public class GetSemFromNaf {
 
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH") + ID_SEPARATOR;
-        String entityUri = ResourcesUri.nwrdata + project + "/entities/";
+        String entityUri = ResourcesUri.nwrdata + nafSemParameters.getPROJECT() + "/entities/";
         if (!baseUrl.toLowerCase().startsWith("http")) {
            //  System.out.println("baseUrl = " + baseUrl);
-            baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH") + ID_SEPARATOR;
+            baseUrl = ResourcesUri.nwrdata + nafSemParameters.getPROJECT() + "/" + kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH") + ID_SEPARATOR;
         }
         processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
-        if (ADDITIONALROLES) {
-            processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
+        if (nafSemParameters.isADDITIONALROLES()) {
+            processSrlForRemainingFramenetRoles(nafSemParameters.getPROJECT(), kafSaxParser, semActors);
         }
         //System.out.println("semActors = " + semActors.size());
         processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
         //System.out.println("semTimes = " + semTimes.size());
-        processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        if (nafSemParameters.isEVENTCOREF()) {
+            processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        }
+        else {
+            processNafFileForEventWithoutCoreferenceSets(baseUrl, kafSaxParser, semEvents);
+        }
         //System.out.println("semEvents = " + semEvents.size());
         //// THIS FIX IS NEEDED BECAUSE SOMETIMES SRL GENERATES IDENTICAL SPANS FOR PREDICATES AND ACTORS. WE REMOVE EVENTS THAT ARE IDENTICAL WITH ACTORS
         //Util.filterOverlapEventsEntities(semEvents, semActors);
@@ -147,31 +144,22 @@ public class GetSemFromNaf {
                 }
             }
         }
-       // System.out.println("semEvents.size() = " + semEvents.size());
     }
-
 
     static void processNafFileForEventWithoutCoreferenceSets(String baseUrl, KafSaxParser kafSaxParser,
                                                              ArrayList<SemObject> semEvents
 
     ) {
-
-
-        /**
-         * Event instances
-         */
         for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
             KafEvent kafEvent = kafSaxParser.kafEventArrayList.get(i);
             SemEvent semEvent = new SemEvent();
             ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListForTermIds(baseUrl, kafSaxParser, kafEvent.getSpanIds());
-                    /*new ArrayList<NafMention>();
-            NafMention nafMention = new NafMention();
-            nafMention.setTermsIds(kafEvent.getSpanIds());
-            mentionArrayList.add(nafMention);*/
             semEvent.addNafId(kafEvent.getId());/// needed to connect to timeAnchors that have predicate ids as spans
             semEvent.addNafMentions(mentionArrayList);
             semEvent.addConcepts(kafEvent.getExternalReferences());
             semEvent.addPhraseCountsForMentions(kafSaxParser);
+            semEvent.setTopics(kafSaxParser.kafTopicsArrayList); /// we assign all the topics (assigned to the document) to this event
+            semEvent.getUriForTopicLabel(eurovoc); /// we obtain the eurovoc URL for the topic label
             String eventName = semEvent.getTopPhraseAsLabel();
             //if (Util.hasAlphaNumeric(eventName)) {
             if (eventName.length() >= MINEVENTLABELSIZE) {
@@ -267,126 +255,41 @@ public class GetSemFromNaf {
                 }
             }
         }
+        if (nafSemParameters.isNOMCOREF()) {
+            for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
+                KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
+                if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
+                    //// this is an entity coreference set
+                    //// no we get all the entities for this set.
+                    int topMatches = 0;
+                    String topEntity = "";
 
-        /**
-         * Next we iterate over all the coreference sets that are not events
-         * WE then select the entity which has most overlap with the spans.
-         * We add the coreference set to the mentions of the entity
-         */
-
-/*        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
-            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
-            if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
-                //// this is an entity coreference set
-                //// no we get all the entities for this set.
-                int topMatches = 0;
-                String topEntity = "";
-
-                //// we first decide which entity has the highest number of span overlap with the coreference targets
-                Set keySet = kafEntityActorUriMap.keySet();
-                Iterator<String> keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    ArrayList<KafEntity> entities = kafEntityActorUriMap.get(key);
-                    int nMatches = 0;
-                    for (int j = 0; j < entities.size(); j++) {
-                        KafEntity kafEntity = entities.get(j);
-                        nMatches += Util.countIntersectingSetOfSpans(kafEntity.getSetsOfSpans(), kafCoreferenceSet.getSetsOfSpans());
+                    //// we first decide which entity has the highest number of span overlap with the coreference targets
+                    Set keySet = kafEntityActorUriMap.keySet();
+                    Iterator<String> keys = keySet.iterator();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                        ArrayList<KafEntity> entities = kafEntityActorUriMap.get(key);
+                        int nMatches = 0;
+                        for (int j = 0; j < entities.size(); j++) {
+                            KafEntity kafEntity = entities.get(j);
+                            nMatches += Util.countIntersectingSetOfSpans(kafEntity.getSetsOfSpans(), kafCoreferenceSet.getSetsOfSpans());
+                        }
+                        if (nMatches > topMatches) {
+                            topMatches = nMatches;
+                            topEntity = key;
+                        }
                     }
-                    if (nMatches > topMatches) {
-                        topMatches = nMatches;
-                        topEntity = key;
-                    }
-                }
-                if (!topEntity.isEmpty()) {
-                    coveredEntities.add(topEntity);
-                    ArrayList<KafEntity> entities = kafEntityActorUriMap.get(topEntity);
-                    ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferenceSet(baseUrl, kafSaxParser, entities, kafCoreferenceSet);
-                    //ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntitiesAndCoreferences(baseUrl, kafSaxParser, entities);
-                    String entityId = "";
-                    entityId = Util.getEntityLabelUriFromEntities(kafSaxParser, entities);
-                    if (entityId.isEmpty()) {
-                        entityId = baseUrl+"e"+semActors.size();
-                    }
-                    else {
-                        entityId = entityUri+entityId;
-                    }
-                    SemActor semActor = new SemActor(SemObject.ENTITY);
-                    semActor.setId(entityId);
-                    semActor.setNafMentions(mentionArrayList);
-                    semActor.addPhraseCountsForMentions(kafSaxParser);
-                    semActor.addConcepts(Util.getExternalReferences(entities));
-                    semActor.setIdByDBpediaReference();
-                    Util.addObject(semActors, semActor);
-                } else {
-                    ///// coreference sets without any entity matches are ignored so far!!!!!!!!!
-                    //   System.out.println("not matched kafCoreferenceSet.getCoid() = " + kafCoreferenceSet.getCoid());
-                }
-            }
-        }
-
-        //// There could be entities not matched with coreference sets. These are now added separately
-        Set keySet = kafEntityActorUriMap.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String uri = keys.next();
-          //  System.out.println("uri = " + uri);
-            if (!coveredEntities.contains(uri)) {
-                ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
-                ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntities(baseUrl, kafSaxParser, entities);
-                String entityId = "";
-                entityId = Util.getEntityLabelUriFromEntities(kafSaxParser, entities);
-                if (entityId.isEmpty()) {
-                    entityId = baseUrl+"e"+semActors.size();
-                }
-                else {
-                    entityId = entityUri+entityId;
-                }
-                SemActor semActor = new SemActor(SemObject.ENTITY);
-                semActor.setId(entityId);
-                semActor.setNafMentions(mentionArrayList);
-                semActor.addPhraseCountsForMentions(kafSaxParser);
-                semActor.addConcepts(Util.getExternalReferences(entities));
-                semActor.setIdByDBpediaReference();
-                Util.addObject(semActors, semActor);
-            }
-        }
-
-        */
-
-        for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
-            KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
-            if (!kafCoreferenceSet.getType().toLowerCase().startsWith("event")) {
-                //// this is an entity coreference set
-                //// no we get all the entities for this set.
-                int topMatches = 0;
-                String topEntity = "";
-
-                //// we first decide which entity has the highest number of span overlap with the coreference targets
-                Set keySet = kafEntityActorUriMap.keySet();
-                Iterator<String> keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    ArrayList<KafEntity> entities = kafEntityActorUriMap.get(key);
-                    int nMatches = 0;
-                    for (int j = 0; j < entities.size(); j++) {
-                        KafEntity kafEntity = entities.get(j);
-                        nMatches += Util.countIntersectingSetOfSpans(kafEntity.getSetsOfSpans(), kafCoreferenceSet.getSetsOfSpans());
-                    }
-                    if (nMatches > topMatches) {
-                        topMatches = nMatches;
-                        topEntity = key;
-                    }
-                }
-                if (!topEntity.isEmpty()) {
-                    if (kafCoreferenceUriMap.containsKey(topEntity)) {
-                        ArrayList<KafCoreferenceSet> set = kafCoreferenceUriMap.get(topEntity);
-                        set.add(kafCoreferenceSet);
-                        kafCoreferenceUriMap.put(topEntity, set);
-                    } else {
-                        ArrayList<KafCoreferenceSet> set = new ArrayList<KafCoreferenceSet>();
-                        set.add(kafCoreferenceSet);
-                        kafCoreferenceUriMap.put(topEntity, set);
+                    if (!topEntity.isEmpty()) {
+                        if (kafCoreferenceUriMap.containsKey(topEntity)) {
+                            ArrayList<KafCoreferenceSet> set = kafCoreferenceUriMap.get(topEntity);
+                            set.add(kafCoreferenceSet);
+                            kafCoreferenceUriMap.put(topEntity, set);
+                        } else {
+                            ArrayList<KafCoreferenceSet> set = new ArrayList<KafCoreferenceSet>();
+                            set.add(kafCoreferenceSet);
+                            kafCoreferenceUriMap.put(topEntity, set);
+                        }
                     }
                 }
             }
@@ -399,21 +302,23 @@ public class GetSemFromNaf {
             //  System.out.println("uri = " + uri);
                 ArrayList<KafEntity> entities = kafEntityActorUriMap.get(uri);
                 ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromEntities(baseUrl, kafSaxParser, entities);
-                if (kafCoreferenceUriMap.containsKey(uri)) {
-                    ArrayList<KafCoreferenceSet> coreferenceSets = kafCoreferenceUriMap.get(uri);
-                    for (int i = 0; i < coreferenceSets.size(); i++) {
-                        KafCoreferenceSet kafCoreferenceSet = coreferenceSets.get(i);
-                        for (int j = 0; j < kafCoreferenceSet.getSetsOfSpans().size(); j++) {
-                            ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(j);
-                            if (corefTargets.size()<=Util.SPANMAXCOREFERENTSET) {
-                                NafMention mention = Util.getNafMentionForCorefTargets(baseUrl, kafSaxParser, corefTargets);
-                                if (!Util.hasMention(mentionArrayList, mention)) {
-                                    // System.out.println("corefTargets.toString() = " + corefTargets.toString());
-                                    mentionArrayList.add(mention);
+                if (nafSemParameters.isNOMCOREF()) {
+                    if (kafCoreferenceUriMap.containsKey(uri)) {
+                        ArrayList<KafCoreferenceSet> coreferenceSets = kafCoreferenceUriMap.get(uri);
+                        for (int i = 0; i < coreferenceSets.size(); i++) {
+                            KafCoreferenceSet kafCoreferenceSet = coreferenceSets.get(i);
+                            for (int j = 0; j < kafCoreferenceSet.getSetsOfSpans().size(); j++) {
+                                ArrayList<CorefTarget> corefTargets = kafCoreferenceSet.getSetsOfSpans().get(j);
+                                if (corefTargets.size() <= Util.SPANMAXCOREFERENTSET) {
+                                    NafMention mention = Util.getNafMentionForCorefTargets(baseUrl, kafSaxParser, corefTargets);
+                                    if (!Util.hasMention(mentionArrayList, mention)) {
+                                        // System.out.println("corefTargets.toString() = " + corefTargets.toString());
+                                        mentionArrayList.add(mention);
+                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
                 String entityId = "";
@@ -432,15 +337,6 @@ public class GetSemFromNaf {
                 semActor.setIdByDBpediaReference();
                 Util.addObject(semActors, semActor);
         }
-
-
-/*
-        for (int i = 0; i < semActors.size(); i++) {
-            SemObject semObject = semActors.get(i);
-            System.out.println("semObject.getId() = " + semObject.getId());
-            System.out.println("semObject.getURI() = " + semObject.getURI());
-        }
-*/
     }
 
 
@@ -798,7 +694,7 @@ public class GetSemFromNaf {
         if (kafSaxParser.kafTimexLayer.size()>0) {
             for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
                 KafTimex timex = kafSaxParser.kafTimexLayer.get(i);
-                if (timex.getFunctionInDocument().equals(KafTimex.functionInDocumentCreationTime) && !DOCTIME) {
+                if (timex.getFunctionInDocument().equals(KafTimex.functionInDocumentCreationTime) && !nafSemParameters.isDOCTIME()) {
                     continue;
                 }
                 if (!timex.getValue().trim().isEmpty() &&
@@ -964,7 +860,7 @@ public class GetSemFromNaf {
             docSemTime = Util.getDocumentCreationTimeFromNafHeader(baseUrl,kafSaxParser);
            // System.out.println("header docSemTime.getOwlTime().getDateLabel() = " + docSemTime.getOwlTime().getDateStringURI());
         }
-        if (DOCTIME) {
+        if (nafSemParameters.isDOCTIME()) {
             if (docSemTime != null) {
                 semTimes.add(docSemTime);
             } else {
@@ -1038,7 +934,7 @@ public class GetSemFromNaf {
                 }
             }
 
-            if (!timeAnchor && DOCTIME) {
+            if (!timeAnchor && nafSemParameters.isDOCTIME()) {
                 /// we assume that events without an explicit time anchor and having nwr:AttributionTime value FUTURE are timeless events
                 KafFactuality kafFactuality = Util.futureEvent(semEvent);
                 if (kafFactuality!=null) {
@@ -1052,7 +948,7 @@ public class GetSemFromNaf {
                     }
                 }
             }
-            if (CONTEXTTIME) {
+            if (nafSemParameters.isCONTEXTTIME()) {
                 if (!timeAnchor) {
                     for (int l = 0; l < semTimes.size(); l++) {
                         SemTime semTime = (SemTime) semTimes.get(l);
@@ -1142,7 +1038,7 @@ public class GetSemFromNaf {
                module which creates the tmx0 for the default anchoring of the document
                
              */
-            if (!timeAnchor && DOCTIME) {
+            if (!timeAnchor && nafSemParameters.isDOCTIME()) {
                 /// timeless event
                 /// in all cases that there is no time relations we link it to the docTime
                // System.out.println("docSemTime.toString() = " + docSemTime.toString());

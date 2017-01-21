@@ -73,27 +73,21 @@ public class GetPerspectiveRelations {
     /**
      * @Get perspective objects from sources in the text
      * @param kafSaxParser
-     * @param project
      * @param semActors
-     * @param contextualVector
-     * @param communicationVector
-     * @param grammaticalVector
      * @return
      */
-        static public ArrayList<PerspectiveObject> getSourcePerspectives (KafSaxParser kafSaxParser, String project,
+        static public ArrayList<PerspectiveObject> getSourcePerspectives (KafSaxParser kafSaxParser,
                                                                    ArrayList<SemObject> semActors,
                                                                    ArrayList<SemObject> semEvents,
-                                    Vector<String> contextualVector,
-                                    Vector<String> communicationVector,
-                                    Vector<String> grammaticalVector) {
+                                                                          NafSemParameters nafSemParameters) {
             String baseUri = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             if (!baseUri.toLowerCase().startsWith("http")) {
-                baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
+                baseUri = ResourcesUri.nwrdata + nafSemParameters.getPROJECT() + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             }
             ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri, kafSaxParser, semEvents,
-                    contextualVector,
-                    communicationVector,
-                    grammaticalVector);
+                    nafSemParameters.getContextualVector(),
+                    nafSemParameters.getContextualVector(),
+                    nafSemParameters.getGrammaticalVector());
             if (FILTERA0) perspectiveObjects = selectSourceEntityToPerspectives(kafSaxParser, perspectiveObjects, semActors);
             else augmentPerspectivesWithSourceEntity(kafSaxParser, perspectiveObjects, semActors);
             return perspectiveObjects;
@@ -170,15 +164,15 @@ public class GetPerspectiveRelations {
             if (tokenString.equalsIgnoreCase("me")) return true;
             return false;
         }
-       static public void getPerspective(KafSaxParser kafSaxParser, String project, ArrayList<PerspectiveObject> perspectives, ArrayList<SemObject> semEvents,
-                                    Vector<String> contextualVector,
-                                    Vector<String> communicationVector,
-                                    Vector<String> grammaticalVector) {
+       static public void getPerspective(KafSaxParser kafSaxParser,
+                                         ArrayList<PerspectiveObject> perspectives,
+                                         ArrayList<SemObject> semEvents, NafSemParameters nafSemParameters) {
             String baseUri = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             if (!baseUri.toLowerCase().startsWith("http")) {
-                baseUri = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
+                baseUri = ResourcesUri.nwrdata + nafSemParameters.getPROJECT() + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
             }
-            ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri,kafSaxParser, semEvents, contextualVector, communicationVector, grammaticalVector);
+            ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri,kafSaxParser, semEvents,
+                    nafSemParameters.getContextualVector(), nafSemParameters.getSourceVector(), nafSemParameters.getGrammaticalVector());
             perspectives.addAll(perspectiveObjects);
         }
 
@@ -399,7 +393,7 @@ public class GetPerspectiveRelations {
           //  Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/perspective");
             ResourcesUri.prefixModelGaf(defaultModel);
             String attrBase = pathToTrigFile+"_";
-            JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, perspectiveObjects, 1);
+            JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo", perspectiveObjects, 1);
             RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
             fos.close();
         } catch (IOException e) {
@@ -422,9 +416,9 @@ public class GetPerspectiveRelations {
 
                 JenaSerialization.addDocMetaData(kafSaxParser);
                 String attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"s";
-                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, sourcePerspectiveObjects, 1);
+                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo", sourcePerspectiveObjects, 1);
                 attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"d";
-                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
+                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, "isDerivedFrom", authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
                 fos.close();
             } catch (IOException e) {
@@ -440,7 +434,7 @@ public class GetPerspectiveRelations {
               //  Model provenanceModel = ds.getNamedModel("http://www.newsreader-project.eu/perspective");
                 ResourcesUri.prefixModelGaf(defaultModel);
                 String attrBase = uri+"_";
-                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, perspectiveObjects, 1);
+                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp,"wasAttributedTo", perspectiveObjects, 1);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
     }
 

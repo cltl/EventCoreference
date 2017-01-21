@@ -1,16 +1,168 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" line="1144" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" line="1142" mnemonic="9" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="445384b5-3667-4928-9720-8c2fa43cd0aa" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/Naf2SemTest.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/NafObjectToSemTest.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/RawTextIndex.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigKSTripleReader.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/input/TrigKSTripleReader.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ClusterEventObjects.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ClusterEventObjects.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/CreateMicrostory.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/CreateMicrostory.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNaf.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNaf.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/MatchEventObjects.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ParcAttributionTask.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ParcAttributionTask.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ResourcesUri.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/ResourcesUri.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/NafMention.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/NafMention.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PerspectiveObject.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/objects/PerspectiveObject.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/timeline/EntityTimeLine.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/timeline/EntityTimeLine.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FrameTypes.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/FrameTypes.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util$AppendableObjectOutputStream.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util$AppendableObjectOutputStream.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/util/Util.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.ipr" afterPath="$PROJECT_DIR$/EventCoreference.ipr" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iws" afterPath="$PROJECT_DIR$/EventCoreference.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonFromRdf.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonFromRdf.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectives.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectives.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-frame.html" afterPath="$PROJECT_DIR$/doc/allclasses-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/allclasses-noframe.html" afterPath="$PROJECT_DIR$/doc/allclasses-noframe.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/constant-values.html" afterPath="$PROJECT_DIR$/doc/constant-values.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/deprecated-list.html" afterPath="$PROJECT_DIR$/doc/deprecated-list.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/ChainCorefSets.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/ChainCorefSets.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/ComponentMatch.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/ComponentMatch.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/coref/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/EvaluateCorefs.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/EvaluateCorefs.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/evaluation/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/CorefSaxParser.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/CorefSaxParser.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/RdfReader.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/RdfReader.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/SemDomParser.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/SemDomParser.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/SesameTrigReader.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/SesameTrigReader.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/input/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/ClusterEventObjects.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/ClusterEventObjects.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/EntityCorefReferenceBaseline.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/EventCorefLemmaBaseline.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/MatchEventObjects.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/MatchEventObjects.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/ResourcesUri.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/ResourcesUri.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/naf/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/AgataMention.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/AgataMention.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CoRefSetAgata.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CoRefSetAgata.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CompositeEvent.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CompositeEvent.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CorefTargetAgata.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/CorefTargetAgata.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/NafMention.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/NafMention.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/OwlTime.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/OwlTime.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/PhraseCount.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/PhraseCount.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/Sem.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/Sem.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemActor.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemActor.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemEvent.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemEvent.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemObject.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemObject.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemPlace.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemPlace.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemRelation.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemRelation.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemTime.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SemTime.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SourceMeta.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/SourceMeta.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/Triple.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/Triple.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/objects/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CombineCorefOutputPerEvent.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CombineCorefOutputPerEvent.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CorefSetToSem.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CorefSetToSem.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CorefTargetsInKafSentences.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CoreferenceBaseline.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/CoreferenceBaseline.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/DocumentToCorpusCoreferences.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/DocumentToCorpusCoreferences.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/FixSynsetReferences.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/FixSynsetReferences.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/JenaSerialization.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/JenaSerialization.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/MergeDocumentToCorpusCoreferencesByLemma.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/MergeDocumentToCorpusCoreferencesByLemma.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/output/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/PwnSaxParser.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/PwnSaxParser.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/pwn/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Anaphor.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Anaphor.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/EntityTypes.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/EntityTypes.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/EventTypes.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/EventTypes.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/FilterCorefSets.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/FilterCorefSets.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/LabelCount.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/LabelCount.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ProcessNewsReaderFolderBatch.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/ReadSourceMetaFile.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/RoleLabels.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/RoleLabels.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/SemUtilObject.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/SemUtilObject.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/SplitTechCrunch.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/SplitTechCrunch.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Statistics.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Statistics.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/TimeLanguage.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/TimeLanguage.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Util.AppendableObjectOutputStream.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Util.AppendableObjectOutputStream.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Util.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/Util.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-frame.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-summary.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-tree.html" afterPath="$PROJECT_DIR$/doc/eu/newsreader/eventcoreference/util/package-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/help-doc.html" afterPath="$PROJECT_DIR$/doc/help-doc.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-1.html" afterPath="$PROJECT_DIR$/doc/index-files/index-1.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-10.html" afterPath="$PROJECT_DIR$/doc/index-files/index-10.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-11.html" afterPath="$PROJECT_DIR$/doc/index-files/index-11.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-12.html" afterPath="$PROJECT_DIR$/doc/index-files/index-12.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-13.html" afterPath="$PROJECT_DIR$/doc/index-files/index-13.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-14.html" afterPath="$PROJECT_DIR$/doc/index-files/index-14.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-15.html" afterPath="$PROJECT_DIR$/doc/index-files/index-15.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-16.html" afterPath="$PROJECT_DIR$/doc/index-files/index-16.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-17.html" afterPath="$PROJECT_DIR$/doc/index-files/index-17.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-18.html" afterPath="$PROJECT_DIR$/doc/index-files/index-18.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-19.html" afterPath="$PROJECT_DIR$/doc/index-files/index-19.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-2.html" afterPath="$PROJECT_DIR$/doc/index-files/index-2.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-20.html" afterPath="$PROJECT_DIR$/doc/index-files/index-20.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-3.html" afterPath="$PROJECT_DIR$/doc/index-files/index-3.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-4.html" afterPath="$PROJECT_DIR$/doc/index-files/index-4.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" afterPath="$PROJECT_DIR$/doc/index-files/index-5.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-6.html" afterPath="$PROJECT_DIR$/doc/index-files/index-6.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-7.html" afterPath="$PROJECT_DIR$/doc/index-files/index-7.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-8.html" afterPath="$PROJECT_DIR$/doc/index-files/index-8.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index-files/index-9.html" afterPath="$PROJECT_DIR$/doc/index-files/index-9.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/index.html" afterPath="$PROJECT_DIR$/doc/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-frame.html" afterPath="$PROJECT_DIR$/doc/overview-frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-summary.html" afterPath="$PROJECT_DIR$/doc/overview-summary.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/overview-tree.html" afterPath="$PROJECT_DIR$/doc/overview-tree.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/package-list" afterPath="$PROJECT_DIR$/doc/package-list" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/serialized-form.html" afterPath="$PROJECT_DIR$/doc/serialized-form.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/CreateMicrostory.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/CreateMicrostory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNaf.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNaf.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ParcAttributionTask.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ParcAttributionTask.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" />
     </list>
     <ignored path="EventCoreference.iws" />
@@ -77,82 +229,138 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="QueryKnowledgeStoreToJsonStoryPerspectives.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectives.java">
+      <file leaf-file-name="GetSemFromNaf.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNaf.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="474" column="12" selection-start-line="474" selection-start-column="12" selection-end-line="474" selection-end-column="18" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JsonStoryUtil.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="523">
-              <caret line="130" column="87" selection-start-line="130" selection-start-column="87" selection-end-line="130" selection-end-column="87" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JsonFromRdf.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonFromRdf.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="490" column="75" selection-start-line="490" selection-start-column="0" selection-end-line="490" selection-end-column="0" />
+            <state relative-caret-position="16643">
+              <caret line="1040" column="59" lean-forward="false" selection-start-line="1040" selection-start-column="59" selection-end-line="1040" selection-end-column="59" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TrigKSTripleReader.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="1716" column="97" selection-start-line="1716" selection-start-column="13" selection-end-line="1716" selection-end-column="13" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MapEuroVocToEuroConcept.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/MapEuroVocToEuroConcept.java">
+      <file leaf-file-name="GetSemFromNafFolder.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="476">
-              <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+              <caret line="111" column="53" lean-forward="true" selection-start-line="111" selection-start-column="53" selection-end-line="111" selection-end-column="53" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataSetTopicHierarchy.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetTopicHierarchy.java">
+      <file leaf-file-name="GetSemFromNafFile.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1326">
-              <caret line="85" column="39" selection-start-line="85" selection-start-column="39" selection-end-line="85" selection-end-column="39" />
+            <state relative-caret-position="292">
+              <caret line="174" column="53" lean-forward="false" selection-start-line="174" selection-start-column="53" selection-end-line="174" selection-end-column="53" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GetPerspectiveRelations.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="583">
+              <caret line="436" column="107" lean-forward="false" selection-start-line="436" selection-start-column="107" selection-end-line="436" selection-end-column="107" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClusterEventObjects.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="185">
+              <caret line="610" column="52" lean-forward="true" selection-start-line="610" selection-start-column="52" selection-end-line="610" selection-end-column="52" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NafSemParameters.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="15" column="8" lean-forward="false" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
               <folding>
-                <element signature="imports" expanded="false" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#2537#2538#0" expanded="true" />
+                <element signature="e#2559#2560#0" expanded="true" />
+                <element signature="e#3182#3183#0" expanded="true" />
+                <element signature="e#3210#3211#0" expanded="true" />
+                <element signature="e#3257#3258#0" expanded="true" />
+                <element signature="e#3292#3293#0" expanded="true" />
+                <element signature="e#3356#3357#0" expanded="true" />
+                <element signature="e#3404#3405#0" expanded="true" />
+                <element signature="e#3456#3457#0" expanded="true" />
+                <element signature="e#3496#3497#0" expanded="true" />
+                <element signature="e#3570#3571#0" expanded="true" />
+                <element signature="e#3628#3629#0" expanded="true" />
+                <element signature="e#3679#3680#0" expanded="true" />
+                <element signature="e#3718#3719#0" expanded="true" />
+                <element signature="e#3790#3791#0" expanded="true" />
+                <element signature="e#3846#3847#0" expanded="true" />
+                <element signature="e#3887#3888#0" expanded="true" />
+                <element signature="e#3927#3928#0" expanded="true" />
+                <element signature="e#3990#3991#0" expanded="true" />
+                <element signature="e#4048#4049#0" expanded="true" />
+                <element signature="e#4086#4087#0" expanded="true" />
+                <element signature="e#4120#4121#0" expanded="true" />
+                <element signature="e#4175#4176#0" expanded="true" />
+                <element signature="e#4221#4222#0" expanded="true" />
+                <element signature="e#4254#4255#0" expanded="true" />
+                <element signature="e#4283#4284#0" expanded="true" />
+                <element signature="e#4328#4329#0" expanded="true" />
+                <element signature="e#4364#4365#0" expanded="true" />
+                <element signature="e#4398#4399#0" expanded="true" />
+                <element signature="e#4428#4429#0" expanded="true" />
+                <element signature="e#4475#4476#0" expanded="true" />
+                <element signature="e#4513#4514#0" expanded="true" />
+                <element signature="e#4551#4552#0" expanded="true" />
+                <element signature="e#4585#4586#0" expanded="true" />
+                <element signature="e#4640#4641#0" expanded="true" />
+                <element signature="e#4686#4687#0" expanded="true" />
+                <element signature="e#4720#4721#0" expanded="true" />
+                <element signature="e#4750#4751#0" expanded="true" />
+                <element signature="e#4797#4798#0" expanded="true" />
+                <element signature="e#4835#4836#0" expanded="true" />
+                <element signature="e#4873#4874#0" expanded="true" />
+                <element signature="e#4907#4908#0" expanded="true" />
+                <element signature="e#4962#4963#0" expanded="true" />
+                <element signature="e#5008#5009#0" expanded="true" />
+                <element signature="e#5043#5044#0" expanded="true" />
+                <element signature="e#5074#5075#0" expanded="true" />
+                <element signature="e#5123#5124#0" expanded="true" />
+                <element signature="e#5163#5164#0" expanded="true" />
+                <element signature="e#5200#5201#0" expanded="true" />
+                <element signature="e#5233#5234#0" expanded="true" />
+                <element signature="e#5286#5287#0" expanded="true" />
+                <element signature="e#5330#5331#0" expanded="true" />
+                <element signature="e#5364#5365#0" expanded="true" />
+                <element signature="e#5394#5395#0" expanded="true" />
+                <element signature="e#5440#5441#0" expanded="true" />
+                <element signature="e#5478#5479#0" expanded="true" />
+                <element signature="e#5508#5509#0" expanded="true" />
+                <element signature="e#5534#5535#0" expanded="true" />
+                <element signature="e#5573#5574#0" expanded="true" />
+                <element signature="e#5603#5604#0" expanded="true" />
+                <element signature="e#5645#5646#0" expanded="true" />
+                <element signature="e#5683#5684#0" expanded="true" />
+                <element signature="e#5746#5747#0" expanded="true" />
+                <element signature="e#5800#5801#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SimpleTaxonomy.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/SimpleTaxonomy.java">
+      <file leaf-file-name="JenaSerialization.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="25" column="73" selection-start-line="25" selection-start-column="73" selection-end-line="25" selection-end-column="73" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
+            <state relative-caret-position="278">
+              <caret line="612" column="136" lean-forward="true" selection-start-line="610" selection-start-column="10" selection-end-line="612" selection-end-column="136" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -165,6 +373,15 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>factualityValue</find>
+      <find>addToJenaDataSet</find>
+      <find>NON</find>
+      <find>NON_FUTURE</find>
+      <find>NON_</find>
+    </findStrings>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -199,66 +416,61 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/scripts/event-coreference-en.sh" />
-        <option value="$PROJECT_DIR$/scripts/event-coreference-lemma.sh" />
-        <option value="$PROJECT_DIR$/scripts/event-coreference-nl.sh" />
-        <option value="$PROJECT_DIR$/scripts/event-coreference-singleton.sh" />
-        <option value="$PROJECT_DIR$/scripts/naf2sem-batch-cluster.sh" />
-        <option value="$PROJECT_DIR$/scripts/naf2sem-batch-nocluster.sh" />
-        <option value="$PROJECT_DIR$/scripts/naf2sem-grasp.sh" />
-        <option value="$PROJECT_DIR$/scripts/run_naf_folder.sh" />
-        <option value="$PROJECT_DIR$/scripts/run_phase1.sh" />
-        <option value="$PROJECT_DIR$/scripts/run_single_naf.sh" />
-        <option value="$PROJECT_DIR$/scripts/storyteller-ks-entity.sh" />
-        <option value="$PROJECT_DIR$/scripts/storyteller-ks-entity-event.sh" />
-        <option value="$PROJECT_DIR$/scripts/storyteller-ks-event.sh" />
-        <option value="$PROJECT_DIR$/scripts/storyteller-ks-sparql.sh" />
-        <option value="$PROJECT_DIR$/scripts/storyteller-rawtext-index.sh" />
-        <option value="$PROJECT_DIR$/scripts/storyteller-trig-files.sh" />
-        <option value="$PROJECT_DIR$/scripts/token-index.sh" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FixUri.java" />
-        <option value="$PROJECT_DIR$/scripts/trigstats.sh" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetSources.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/NafTokenLayerIndex.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/PerspectiveJsonObject.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonSerialization.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonStoryPerspectives.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemObject.java" />
-        <option value="$MAVEN_REPOSITORY$/com/github/cltl/KafSaxParser/v3.1.1/KafSaxParser-v3.1.1.jar!/eu/kyotoproject/kaf/KafOpinion.class" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNaf.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetNAF.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetEventHierarchy.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonFromCat.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetConceptHierarchy.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/TrigStats.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/TreeStaticHtml.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigTripleReader.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/TopicStatsFromTrig.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetEntityHierarchy.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectivesOrg.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/MapEuroVocToEuroConcept.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/EuroVoc.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetTopicHierarchy.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/SimpleTaxonomy.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ResourcesUri.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PerspectiveObject.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonFromCat.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonFromRdf.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/PerspectiveJsonObject.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/NafTokenLayerIndex.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonSerialization.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectivesOld.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/ReadFtData.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonStoryPerspectives.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonTimeLine.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/timeline/EntityTimeLine.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/TrigStats.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/SimpleTaxonomy.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/GetTypeHierarchyForConcepts.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetTopicHierarchy.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetSources.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetEventHierarchy.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetEntityHierarchy.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetConceptHierarchy.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/TreeStaticHtml.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/coref/WithinDocumentEventCoref.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectives.java" />
+        <option value="$MAVEN_REPOSITORY$/com/github/cltl/KafSaxParser/v3.1.1/KafSaxParser-v3.1.1.jar!/eu/kyotoproject/kaf/KafFactuality.class" />
+        <option value="$PROJECT_DIR$/scripts/naf2sem-grasp.sh" />
+        <option value="$PROJECT_DIR$/scripts/naf-folder-to-trig.sh" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNaf.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ParcAttributionTask.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/CreateMicrostory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java" />
       </list>
     </option>
   </component>
   <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHome" value="Bundled (Maven 3)" />
-      </MavenGeneralSettings>
-    </option>
     <option name="importingSettings">
       <MavenImportingSettings>
         <option name="downloadSourcesAutomatically" value="true" />
@@ -276,34 +488,6 @@
         <PATH_ELEMENT>
           <option name="myItemId" value="EventCoreference and NAF2SEM-GRASP" />
           <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Dependencies" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependenciesNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="EventCoreference and NAF2SEM-GRASP" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="EventCoreference and NAF2SEM-GRASP" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Plugins" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginsNode" />
         </PATH_ELEMENT>
       </PATH>
       <PATH>
@@ -326,10 +510,9 @@
     <option name="runMavenInBackground" value="false" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-21" />
-    <option name="y" value="23" />
-    <option name="width" value="1327" />
-    <option name="height" value="1006" />
+    <option name="y" value="22" />
+    <option name="width" value="1280" />
+    <option name="height" value="992" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -371,16 +554,7 @@
       </profile-state>
     </entry>
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <OptionsSetting value="true" id="Add" />
-    <OptionsSetting value="true" id="Remove" />
-    <OptionsSetting value="true" id="Checkout" />
-    <OptionsSetting value="true" id="Update" />
-    <OptionsSetting value="true" id="Status" />
-    <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
-    <ConfirmationsSetting value="0" id="Remove" />
-  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectReloadState">
     <option name="STATE" value="0" />
   </component>
@@ -399,14 +573,10 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EventCoreference" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="EventCoreference" />
@@ -457,16 +627,84 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eventcoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="eventcoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="naf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EventCoreference" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scripts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
@@ -490,6 +728,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="eu.newsreader.eventcoreference.timeline" />
       <recent name="eu.newsreader.eventcoreference.output" />
       <recent name="eu.newsreader.eventcoreference.storyline" />
       <recent name="eu.newsreader.eventcoreference.objects" />
@@ -505,27 +744,7 @@
       <recent name="$PROJECT_DIR$/scripts" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.DataSetTopicHierarchy">
-    <configuration default="false" name="TrigStats" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="eu.newsreader.eventcoreference.output.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.output.TrigStats" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="EventCoreference" />
-      <envs />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Application.GetSemFromNafFile">
     <configuration default="false" name="DataSetTopicHierarchy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" runner="idea">
         <pattern>
@@ -534,26 +753,6 @@
         </pattern>
       </extension>
       <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.output.DataSetTopicHierarchy" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="EventCoreference" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="false" name="DataSetEntityHierarchy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="eu.newsreader.eventcoreference.output.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.output.DataSetEntityHierarchy" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -606,17 +805,57 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+    <configuration default="false" name="GetTypeHierarchyForConcepts" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="eu.newsreader.eventcoreference.output.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.output.GetTypeHierarchyForConcepts" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="EventCoreference" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="GetJsonTimeLinesFromNaf" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="eu.newsreader.eventcoreference.naf.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="eu.newsreader.eventcoreference.naf.GetJsonTimeLinesFromNaf" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="EventCoreference" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="" />
       <option name="DEPLOY" value="true" />
       <option name="ARTIFACT_NAME" value="" />
       <option name="PM_INSTALL_OPTIONS" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
       <option name="PREFERRED_AVD" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
-      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
       <option name="FORCE_STOP_RUNNING_APP" value="true" />
       <option name="DEBUGGER_TYPE" value="Java" />
@@ -624,7 +863,11 @@
       <option name="PREFERRED_AVD" value="" />
       <Java />
       <Profilers>
+        <option name="ENABLE_ADVANCED_PROFILING" value="true" />
+        <option name="GAPID_ENABLED" value="false" />
         <option name="GAPID_DISABLE_PCS" value="false" />
+        <option name="SUPPORT_LIB_ENABLED" value="true" />
+        <option name="INSTRUMENTATION_ENABLED" value="true" />
       </Profilers>
       <option name="DEEP_LINK" value="" />
       <option name="ACTIVITY_CLASS" value="" />
@@ -649,7 +892,11 @@
       <option name="PREFERRED_AVD" value="" />
       <Java />
       <Profilers>
+        <option name="ENABLE_ADVANCED_PROFILING" value="true" />
+        <option name="GAPID_ENABLED" value="false" />
         <option name="GAPID_DISABLE_PCS" value="false" />
+        <option name="SUPPORT_LIB_ENABLED" value="true" />
+        <option name="INSTRUMENTATION_ENABLED" value="true" />
       </Profilers>
       <method />
     </configuration>
@@ -688,6 +935,16 @@
       <envs />
       <method />
     </configuration>
+    <configuration default="true" type="BatchConfigurationType" factoryName="Batch">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <method />
+    </configuration>
     <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -720,27 +977,6 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="wholeProject" />
-      </option>
-      <envs />
-      <patterns />
-      <method />
-    </configuration>
-    <configuration default="true" type="JUnitTestDiscovery" factoryName="JUnit Test Discovery" changeList="All">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
       </option>
       <envs />
       <patterns />
@@ -850,32 +1086,17 @@
       <listeners />
       <method />
     </configuration>
-    <configuration default="true" type="TestNGTestDiscovery" factoryName="TestNG Test Discovery" changeList="All">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="SUITE_NAME" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="GROUP_NAME" />
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="OUTPUT_DIRECTORY" />
-      <option name="ANNOTATION_TYPE" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <option name="USE_DEFAULT_REPORTERS" value="false" />
-      <option name="PROPERTIES_FILE" />
-      <envs />
-      <properties />
-      <listeners />
+    <configuration default="true" type="executeSpecs" factoryName="Gauge Execution">
+      <setting name="environment" value="" />
+      <setting name="specsToExecute" value="" />
+      <setting name="tags" value="" />
+      <setting name="parallelNodes" value="" />
+      <setting name="execInParallel" value="false" />
+      <setting name="programParameters" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="moduleName" value="" />
+      <envMap />
+      <setting name="rowsRange" value="" />
       <method />
     </configuration>
     <configuration default="false" name="EventCorefLemmaBaseline" type="Application" factoryName="Application">
@@ -999,21 +1220,50 @@
       <item index="3" class="java.lang.String" itemvalue="Application.Stats" />
       <item index="4" class="java.lang.String" itemvalue="Application.InterDocumentEventCoref TechCrunch" />
       <item index="5" class="java.lang.String" itemvalue="Maven.EventCoreference [clean,validate,compile...]" />
-      <item index="6" class="java.lang.String" itemvalue="Application.TrigStats" />
-      <item index="7" class="java.lang.String" itemvalue="Application.DataSetTopicHierarchy" />
-      <item index="8" class="java.lang.String" itemvalue="Application.DataSetEntityHierarchy" />
-      <item index="9" class="java.lang.String" itemvalue="Application.MapEuroVocToEuroConcept" />
-      <item index="10" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
+      <item index="6" class="java.lang.String" itemvalue="Application.DataSetTopicHierarchy" />
+      <item index="7" class="java.lang.String" itemvalue="Application.MapEuroVocToEuroConcept" />
+      <item index="8" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
+      <item index="9" class="java.lang.String" itemvalue="Application.GetTypeHierarchyForConcepts" />
+      <item index="10" class="java.lang.String" itemvalue="Application.GetJsonTimeLinesFromNaf" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Application.DataSetTopicHierarchy" />
-        <item index="1" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
-        <item index="2" class="java.lang.String" itemvalue="Application.MapEuroVocToEuroConcept" />
-        <item index="3" class="java.lang.String" itemvalue="Application.DataSetEntityHierarchy" />
-        <item index="4" class="java.lang.String" itemvalue="Application.TrigStats" />
+        <item index="0" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
+        <item index="1" class="java.lang.String" itemvalue="Application.GetJsonTimeLinesFromNaf" />
+        <item index="2" class="java.lang.String" itemvalue="Application.GetTypeHierarchyForConcepts" />
+        <item index="3" class="java.lang.String" itemvalue="Application.DataSetTopicHierarchy" />
+        <item index="4" class="java.lang.String" itemvalue="Application.MapEuroVocToEuroConcept" />
       </list>
     </recent_temporary>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
+      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
+      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
+      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
+      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
+      <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
+      <method />
+    </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
@@ -1028,83 +1278,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1382608862052</updated>
-    </task>
-    <task id="LOCAL-00304" summary="-- first commit branch 3.1.2">
-      <created>1468873412732</created>
-      <option name="number" value="00304" />
-      <option name="presentableId" value="LOCAL-00304" />
-      <option name="project" value="LOCAL" />
-      <updated>1468873412732</updated>
-    </task>
-    <task id="LOCAL-00305" summary="-- first commit branch 3.1.2">
-      <created>1468873985361</created>
-      <option name="number" value="00305" />
-      <option name="presentableId" value="LOCAL-00305" />
-      <option name="project" value="LOCAL" />
-      <updated>1468873985361</updated>
-    </task>
-    <task id="LOCAL-00306" summary="-- first commit branch 3.1.2">
-      <created>1468934369761</created>
-      <option name="number" value="00306" />
-      <option name="presentableId" value="LOCAL-00306" />
-      <option name="project" value="LOCAL" />
-      <updated>1468934369761</updated>
-    </task>
-    <task id="LOCAL-00307" summary="-- first commit branch 3.1.2">
-      <created>1468941441827</created>
-      <option name="number" value="00307" />
-      <option name="presentableId" value="LOCAL-00307" />
-      <option name="project" value="LOCAL" />
-      <updated>1468941441828</updated>
-    </task>
-    <task id="LOCAL-00308" summary="-- first commit branch 3.1.2">
-      <created>1469006499580</created>
-      <option name="number" value="00308" />
-      <option name="presentableId" value="LOCAL-00308" />
-      <option name="project" value="LOCAL" />
-      <updated>1469006499581</updated>
-    </task>
-    <task id="LOCAL-00309" summary="-- first commit branch 3.1.2">
-      <created>1469048952242</created>
-      <option name="number" value="00309" />
-      <option name="presentableId" value="LOCAL-00309" />
-      <option name="project" value="LOCAL" />
-      <updated>1469048952242</updated>
-    </task>
-    <task id="LOCAL-00310" summary="-- first commit branch 3.1.2">
-      <created>1469049310969</created>
-      <option name="number" value="00310" />
-      <option name="presentableId" value="LOCAL-00310" />
-      <option name="project" value="LOCAL" />
-      <updated>1469049310969</updated>
-    </task>
-    <task id="LOCAL-00311" summary="-- first commit branch 3.1.2">
-      <created>1469282347237</created>
-      <option name="number" value="00311" />
-      <option name="presentableId" value="LOCAL-00311" />
-      <option name="project" value="LOCAL" />
-      <updated>1469282347239</updated>
-    </task>
-    <task id="LOCAL-00312" summary="-- first commit branch 3.1.2">
-      <created>1469282568524</created>
-      <option name="number" value="00312" />
-      <option name="presentableId" value="LOCAL-00312" />
-      <option name="project" value="LOCAL" />
-      <updated>1469282568524</updated>
-    </task>
-    <task id="LOCAL-00313" summary="-- first commit branch 3.1.2">
-      <created>1469631231038</created>
-      <option name="number" value="00313" />
-      <option name="presentableId" value="LOCAL-00313" />
-      <option name="project" value="LOCAL" />
-      <updated>1469631231039</updated>
-    </task>
-    <task id="LOCAL-00314" summary="-- first commit branch 3.1.2">
-      <created>1469736253691</created>
-      <option name="number" value="00314" />
-      <option name="presentableId" value="LOCAL-00314" />
-      <option name="project" value="LOCAL" />
-      <updated>1469736253692</updated>
     </task>
     <task id="LOCAL-00315" summary="-- first commit branch 3.1.2">
       <created>1469736423801</created>
@@ -1372,41 +1545,122 @@
       <option name="project" value="LOCAL" />
       <updated>1480370099908</updated>
     </task>
-    <option name="localTasksCounter" value="353" />
+    <task id="LOCAL-00353" summary="-- sparql combined facets query">
+      <created>1480420986687</created>
+      <option name="number" value="00353" />
+      <option name="presentableId" value="LOCAL-00353" />
+      <option name="project" value="LOCAL" />
+      <updated>1480420986688</updated>
+    </task>
+    <task id="LOCAL-00354" summary="-- bug fix (revision of previous fix): in cross doc event coreference MatchingEventObjects Chaining 3, break was commented out so that it matched too many events during matrix comparison. Aparently, the break was no longer relevant since the for loop was replaced to make it more efficient. Break removed again and speed gain lost.">
+      <created>1480514891903</created>
+      <option name="number" value="00354" />
+      <option name="presentableId" value="LOCAL-00354" />
+      <option name="project" value="LOCAL" />
+      <updated>1480514891904</updated>
+    </task>
+    <task id="LOCAL-00355" summary="-- bug fix (revision of previous fix): in cross doc event coreference MatchingEventObjects Chaining 3, break was commented out so that it matched too many events during matrix comparison. Aparently, the break was no longer relevant since the for loop was replaced to make it more efficient. Break removed again and speed gain lost.">
+      <created>1481209538119</created>
+      <option name="number" value="00355" />
+      <option name="presentableId" value="LOCAL-00355" />
+      <option name="project" value="LOCAL" />
+      <updated>1481209538119</updated>
+    </task>
+    <task id="LOCAL-00356" summary="-- bug fix (revision of previous fix): in cross doc event coreference MatchingEventObjects Chaining 3, break was commented out so that it matched too many events during matrix comparison. Aparently, the break was no longer relevant since the for loop was replaced to make it more efficient. Break removed again and speed gain lost.">
+      <created>1481211926633</created>
+      <option name="number" value="00356" />
+      <option name="presentableId" value="LOCAL-00356" />
+      <option name="project" value="LOCAL" />
+      <updated>1481211926633</updated>
+    </task>
+    <task id="LOCAL-00357" summary="-- personal pronouns become author attributions">
+      <created>1481820205168</created>
+      <option name="number" value="00357" />
+      <option name="presentableId" value="LOCAL-00357" />
+      <option name="project" value="LOCAL" />
+      <updated>1481820205169</updated>
+    </task>
+    <task id="LOCAL-00358" summary="-- @deprecated storyteller classes, preparing removal">
+      <created>1483624933247</created>
+      <option name="number" value="00358" />
+      <option name="presentableId" value="LOCAL-00358" />
+      <option name="project" value="LOCAL" />
+      <updated>1483624933248</updated>
+    </task>
+    <task id="LOCAL-00359" summary="-- @deprecated storyteller classes, preparing removal">
+      <created>1483970239370</created>
+      <option name="number" value="00359" />
+      <option name="presentableId" value="LOCAL-00359" />
+      <option name="project" value="LOCAL" />
+      <updated>1483970239371</updated>
+    </task>
+    <task id="LOCAL-00360" summary="-- @deprecated storyteller classes, preparing removal">
+      <created>1483970270024</created>
+      <option name="number" value="00360" />
+      <option name="presentableId" value="LOCAL-00360" />
+      <option name="project" value="LOCAL" />
+      <updated>1483970270024</updated>
+    </task>
+    <task id="LOCAL-00361" summary="-- @deprecated storyteller classes, preparing removal">
+      <created>1483970701614</created>
+      <option name="number" value="00361" />
+      <option name="presentableId" value="LOCAL-00361" />
+      <option name="project" value="LOCAL" />
+      <updated>1483970701614</updated>
+    </task>
+    <task id="LOCAL-00362" summary="-- @deprecated storyteller classes, preparing removal">
+      <created>1484156191688</created>
+      <option name="number" value="00362" />
+      <option name="presentableId" value="LOCAL-00362" />
+      <option name="project" value="LOCAL" />
+      <updated>1484156191688</updated>
+    </task>
+    <task id="LOCAL-00363" summary="-- @deprecated storyteller classes, preparing removal">
+      <created>1484582502925</created>
+      <option name="number" value="00363" />
+      <option name="presentableId" value="LOCAL-00363" />
+      <option name="project" value="LOCAL" />
+      <updated>1484582502926</updated>
+    </task>
+    <option name="localTasksCounter" value="364" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-21" y="23" width="1327" height="1006" extended-state="0" />
+    <frame x="0" y="22" width="1280" height="992" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24097788" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16491228" sideWeight="0.49895832" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25783476" sideWeight="0.50104165" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.119844355" sideWeight="0.95652175" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12906611" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26125136" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32881" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.41478598" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12277868" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12520194" sideWeight="0.95652175" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12906611" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13712375" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32881" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33925685" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3005848" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17663981" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17109145" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293247" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293247" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1049936" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1049936" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28318584" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1415,26 +1669,26 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25783476" sideWeight="0.50104165" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2265908" sideWeight="0.95652175" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17124394" sideWeight="0.95652175" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293247" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35573772" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12277868" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17109145" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1049936" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2861357" sideWeight="0.49895832" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24097788" sideWeight="0.49895832" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17436975" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12906611" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22446808" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32881" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24883601" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16720517" sideWeight="0.95652175" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28318584" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
     </layout-to-restore>
@@ -1457,9 +1711,6 @@
     <option name="PERFORM_UPDATE_IN_BACKGROUND" value="false" />
     <option name="PERFORM_COMMIT_IN_BACKGROUND" value="false" />
     <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="true" />
-    <MESSAGE value="-- naf3.0" />
-    <MESSAGE value="-- naf2semperspective stream api" />
-    <MESSAGE value="-- eurovoc topic URIs" />
     <MESSAGE value="-- added nwr:grasp name space to perspective RDF output" />
     <MESSAGE value="-- KnowledgeStore Storyline" />
     <MESSAGE value="-- EventCorefWordnetSim class was deleted by accident" />
@@ -1482,12 +1733,15 @@
     <MESSAGE value="-- bug fix building composite events from event coreference and srl data: many duplicate event mentions were created which slowed down the system" />
     <MESSAGE value="-- bug fix in cross doc event coreference MatchingEventObjects Chaining 3, break was commented out so that it matched too many events during matrix comparison." />
     <MESSAGE value="-- sparql combined facets query" />
-    <option name="LAST_COMMIT_MESSAGE" value="-- sparql combined facets query" />
+    <MESSAGE value="-- bug fix (revision of previous fix): in cross doc event coreference MatchingEventObjects Chaining 3, break was commented out so that it matched too many events during matrix comparison. Aparently, the break was no longer relevant since the for loop was replaced to make it more efficient. Break removed again and speed gain lost." />
+    <MESSAGE value="-- personal pronouns become author attributions" />
+    <MESSAGE value="-- @deprecated storyteller classes, preparing removal" />
+    <option name="LAST_COMMIT_MESSAGE" value="-- @deprecated storyteller classes, preparing removal" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="26" />
+      <option name="time" value="28" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1496,375 +1750,524 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/JsonEvent.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonSerialization.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="53" column="29" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
+        <state relative-caret-position="119">
+          <caret line="15" column="11" lean-forward="false" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/jena/jena-arq/2.11.0/jena-arq-2.11.0-sources.jar!/org/apache/jena/atlas/web/auth/SimpleAuthenticator.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectivesOld.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="47" column="11" selection-start-line="47" selection-start-column="11" selection-end-line="47" selection-end-column="11" />
+        <state relative-caret-position="119">
+          <caret line="15" column="11" lean-forward="false" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="jar:///System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/classes.jar!/java/lang/String.class" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FixUri.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/ReadFtData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="135" column="21" selection-start-line="135" selection-start-column="21" selection-end-line="135" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/trigstats.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="7" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetSources.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="654">
-          <caret line="60" column="47" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/RoleLabels.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4811">
-          <caret line="287" column="26" selection-start-line="287" selection-start-column="26" selection-end-line="287" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/cltl/KafSaxParser/v3.1.1/KafSaxParser-v3.1.1.jar!/eu/kyotoproject/kaf/KafFactValue.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="24" column="31" selection-start-line="24" selection-start-column="31" selection-end-line="24" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="32" column="37" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="106" column="51" selection-start-line="106" selection-start-column="51" selection-end-line="106" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PerspectiveObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="764">
-          <caret line="292" column="57" selection-start-line="292" selection-start-column="57" selection-end-line="292" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/NafTokenLayerIndex.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3451">
-          <caret line="224" column="60" selection-start-line="224" selection-start-column="60" selection-end-line="224" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/PerspectiveJsonObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3009">
-          <caret line="208" column="0" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
+        <state relative-caret-position="119">
+          <caret line="14" column="11" lean-forward="false" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonStoryPerspectives.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4692">
-          <caret line="286" column="99" selection-start-line="286" selection-start-column="99" selection-end-line="286" selection-end-column="99" />
+        <state relative-caret-position="119">
+          <caret line="17" column="11" lean-forward="false" selection-start-line="17" selection-start-column="11" selection-end-line="17" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonSerialization.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/TrigToJsonTimeLine.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5491">
-          <caret line="331" column="27" selection-start-line="331" selection-start-column="27" selection-end-line="331" selection-end-column="27" />
+        <state relative-caret-position="119">
+          <caret line="24" column="11" lean-forward="false" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemRelation.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/timeline/EntityTimeLine.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+        <state relative-caret-position="119">
+          <caret line="9" column="11" lean-forward="false" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/NafMention.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetSources.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-8058">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        <state relative-caret-position="119">
+          <caret line="18" column="11" lean-forward="false" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/cltl/KafSaxParser/v3.1.1/KafSaxParser-v3.1.1.jar!/eu/kyotoproject/kaf/KafOpinion.class">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetEventHierarchy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="16" column="24" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
+        <state relative-caret-position="119">
+          <caret line="20" column="11" lean-forward="false" selection-start-line="20" selection-start-column="11" selection-end-line="20" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetEntityHierarchy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="337" column="22" selection-start-line="337" selection-start-column="22" selection-end-line="337" selection-end-column="22" />
+        <state relative-caret-position="119">
+          <caret line="18" column="11" lean-forward="false" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_91.jdk/Contents/Home/src.zip!/java/util/ArrayList.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetConceptHierarchy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="575" column="19" selection-start-line="575" selection-start-column="19" selection-end-line="575" selection-end-column="19" />
+        <state relative-caret-position="119">
+          <caret line="18" column="11" lean-forward="false" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/coref/ComponentMatch.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/TreeStaticHtml.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="11" lean-forward="false" selection-start-line="5" selection-start-column="11" selection-end-line="5" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/TrigStats.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="21" column="11" lean-forward="false" selection-start-line="21" selection-start-column="11" selection-end-line="21" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/SimpleTaxonomy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="16" column="11" lean-forward="false" selection-start-line="16" selection-start-column="11" selection-end-line="16" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/GetTypeHierarchyForConcepts.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="11" column="11" lean-forward="false" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetTopicHierarchy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="16" column="11" lean-forward="false" selection-start-line="16" selection-start-column="11" selection-end-line="16" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/RawTextIndex.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetJsonTimeLinesFromNaf.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="20" column="11" lean-forward="false" selection-start-line="20" selection-start-column="11" selection-end-line="20" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNaf.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="663">
+          <caret line="52" column="4" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/Naf2SemTest.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/EventCorefWordnetSim.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="990" column="13" lean-forward="false" selection-start-line="990" selection-start-column="13" selection-end-line="990" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/coref/WithinDocumentEventCoref.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
-          <caret line="16" column="26" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/CompositeEvent.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ResourcesUri.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="13" column="15" selection-start-line="13" selection-start-column="15" selection-end-line="13" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/cltl/KafSaxParser/v3.1.1/KafSaxParser-v3.1.1.jar!/eu/kyotoproject/kaf/KafSaxParser.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1632">
-          <caret line="86" column="13" selection-start-line="86" selection-start-column="13" selection-end-line="86" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/GetNAF.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="590">
-          <caret line="90" column="7" selection-start-line="90" selection-start-column="7" selection-end-line="90" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="526">
-          <caret line="2574" column="41" selection-start-line="2574" selection-start-column="13" selection-end-line="2574" selection-end-column="13" />
+        <state relative-caret-position="952">
+          <caret line="56" column="53" lean-forward="false" selection-start-line="56" selection-start-column="53" selection-end-line="56" selection-end-column="53" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="56" column="34" selection-start-line="51" selection-start-column="21" selection-end-line="57" selection-end-column="21" />
+        <state relative-caret-position="1122">
+          <caret line="66" column="46" lean-forward="false" selection-start-line="66" selection-start-column="46" selection-end-line="66" selection-end-column="46" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetEventHierarchy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="74" column="45" selection-start-line="74" selection-start-column="45" selection-end-line="74" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonFromCat.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="26724">
-          <caret line="1637" column="45" selection-start-line="1637" selection-start-column="45" selection-end-line="1637" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PhraseCount.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="34" column="16" selection-start-line="34" selection-start-column="16" selection-end-line="34" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetConceptHierarchy.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/cltl/KafSaxParser/v3.1.1/KafSaxParser-v3.1.1.jar!/eu/kyotoproject/kaf/KafFactValue.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="20" column="69" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <caret line="13" column="31" lean-forward="false" selection-start-line="13" selection-start-column="31" selection-end-line="13" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/MatchEventObjects.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/PerspectiveJsonObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="1136" column="3" selection-start-line="1136" selection-start-column="3" selection-end-line="1136" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/TreeStaticHtml.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="213" column="124" selection-start-line="213" selection-start-column="124" selection-end-line="213" selection-end-column="124" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigTripleReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="137" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/TopicStatsFromTrig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="63" column="28" selection-start-line="63" selection-start-column="28" selection-end-line="63" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/TrigStats.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="562">
-          <caret line="136" column="11" selection-start-line="117" selection-start-column="4" selection-end-line="136" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectivesOld.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7565">
-          <caret line="453" column="55" selection-start-line="453" selection-start-column="55" selection-end-line="453" selection-end-column="55" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/MentionResolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1926">
-          <caret line="287" column="18" selection-start-line="287" selection-start-column="18" selection-end-line="287" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3468">
-          <caret line="223" column="47" selection-start-line="223" selection-start-column="47" selection-end-line="223" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/cltl/KafSaxParser/v3.1.1/KafSaxParser-v3.1.1.jar!/eu/kyotoproject/kaf/KafTopic.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="85" column="52" selection-start-line="85" selection-start-column="20" selection-end-line="85" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/SemObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1377">
-          <caret line="111" column="5" selection-start-line="111" selection-start-column="5" selection-end-line="111" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="75" column="13" selection-start-line="75" selection-start-column="13" selection-end-line="75" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNaf.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="134" column="41" selection-start-line="134" selection-start-column="41" selection-end-line="134" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/EuroVoc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="481">
-          <caret line="70" column="20" selection-start-line="70" selection-start-column="20" selection-end-line="70" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetEntityHierarchy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="146" column="58" selection-start-line="146" selection-start-column="58" selection-end-line="146" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/MapEuroVocToEuroConcept.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/DataSetTopicHierarchy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1326">
-          <caret line="85" column="39" selection-start-line="85" selection-start-column="39" selection-end-line="85" selection-end-column="39" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/SimpleTaxonomy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="25" column="73" selection-start-line="25" selection-start-column="73" selection-end-line="25" selection-end-column="73" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="1716" column="97" selection-start-line="1716" selection-start-column="13" selection-end-line="1716" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonStoryUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="523">
-          <caret line="130" column="87" selection-start-line="130" selection-start-column="87" selection-end-line="130" selection-end-column="87" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/JsonFromRdf.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="490" column="75" selection-start-line="490" selection-start-column="0" selection-end-line="490" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="75">
+          <caret line="221" column="60" lean-forward="false" selection-start-line="221" selection-start-column="60" selection-end-line="221" selection-end-column="60" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/storyline/QueryKnowledgeStoreToJsonStoryPerspectives.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="474" column="12" selection-start-line="474" selection-start-column="12" selection-end-line="474" selection-end-column="18" />
+        <state relative-caret-position="84">
+          <caret line="457" column="66" lean-forward="false" selection-start-line="457" selection-start-column="66" selection-end-line="457" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/input/TrigKSTripleReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="1426" column="63" lean-forward="false" selection-start-line="1426" selection-start-column="63" selection-end-line="1426" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/NafMention.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4862">
+          <caret line="296" column="32" lean-forward="false" selection-start-line="296" selection-start-column="32" selection-end-line="296" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#2438#2439#0" expanded="false" />
+            <element signature="e#2469#2470#0" expanded="false" />
+            <element signature="e#3580#3581#0" expanded="false" />
+            <element signature="e#3609#3610#0" expanded="false" />
+            <element signature="e#3664#3665#0" expanded="false" />
+            <element signature="e#3699#3700#0" expanded="false" />
+            <element signature="e#22116#22117#0" expanded="false" />
+            <element signature="e#22147#22148#0" expanded="false" />
+            <element signature="e#22787#22788#0" expanded="false" />
+            <element signature="e#22817#22818#0" expanded="false" />
+            <element signature="e#23339#23340#0" expanded="false" />
+            <element signature="e#23377#23378#0" expanded="false" />
+            <element signature="e#23415#23416#0" expanded="false" />
+            <element signature="e#23449#23450#0" expanded="false" />
+            <element signature="e#23503#23504#0" expanded="false" />
+            <element signature="e#23549#23550#0" expanded="false" />
+            <element signature="e#23585#23586#0" expanded="false" />
+            <element signature="e#23617#23618#0" expanded="false" />
+            <element signature="e#23667#23668#0" expanded="false" />
+            <element signature="e#23709#23710#0" expanded="false" />
+            <element signature="e#23756#23757#0" expanded="false" />
+            <element signature="e#23788#23789#0" expanded="false" />
+            <element signature="e#23849#23850#0" expanded="false" />
+            <element signature="e#23891#23892#0" expanded="false" />
+            <element signature="e#23939#23940#0" expanded="false" />
+            <element signature="e#23983#23984#0" expanded="false" />
+            <element signature="e#24029#24030#0" expanded="false" />
+            <element signature="e#24060#24061#0" expanded="false" />
+            <element signature="e#24119#24120#0" expanded="false" />
+            <element signature="e#24159#24160#0" expanded="false" />
+            <element signature="e#24204#24205#0" expanded="false" />
+            <element signature="e#24246#24247#0" expanded="false" />
+            <element signature="e#24290#24291#0" expanded="false" />
+            <element signature="e#24326#24327#0" expanded="false" />
+            <element signature="e#24374#24375#0" expanded="false" />
+            <element signature="e#24414#24415#0" expanded="false" />
+            <element signature="e#24453#24454#0" expanded="false" />
+            <element signature="e#24488#24489#0" expanded="false" />
+            <element signature="e#24544#24545#0" expanded="false" />
+            <element signature="e#24592#24593#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/objects/PerspectiveObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4199">
+          <caret line="299" column="93" lean-forward="false" selection-start-line="299" selection-start-column="93" selection-end-line="299" selection-end-column="93" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#1071#1072#0" expanded="false" />
+            <element signature="e#1104#1105#0" expanded="false" />
+            <element signature="e#1375#1376#0" expanded="false" />
+            <element signature="e#1419#1420#0" expanded="false" />
+            <element signature="e#2290#2291#0" expanded="false" />
+            <element signature="e#2329#2330#0" expanded="false" />
+            <element signature="e#2404#2405#0" expanded="false" />
+            <element signature="e#2460#2461#0" expanded="false" />
+            <element signature="e#2498#2499#0" expanded="false" />
+            <element signature="e#2532#2533#0" expanded="false" />
+            <element signature="e#2586#2587#0" expanded="false" />
+            <element signature="e#2632#2633#0" expanded="false" />
+            <element signature="e#2670#2671#0" expanded="false" />
+            <element signature="e#2704#2705#0" expanded="false" />
+            <element signature="e#2758#2759#0" expanded="false" />
+            <element signature="e#2804#2805#0" expanded="false" />
+            <element signature="e#2845#2846#0" expanded="false" />
+            <element signature="e#2878#2879#0" expanded="false" />
+            <element signature="e#3499#3500#0" expanded="false" />
+            <element signature="e#3539#3540#0" expanded="false" />
+            <element signature="e#3743#3744#0" expanded="false" />
+            <element signature="e#3803#3804#0" expanded="false" />
+            <element signature="e#3841#3842#0" expanded="false" />
+            <element signature="e#3875#3876#0" expanded="false" />
+            <element signature="e#3929#3930#0" expanded="false" />
+            <element signature="e#3975#3976#0" expanded="false" />
+            <element signature="e#4016#4017#0" expanded="false" />
+            <element signature="e#4045#4046#0" expanded="false" />
+            <element signature="e#4097#4098#0" expanded="false" />
+            <element signature="e#4133#4134#0" expanded="false" />
+            <element signature="e#4174#4175#0" expanded="false" />
+            <element signature="e#4209#4210#0" expanded="false" />
+            <element signature="e#4267#4268#0" expanded="false" />
+            <element signature="e#4315#4316#0" expanded="false" />
+            <element signature="e#4356#4357#0" expanded="false" />
+            <element signature="e#4385#4386#0" expanded="false" />
+            <element signature="e#4437#4438#0" expanded="false" />
+            <element signature="e#4473#4474#0" expanded="false" />
+            <element signature="e#4534#4535#0" expanded="false" />
+            <element signature="e#4576#4577#0" expanded="false" />
+            <element signature="method#addToJenaDataSet2#0;class#PerspectiveObject#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/cltl/KafSaxParser/v3.1.1/KafSaxParser-v3.1.1.jar!/eu/kyotoproject/kaf/KafFactuality.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="118" column="33" lean-forward="true" selection-start-line="118" selection-start-column="33" selection-end-line="118" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/run_naf_folder.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/naf-folder-to-trig.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemAndPerspectiveFromNafFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="124" column="37" lean-forward="false" selection-start-line="124" selection-start-column="37" selection-end-line="124" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/naf2sem-grasp.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ParcAttributionTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="61" column="64" lean-forward="false" selection-start-line="61" selection-start-column="64" selection-end-line="61" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="353">
+          <caret line="68" column="73" lean-forward="false" selection-start-line="68" selection-start-column="73" selection-end-line="68" selection-end-column="73" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="177" column="185" lean-forward="false" selection-start-line="177" selection-start-column="69" selection-end-line="177" selection-end-column="185" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="175" column="28" lean-forward="false" selection-start-line="175" selection-start-column="28" selection-end-line="175" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="111" column="53" lean-forward="true" selection-start-line="111" selection-start-column="53" selection-end-line="111" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/Util.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="271" column="23" lean-forward="false" selection-start-line="271" selection-start-column="23" selection-end-line="271" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="193" column="0" lean-forward="false" selection-start-line="193" selection-start-column="0" selection-end-line="193" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1132">
+          <caret line="136" column="41" lean-forward="false" selection-start-line="136" selection-start-column="41" selection-end-line="136" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/CreateMicrostory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="64" column="16" lean-forward="false" selection-start-line="64" selection-start-column="16" selection-end-line="64" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="62" column="71" lean-forward="true" selection-start-line="62" selection-start-column="1" selection-end-line="62" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="305" column="116" lean-forward="true" selection-start-line="305" selection-start-column="93" selection-end-line="305" selection-end-column="93" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNaf.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="16643">
+          <caret line="1040" column="59" lean-forward="false" selection-start-line="1040" selection-start-column="59" selection-end-line="1040" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="610" column="52" lean-forward="true" selection-start-line="610" selection-start-column="52" selection-end-line="610" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="612" column="136" lean-forward="true" selection-start-line="610" selection-start-column="10" selection-end-line="612" selection-end-column="136" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="583">
+          <caret line="436" column="107" lean-forward="false" selection-start-line="436" selection-start-column="107" selection-end-line="436" selection-end-column="107" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="174" column="53" lean-forward="false" selection-start-line="174" selection-start-column="53" selection-end-line="174" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="15" column="8" lean-forward="false" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#2537#2538#0" expanded="true" />
+            <element signature="e#2559#2560#0" expanded="true" />
+            <element signature="e#3182#3183#0" expanded="true" />
+            <element signature="e#3210#3211#0" expanded="true" />
+            <element signature="e#3257#3258#0" expanded="true" />
+            <element signature="e#3292#3293#0" expanded="true" />
+            <element signature="e#3356#3357#0" expanded="true" />
+            <element signature="e#3404#3405#0" expanded="true" />
+            <element signature="e#3456#3457#0" expanded="true" />
+            <element signature="e#3496#3497#0" expanded="true" />
+            <element signature="e#3570#3571#0" expanded="true" />
+            <element signature="e#3628#3629#0" expanded="true" />
+            <element signature="e#3679#3680#0" expanded="true" />
+            <element signature="e#3718#3719#0" expanded="true" />
+            <element signature="e#3790#3791#0" expanded="true" />
+            <element signature="e#3846#3847#0" expanded="true" />
+            <element signature="e#3887#3888#0" expanded="true" />
+            <element signature="e#3927#3928#0" expanded="true" />
+            <element signature="e#3990#3991#0" expanded="true" />
+            <element signature="e#4048#4049#0" expanded="true" />
+            <element signature="e#4086#4087#0" expanded="true" />
+            <element signature="e#4120#4121#0" expanded="true" />
+            <element signature="e#4175#4176#0" expanded="true" />
+            <element signature="e#4221#4222#0" expanded="true" />
+            <element signature="e#4254#4255#0" expanded="true" />
+            <element signature="e#4283#4284#0" expanded="true" />
+            <element signature="e#4328#4329#0" expanded="true" />
+            <element signature="e#4364#4365#0" expanded="true" />
+            <element signature="e#4398#4399#0" expanded="true" />
+            <element signature="e#4428#4429#0" expanded="true" />
+            <element signature="e#4475#4476#0" expanded="true" />
+            <element signature="e#4513#4514#0" expanded="true" />
+            <element signature="e#4551#4552#0" expanded="true" />
+            <element signature="e#4585#4586#0" expanded="true" />
+            <element signature="e#4640#4641#0" expanded="true" />
+            <element signature="e#4686#4687#0" expanded="true" />
+            <element signature="e#4720#4721#0" expanded="true" />
+            <element signature="e#4750#4751#0" expanded="true" />
+            <element signature="e#4797#4798#0" expanded="true" />
+            <element signature="e#4835#4836#0" expanded="true" />
+            <element signature="e#4873#4874#0" expanded="true" />
+            <element signature="e#4907#4908#0" expanded="true" />
+            <element signature="e#4962#4963#0" expanded="true" />
+            <element signature="e#5008#5009#0" expanded="true" />
+            <element signature="e#5043#5044#0" expanded="true" />
+            <element signature="e#5074#5075#0" expanded="true" />
+            <element signature="e#5123#5124#0" expanded="true" />
+            <element signature="e#5163#5164#0" expanded="true" />
+            <element signature="e#5200#5201#0" expanded="true" />
+            <element signature="e#5233#5234#0" expanded="true" />
+            <element signature="e#5286#5287#0" expanded="true" />
+            <element signature="e#5330#5331#0" expanded="true" />
+            <element signature="e#5364#5365#0" expanded="true" />
+            <element signature="e#5394#5395#0" expanded="true" />
+            <element signature="e#5440#5441#0" expanded="true" />
+            <element signature="e#5478#5479#0" expanded="true" />
+            <element signature="e#5508#5509#0" expanded="true" />
+            <element signature="e#5534#5535#0" expanded="true" />
+            <element signature="e#5573#5574#0" expanded="true" />
+            <element signature="e#5603#5604#0" expanded="true" />
+            <element signature="e#5645#5646#0" expanded="true" />
+            <element signature="e#5683#5684#0" expanded="true" />
+            <element signature="e#5746#5747#0" expanded="true" />
+            <element signature="e#5800#5801#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1909,7 +2312,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>1.6</last-edited>
+          <last-edited>1.8</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
