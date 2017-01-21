@@ -62,8 +62,8 @@ public class GetSemFromNafFile {
         pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample/425051_relink_dominant.naf";
         pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/16#New_York_Magazine#2015-03-02.naf";
         pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#ANSA.it#20161010T000000.naf";
-        //pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#Centers_for_Disease_Control_and_Prevention#2015-01-23.naf";
-        pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/9##20161111T000000.naf";
+        pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#Centers_for_Disease_Control_and_Prevention#2015-01-23.naf";
+        //pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/9##20161111T000000.naf";
         String sourceFrameFile = "";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source.txt";
@@ -76,6 +76,9 @@ public class GetSemFromNafFile {
         String eurovoctestfile = "/Code/vu/newsreader/vua-resources/mapping_eurovoc_skos.label.concept.gz";
         GetSemFromNaf.initEurovoc(eurovoctestfile, "en");
         NafSemParameters nafSemParameters = new NafSemParameters(args);
+        /// Put here settings for testing
+        //nafSemParameters.setPERSPECTIVE(true);
+        //nafSemParameters.readSourceVector(sourceFrameFile);
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-file") && args.length > (i + 1)) {

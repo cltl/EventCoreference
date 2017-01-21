@@ -224,8 +224,8 @@ doc-uri
 	prov:wasAttributedTo journal.
          */
 
-      //  System.out.println("sourceURI = " + sourceURI);
-      //  System.out.println("perspectives = " + perspectives.size());
+       // System.out.println("sourceURI = " + sourceURI);
+       // System.out.println("perspectives = " + perspectives.size());
         HashMap<String, ArrayList<NafMention>> mentionMap = new HashMap<String, ArrayList<NafMention>>();
         for (int p = 0; p < perspectives.size(); p++) {
             PerspectiveObject perspectiveObject = perspectives.get(p);
@@ -273,14 +273,14 @@ doc-uri
                     }
                 }
                 else {
-                   // System.out.println(" No perspectives for:"+sourceURI);
+                 //   System.out.println(" No perspectives for:"+sourceURI);
                 }
             }
             else {
-              //  System.out.println("no target mentions");
+             //   System.out.println("no target mentions");
             }
         }
-      //  System.out.println("mentionMap.size() = " + mentionMap.size());
+       // System.out.println("mentionMap.size() = " + mentionMap.size());
         if (mentionMap.size()>0) {
             Resource sourceResource = model.createResource(sourceURI);
             Property property = model.createProperty(ns, predicate);

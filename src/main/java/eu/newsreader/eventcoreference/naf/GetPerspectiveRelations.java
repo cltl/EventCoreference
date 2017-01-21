@@ -86,7 +86,7 @@ public class GetPerspectiveRelations {
             }
             ArrayList<PerspectiveObject> perspectiveObjects = getPerspective(baseUri, kafSaxParser, semEvents,
                     nafSemParameters.getContextualVector(),
-                    nafSemParameters.getContextualVector(),
+                    nafSemParameters.getSourceVector(),
                     nafSemParameters.getGrammaticalVector());
             if (FILTERA0) perspectiveObjects = selectSourceEntityToPerspectives(kafSaxParser, perspectiveObjects, semActors);
             else augmentPerspectivesWithSourceEntity(kafSaxParser, perspectiveObjects, semActors);
@@ -103,13 +103,15 @@ public class GetPerspectiveRelations {
                                                                           ArrayList<PerspectiveObject> perspectiveObjects,
                                                                           ArrayList<SemObject> events)
         {
-            String baseUrl = kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
-            if (!baseUrl.toLowerCase().startsWith("http")) {
-                baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + GetSemFromNaf.ID_SEPARATOR;
+            String url = kafSaxParser.getKafMetaData().getUrl();
+            if (!url.toLowerCase().startsWith("http")) {
+                url = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl();
             }
+            String baseUrl = url + GetSemFromNaf.ID_SEPARATOR;
+
 
             SemActor semActor = new SemActor(SemObject.ENTITY);
-            semActor.setId(kafSaxParser.getKafMetaData().getUrl());
+            semActor.setId(url);
             ArrayList<PerspectiveObject> authorPerspectiveObjects = new ArrayList<PerspectiveObject>();
             for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
                 KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
@@ -241,6 +243,9 @@ public class GetPerspectiveRelations {
                             else {
                                 ////first person pronouns are skipped and left to the author perspectives
                             }
+                    }
+                    else {
+                        //System.out.println("eventType = " + eventType);
                     }
                 }
             }

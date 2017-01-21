@@ -5,9 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="445384b5-3667-4928-9720-8c2fa43cd0aa" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class" afterPath="$PROJECT_DIR$/target/classes/eu/newsreader/eventcoreference/output/JenaSerialization.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EventCoreference.iws" afterPath="$PROJECT_DIR$/EventCoreference.iws" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java" afterPath="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" />
     </list>
     <ignored path="EventCoreference.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -73,31 +79,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="GetSemFromNaf.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNaf.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17476">
-              <caret line="1040" column="59" lean-forward="false" selection-start-line="1040" selection-start-column="59" selection-end-line="1040" selection-end-column="59" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="naf2sem-grasp.sh" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/naf2sem-grasp.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+            <state relative-caret-position="221">
+              <caret line="11" column="54" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GetSemFromNafFolder.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GetSemFromNafFolder.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1700">
-              <caret line="111" column="53" lean-forward="false" selection-start-line="111" selection-start-column="53" selection-end-line="111" selection-end-column="53" />
+            <state relative-caret-position="714">
+              <caret line="121" column="77" lean-forward="false" selection-start-line="121" selection-start-column="77" selection-end-line="121" selection-end-column="77" />
               <folding />
             </state>
           </provider>
@@ -106,8 +102,8 @@
       <file leaf-file-name="GetSemFromNafFile.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2788">
-              <caret line="174" column="53" lean-forward="false" selection-start-line="174" selection-start-column="53" selection-end-line="174" selection-end-column="53" />
+            <state relative-caret-position="453">
+              <caret line="119" column="10" lean-forward="true" selection-start-line="114" selection-start-column="9" selection-end-line="119" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -116,18 +112,18 @@
       <file leaf-file-name="GetPerspectiveRelations.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="420" column="90" lean-forward="false" selection-start-line="420" selection-start-column="90" selection-end-line="420" selection-end-column="90" />
+            <state relative-caret-position="548">
+              <caret line="130" column="35" lean-forward="false" selection-start-line="130" selection-start-column="35" selection-end-line="130" selection-end-column="35" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClusterEventObjects.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java">
+      <file leaf-file-name="FrameTypes.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10166">
-              <caret line="610" column="52" lean-forward="false" selection-start-line="610" selection-start-column="52" selection-end-line="610" selection-end-column="52" />
+            <state relative-caret-position="172">
+              <caret line="40" column="25" lean-forward="false" selection-start-line="40" selection-start-column="25" selection-end-line="40" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -136,96 +132,20 @@
       <file leaf-file-name="NafSemParameters.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="14" column="30" lean-forward="false" selection-start-line="14" selection-start-column="30" selection-end-line="14" selection-end-column="30" />
+            <state relative-caret-position="199">
+              <caret line="281" column="10" lean-forward="false" selection-start-line="281" selection-start-column="10" selection-end-line="281" selection-end-column="10" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3199#3200#0" expanded="true" />
-                <element signature="e#3253#3254#0" expanded="true" />
-                <element signature="e#3286#3287#0" expanded="true" />
-                <element signature="e#3308#3309#0" expanded="true" />
-                <element signature="e#3931#3932#0" expanded="true" />
-                <element signature="e#3959#3960#0" expanded="true" />
-                <element signature="e#4006#4007#0" expanded="true" />
-                <element signature="e#4041#4042#0" expanded="true" />
-                <element signature="e#4105#4106#0" expanded="true" />
-                <element signature="e#4153#4154#0" expanded="true" />
-                <element signature="e#4205#4206#0" expanded="true" />
-                <element signature="e#4245#4246#0" expanded="true" />
-                <element signature="e#4319#4320#0" expanded="true" />
-                <element signature="e#4377#4378#0" expanded="true" />
-                <element signature="e#4428#4429#0" expanded="true" />
-                <element signature="e#4467#4468#0" expanded="true" />
-                <element signature="e#4539#4540#0" expanded="true" />
-                <element signature="e#4595#4596#0" expanded="true" />
-                <element signature="e#4636#4637#0" expanded="true" />
-                <element signature="e#4676#4677#0" expanded="true" />
-                <element signature="e#4739#4740#0" expanded="true" />
-                <element signature="e#4797#4798#0" expanded="true" />
-                <element signature="e#4835#4836#0" expanded="true" />
-                <element signature="e#4869#4870#0" expanded="true" />
-                <element signature="e#4924#4925#0" expanded="true" />
-                <element signature="e#4970#4971#0" expanded="true" />
-                <element signature="e#5003#5004#0" expanded="true" />
-                <element signature="e#5032#5033#0" expanded="true" />
-                <element signature="e#5077#5078#0" expanded="true" />
-                <element signature="e#5113#5114#0" expanded="true" />
-                <element signature="e#5147#5148#0" expanded="true" />
-                <element signature="e#5177#5178#0" expanded="true" />
-                <element signature="e#5224#5225#0" expanded="true" />
-                <element signature="e#5262#5263#0" expanded="true" />
-                <element signature="e#5300#5301#0" expanded="true" />
-                <element signature="e#5334#5335#0" expanded="true" />
-                <element signature="e#5389#5390#0" expanded="true" />
-                <element signature="e#5435#5436#0" expanded="true" />
-                <element signature="e#5469#5470#0" expanded="true" />
-                <element signature="e#5499#5500#0" expanded="true" />
-                <element signature="e#5546#5547#0" expanded="true" />
-                <element signature="e#5584#5585#0" expanded="true" />
-                <element signature="e#5622#5623#0" expanded="true" />
-                <element signature="e#5656#5657#0" expanded="true" />
-                <element signature="e#5711#5712#0" expanded="true" />
-                <element signature="e#5757#5758#0" expanded="true" />
-                <element signature="e#5792#5793#0" expanded="true" />
-                <element signature="e#5823#5824#0" expanded="true" />
-                <element signature="e#5872#5873#0" expanded="true" />
-                <element signature="e#5912#5913#0" expanded="true" />
-                <element signature="e#5949#5950#0" expanded="true" />
-                <element signature="e#5982#5983#0" expanded="true" />
-                <element signature="e#6035#6036#0" expanded="true" />
-                <element signature="e#6079#6080#0" expanded="true" />
-                <element signature="e#6113#6114#0" expanded="true" />
-                <element signature="e#6143#6144#0" expanded="true" />
-                <element signature="e#6189#6190#0" expanded="true" />
-                <element signature="e#6227#6228#0" expanded="true" />
-                <element signature="e#6257#6258#0" expanded="true" />
-                <element signature="e#6283#6284#0" expanded="true" />
-                <element signature="e#6322#6323#0" expanded="true" />
-                <element signature="e#6352#6353#0" expanded="true" />
-                <element signature="e#6394#6395#0" expanded="true" />
-                <element signature="e#6432#6433#0" expanded="true" />
-                <element signature="e#6495#6496#0" expanded="true" />
-                <element signature="e#6549#6550#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="naf2sem-usage.sh" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/naf2sem-usage.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JenaSerialization.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="JenaSerialization.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="512">
-              <caret line="612" column="68" lean-forward="false" selection-start-line="612" selection-start-column="68" selection-end-line="612" selection-end-column="68" />
+            <state relative-caret-position="480">
+              <caret line="282" column="9" lean-forward="false" selection-start-line="282" selection-start-column="9" selection-end-line="282" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -334,14 +254,14 @@
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NoClusterEventObjects.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveFromNafFile.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/CreateMicrostory.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveStatsFromNafFile.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/ProcessSeparateNafFilesBatch.java" />
         <option value="$PROJECT_DIR$/scripts/naf2sem-usage.sh" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java" />
       </list>
     </option>
   </component>
@@ -589,7 +509,7 @@
       <recent name="$PROJECT_DIR$/scripts" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.NafSemParameters">
+  <component name="RunManager" selected="Application.GetSemFromNafFile">
     <configuration default="false" name="DataSetTopicHierarchy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" runner="idea">
         <pattern>
@@ -1073,8 +993,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Application.NafSemParameters" />
-        <item index="1" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
+        <item index="0" class="java.lang.String" itemvalue="Application.GetSemFromNafFile" />
+        <item index="1" class="java.lang.String" itemvalue="Application.NafSemParameters" />
         <item index="2" class="java.lang.String" itemvalue="Application.GetJsonTimeLinesFromNaf" />
         <item index="3" class="java.lang.String" itemvalue="Application.GetTypeHierarchyForConcepts" />
         <item index="4" class="java.lang.String" itemvalue="Application.DataSetTopicHierarchy" />
@@ -1123,13 +1043,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1382608862052</updated>
-    </task>
-    <task id="LOCAL-00318" summary="-- first commit branch 3.1.2">
-      <created>1472196476360</created>
-      <option name="number" value="00318" />
-      <option name="presentableId" value="LOCAL-00318" />
-      <option name="project" value="LOCAL" />
-      <updated>1472196476360</updated>
     </task>
     <task id="LOCAL-00319" summary="-- first commit branch 3.1.2">
       <created>1472200150741</created>
@@ -1467,7 +1380,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484985134161</updated>
     </task>
-    <option name="localTasksCounter" value="367" />
+    <task id="LOCAL-00367" summary="-- harmonised parameters across main functions using NafSemParameters class&#10;-- --no-nomcoref and --no-eventcoref parameter are added to the NAF2SEM functions. These parameters turn-off the coref layers for extracting entity and event mentions.">
+      <created>1484986719081</created>
+      <option name="number" value="00367" />
+      <option name="presentableId" value="LOCAL-00367" />
+      <option name="project" value="LOCAL" />
+      <updated>1484986719082</updated>
+    </task>
+    <option name="localTasksCounter" value="368" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1477,12 +1397,13 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3089701" sideWeight="0.49895832" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25783476" sideWeight="0.50104165" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0549273" sideWeight="0.95652175" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23522854" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.105815835" sideWeight="0.95652175" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29014397" sideWeight="0.827168" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12906611" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32881" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -1503,7 +1424,6 @@
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293247" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1049936" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30992195" sideWeight="0.49895832" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1896,6 +1816,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="61" column="64" lean-forward="false" selection-start-line="61" selection-start-column="64" selection-end-line="61" selection-end-column="64" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1907,25 +1828,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="177" column="185" lean-forward="false" selection-start-line="177" selection-start-column="69" selection-end-line="177" selection-end-column="185" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetTimeLinesFromNafFolder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
           <caret line="175" column="28" lean-forward="false" selection-start-line="175" selection-start-column="28" selection-end-line="175" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1700">
-          <caret line="111" column="53" lean-forward="false" selection-start-line="111" selection-start-column="53" selection-end-line="111" selection-end-column="53" />
           <folding />
         </state>
       </provider>
@@ -1942,6 +1848,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
           <caret line="193" column="0" lean-forward="false" selection-start-line="193" selection-start-column="0" selection-end-line="193" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1966,6 +1873,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="305" column="116" lean-forward="true" selection-start-line="305" selection-start-column="93" selection-end-line="305" selection-end-column="93" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1977,106 +1885,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10166">
-          <caret line="610" column="52" lean-forward="false" selection-start-line="610" selection-start-column="52" selection-end-line="610" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2788">
-          <caret line="174" column="53" lean-forward="false" selection-start-line="174" selection-start-column="53" selection-end-line="174" selection-end-column="53" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/naf2sem-grasp.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="14" column="30" lean-forward="false" selection-start-line="14" selection-start-column="30" selection-end-line="14" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3199#3200#0" expanded="true" />
-            <element signature="e#3253#3254#0" expanded="true" />
-            <element signature="e#3286#3287#0" expanded="true" />
-            <element signature="e#3308#3309#0" expanded="true" />
-            <element signature="e#3931#3932#0" expanded="true" />
-            <element signature="e#3959#3960#0" expanded="true" />
-            <element signature="e#4006#4007#0" expanded="true" />
-            <element signature="e#4041#4042#0" expanded="true" />
-            <element signature="e#4105#4106#0" expanded="true" />
-            <element signature="e#4153#4154#0" expanded="true" />
-            <element signature="e#4205#4206#0" expanded="true" />
-            <element signature="e#4245#4246#0" expanded="true" />
-            <element signature="e#4319#4320#0" expanded="true" />
-            <element signature="e#4377#4378#0" expanded="true" />
-            <element signature="e#4428#4429#0" expanded="true" />
-            <element signature="e#4467#4468#0" expanded="true" />
-            <element signature="e#4539#4540#0" expanded="true" />
-            <element signature="e#4595#4596#0" expanded="true" />
-            <element signature="e#4636#4637#0" expanded="true" />
-            <element signature="e#4676#4677#0" expanded="true" />
-            <element signature="e#4739#4740#0" expanded="true" />
-            <element signature="e#4797#4798#0" expanded="true" />
-            <element signature="e#4835#4836#0" expanded="true" />
-            <element signature="e#4869#4870#0" expanded="true" />
-            <element signature="e#4924#4925#0" expanded="true" />
-            <element signature="e#4970#4971#0" expanded="true" />
-            <element signature="e#5003#5004#0" expanded="true" />
-            <element signature="e#5032#5033#0" expanded="true" />
-            <element signature="e#5077#5078#0" expanded="true" />
-            <element signature="e#5113#5114#0" expanded="true" />
-            <element signature="e#5147#5148#0" expanded="true" />
-            <element signature="e#5177#5178#0" expanded="true" />
-            <element signature="e#5224#5225#0" expanded="true" />
-            <element signature="e#5262#5263#0" expanded="true" />
-            <element signature="e#5300#5301#0" expanded="true" />
-            <element signature="e#5334#5335#0" expanded="true" />
-            <element signature="e#5389#5390#0" expanded="true" />
-            <element signature="e#5435#5436#0" expanded="true" />
-            <element signature="e#5469#5470#0" expanded="true" />
-            <element signature="e#5499#5500#0" expanded="true" />
-            <element signature="e#5546#5547#0" expanded="true" />
-            <element signature="e#5584#5585#0" expanded="true" />
-            <element signature="e#5622#5623#0" expanded="true" />
-            <element signature="e#5656#5657#0" expanded="true" />
-            <element signature="e#5711#5712#0" expanded="true" />
-            <element signature="e#5757#5758#0" expanded="true" />
-            <element signature="e#5792#5793#0" expanded="true" />
-            <element signature="e#5823#5824#0" expanded="true" />
-            <element signature="e#5872#5873#0" expanded="true" />
-            <element signature="e#5912#5913#0" expanded="true" />
-            <element signature="e#5949#5950#0" expanded="true" />
-            <element signature="e#5982#5983#0" expanded="true" />
-            <element signature="e#6035#6036#0" expanded="true" />
-            <element signature="e#6079#6080#0" expanded="true" />
-            <element signature="e#6113#6114#0" expanded="true" />
-            <element signature="e#6143#6144#0" expanded="true" />
-            <element signature="e#6189#6190#0" expanded="true" />
-            <element signature="e#6227#6228#0" expanded="true" />
-            <element signature="e#6257#6258#0" expanded="true" />
-            <element signature="e#6283#6284#0" expanded="true" />
-            <element signature="e#6322#6323#0" expanded="true" />
-            <element signature="e#6352#6353#0" expanded="true" />
-            <element signature="e#6394#6395#0" expanded="true" />
-            <element signature="e#6432#6433#0" expanded="true" />
-            <element signature="e#6495#6496#0" expanded="true" />
-            <element signature="e#6549#6550#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/naf2sem-usage.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -2085,18 +1893,68 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/ClusterEventObjects.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="420" column="90" lean-forward="false" selection-start-line="420" selection-start-column="90" selection-end-line="420" selection-end-column="90" />
+        <state relative-caret-position="185">
+          <caret line="610" column="52" lean-forward="false" selection-start-line="610" selection-start-column="52" selection-end-line="610" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/naf2sem-grasp.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="11" column="54" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/util/FrameTypes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="40" column="25" lean-forward="false" selection-start-line="40" selection-start-column="25" selection-end-line="40" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/output/JenaSerialization.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="612" column="68" lean-forward="false" selection-start-line="612" selection-start-column="68" selection-end-line="612" selection-end-column="68" />
+        <state relative-caret-position="480">
+          <caret line="282" column="9" lean-forward="false" selection-start-line="282" selection-start-column="9" selection-end-line="282" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/NafSemParameters.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="281" column="10" lean-forward="false" selection-start-line="281" selection-start-column="10" selection-end-line="281" selection-end-column="10" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="453">
+          <caret line="119" column="10" lean-forward="true" selection-start-line="114" selection-start-column="9" selection-end-line="119" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetPerspectiveRelations.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="548">
+          <caret line="130" column="35" lean-forward="false" selection-start-line="130" selection-start-column="35" selection-end-line="130" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/newsreader/eventcoreference/naf/GetSemFromNafFolder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="714">
+          <caret line="121" column="77" lean-forward="false" selection-start-line="121" selection-start-column="77" selection-end-line="121" selection-end-column="77" />
           <folding />
         </state>
       </provider>

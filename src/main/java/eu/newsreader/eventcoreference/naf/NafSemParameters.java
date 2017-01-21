@@ -276,4 +276,22 @@ public class NafSemParameters {
         grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
         contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
     }
+
+    public void readSourceVector(String sourceFrameFile) {
+        sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
+        //System.out.println("sourceVector = " + sourceVector.size());
+    }
+    public void readGrammaticalVector(String grammaticalFrameFile) {
+        grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
+    }
+    public void readContextVector(String contextualFrameFile) {
+        contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
+    }
+
+    public void setEuroVoc (String pathToEurovocFile, String language) {
+        GetSemFromNaf.initEurovoc(pathToEurovocFile, language);
+
+    }
+
+
 }
