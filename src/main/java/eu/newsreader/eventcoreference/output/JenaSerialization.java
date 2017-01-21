@@ -610,7 +610,7 @@ doc-uri
             String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
             addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo",sourcePerspectiveObjects, 1);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
-            addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, "isDerivedFrom", authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
+            addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, "wasDerivedFrom", authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
         try {
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
         } catch (Exception e) {

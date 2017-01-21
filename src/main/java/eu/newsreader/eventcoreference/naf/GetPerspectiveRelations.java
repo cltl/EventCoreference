@@ -418,7 +418,7 @@ public class GetPerspectiveRelations {
                 String attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"s";
                 JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo", sourcePerspectiveObjects, 1);
                 attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"d";
-                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, "isDerivedFrom", authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
+                JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, "wasDerivedFrom", authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
                 RDFDataMgr.write(fos, ds, RDFFormat.TRIG_PRETTY);
                 fos.close();
             } catch (IOException e) {
