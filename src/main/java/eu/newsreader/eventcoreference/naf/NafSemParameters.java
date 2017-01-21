@@ -11,21 +11,28 @@ import java.util.Vector;
 public class NafSemParameters {
 
 
-    static final String USAGE = "This program processes a single NAF file and generates SEM RDF-TRiG results" +
-            "The program has the following arguments:\n" +
-            "--project              <string> <The name of the project for creating URIs>\n" +
-            "--non-entities                  <If used, additional FrameNet roles and non-entity phrases are included>\n" +
-            "--contextual-frames    <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
-            "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
-            "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>" +
-            "--time-max   <string int>   <Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5" +
+    static final String USAGE = "The NAF2SEM functions processes NAF files and generate SEM RDF-TRiG results" +
+            "The functions use the following arguments:\n" +
+            "--perspective          <(OPTIONAL) GRaSP layer is included in the output>\n" +
+            "--project              <The name of the project for creating project-specific URIs within the NewsReader domain>\n" +
+            "--non-entities         <(OPTIONAL) If used, additional FrameNet roles and non-entity phrases are included>\n" +
+            "--contextual-frames    <Path to a file with the FrameNet frames considered contextual>\n" +
+            "--communication-frames <Path to a file with the FrameNet frames considered source>\n" +
+            "--grammatical-frames   <Path to a file with the FrameNet frames considered grammatical>" +
+            "--time-max             <(OPTIONAL) Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5" +
             "--ili                  <(OPTIONAL) Path to ILI.ttl file to convert wordnet-synsets identifiers to ILI identifiers>\n" +
-            "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
-            "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n" +
-            "--no-additional-role       <(OPTIONAL) only roles for entities are extracted" +
+            "--ili-uri              <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
+            "--verbose              <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n" +
+            "--no-additional-role   <(OPTIONAL) only roles for entities are extracted" +
             "--no-nomcoref          <(OPTIONAL) nominal coreference layer is ignored\n" +
-            "--no-eventcoref          <(OPTIONAL) event coreference layer is ignored\n"
-            ;
+            "--no-eventcoref        <(OPTIONAL) event coreference layer is ignored\n" +
+            "--no-doc-time          <(OPTIONAL) document creation time is not considered\n" +
+            "--no-context-time      <(OPTIONAL) time expressions of preceding and following sentences are not associated with events\n"+
+            "--all                  <(OPTIONAL) All events are extracted, including events without time and without participants>\n" +
+            "--eurovoc-en, --eurovoc-nl, --eurovoc-es, --eurovoc_es" +
+            "                       <(OPTIONAL) Eurovoc resource to map topic labels to topic concept identifiers>\n"
+    ;
+
 
     private Vector<String> sourceVector = null;
     private Vector<String> grammaticalVector = null;
@@ -43,6 +50,10 @@ public class NafSemParameters {
     private boolean NOMCOREF = true;
     private boolean EVENTCOREF = true;
 
+
+    static public void main (String[] args) {
+        System.out.println("USAGE = " + USAGE);
+    }
     public NafSemParameters () {
         init();
     }
