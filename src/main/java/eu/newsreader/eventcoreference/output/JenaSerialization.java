@@ -434,7 +434,7 @@ doc-uri
         }
         if (!project.isEmpty()) {
             try {
-                property = graspModel.createProperty(ResourcesUri.prov, "wasAssociatedWIth");
+                property = graspModel.createProperty(ResourcesUri.rdfs, "comment");
                 project = URLEncoder.encode(project, "UTF-8");
                 Resource object = graspModel.createResource(ResourcesUri.nwrproject+project);
                 subject.addProperty(property, object);
