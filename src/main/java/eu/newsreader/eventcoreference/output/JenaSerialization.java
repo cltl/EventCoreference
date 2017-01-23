@@ -435,7 +435,7 @@ doc-uri
         if (!project.isEmpty()) {
             try {
                 project = URLEncoder.encode(project, "UTF-8");
-                Resource object = graspModel.createResource(ResourcesUri.nwr+project);
+                Resource object = graspModel.createResource(ResourcesUri.nwrproject+project);
                 subject.addProperty(property, object);
             } catch (UnsupportedEncodingException e) {
                 //  e.printStackTrace();
