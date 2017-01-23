@@ -408,6 +408,7 @@ public class GetPerspectiveRelations {
 
     public static void perspectiveRelationsToTrig (String pathToTrigFile,
                                                    KafSaxParser kafSaxParser,
+                                                   String project,
                                                    ArrayList<PerspectiveObject> sourcePerspectiveObjects,
                                                    ArrayList<PerspectiveObject> authorPerspectiveObjects) {
             try {
@@ -419,7 +420,7 @@ public class GetPerspectiveRelations {
                 defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
                 defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
 
-                JenaSerialization.addDocMetaData(kafSaxParser);
+                JenaSerialization.addDocMetaData(kafSaxParser, project);
                 String attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"s";
                 JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo", sourcePerspectiveObjects, 1);
                 attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"d";

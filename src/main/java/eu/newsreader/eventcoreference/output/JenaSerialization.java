@@ -398,7 +398,7 @@ doc-uri
         }
     }
 
-    static public void addDocMetaData(KafSaxParser kafSaxParser) {
+    static public void addDocMetaData(KafSaxParser kafSaxParser, String project) {
         String docId = kafSaxParser.getKafMetaData().getUrl();
         Resource subject = graspModel.createResource(docId);
         Property property = graspModel.createProperty(ResourcesUri.prov, "wasAttributedTo");
@@ -427,6 +427,15 @@ doc-uri
             try {
                 publisher = URLEncoder.encode(publisher, "UTF-8");
                 Resource object = graspModel.createResource(ResourcesUri.nwrpublisher+publisher);
+                subject.addProperty(property, object);
+            } catch (UnsupportedEncodingException e) {
+                //  e.printStackTrace();
+            }
+        }
+        if (!project.isEmpty()) {
+            try {
+                project = URLEncoder.encode(project, "UTF-8");
+                Resource object = graspModel.createResource(ResourcesUri.nwr+project);
                 subject.addProperty(property, object);
             } catch (UnsupportedEncodingException e) {
                 //  e.printStackTrace();
@@ -598,6 +607,7 @@ doc-uri
     static public void serializeJenaCompositeEventsAndPerspective (OutputStream stream,
                                                                     ArrayList<CompositeEvent> semEvents,
                                                                    KafSaxParser kafSaxParser,
+                                                                   String project,
                                                                    ArrayList<PerspectiveObject> sourcePerspectiveObjects,
                                                                    ArrayList<PerspectiveObject> authorPerspectiveObjects) {
 
@@ -606,7 +616,7 @@ doc-uri
 
             createModels();
             addJenaCompositeEvents(semEvents, null, false, false);
-            addDocMetaData(kafSaxParser);
+            addDocMetaData(kafSaxParser, project);
             String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
             addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo",sourcePerspectiveObjects, 1);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
