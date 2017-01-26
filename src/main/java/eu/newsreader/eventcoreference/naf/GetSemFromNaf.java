@@ -1160,5 +1160,99 @@ public class GetSemFromNaf {
         }
     }
 
+    /**
+     * Get causal event relations
+     *
+     * @param baseUrl
+     * @param kafSaxParser
+     * @param semEvents
+     * @param semRelations
+     */
+/*
+    static void processNafFileForCausalRelations(String baseUrl, KafSaxParser kafSaxParser,
+                                           ArrayList<SemObject> semEvents,
+                                           ArrayList<SemRelation> semRelations
+    ) {
+        for (int i = 0; i < kafSaxParser.kafClinks.size(); i++) {
+            KafEventRelation kafEventRelation = kafSaxParser.kafClinks.get(i);
+
+        }
+        for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
+            KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
+            //// we need to get the corresponding semEvent first
+            // check the SemEvents
+            String semEventId = "";
+            for (int j = 0; j < semEvents.size(); j++) {
+                SemObject semEvent = semEvents.get(j);
+                // if (matchAtLeastASingleSpan(kafEvent.getSpanIds(), semEvent)) {
+                if (Util.matchAllOfAnyMentionSpans(kafEvent.getSpanIds(), semEvent)) {
+                    semEventId = semEvent.getId();
+                    break;
+                }
+            }
+         //   System.out.println("semEventId = " + semEventId);
+            if (semEventId.isEmpty()) {
+                //// this is an event without SRL representation, which is not allowed
+                // SHOULD NEVER OCCUR
+            } else {
+               // System.out.println("kafEvent.getParticipants().size() = " + kafEvent.getParticipants().size());
+                for (int k = 0; k < kafEvent.getParticipants().size(); k++) {
+                    KafParticipant kafParticipant = kafEvent.getParticipants().get(k);
+                    // CERTAIN ROLES ARE NOT PROCESSED AND CAN BE SKIPPED
+                    //System.out.println(kafParticipant.getSpanIds().toString()+": kafParticipant.getRole() = " + kafParticipant.getRole());
+*/
+/*                    if (!RoleLabels.validRole(kafParticipant.getRole()) && !Util.hasEsoReference(kafParticipant.getExternalReferences())) {
+                        // System.out.println("invalid kafParticipant.getRole() = " + kafParticipant.getRole());
+                        continue;
+                    }*//*
+
+                    if (!RoleLabels.validRole(kafParticipant.getRole())
+                            ) {
+                        // System.out.println("invalid kafParticipant.getRole() = " + kafParticipant.getRole());
+                        continue;
+                    }
+                    else {
+                      //  System.out.println("valid kafParticipant.getRole() = " + kafParticipant.getRole());
+                    }
+
+                        //// we take all objects above threshold
+                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+                     // System.out.println("semObjects.size() = " + semObjects.size());
+                    for (int l = 0; l < semObjects.size(); l++) {
+                        SemObject semObject = semObjects.get(l);
+                       // System.out.println("semObject.getUniquePhrases().toString() = " + semObject.getUniquePhrases().toString());
+                        if (semObject != null) {
+                            SemRelation semRelation = new SemRelation();
+                            String relationInstanceId = baseUrl + kafEvent.getId() + "," + kafParticipant.getId();
+                            semRelation.setId(relationInstanceId);
+                            ArrayList<String> termsIds = kafEvent.getSpanIds();
+                            for (int j = 0; j < kafParticipant.getSpanIds().size(); j++) {
+                                String s = kafParticipant.getSpanIds().get(j);
+                                termsIds.add(s);
+                            }
+                            NafMention mention = Util.getNafMentionForTermIdArrayList(baseUrl, kafSaxParser, termsIds);
+                            semRelation.addMention(mention);
+                            semRelation.addPredicate(Sem.hasActor.getLocalName());
+                            //// check the source and prefix accordingly
+                            semRelation.addPredicate(RoleLabels.normalizeProbBankValue(kafParticipant.getRole()));
+                            for (int j = 0; j < kafParticipant.getExternalReferences().size(); j++) {
+                                KafSense kafSense = kafParticipant.getExternalReferences().get(j);
+                                semRelation.addPredicate(kafSense.getResource() + ":" + kafSense.getSensecode());
+                            }
+                            semRelation.setSubject(semEventId);
+                            semRelation.setObject(semObject.getId());
+                            semRelations.add(semRelation);
+                        }
+                        else {
+                            System.out.println("SemObject is null");
+                        }
+                       // System.out.println("semRelations = " + semRelations.size());
+                    }
+                }
+            }
+        }
+    }
+*/
+
 
 }

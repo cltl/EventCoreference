@@ -419,8 +419,11 @@ public class GetPerspectiveRelations {
                 ResourcesUri.prefixModelNwr(defaultModel);
                 defaultModel.setNsPrefix("rdf", ResourcesUri.rdf);
                 defaultModel.setNsPrefix("rdfs", ResourcesUri.rdfs);
-
-                JenaSerialization.addDocMetaData(kafSaxParser, project);
+                String docId = kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH");
+                if (!docId.toLowerCase().startsWith("http")) {
+                    docId = ResourcesUri.nwrdata + project + "/" + docId;
+                }
+                JenaSerialization.addDocMetaData(docId, kafSaxParser, project);
                 String attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"s";
                 JenaSerialization.addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo", sourcePerspectiveObjects, 1);
                 attrBase = kafSaxParser.getKafMetaData().getUrl()+"_"+"d";

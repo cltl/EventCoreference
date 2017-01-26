@@ -398,8 +398,8 @@ doc-uri
         }
     }
 
-    static public void addDocMetaData(KafSaxParser kafSaxParser, String project) {
-        String docId = kafSaxParser.getKafMetaData().getUrl();
+    static public void addDocMetaData(String docId, KafSaxParser kafSaxParser, String project) {
+       // String docId = kafSaxParser.getKafMetaData().getUrl();
         Resource subject = graspModel.createResource(docId);
         Property property = graspModel.createProperty(ResourcesUri.prov, "wasAttributedTo");
         String author = kafSaxParser.getKafMetaData().getAuthor();
@@ -617,8 +617,13 @@ doc-uri
 
             createModels();
             addJenaCompositeEvents(semEvents, null, false, false);
-            addDocMetaData(kafSaxParser, project);
-            String attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"source_attribution/";
+            String docId = kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH");
+            if (!docId.toLowerCase().startsWith("http")) {
+                docId = ResourcesUri.nwrdata + project + "/" + docId;
+            }
+            addDocMetaData(docId, kafSaxParser, project);
+
+            String attrBase = docId+"/"+"source_attribution/";
             addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo",sourcePerspectiveObjects, 1);
             attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
             addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, "wasDerivedFrom", authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
