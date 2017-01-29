@@ -229,6 +229,12 @@ public class NafSemParameters {
             else if (arg.equals("--no-context-time")) {
                 CONTEXTTIME = false;
             }
+            else if (arg.equals("--no-nomcoref")) {
+                NOMCOREF = false;
+            }
+            else if (arg.equals("--no-eventcoref")) {
+                EVENTCOREF = false;
+            }
             else if (arg.equals("--no-additional-roles")) {
                 ADDITIONALROLES = false;
             }
