@@ -58,7 +58,7 @@ public class GetSemFromNafFile {
     static public void main(String[] args) {
         Log.setLog4j("jena-log4j.properties");
         //// TAKE THIS OUT FOR RUNNING WITH REAL SETTINGS!!!!!!
-        boolean TEST = true;
+        boolean TEST = false;
         String pathToNafFile = "";
         pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample/425051_relink_dominant.naf";
         pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/16#New_York_Magazine#2015-03-02.naf";

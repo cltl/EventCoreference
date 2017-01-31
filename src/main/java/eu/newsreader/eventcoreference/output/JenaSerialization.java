@@ -224,8 +224,8 @@ doc-uri
 	prov:wasAttributedTo journal.
          */
 
-       // System.out.println("sourceURI = " + sourceURI);
-       // System.out.println("perspectives = " + perspectives.size());
+        // System.out.println("sourceURI = " + sourceURI);
+        // System.out.println("perspectives = " + perspectives.size());
         HashMap<String, ArrayList<NafMention>> mentionMap = new HashMap<String, ArrayList<NafMention>>();
         for (int p = 0; p < perspectives.size(); p++) {
             PerspectiveObject perspectiveObject = perspectives.get(p);
@@ -245,7 +245,7 @@ doc-uri
                 //System.out.println("factualityStringArray.toString() = " + factualityStringArray.toString());
                 if (allFactualities.size() > 0) {
                     factualityStringArray= kafFactuality.getPredictionArrayList();
-                   // System.out.println("factualityStringArray.toString() = " + factualityStringArray.toString());
+                    // System.out.println("factualityStringArray.toString() = " + factualityStringArray.toString());
                 }
                 String sentiment = NafMention.getDominantOpinion(perspectiveObject.getTargetEventMentions());
                 if (!sentiment.isEmpty()) {
@@ -274,14 +274,130 @@ doc-uri
                     }
                 }
                 else {
-                 //   System.out.println(" No perspectives for:"+sourceURI);
+                    //   System.out.println(" No perspectives for:"+sourceURI);
                 }
             }
             else {
-             //   System.out.println("no target mentions");
+                //   System.out.println("no target mentions");
             }
         }
-       // System.out.println("mentionMap.size() = " + mentionMap.size());
+        // System.out.println("mentionMap.size() = " + mentionMap.size());
+        if (mentionMap.size()>0) {
+            int nAttribution = 0;
+            Set keySet = mentionMap.keySet();
+            Iterator<String> keys = keySet.iterator();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                nAttribution++;
+                Resource sourceResource = model.createResource(sourceURI);
+                Property aProperty = model.createProperty(ns, property);
+                Resource attributionSubject = model.createResource(attrId+"_"+nAttribution);
+                attributionSubject.addProperty(aProperty, sourceResource);
+                // System.out.println("key = " + key);
+                ArrayList<NafMention> mentions = mentionMap.get(key);
+                String[] factValues = key.split(",");
+                for (int i = 0; i < factValues.length; i++) {
+                    String factValue = factValues[i];
+                    Resource factualityResource = model.createResource(ResourcesUri.grasp + factValue);
+                    aProperty = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
+                    attributionSubject.addProperty(aProperty, factualityResource);
+                }
+                for (int j = 0; j < mentions.size(); j++) {
+                    NafMention nafMention = mentions.get(j);
+                    ////
+                    Resource mentionObject = model.createResource(nafMention.toString());
+                    aProperty = model.createProperty(ResourcesUri.grasp, "isAttributionFor");
+                    attributionSubject.addProperty(aProperty, mentionObject);
+                }
+            }
+        }
+    }
+
+    static public void addToJenaDataSet1 (Model model, String ns, String property,
+                                         String attrId, ArrayList<PerspectiveObject> perspectives, String sourceURI) {
+        /*
+        mentionId2      hasAttribution         attributionId1
+                        gaf:generatedBy        mentionId3
+        attributionId1  rdf:value              CERTAIN_POS_FUTURE
+                        rdf:value              POSITIVE
+                        prov:wasAttributedTo   doc-uri
+                        gaf:wasAttributedTo    dbp:Zetsche
+
+         */
+        /*
+http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=254,261
+	gafAttribution:CERTAIN,NON_FUTURE
+		http://dbpedia.org/resource/Caesars_Entertainment_Corporation ;
+		gaf:generatedBy http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=201,209.
+
+
+http://www.newsreader-project.eu/data/2006/10/02/4M1J-3MC0-TWKJ-V1W8.xml#char=201,209
+			gafAttribution:CERTAIN,NON_FUTURE
+				doc-uri;
+
+doc-uri
+	prov:wasAttributedTo author;
+	prov:wasAttributedTo journal.
+         */
+
+        // System.out.println("sourceURI = " + sourceURI);
+        // System.out.println("perspectives = " + perspectives.size());
+        HashMap<String, ArrayList<NafMention>> mentionMap = new HashMap<String, ArrayList<NafMention>>();
+        for (int p = 0; p < perspectives.size(); p++) {
+            PerspectiveObject perspectiveObject = perspectives.get(p);
+            if ((perspectiveObject.getTargetEventMentions().size()>0)) {
+                //// We collect all factualities from all the target mentions for this perspective
+                ArrayList<KafFactuality> allFactualities = new ArrayList<KafFactuality>();
+                for (int i = 0; i < perspectiveObject.getTargetEventMentions().size(); i++) {
+                    NafMention mention = perspectiveObject.getTargetEventMentions().get(i);
+                    ////
+                    for (int j = 0; j < mention.getFactuality().size(); j++) {
+                        KafFactuality kafFactuality = mention.getFactuality().get(j);
+                        allFactualities.add(kafFactuality);
+                    }
+                }
+                KafFactuality kafFactuality = NafMention.getDominantFactuality(allFactualities);
+                ArrayList<String> factualityStringArray = KafFactuality.castToDefault();
+                //System.out.println("factualityStringArray.toString() = " + factualityStringArray.toString());
+                if (allFactualities.size() > 0) {
+                    factualityStringArray= kafFactuality.getPredictionArrayList();
+                    // System.out.println("factualityStringArray.toString() = " + factualityStringArray.toString());
+                }
+                String sentiment = NafMention.getDominantOpinion(perspectiveObject.getTargetEventMentions());
+                if (!sentiment.isEmpty()) {
+                    if (sentiment.equals("+")) {
+                        factualityStringArray.add("positive");
+                    } else if (sentiment.equals("-")) {
+                        factualityStringArray.add("negative");
+                    }
+                }
+
+                if (factualityStringArray.size()>0) {
+                    String valueAray = "";
+                    for (int i = 0; i < factualityStringArray.size(); i++) {
+                        String v = factualityStringArray.get(i);
+                        if (!valueAray.isEmpty())  valueAray+=",";
+                        valueAray += v;
+                    }
+                    if (mentionMap.containsKey(valueAray)) {
+                        ArrayList<NafMention> mentions = mentionMap.get(valueAray);
+                        mentions.addAll(perspectiveObject.getTargetEventMentions());
+                        mentionMap.put(valueAray, mentions);
+                    }
+                    else {
+                        ArrayList<NafMention> mentions = perspectiveObject.getTargetEventMentions();
+                        mentionMap.put(valueAray, mentions);
+                    }
+                }
+                else {
+                    //   System.out.println(" No perspectives for:"+sourceURI);
+                }
+            }
+            else {
+                //   System.out.println("no target mentions");
+            }
+        }
+        // System.out.println("mentionMap.size() = " + mentionMap.size());
         if (mentionMap.size()>0) {
             Resource sourceResource = model.createResource(sourceURI);
             Property aProperty = model.createProperty(ns, property);
@@ -292,7 +408,7 @@ doc-uri
             Iterator<String> keys = keySet.iterator();
             while (keys.hasNext()) {
                 String key = keys.next();
-               // System.out.println("key = " + key);
+                // System.out.println("key = " + key);
                 ArrayList<NafMention> mentions = mentionMap.get(key);
                 String[] factValues = key.split(",");
                 for (int i = 0; i < factValues.length; i++) {
