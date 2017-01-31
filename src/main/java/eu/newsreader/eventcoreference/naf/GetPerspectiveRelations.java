@@ -4,6 +4,7 @@ import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import eu.kyotoproject.kaf.KafEvent;
+import eu.kyotoproject.kaf.KafFactuality;
 import eu.kyotoproject.kaf.KafParticipant;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.objects.NafMention;
@@ -100,8 +101,7 @@ public class GetPerspectiveRelations {
      * @return
      */
         static public ArrayList<PerspectiveObject> getAuthorPerspectives (KafSaxParser kafSaxParser,String project,
-                                                                          ArrayList<PerspectiveObject> perspectiveObjects,
-                                                                          ArrayList<SemObject> events)
+                                                                          ArrayList<PerspectiveObject> perspectiveObjects)
         {
             String url = kafSaxParser.getKafMetaData().getUrl();
             if (!url.toLowerCase().startsWith("http")) {
@@ -129,22 +129,32 @@ public class GetPerspectiveRelations {
                     }
                 }
                 if (!hasPerspective) {
+                    //// we need to add the values here since we do not consider the SemEvent but the mention itself
+                    eventMention.addFactuality(kafSaxParser);
+                    eventMention.addOpinion(kafSaxParser);
                     PerspectiveObject perspectiveObject = new PerspectiveObject();
                     perspectiveObject.setDocumentUri(baseUrl);
-                    perspectiveObject.setSourceEntity(semActor);
+                    perspectiveObject.setSourceEntity(semActor); /// this is not the document itself
                     perspectiveObject.setPredicateId(kafEvent.getId());
                     perspectiveObject.setEventString(kafEvent.getTokenString());
                     perspectiveObject.setPredicateConcepts(kafEvent.getExternalReferences());
                     perspectiveObject.setPredicateSpanIds(kafEvent.getSpanIds());
                     perspectiveObject.setNafMention(baseUrl, kafSaxParser, kafEvent.getSpanIds());
-                    //eventMention.addFactuality(kafSaxParser);  //already done when SemEvent is created
-                    //eventMention.addOpinion(kafSaxParser);
                     perspectiveObject.addTargetEventMention(eventMention);
+                   // System.out.println("eventMention.getFactuality().size() = " + eventMention.getFactuality().size());
+                    for (int p = 0; p < perspectiveObject.getTargetEventMentions().size(); p++) {
+                        NafMention mention = perspectiveObject.getTargetEventMentions().get(p);
+                        for (int j = 0; j < mention.getFactuality().size(); j++) {
+                            KafFactuality kafFactuality = mention.getFactuality().get(j);
+                          //  System.out.println("kafFactuality.getPrediction() = " + kafFactuality.getPrediction());
+                        }
+                    }
                     authorPerspectiveObjects.add(perspectiveObject);
                 }
             }
             return authorPerspectiveObjects;
         }
+
 
         static boolean authorPerspective (KafSaxParser kafSaxParser, String tokenString) {
             /// English
@@ -228,14 +238,11 @@ public class GetPerspectiveRelations {
                                     SemObject semEvent = semEvents.get(j);
                                     for (int k = 0; k < semEvent.getNafMentions().size(); k++) {
                                         NafMention nafMention = semEvent.getNafMentions().get(k);
+                                        /// the factuality and sentiment are already assigned to the nafMention when building the SemEvent object
                                         if (!Collections.disjoint(targetParticipant.getSpanIds(), nafMention.getTermsIds())) {
-                                            // System.out.println("nafMention.getOpinions().size() = " + nafMention.getOpinions().size());
-                                            // System.out.println("nafMention.getTermsIds() = " + nafMention.getTermsIds());
-                                            // System.out.println("targetParticipant.getSpanIds() = " + targetParticipant.getSpanIds());
                                             perspectiveObject.addTargetEventMention(nafMention);
                                         }
                                     }
-
                                 }
                                 perspectiveObjectArrayList.add(perspectiveObject);
                                 //}

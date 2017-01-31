@@ -166,7 +166,7 @@ public class JenaSerialization {
       //  System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
     }
 
-    static public void addJenaPerspectiveObjects(String attrBase, String namespace, String predicate,
+    static public void addJenaPerspectiveObjects(String attrBase, String namespace, String property,
                                             ArrayList<PerspectiveObject> perspectiveObjects, int cnt) {
         HashMap<String, ArrayList<PerspectiveObject>> map = new HashMap<String, ArrayList<PerspectiveObject>>();
         for (int i = 0; i < perspectiveObjects.size(); i++) {
@@ -192,12 +192,12 @@ public class JenaSerialization {
             kCnt++;
             String attrId = attrBase + "attr"+kCnt+"_" + cnt;
             ArrayList<PerspectiveObject> sourcePerspectives = map.get(key);
-            addToJenaDataSet(graspModel, namespace, predicate, attrId, sourcePerspectives, key);
+            addToJenaDataSet(graspModel, namespace, property, attrId, sourcePerspectives, key);
         }
     }
 
 
-    static public void addToJenaDataSet (Model model, String ns, String predicate,
+    static public void addToJenaDataSet (Model model, String ns, String property,
                                          String attrId, ArrayList<PerspectiveObject> perspectives, String sourceURI) {
         /*
         mentionId2      hasAttribution         attributionId1
@@ -230,6 +230,7 @@ doc-uri
         for (int p = 0; p < perspectives.size(); p++) {
             PerspectiveObject perspectiveObject = perspectives.get(p);
             if ((perspectiveObject.getTargetEventMentions().size()>0)) {
+                //// We collect all factualities from all the target mentions for this perspective
                 ArrayList<KafFactuality> allFactualities = new ArrayList<KafFactuality>();
                 for (int i = 0; i < perspectiveObject.getTargetEventMentions().size(); i++) {
                     NafMention mention = perspectiveObject.getTargetEventMentions().get(i);
@@ -283,9 +284,9 @@ doc-uri
        // System.out.println("mentionMap.size() = " + mentionMap.size());
         if (mentionMap.size()>0) {
             Resource sourceResource = model.createResource(sourceURI);
-            Property property = model.createProperty(ns, predicate);
+            Property aProperty = model.createProperty(ns, property);
             Resource attributionSubject = model.createResource(attrId);
-            attributionSubject.addProperty(property, sourceResource);
+            attributionSubject.addProperty(aProperty, sourceResource);
 
             Set keySet = mentionMap.keySet();
             Iterator<String> keys = keySet.iterator();
@@ -297,15 +298,15 @@ doc-uri
                 for (int i = 0; i < factValues.length; i++) {
                     String factValue = factValues[i];
                     Resource factualityResource = model.createResource(ResourcesUri.grasp + factValue);
-                    property = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
-                    attributionSubject.addProperty(property, factualityResource);
+                    aProperty = model.createProperty(RDF.NAMESPACE, RDF.VALUE.getLocalName());
+                    attributionSubject.addProperty(aProperty, factualityResource);
                 }
                 for (int j = 0; j < mentions.size(); j++) {
                     NafMention nafMention = mentions.get(j);
                     ////
                     Resource mentionObject = model.createResource(nafMention.toString());
-                    property = model.createProperty(ResourcesUri.grasp, "isAttributionFor");
-                    attributionSubject.addProperty(property, mentionObject);
+                    aProperty = model.createProperty(ResourcesUri.grasp, "isAttributionFor");
+                    attributionSubject.addProperty(aProperty, mentionObject);
                 }
             }
         }

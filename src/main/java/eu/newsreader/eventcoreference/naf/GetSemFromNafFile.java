@@ -57,13 +57,14 @@ public class GetSemFromNafFile {
 
     static public void main(String[] args) {
         Log.setLog4j("jena-log4j.properties");
-
+        //// TAKE THIS OUT FOR RUNNING WITH REAL SETTINGS!!!!!!
+        boolean TEST = true;
         String pathToNafFile = "";
         pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample/425051_relink_dominant.naf";
         pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/16#New_York_Magazine#2015-03-02.naf";
         pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#ANSA.it#20161010T000000.naf";
         pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#Centers_for_Disease_Control_and_Prevention#2015-01-23.naf";
-        pathToNafFile = "/Users/piek/Desktop/1996_-_Wikipedia.0.naf";
+        //pathToNafFile = "/Users/piek/Desktop/1996_-_Wikipedia.0.naf";
         //pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/9##20161111T000000.naf";
         String sourceFrameFile = "";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
@@ -78,11 +79,13 @@ public class GetSemFromNafFile {
         GetSemFromNaf.initEurovoc(eurovoctestfile, "en");
         NafSemParameters nafSemParameters = new NafSemParameters(args);
         /// Put here settings for testing
-/*
-        nafSemParameters.setPERSPECTIVE(true);
-        nafSemParameters.setPROJECT("test");
-        nafSemParameters.readSourceVector(sourceFrameFile);
-*/
+        if (TEST) {
+            System.out.println("WARNING!!!!!!!!!!!!!!!");
+            System.out.println("RUNNING IN TEST MODE! RECOMPILE WITHOUT TEST SETTINGS!!!!");
+            nafSemParameters.setPERSPECTIVE(true);
+            nafSemParameters.setPROJECT("test");
+            nafSemParameters.readSourceVector(sourceFrameFile);
+        }
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-file") && args.length > (i + 1)) {
@@ -178,7 +181,7 @@ public class GetSemFromNafFile {
                         semEvents,
                         nafSemParameters);
                 ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(
-                        kafSaxParser, project, sourcePerspectives, semEvents);
+                        kafSaxParser, project, sourcePerspectives);
                 JenaSerialization.serializeJenaCompositeEventsAndPerspective(fos, compositeEventArraylist, kafSaxParser, nafSemParameters.getPROJECT(), sourcePerspectives, documentPerspectives);
             }
             fos.close();

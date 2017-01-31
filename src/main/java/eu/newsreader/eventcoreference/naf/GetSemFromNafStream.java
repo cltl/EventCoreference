@@ -97,7 +97,7 @@ public class GetSemFromNafStream {
                     semEvents,
                     nafSemParameters);
             ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(
-                    kafSaxParser, nafSemParameters.getPROJECT(), sourcePerspectives, semEvents);
+                    kafSaxParser, nafSemParameters.getPROJECT(), sourcePerspectives);
             JenaSerialization.serializeJenaCompositeEventsAndPerspective(System.out, compositeEventArraylist, kafSaxParser, nafSemParameters.getPROJECT(), sourcePerspectives, documentPerspectives);
         }
     }
