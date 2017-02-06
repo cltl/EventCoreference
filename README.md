@@ -15,7 +15,7 @@ INSTALLATION
 3. chmod +wrx install.sh
 4. run the install.sh script
 
-The install.sh will build the binary through apache-maven-2.2.1 and the pom.xml and move it to the "lib" folder.
+The install.sh will build the binary through apache-maven-3.x and the pom.xml and move it to the "lib" folder.
 
 REQUIREMENTS
 EventCoreference is developed in Java 1.6 and can run on any platform that supports Java 1.6
