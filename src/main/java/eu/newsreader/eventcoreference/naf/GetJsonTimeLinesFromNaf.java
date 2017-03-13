@@ -18,6 +18,7 @@ import java.util.Vector;
 /**
  * Created by piek on 10/22/14.
  */
+@Deprecated
 public class GetJsonTimeLinesFromNaf {
 
     static final public String ID_SEPARATOR = "#";

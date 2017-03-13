@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.*;
+import eu.newsreader.eventcoreference.naf.NafSemParameters;
 import eu.newsreader.eventcoreference.objects.*;
 
 import java.io.*;
@@ -268,15 +269,12 @@ public class Util {
     }
 
 
-    static public void fixSourceEventCoreferenceSets(KafSaxParser kafSaxParser,
-                                                     Vector<String> contextualVector,
-                                                     Vector<String> sourceVector,
-                                                     Vector<String> grammaticalVector) {
+    static public void fixSourceEventCoreferenceSets(KafSaxParser kafSaxParser, NafSemParameters nafSemParameters) {
         ArrayList<KafCoreferenceSet> fixedSets = new ArrayList<KafCoreferenceSet>();
         for (int i = 0; i < kafSaxParser.kafCorefenceArrayList.size(); i++) {
             KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(i);
             if (kafCoreferenceSet.getType().toLowerCase().startsWith("event") && kafCoreferenceSet.getSetsOfSpans().size()>1) {
-                ArrayList<String> eventTypes = FrameTypes.getEventTypeArrayList(kafSaxParser, kafCoreferenceSet, contextualVector, sourceVector, grammaticalVector);
+                ArrayList<String> eventTypes = FrameTypes.getEventTypeArrayList(kafSaxParser, kafCoreferenceSet,  nafSemParameters.getContextualVector(), nafSemParameters.getSourceVector(), nafSemParameters.getGrammaticalVector());
                 if (eventTypes.contains(FrameTypes.SOURCE)) {
                     //we need a fix since sources are usually never coreferential within one source
                     /// mention based events
@@ -1149,10 +1147,13 @@ public class Util {
      * @return
      */
     static public boolean matchAllOfAnyMentionSpans(ArrayList<String> spans, SemObject semObject) {
+       // System.out.println("semObject.getNafMentions().size() = " + semObject.getNafMentions().size());
         for (int i = 0; i < semObject.getNafMentions().size(); i++) {
             ArrayList<NafMention> mentions = semObject.getNafMentions();
             for (int j = 0; j < mentions.size(); j++) {
                 NafMention nafMention = mentions.get(j);
+                // System.out.println("nafMention.getTermsIds().toString() = " + nafMention.getTermsIds().toString());
+                // System.out.println("spans.toString() = " + spans.toString());
                 boolean localmatch = true;
                 for (int k = 0; k < spans.size(); k++) {
                     String spanId = spans.get(k);
@@ -1362,40 +1363,24 @@ public class Util {
             kafEntity.setTokenStrings(kafSaxParser);
             String aUri = null;
             try {
-                //String cleanLabel = kafEntity.getTokenString().replaceAll(" ", "_");
                 String cleanLabel = keepAlphaNumeric(kafEntity.getTokenString().trim());
+                //cleanLabel = kafEntity.getTokenString().replaceAll(" ", "_");
                 //cleanLabel = cleanLabel.replaceAll("\'", "");
                 aUri = URLEncoder.encode(cleanLabel, "UTF-8");
                 if (!aUri.isEmpty()) {
-/*
-                    if (aUri.indexOf("Schreyer")>-1) {
-                        System.out.println("aUri = " + aUri);
-                        System.out.println("kafEntity = " + kafEntity.getTokenString());
-                    }
-*/
                     semObject.addPhraseCounts(aUri);
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
-    //    System.out.println("semObject.getPhrase() = " + semObject.getPhraseCounts().toString());
         uri = semObject.getTopPhraseAsLabel().trim();
         if (uri.isEmpty()) {
-          //  System.out.println("semObject.getPhraseCounts().size() = " + semObject.getPhraseCounts().size());
-            for (int i = 0; i < semObject.getPhraseCounts().size(); i++) {
-                PhraseCount phraseCount = semObject.getPhraseCounts().get(i);
-            //    System.out.println("phraseCount = " + phraseCount);
-            }
             uri = semObject.getPhrase();
         }
-/*
-        if (uri.indexOf("Schreyer")>-1)
-            System.out.println("semObject uri = " + uri);
-*/
-
         return uri;
     }
+
     /**
      * Returns the span id that is the head of a constituent of a participant in the SRL layer
      * @param kafParticipant
@@ -2090,6 +2075,22 @@ public class Util {
         return mentionURIs;
     }
 
+    static public ArrayList<NafMention> getNafMentionArrayListFromCoreferenceSet (String baseUri,
+                                                                                           KafSaxParser kafSaxParser,
+                                                                                           KafCoreferenceSet corefSet) {
+        ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
+        for (int i = 0; i < corefSet.getSetsOfSpans().size(); i++) {
+            ArrayList<CorefTarget> corefTargets = corefSet.getSetsOfSpans().get(i);
+            NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
+            if (!hasMention(mentionURIs, mention)) {
+                // System.out.println("corefTargets.toString() = " + corefTargets.toString());
+                mentionURIs.add(mention);
+            }
+        }
+        return mentionURIs;
+    }
+
+    @Deprecated
     static public ArrayList<NafMention> getNafMentionArrayListFromPredicatesAndCoreferences (String baseUri,
                                                                                            KafSaxParser kafSaxParser,
                                                                                            KafEvent kafEvent) {
@@ -2731,7 +2732,22 @@ public class Util {
         return vector;
     }
 
-
+    static public void addNewReferences (ArrayList<KafSense> refsNew, ArrayList<KafSense> refs) {
+        for (int i = 0; i < refsNew.size(); i++) {
+            KafSense kafSense = refsNew.get(i);
+            boolean match = false;
+            for (int j = 0; j < refs.size(); j++) {
+                KafSense sense = refs.get(j);
+                if (kafSense.getSensecode().equals(sense.getSensecode())) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                refs.add(kafSense);
+            }
+        }
+    }
 
     static public ArrayList<String> getDifference (ArrayList<String> l1, ArrayList<String> l2) {
         ArrayList<String> l3 = new ArrayList<String>();
@@ -2743,6 +2759,17 @@ public class Util {
         }
         return l3;
     }
+
+/*    static public ArrayList<String> getDifference (String s1, ArrayList<String> l1, ArrayList<String> l2) {
+        ArrayList<String> l3 = new ArrayList<String>();
+        for (int i = 0; i < l1.size(); i++) {
+            String s = l1.get(i);
+            if (!l2.contains(s) && !s1.equals(s)) {
+                l3.add(s);
+            }
+        }
+        return l3;
+    }*/
 
     static public String fixUri (String inputLine) {
         /// PeterShaffyPeterShaffyPeterShaffy
@@ -2837,33 +2864,118 @@ public class Util {
         return sortedMap;
     }
 
-    public static Map<String, Integer> sortByComparatorDecreasing(Map<String, Integer> unsortMap) {
-
-        // Convert Map to List
-        List<Map.Entry<String, Integer>> list =
+    public static String getLastTop(Map<String, Integer> unsortMap) {
+          String topKey = "";
+          Integer topValue = -1;
+          List<Map.Entry<String, Integer>> list =
                 new LinkedList<Map.Entry<String, Integer>>(unsortMap.entrySet());
-
-        // Sort list with comparator, to compare the Map values
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-            public int compare(Map.Entry<String, Integer> o2,
-                               Map.Entry<String, Integer> o1) {
-                return (o1.getValue()).compareTo(o2.getValue());
-            }
-        });
-
-        // Convert sorted map back to a Map
-        Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
         for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
             Map.Entry<String, Integer> entry = it.next();
-            sortedMap.put(entry.getKey(), entry.getValue());
+            //System.out.println("entry.getKey() = " + entry.getKey());
+            if (entry.getValue()>topValue) {
+                topValue = entry.getValue();
+                topKey = entry.getKey();
+            }
         }
-        return sortedMap;
+      //  System.out.println("topKey = " + topKey);
+        return topKey;
     }
+
+     public static Map<String, Integer> sortByComparatorDecreasing(Map<String, Integer> unsortMap) {
+
+            // Convert Map to List
+            List<Map.Entry<String, Integer>> list =
+                    new LinkedList<Map.Entry<String, Integer>>(unsortMap.entrySet());
+
+            // Sort list with comparator, to compare the Map values
+            Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                public int compare(Map.Entry<String, Integer> o2,
+                                   Map.Entry<String, Integer> o1) {
+                    return (o1.getValue()).compareTo(o2.getValue());
+                }
+            });
+
+            // Convert sorted map back to a Map
+            Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+            for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
+                Map.Entry<String, Integer> entry = it.next();
+                sortedMap.put(entry.getKey(), entry.getValue());
+            }
+            return sortedMap;
+        }
 
     public static void printMap(Map<String, Integer> map) {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             System.out.println("[Key] : " + entry.getKey()
                     + " [Value] : " + entry.getValue());
+        }
+    }
+    
+    public static ArrayList<String> splitSubstring (String str, String substr) {
+        ArrayList<String> split = new ArrayList<String>();
+        int idx_s = 0;
+        int idx_e = str.indexOf(substr);
+        while (idx_e>-1) {
+            String f = str.substring(idx_s, idx_e);
+            split.add(f.trim());
+            idx_s = idx_e+substr.length();
+            idx_e = str.indexOf(substr, idx_s);
+        }
+        if (idx_s<str.length()) {
+           String f = str.substring(idx_s).trim();
+            split.add(f);
+        }
+        //System.out.println("split.toString() = " + split.toString());
+        return split;
+    }
+
+    public static String getCamelName (String name) {
+        final String capital = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lastName = "";
+        boolean CAMEL = false;
+        System.out.println("name = " + name);
+        for (int i = 1; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (capital.indexOf(c)>-1) {
+               CAMEL = true;
+            }
+            if (CAMEL) lastName+=c;
+        }
+        System.out.println("lastName = " + lastName);
+        return lastName;
+    }
+
+    public static boolean isSimpleQuery (String[] args) {
+        int q = 0;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equalsIgnoreCase("--entity")) {
+               q++;
+            }
+            else if (arg.equalsIgnoreCase("--event")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--grasp")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--year")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--topic")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--source")) {
+                q++;
+            }
+            else if (arg.equalsIgnoreCase("--word")) {
+                q++;
+            }
+        }
+        if (q>1) {
+            return false;
+        }
+        else {
+            return true;
         }
     }
 }

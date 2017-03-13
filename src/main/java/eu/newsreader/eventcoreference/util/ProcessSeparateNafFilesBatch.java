@@ -2,6 +2,7 @@ package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.naf.GetSemFromNaf;
+import eu.newsreader.eventcoreference.naf.NafSemParameters;
 import eu.newsreader.eventcoreference.objects.SemObject;
 import eu.newsreader.eventcoreference.objects.SemRelation;
 import eu.newsreader.eventcoreference.objects.SemTime;
@@ -17,13 +18,11 @@ import java.util.ArrayList;
  */
 public class ProcessSeparateNafFilesBatch {
 
-    static boolean ADDITIONALROLES = true;
-
-    static boolean DOCTIME = true;
-    static boolean CONTEXTTIME = true;
+    static NafSemParameters nafSemParameters = new NafSemParameters();
 
     static public void main (String [] args) {
         try {
+            nafSemParameters = new NafSemParameters(args);
             String pathToNafFolder = "/Users/piek/Desktop/NWR-DATA/techcrunch/1_3000";
             String projectName  = "techcrunch";
             String extension = ".naf";
@@ -39,12 +38,6 @@ public class ProcessSeparateNafFilesBatch {
                     extension = args[i+1];
                 }
 
-                else if (arg.equals("--no-doc-time")) {
-                    DOCTIME = false;
-                }
-                else if (arg.equals("--no-context-time")) {
-                    CONTEXTTIME = false;
-                }
             }
             ArrayList<File> nafFiles = Util.makeRecursiveFileList(new File(pathToNafFolder), extension);
             KafSaxParser kafSaxParser = new KafSaxParser();
@@ -56,8 +49,8 @@ public class ProcessSeparateNafFilesBatch {
                 ArrayList<SemObject> semActors = new ArrayList<SemObject>();
                 ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
                 ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-                GetSemFromNaf.processNafFile(projectName, kafSaxParser, semEvents, semActors, semTimes,
-                        semRelations, ADDITIONALROLES, DOCTIME, CONTEXTTIME);
+                GetSemFromNaf.processNafFile(nafSemParameters, kafSaxParser, semEvents, semActors, semTimes,
+                        semRelations);
                 FileOutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trig");
                 JenaSerialization.serializeJena(fos, semEvents, semActors, semTimes, semRelations, null, false, false);
                 fos.close();

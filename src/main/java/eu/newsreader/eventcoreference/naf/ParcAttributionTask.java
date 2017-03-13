@@ -13,27 +13,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * Created by piek on 10/06/15.
  */
 public class ParcAttributionTask {
-    static Vector<String> communicationVector = null;
-    static Vector<String> grammaticalVector = null;
-    static Vector<String> contextualVector = null;
     static final public String ID_SEPARATOR = "#";
     static final public String URI_SEPARATOR = "_";
-
+    static NafSemParameters nafSemParameters = new NafSemParameters();
 
     static public void main (String [] args) {
-
+        nafSemParameters = new NafSemParameters(args);
         String pathToFolder = "";
         String extension = "";
-        String comFrameFile = "";
         pathToFolder = "/Users/piek/Desktop/PerspectiveAnnotation/PARC/test/nwr_pipe_output/test";
         extension = ".naf";
-        comFrameFile = "/Users/piek/Desktop/PerspectiveAnnotation/PARC/nwr-baseline/resources/communication.txt";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equalsIgnoreCase("--naf-folder") && ((i+1)<args.length)) {
@@ -42,11 +36,7 @@ public class ParcAttributionTask {
             else if (arg.equalsIgnoreCase("--extension") && ((i+1)<args.length)) {
                 extension = args[i+1];
             }
-            else if (arg.equalsIgnoreCase("--communication-frames") && ((i+1)<args.length)) {
-                comFrameFile = args[i+1];
-            }
         }
-        communicationVector = Util.ReadFileToStringVector(comFrameFile);
         KafSaxParser kafSaxParser = new KafSaxParser();
         ArrayList<File> files = Util.makeFlatFileList(new File(pathToFolder), extension);
         for (int i = 0; i < files.size(); i++) {
@@ -67,12 +57,9 @@ public class ParcAttributionTask {
         ArrayList<PerspectiveObject> perspectiveObjects = new ArrayList<PerspectiveObject>();
 
         boolean ADDITIONALROLES = true;
-        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes, semRelations, ADDITIONALROLES, true, true);
+        GetSemFromNaf.processNafFile(nafSemParameters, kafSaxParser, semEvents, semActors, semTimes, semRelations);
         GetPerspectiveRelations.getPerspective(kafSaxParser,
-                project, perspectiveObjects, semEvents,
-                contextualVector,
-                communicationVector,
-                grammaticalVector);
+                 perspectiveObjects, semEvents, nafSemParameters);
         perspectiveRelationsToEval(file, perspectiveObjects, kafSaxParser);
         return attribution;
     }

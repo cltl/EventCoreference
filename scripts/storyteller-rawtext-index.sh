@@ -9,7 +9,7 @@ PROJECT=$3
 # assumes vua-resources is installed next to this installation
 # git clone https://github.com/cltl/vua-resources.git
 
-java -Xmx2000m -cp $LIB/EventCoreference-v3.0-jar-with-dependencies.jar eu.newsreader.eventcoreference.naf.RawTextIndex --naf-folder "$FOLDER" --extension "$EXTENSION" --project "$PROJECT"
+java -Xmx2000m -cp $LIB/EventCoreference-v3.1.2-jar-with-dependencies.jar eu.newsreader.eventcoreference.naf.RawTextIndex --naf-folder "$FOLDER" --extension "$EXTENSION" --project "$PROJECT"
 
 
 

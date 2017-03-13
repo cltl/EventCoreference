@@ -3,6 +3,8 @@ package eu.newsreader.eventcoreference.output;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * Created by piek on 29/05/16.
  */
+@Deprecated
 public class DataSetEntityHierarchy {
 
 
@@ -21,8 +24,9 @@ public class DataSetEntityHierarchy {
         String hierarchyPath = "";
         String entityPath = "";
         String title = "";
-        hierarchyPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/counted_types_unsorted.tsv";
-        entityPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.dbp.types.tsv";
+        String querypath = "";
+        hierarchyPath = "/Users/piek/Desktop/NWR-INC/dasym/stats-5/DBpediaHierarchy_parent_child.tsv";
+        entityPath = "/Users/piek/Desktop/NWR-INC/dasym/stats-5/dasym_dark_light.tsv";
         title = "PostNL DBp ontology for entities";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -35,13 +39,21 @@ public class DataSetEntityHierarchy {
             else if (arg.equals("--title") && args.length>(i+1)) {
                 title = args[i+1];
             }
+            else if (arg.equals("--path") && args.length>(i+1)) {
+                querypath = args[i+1];
+            }
         }
         SimpleTaxonomy simpleTaxonomy = new SimpleTaxonomy();
         simpleTaxonomy.readSimpleTaxonomyFromDbpFile(hierarchyPath);
         ArrayList<String> tops = simpleTaxonomy.getTops();
+        /*
+        tops = new ArrayList<String>();
+        tops.add("Organisation");
+        tops.add("Place");
+        tops.add("Person");*/
         System.out.println("tops.toString() = " + tops.toString());
-        HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEntityCountTypeTsv (simpleTaxonomy, entityPath, "//dbpedia.org/");
-        HashMap<String, Integer> cnt = cntEntities(cntPredicates);
+        HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEntityCountTypeTsv (simpleTaxonomy, entityPath, "/dbpedia.org/");
+        HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
         System.out.println("Cumulating scores");
         simpleTaxonomy.cumulateScores("dbp:", tops, cnt);
@@ -51,19 +63,29 @@ public class DataSetEntityHierarchy {
 
         try {
             OutputStream fos = new FileOutputStream(entityPath+".words.html");
-            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title, querypath, 0, 0, 0, 0);
+            str += "<div id=\"Entities\" class=\"tabcontent\">\n";
             str += "<div id=\"container\">\n";
             fos.write(str.getBytes());
-            //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
-            simpleTaxonomy.htmlTableTree(fos, "dbp:",tops, 1, cnt, cntPredicates);
-            str = "</div>\n";
-            str += TreeStaticHtml.bodyEnd;
+            simpleTaxonomy.htmlTableTree(fos, "entity", "dbp:",tops, 1, cnt, cntPredicates);
+            str = "</div></div>\n";
+            fos.write(str.getBytes());
+            str = TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
+
+            OutputStream jsonOut = new FileOutputStream(entityPath+".words.json");
+            JSONObject tree = new JSONObject();
+            simpleTaxonomy.jsonTree(tree, "entity", "dbp:", tops, 1, cnt, cntPredicates, null);
+            //jsonOut.write(tree.toString().getBytes());
+            jsonOut.write(tree.toString(0).getBytes());
+            jsonOut.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
+       /* String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
         str += "<div id=\"container\">\n";
         str += simpleTaxonomy.htmlTableTreeOverview("dbp:",tops, 1, cnt, cntPredicates);
         str += "</div>\n";
@@ -77,11 +99,11 @@ public class DataSetEntityHierarchy {
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
-    static public HashMap<String, Integer> cntEntities (HashMap<String, ArrayList<PhraseCount>> map) {
+    static public HashMap<String, Integer> cntPhrases (HashMap<String, ArrayList<PhraseCount>> map) {
         HashMap<String, Integer> countMap = new HashMap<String, Integer>();
         Set keySet = map.keySet();
         Iterator<String> keys = keySet.iterator();
@@ -96,6 +118,18 @@ public class DataSetEntityHierarchy {
             countMap.put(key, sum);
         }
         return countMap;
+    }
+
+    static public int totalPhrases (HashMap<String, ArrayList<PhraseCount>> map) {
+        int n = 0;
+        Set keySet = map.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<PhraseCount> phrases = map.get(key);
+            n+= phrases.size();
+        }
+        return n;
     }
 
     /*
@@ -153,7 +187,7 @@ http://nl.dbpedia.org/resource/Maxime_Verhagen	96	http://wikidata.dbpedia.org/re
                         nextEntity = fields[0];
                         nextCount = fields[1];
                         nextType = fields[2];
-                        if (nextType.indexOf(prefix) > -1) {
+                        if (nextType.indexOf(prefix) > -1 || nextType.indexOf("cltl.nl") >-1) {
                             int idx = nextType.lastIndexOf("/");
                             if (idx > -1) nextType = "dbp:" + nextType.substring(idx + 1);
                             if (entity.isEmpty()) {
@@ -172,14 +206,16 @@ http://nl.dbpedia.org/resource/Maxime_Verhagen	96	http://wikidata.dbpedia.org/re
                                 }*/
                                 if (!child.isEmpty()) {
                                     PhraseCount phraseCount = new PhraseCount(entity, Integer.parseInt(count));
-                                    if (map.containsKey(child)) {
-                                        ArrayList<PhraseCount> phrases = map.get(child);
-                                        phrases.add(phraseCount);
-                                        map.put(child, phrases);
-                                    } else {
-                                        ArrayList<PhraseCount> phrases = new ArrayList<PhraseCount>();
-                                        phrases.add(phraseCount);
-                                        map.put(child, phrases);
+                                    if (phraseCount.getCount()>0) {
+                                        if (map.containsKey(child)) {
+                                            ArrayList<PhraseCount> phrases = map.get(child);
+                                            phrases.add(phraseCount);
+                                            map.put(child, phrases);
+                                        } else {
+                                            ArrayList<PhraseCount> phrases = new ArrayList<PhraseCount>();
+                                            phrases.add(phraseCount);
+                                            map.put(child, phrases);
+                                        }
                                     }
                                 }
                                 /// now we clean the stuff to start a new data structure
@@ -195,9 +231,9 @@ http://nl.dbpedia.org/resource/Maxime_Verhagen	96	http://wikidata.dbpedia.org/re
                         }
                     }
                 }
+                //// deal with the last case that stops at end of file
                 if (!entity.isEmpty()) {
                     String child = simpleTaxonomy.getMostSpecificChild(parents);
-                    // System.out.println("entity = "+entity+"count = "+count+" type = " + type);
                     PhraseCount phraseCount = new PhraseCount(entity, Integer.parseInt(count));
                     if (map.containsKey(child)) {
                         ArrayList<PhraseCount> phrases = map.get(child);

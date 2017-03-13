@@ -7,6 +7,7 @@ import java.util.*;
 /**
  * Created by piek on 10/29/14.
  */
+@Deprecated
 public class EntityTimeLine {
 
     private String entityId;

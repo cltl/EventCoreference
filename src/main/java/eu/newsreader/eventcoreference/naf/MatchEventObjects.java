@@ -153,6 +153,9 @@ public class MatchEventObjects {
                 VERBOSEMENTIONS = true;
             }
         }
+        if (DEBUG>0) {
+            System.out.println("DEBUG = " + DEBUG);
+        }
         if (!pathToSourceDataFile.isEmpty()) {
             sourceMetaHashMap = ReadSourceMetaFile.readSourceFile(pathToSourceDataFile);
          //   System.out.println("sourceMetaHashMap = " + sourceMetaHashMap.size());
@@ -643,7 +646,7 @@ public class MatchEventObjects {
     public static void readCompositeEventArrayListFromObjectFile (File file, HashMap<String,CompositeEvent> events) {
         if (file.exists() ) {
             int cnt = 0;
-            if (DEBUG==2) System.out.println("file = " + file.getName());
+            if (DEBUG==1) System.out.println("file = " + file.getName());
             try {
                 InputStream fis = new FileInputStream(file);
 
@@ -676,7 +679,7 @@ public class MatchEventObjects {
                     e.printStackTrace();
                 }
             }
-            if (DEBUG==2) System.out.println(file.getName()+" nr objects read = " + cnt);
+            if (DEBUG==1) System.out.println(file.getName()+" nr objects read = " + cnt);
         }
     }
 
@@ -723,14 +726,22 @@ public class MatchEventObjects {
                 if (LCS) {
                     ArrayList<KafSense> event1Lcs = getLcsILIreferences(myCompositeEvent.getEvent());
                     ArrayList<KafSense> event2Lcs = getLcsILIreferences(targetEvent.getEvent());
+                    Util.addNewReferences(event1Lcs, event1References);
+                    Util.addNewReferences(event2Lcs, event1References);
+/*
                     event1References.addAll(event1Lcs);
                     event2References.addAll(event2Lcs);
+*/
                 }
                 if (HYPERS) {
                     ArrayList<KafSense> event1Hyper = getHyperILIreferences(myCompositeEvent.getEvent());
                     ArrayList<KafSense> event2Hyper = getHyperILIreferences(targetEvent.getEvent());
+                    Util.addNewReferences(event1Hyper, event1References);
+                    Util.addNewReferences(event2Hyper, event1References);
+/*
                     event1References.addAll(event1Hyper);
                     event2References.addAll(event2Hyper);
+*/
                 }
                 if (ComponentMatch.compareReference(event1References, event2References, conceptMatchThreshold)) {
                     EVENTMATCH = true;
@@ -785,7 +796,6 @@ public class MatchEventObjects {
                         break;
                     }
                 }
-
             }
             else {
                // System.out.println("NO EVENTMATCH");
@@ -913,15 +923,17 @@ public class MatchEventObjects {
         while (keys.hasNext()) {
             String key = keys.next();
             CompositeEvent myCompositeEvent = myCompositeEvents.get(key);
-            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equals("ili")) {
+            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("ili")) {
                 ArrayList<KafSense> iliReferences = getILIreferences(myCompositeEvent.getEvent());
                 if (LCS) {
                     ArrayList<KafSense> lcsReferences = getLcsILIreferences(myCompositeEvent.getEvent());
-                    iliReferences.addAll(lcsReferences);
+                    Util.addNewReferences(lcsReferences, iliReferences);
+                    //iliReferences.addAll(lcsReferences);
                 }
                 if (HYPERS) {
                     ArrayList<KafSense> hyperReferences = getHyperILIreferences(myCompositeEvent.getEvent());
-                    iliReferences.addAll(hyperReferences);
+                    Util.addNewReferences(hyperReferences, iliReferences);
+                   // iliReferences.addAll(hyperReferences);
                 }
                 if (iliReferences.size() > 0) {
                     for (int j = 0; j < iliReferences.size(); j++) {
@@ -941,7 +953,7 @@ public class MatchEventObjects {
                     }
                 }
             }
-            if ((MATCHTYPE.equals("ililemma") || MATCHTYPE.equals("lemma"))) {
+            if ((MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("lemma"))) {
                 ArrayList<String> phrases = myCompositeEvent.getEvent().getUniquePhrases();
                 for (int j = 0; j < phrases.size(); j++) {
                     String phrase = phrases.get(j);
@@ -963,13 +975,13 @@ public class MatchEventObjects {
         return conceptEventMap;
     }
 
-    static void chaining3 (HashMap<String, CompositeEvent> allCompositeEvents,
+    static void chaining3WithoutBreak (HashMap<String, CompositeEvent> allCompositeEvents,
                            HashMap<String, ArrayList<String>> conceptEventMap,
                            ArrayList<String> eventIds,
                            int phraseMatchThreshold,
                            int conceptMatchThreshold,
                            ArrayList<String> roleNeededArrayList) {
-       // System.out.println("eventIds = " + eventIds.size());
+        if (DEBUG==1) System.out.println("eventIds = " + eventIds.size());
         ArrayList<String> modifiedEvents = new ArrayList<String>();
         ArrayList<String> processedEvents = new ArrayList<String>();
         for (int i = 0; i < eventIds.size(); i++) {
@@ -982,37 +994,35 @@ public class MatchEventObjects {
             if (myCompositeEvent==null) {
                 continue;
             }
-            //System.out.println("eventId = " + eventId);
+            if (DEBUG>1) System.out.println("eventId = " + eventId);
             String mergedEventId = "";
 
             /// We first match this event with all other events that have the same ILI references
-            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equals("ili")) {
+            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("ili")) {
                 ArrayList<KafSense> iliReferences = getILIreferences(myCompositeEvent.getEvent());
                 if (LCS) {
                     ArrayList<KafSense> lcsReferences = getLcsILIreferences(myCompositeEvent.getEvent());
-                    iliReferences.addAll(lcsReferences);
+                    Util.addNewReferences(lcsReferences, iliReferences);
+                    //iliReferences.addAll(lcsReferences);
                 }
                 if (HYPERS) {
                     ArrayList<KafSense> hyperReferences = getHyperILIreferences(myCompositeEvent.getEvent());
-                    iliReferences.addAll(hyperReferences);
+                    Util.addNewReferences(hyperReferences, iliReferences);
+                    //iliReferences.addAll(hyperReferences);
                 }
-
+                if (DEBUG>0) {
+                    System.out.println("iliReferences = " + iliReferences.size());
+                }
                 if (iliReferences.size() > 0) {
+                    ArrayList<String> eventMapIds = new ArrayList<String>();
                     for (int j = 0; j < iliReferences.size(); j++) {
                         KafSense kafSense = iliReferences.get(j);
                         if (conceptEventMap.containsKey(kafSense.getSensecode())) {
                             /// we get the list of event Ids to which the sensecode gives access but take the difference with the list of eventIds already processed
-                            ArrayList<String> eventMapIds = Util.getDifference(conceptEventMap.get(kafSense.getSensecode()), processedEvents);
-                            mergedEventId = matchEvents(myCompositeEvent,
-                                                        allCompositeEvents,
-                                                        eventMapIds,
-                                                        0,
-                                                        conceptMatchThreshold,
-                                                        phraseMatchThreshold,
-                                                        roleNeededArrayList);
-                            if (!mergedEventId.isEmpty()) {
-                                /// we found another eventId that fits the identity criteria
-                                break;
+                            ArrayList<String> newEventMapIds = Util.getDifference(conceptEventMap.get(kafSense.getSensecode()), processedEvents);
+                            for (int k = 0; k < newEventMapIds.size(); k++) {
+                                String id = newEventMapIds.get(k);
+                                if (!eventMapIds.contains(id)) eventMapIds.add(id);
                             }
                         }
                         else {
@@ -1020,35 +1030,52 @@ public class MatchEventObjects {
                             System.out.println("No event in conceptEventMap for kafSense.getSensecode() = " + kafSense.getSensecode());
                         }
                     }
+                    if (DEBUG>0) System.out.println("Targets events to compare based on ILI= " + eventMapIds.size());
+                    mergedEventId = matchEvents(myCompositeEvent,
+                            allCompositeEvents,
+                            eventMapIds,
+                            0,
+                            conceptMatchThreshold,
+                            phraseMatchThreshold,
+                            roleNeededArrayList);
+                    if (!mergedEventId.isEmpty()) {
+                        /// we found another eventId that fits the identity criteria
+                        //break;
+                    }
                 }
             }
             //// We do the same for the phrase based index. Note that the processedEvents list grows
-            if (mergedEventId.isEmpty() && (MATCHTYPE.equals("ililemma") || MATCHTYPE.equals("lemma"))) {
+            if (mergedEventId.isEmpty() && (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("lemma"))) {
                 ArrayList<String> phrases = myCompositeEvent.getEvent().getUniquePhrases();
+                ArrayList<String> eventMapIds = new ArrayList<String>();
                 for (int j = 0; j < phrases.size(); j++) {
                     String phrase = phrases.get(j);
                     //System.out.println("phrase = " + phrase);
                     if (conceptEventMap.containsKey(phrase)) {
-                        ArrayList<String> phraseIds = conceptEventMap.get(phrase);
-                        ArrayList<String> eventMapIds = Util.getDifference(conceptEventMap.get(phrase), processedEvents);
-
-                        mergedEventId = matchEvents(myCompositeEvent,
-                                allCompositeEvents,
-                                eventMapIds, 0,
-                                conceptMatchThreshold,
-                                phraseMatchThreshold,
-                                roleNeededArrayList);
-                        if (!mergedEventId.isEmpty()) {
-                            break;
+                        ArrayList<String> newEventMapIds = Util.getDifference(conceptEventMap.get(phrase), processedEvents);
+                        for (int k = 0; k < newEventMapIds.size(); k++) {
+                            String id = newEventMapIds.get(k);
+                            if (!eventMapIds.contains(id)) eventMapIds.add(id);
                         }
                     } else {
                         ///we have a problem.....
                         System.out.println("No event for phrase = " + phrase);
                     }
                 }
+                if (DEBUG>0) System.out.println("Targets events to compare based on phrase = " + eventMapIds.size());
+
+                mergedEventId = matchEvents(myCompositeEvent,
+                        allCompositeEvents,
+                        eventMapIds, 0,
+                        conceptMatchThreshold,
+                        phraseMatchThreshold,
+                        roleNeededArrayList);
+                if (!mergedEventId.isEmpty()) {
+                   // break;
+                }
             }
             if (mergedEventId.isEmpty()) {
-             //   if (DEBUG==2) System.out.println("NO MATCH");
+                //if (DEBUG==2) System.out.println("NO MATCH");
             }
             else {
                 if (!modifiedEvents.contains(mergedEventId)) modifiedEvents.add(mergedEventId);
@@ -1056,16 +1083,160 @@ public class MatchEventObjects {
                 if (CROSSDOC) {
                     if (!crossDocCorefSet.contains(mergedEventId)) crossDocCorefSet.add(mergedEventId);
                 }
-            //    if (DEBUG==2) System.out.println("MATCH");
+               // if (DEBUG==2) System.out.println("MATCH");
                 //System.out.println("mergedEventId = " + mergedEventId);
             }
+            if (DEBUG>1) System.out.println("Event i = " + i);
         }
 
         if (modifiedEvents.size()>0) {
-            if (DEBUG==1) System.out.println("matched events = " + modifiedEvents.size());
+            if (DEBUG>1) System.out.println("matched events = " + modifiedEvents.size());
             /// something was merged so we need to compare again
             ///iterate
             //System.out.println("ITERATING:"+modifiedEvents.size());
+            chaining3WithoutBreak(allCompositeEvents, conceptEventMap, modifiedEvents, phraseMatchThreshold, conceptMatchThreshold, roleNeededArrayList);
+        }
+        else {
+            /// no merge so no change and we are done
+        }
+    }
+
+    static void chaining3 (HashMap<String, CompositeEvent> allCompositeEvents,
+                           HashMap<String, ArrayList<String>> conceptEventMap,
+                           ArrayList<String> eventIds,
+                           int phraseMatchThreshold,
+                           int conceptMatchThreshold,
+                           ArrayList<String> roleNeededArrayList) {
+        if (DEBUG>0) System.out.println("eventIds = " + eventIds.size());
+        ArrayList<String> modifiedEvents = new ArrayList<String>();
+        ArrayList<String> processedEvents = new ArrayList<String>();
+        for (int i = 0; i < eventIds.size(); i++) {
+            String eventId = eventIds.get(i);
+            /// make sure we do not do duplicate work and do not compare the event with itself
+            if (!processedEvents.contains(eventId)) {
+                processedEvents.add(eventId);
+            }
+            CompositeEvent myCompositeEvent = allCompositeEvents.get(eventId);
+            if (myCompositeEvent==null) {
+                continue;
+            }
+            if (DEBUG>1) System.out.println("eventId = " + eventId);
+            String mergedEventId = "";
+
+            /// We first match this event with all other events that have the same ILI references
+            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("ili")) {
+                ArrayList<KafSense> iliReferences = getILIreferences(myCompositeEvent.getEvent());
+                if (LCS) {
+                    ArrayList<KafSense> lcsReferences = getLcsILIreferences(myCompositeEvent.getEvent());
+                    Util.addNewReferences(lcsReferences, iliReferences);
+                    //iliReferences.addAll(lcsReferences);
+                }
+                if (HYPERS) {
+                    ArrayList<KafSense> hyperReferences = getHyperILIreferences(myCompositeEvent.getEvent());
+                    Util.addNewReferences(hyperReferences, iliReferences);
+                    //iliReferences.addAll(hyperReferences);
+                }
+                if (DEBUG>0) {
+                    System.out.println("iliReferences = " + iliReferences.size());
+                }
+                if (iliReferences.size() > 0) {
+                    ArrayList<String> eventMapIds = new ArrayList<String>();
+                    for (int j = 0; j < iliReferences.size(); j++) {
+                        KafSense kafSense = iliReferences.get(j);
+                        if (conceptEventMap.containsKey(kafSense.getSensecode())) {
+                            /// we get the list of event Ids to which the sensecode gives access but take the difference with the list of eventIds already processed
+                            /// event already processed were already rejected by the matching criteria and do not need to be checked again
+                            /// in this way we only check events once even if they have more than one ili reference as overlap
+                            ArrayList<String> newEventMapIds = Util.getDifference(conceptEventMap.get(kafSense.getSensecode()), processedEvents);
+                            for (int k = 0; k < newEventMapIds.size(); k++) {
+                                String id = newEventMapIds.get(k);
+                                if (!eventMapIds.contains(id)) eventMapIds.add(id);
+                            }
+                        }
+                        else {
+                            ///we have a problem.....
+                            System.out.println("No event in conceptEventMap for kafSense.getSensecode() = " + kafSense.getSensecode());
+                        }
+                    }
+                    if (DEBUG>0) System.out.println("Targets events to compare based on ILI= " + eventMapIds.size());
+                    mergedEventId = matchEvents(myCompositeEvent,
+                            allCompositeEvents,
+                            eventMapIds,
+                            0,
+                            conceptMatchThreshold,
+                            phraseMatchThreshold,
+                            roleNeededArrayList);
+                    if (!mergedEventId.isEmpty()) {
+                        /// we found another eventId that fits the identity criteria
+                        /// we have a match and the event is absorbed, no need to continue
+                        if (DEBUG>0) {
+                            System.out.println("SYNSET MATCH");
+                            System.out.println("mergedEventId = " + mergedEventId);
+                        }
+                    }
+                    else {
+                        if (DEBUG>0) {
+                            System.out.println("NO MATCH");
+                        }
+                    }
+                }
+            }
+            //// We do the same for the phrase based index. Note that the processedEvents list grows
+            if (mergedEventId.isEmpty() && (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("lemma"))) {
+                ArrayList<String> phrases = myCompositeEvent.getEvent().getUniquePhrases();
+                ArrayList<String> eventMapIds = new ArrayList<String>();
+                for (int j = 0; j < phrases.size(); j++) {
+                    String phrase = phrases.get(j);
+                    //System.out.println("phrase = " + phrase);
+                    if (conceptEventMap.containsKey(phrase)) {
+                        ArrayList<String> newEventMapIds = Util.getDifference(conceptEventMap.get(phrase), processedEvents);
+                        for (int k = 0; k < newEventMapIds.size(); k++) {
+                            String id = newEventMapIds.get(k);
+                            if (!eventMapIds.contains(id)) eventMapIds.add(id);
+                        }
+                    } else {
+                        ///we have a problem.....
+                        System.out.println("No event for phrase = " + phrase);
+                    }
+                }
+                if (DEBUG>0) System.out.println("Targets events to compare based on phrase = " + eventMapIds.size());
+
+                mergedEventId = matchEvents(myCompositeEvent,
+                        allCompositeEvents,
+                        eventMapIds, 0,
+                        conceptMatchThreshold,
+                        phraseMatchThreshold,
+                        roleNeededArrayList);
+                if (!mergedEventId.isEmpty()) {
+                    /// we have a match and the event is absorbed, no need to continue
+                    if (DEBUG>0) {
+                        System.out.println("LEMMA MATCH");
+                        System.out.println("mergedEventId = " + mergedEventId);
+                    }
+                }
+            }
+            if (mergedEventId.isEmpty()) {
+                if (DEBUG>1) System.out.println("NO MATCH");
+            }
+            else {
+                if (!modifiedEvents.contains(mergedEventId)) modifiedEvents.add(mergedEventId);
+                /// for debugging
+                if (CROSSDOC) {
+                    if (!crossDocCorefSet.contains(mergedEventId)) crossDocCorefSet.add(mergedEventId);
+                }
+                if (DEBUG>1) {
+                    System.out.println("MATCH");
+                    System.out.println("mergedEventId = " + mergedEventId);
+                }
+            }
+            if (DEBUG>1) System.out.println("Event i = " + i);
+        }
+
+        if (modifiedEvents.size()>0) {
+            if (DEBUG>1) System.out.println("matched events = " + modifiedEvents.size());
+            /// something was merged so we need to compare again
+            ///iterate
+            if (DEBUG>1) System.out.println("ITERATING:"+modifiedEvents.size());
             chaining3(allCompositeEvents, conceptEventMap, modifiedEvents, phraseMatchThreshold, conceptMatchThreshold, roleNeededArrayList);
         }
         else {
@@ -1079,7 +1250,7 @@ public class MatchEventObjects {
                            int phraseMatchThreshold,
                            int conceptMatchThreshold,
                            ArrayList<String> roleNeededArrayList) {
-       // System.out.println("eventIds = " + eventIds.size());
+        if (DEBUG==1) System.out.println("eventIds = " + eventIds.size());
         ArrayList<String> modifiedEvents = new ArrayList<String>();
         ArrayList<String> processedEvents = new ArrayList<String>();
         for (int i = 0; i < eventIds.size(); i++) {
@@ -1097,7 +1268,7 @@ public class MatchEventObjects {
 
             /// We first match this event with all other events that have the same ILI references
             ArrayList<KafSense> iliReferences = getILIreferences(myCompositeEvent.getEvent());
-            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equals("ili")) {
+            if (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("ili")) {
                 if (LCS) {
                     ArrayList<KafSense> lcsReferences = getLcsILIreferences(myCompositeEvent.getEvent());
                     iliReferences.addAll(lcsReferences);
@@ -1106,31 +1277,39 @@ public class MatchEventObjects {
                     ArrayList<KafSense> hyperReferences = getHyperILIreferences(myCompositeEvent.getEvent());
                     iliReferences.addAll(hyperReferences);
                 }
-
+                if (DEBUG==1) {
+                    System.out.println("iliReferences = " + iliReferences.size());
+                }
                 if (iliReferences.size() > 0) {
+                    ArrayList<String> eventMapIds = new ArrayList<String>();
+
                     for (int j = 0; j < iliReferences.size(); j++) {
                         KafSense kafSense = iliReferences.get(j);
                         if (conceptEventMap.containsKey(kafSense.getSensecode())) {
                             /// we get the list of event Ids to which the sensecode gives access but take the difference with the list of eventIds already processed
-                            ArrayList<String> eventMapIds = Util.getDifference(conceptEventMap.get(kafSense.getSensecode()), processedEvents);
-                            ArrayList<String> swallowedEvents = matchAndSwallowEvents(myCompositeEvent,
-                                                        allCompositeEvents,
-                                                        eventMapIds,
-                                                        0,
-                                                        conceptMatchThreshold,
-                                                        phraseMatchThreshold,
-                                                        roleNeededArrayList);
-                            if (swallowedEvents.size()>0) {
-                                MATCH=true;
-                                for (int k = 0; k < swallowedEvents.size(); k++) {
-                                    String swallowedEventId = swallowedEvents.get(k);
-                                    processedEvents.add(swallowedEventId);
-                                }
+                            ArrayList<String> newEventMapIds = Util.getDifference(conceptEventMap.get(kafSense.getSensecode()), processedEvents);
+                            for (int k = 0; k < newEventMapIds.size(); k++) {
+                                String id = newEventMapIds.get(k);
+                                if (!eventMapIds.contains(id)) eventMapIds.add(id);
                             }
                         }
                         else {
                             ///we have a problem.....
                             System.out.println("No event in conceptEventMap for kafSense.getSensecode() = " + kafSense.getSensecode());
+                        }
+                    }
+                    ArrayList<String> swallowedEvents = matchAndSwallowEvents(myCompositeEvent,
+                            allCompositeEvents,
+                            eventMapIds,
+                            0,
+                            conceptMatchThreshold,
+                            phraseMatchThreshold,
+                            roleNeededArrayList);
+                    if (swallowedEvents.size()>0) {
+                        MATCH=true;
+                        for (int k = 0; k < swallowedEvents.size(); k++) {
+                            String swallowedEventId = swallowedEvents.get(k);
+                            processedEvents.add(swallowedEventId);
                         }
                     }
                 }
@@ -1141,38 +1320,41 @@ public class MatchEventObjects {
 
 
             //// We do the same for the phrase based index. Note that the processedEvents list grows
-            if (!MATCH && iliReferences.size()==0 && (MATCHTYPE.equals("ililemma") || MATCHTYPE.equals("lemma"))) {
+            if (!MATCH && iliReferences.size()==0 && (MATCHTYPE.equalsIgnoreCase("ililemma") || MATCHTYPE.equalsIgnoreCase("lemma"))) {
                 ArrayList<String> phrases = myCompositeEvent.getEvent().getUniquePhrases();
+                ArrayList<String> eventMapIds = new ArrayList<String>();
                 for (int j = 0; j < phrases.size(); j++) {
                     String phrase = phrases.get(j);
                     //System.out.println("phrase = " + phrase);
                     if (conceptEventMap.containsKey(phrase)) {
-                        ArrayList<String> phraseIds = conceptEventMap.get(phrase);
-                        ArrayList<String> eventMapIds = Util.getDifference(conceptEventMap.get(phrase), processedEvents);
-
-                        ArrayList<String> swallowedEvents = matchAndSwallowEvents(myCompositeEvent,
-                                allCompositeEvents,
-                                eventMapIds, 0,
-                                conceptMatchThreshold,
-                                phraseMatchThreshold,
-                                roleNeededArrayList);
-                        if (swallowedEvents.size()>0) {
-                            MATCH=true;
-                            for (int k = 0; k < swallowedEvents.size(); k++) {
-                                String swallowedEventId = swallowedEvents.get(k);
-                                processedEvents.add(swallowedEventId);
-                            }
+                        ArrayList<String> newEventMapIds = Util.getDifference(conceptEventMap.get(phrase), processedEvents);
+                        for (int k = 0; k < newEventMapIds.size(); k++) {
+                            String id = newEventMapIds.get(k);
+                            if (!eventMapIds.contains(id)) eventMapIds.add(id);
                         }
                     } else {
                         ///we have a problem.....
                         System.out.println("No event for phrase = " + phrase);
                     }
                 }
+                ArrayList<String> swallowedEvents = matchAndSwallowEvents(myCompositeEvent,
+                        allCompositeEvents,
+                        eventMapIds, 0,
+                        conceptMatchThreshold,
+                        phraseMatchThreshold,
+                        roleNeededArrayList);
+                if (swallowedEvents.size()>0) {
+                    MATCH=true;
+                    for (int k = 0; k < swallowedEvents.size(); k++) {
+                        String swallowedEventId = swallowedEvents.get(k);
+                        processedEvents.add(swallowedEventId);
+                    }
+                }
             }
 
             //////////////
             if (!MATCH) {
-                //if (DEBUG==2) System.out.println("NO MATCH");
+               // if (DEBUG==2) System.out.println("NO MATCH");
             }
             else {
                 if (!modifiedEvents.contains(myCompositeEvent.getEvent().getId())) modifiedEvents.add(myCompositeEvent.getEvent().getId());
@@ -1180,16 +1362,16 @@ public class MatchEventObjects {
                 if (CROSSDOC) {
                     if (!crossDocCorefSet.contains(myCompositeEvent.getEvent().getId())) crossDocCorefSet.add(myCompositeEvent.getEvent().getId());
                 }
-                //if (DEBUG==2) System.out.println("MATCH");
+              //  if (DEBUG==2) System.out.println("MATCH");
                 //System.out.println("mergedEventId = " + mergedEventId);
             }
         }
 
         if (modifiedEvents.size()>0) {
-            if (DEBUG==1) System.out.println("matched events = " + modifiedEvents.size());
+            if (DEBUG>0) System.out.println("matched events = " + modifiedEvents.size());
             /// something was merged so we need to compare again
             ///iterate
-            if (DEBUG==1) System.out.println("ITERATING:"+modifiedEvents.size());
+            if (DEBUG>0) System.out.println("ITERATING:"+modifiedEvents.size());
             chaining4(allCompositeEvents, conceptEventMap, modifiedEvents, phraseMatchThreshold, conceptMatchThreshold, roleNeededArrayList);
         }
         else {
