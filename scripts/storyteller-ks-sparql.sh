@@ -27,7 +27,7 @@ echo "CLIMAX THRESHOLD = $CLIMAX"
 echo "ACTION SCHEMA = $ACTIONSCHEMA"
 echo "Sparql = $SPARQL"
 
-java -Xmx4000m -cp $LIB/EventCoreference-v3.0-jar-with-dependencies.jar eu.newsreader.eventcoreference.storyline.TrigToJsonStoryPerspectives --climax-level $CLIMAX --story-limit 500 $MERGE --time $TIME --action-ont $ONT --action-sim $ONTGRAN --actor-cnt $ACTOR --actor-intersect $INTERSECT --topic-level $TOPIC --ft "../../data/poll.data"  --blacklist "../../data/blacklist.txt" --eurovoc "$RESOURCES/mapping_eurovoc_skos.csv.gz" --eurovoc-blacklist "../../data/eurovoc-blacklist.txt" --project wikinews --action-schema "$ACTIONSCHEMA" --ks "nwr/ks-node" --service https://knowledgestore2.fbk.eu  --ks "nwr/wikinews-new" --ks-user wikinews --ks-pass wikinews --sparql $SPARQL
+java -Xmx4000m -cp $LIB/EventCoreference-v3.1.2-jar-with-dependencies.jar eu.newsreader.eventcoreference.storyline.TrigToJsonStoryPerspectives --climax-level $CLIMAX --story-limit 500 $MERGE --time $TIME --action-ont $ONT --action-sim $ONTGRAN --actor-cnt $ACTOR --actor-intersect $INTERSECT --topic-level $TOPIC --ft "../../data/poll.data"  --blacklist "../../data/blacklist.txt" --eurovoc "$RESOURCES/mapping_eurovoc_skos.csv.gz" --eurovoc-blacklist "../../data/eurovoc-blacklist.txt" --project wikinews --action-schema "$ACTIONSCHEMA" --ks "nwr/ks-node" --service https://knowledgestore2.fbk.eu  --ks "nwr/wikinews-new" --ks-user wikinews --ks-pass wikinews --sparql $SPARQL
 
 # Command line example
 #./storyteller-ks-entity.sh --merge W ili 5 5 2 50 50 "fn;eso" "my sparql query goes here" 

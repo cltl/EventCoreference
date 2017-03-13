@@ -13,6 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by piek on 17/02/16.
  */
+@Deprecated
 public class JsonSerialization {
 
     static void writeJsonObjectArray (String pathToFolder, String project, ArrayList<JSONObject> objects) {
@@ -51,7 +52,7 @@ public class JsonSerialization {
         }
     }
 
-    static void writeJsonObjectArrayForQuery (String KS, String query,
+    static void writeJsonObjectArrayForQuery (String SERVICE, String KS, String query,
                                               String project,
                                               ArrayList<JSONObject> objects,
                                               int nEvents,
@@ -77,7 +78,7 @@ public class JsonSerialization {
                     MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, KS);
                 }
                 else {
-                    MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, KS, KSuser, KSpass);
+                    MentionResolver.createRawTextIndexFromMentions(objects, timeLineObject, SERVICE, KS, KSuser, KSpass);
                 }
                 timeLineObject.append("event_cnt", nEvents);
                 timeLineObject.append("story_cnt", nStories);
@@ -318,15 +319,14 @@ public class JsonSerialization {
 
                 for (int j = 0; j < objects.size(); j++) {
                     JSONObject jsonObject = objects.get(j);
-/*
-                    String instance = jsonObject.getString("instance");
-                    if (instance.equalsIgnoreCase("http://www.newsreader-project.eu/data/dasym/426985.naf.topic#ev8")) {
-                        JSONObject actors = (JSONObject) jsonObject.get("actors");
-                        System.out.println("actors = " + actors.toString()  );
+                    jsonObject.remove("classes");
+                    jsonObject.remove("topics");
+                    try {
+                        jsonObject.get("mentions");
+                        timeLineObject.append("events", jsonObject);
+                    } catch (JSONException e) {
+                      //  e.printStackTrace();
                     }
-*/
-
-                    timeLineObject.append("events", jsonObject);
                 }
 
                 for (int j = 0; j < mentions.size(); j++) {

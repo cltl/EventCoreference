@@ -314,7 +314,17 @@ public class SemObject implements Serializable {
     public void addNafMentions(ArrayList<NafMention> nafMentions) {
         for (int i = 0; i < nafMentions.size(); i++) {
             NafMention nafMention = nafMentions.get(i);
-            this.nafMentions.add(nafMention);
+            boolean NEW = true;
+            for (int j = 0; j < this.nafMentions.size(); j++) {
+                NafMention mention = this.nafMentions.get(j);
+                if (mention.sameMention(nafMention)) {
+                    NEW = false;
+                    break;
+                }
+            }
+            if (NEW) {
+                this.nafMentions.add(nafMention);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.util;
 
 import eu.kyotoproject.kaf.*;
+import eu.newsreader.eventcoreference.naf.NafSemParameters;
 import eu.newsreader.eventcoreference.objects.SemObject;
 
 import java.util.ArrayList;
@@ -172,12 +173,9 @@ public class FrameTypes {
         return eventType;
     }
 
-    static public String setEventTypeString(SemObject semEvent,
-                                          Vector<String> contextualVector,
-                                          Vector<String> sourceVector,
-                                          Vector<String> grammaticalVector) {
+    static public String setEventTypeString(SemObject semEvent, NafSemParameters nafSemParameters) {
         boolean DEBUG = false;
-        String eventType = getEventTypeString(semEvent.getConcepts(), contextualVector, sourceVector, grammaticalVector);
+        String eventType = getEventTypeString(semEvent.getConcepts(), nafSemParameters.getContextualVector(), nafSemParameters.getSourceVector(), nafSemParameters.getGrammaticalVector());
         if (DEBUG) System.out.println("final eventType = " + eventType);
         ArrayList<KafSense> typedConcepts = new ArrayList<KafSense>();
         KafSense typeSense = new KafSense();

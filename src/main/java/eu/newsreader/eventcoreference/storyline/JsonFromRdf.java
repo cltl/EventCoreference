@@ -20,6 +20,7 @@ import static eu.newsreader.eventcoreference.storyline.JsonStoryUtil.normalizeSo
 /**
  * Created by piek on 17/02/16.
  */
+@Deprecated
 public class JsonFromRdf {
 
     static public String getTimeAnchor (HashMap<String, ArrayList<Statement>> tripleMapInstances,
@@ -463,6 +464,32 @@ public class JsonFromRdf {
                             ns = "co";
                         }
 
+/*                        if (!tooTinyValue(getValue(value))) {
+                            ///// HACK to remove very short lower case actors
+                            if (!ns.isEmpty()) {
+                                value = ns + ":" + getValue(value);
+                            }
+
+                            value = value.replace("+", "_"); //// just to make it look nicer
+                            if (property.equalsIgnoreCase("pb")) {
+                                if (!pbActors.contains(value)) {
+                                    pbActors.add(value);
+                                }
+                            } else if (property.equalsIgnoreCase("fn")) {
+                                if (!fnActors.contains(value)) {
+                                    fnActors.add(value);
+                                }
+                            } else if (property.equalsIgnoreCase("eso")) {
+                                if (!esoActors.contains(value)) {
+                                    esoActors.add(value);
+                                }
+                            }
+                            Triple triple = new Triple();
+                            triple.setPredicate(predicate);
+                            triple.setObject(value);
+                            eventTriples.add(triple);
+                        }*/
+
                         if (!ns.isEmpty()) {
                             value = ns + ":" + getValue(value);
                         }
@@ -472,13 +499,11 @@ public class JsonFromRdf {
                             if (!pbActors.contains(value)) {
                                 pbActors.add(value);
                             }
-                        }
-                        else if (property.equalsIgnoreCase("fn")) {
+                        } else if (property.equalsIgnoreCase("fn")) {
                             if (!fnActors.contains(value)) {
                                 fnActors.add(value);
                             }
-                        }
-                        else if (property.equalsIgnoreCase("eso")) {
+                        } else if (property.equalsIgnoreCase("eso")) {
                             if (!esoActors.contains(value)) {
                                 esoActors.add(value);
                             }
@@ -737,11 +762,11 @@ public class JsonFromRdf {
 
     static JSONObject getMentionsJSONObjectFromInstanceStatement (ArrayList<Statement> statements) throws JSONException {
         JSONObject jsonClassesObject = new JSONObject();
-
+        String predicate = "";
         for (int i = 0; i < statements.size(); i++) {
             Statement statement = statements.get(i);
 
-            String predicate = statement.getPredicate().getURI();
+            predicate = statement.getPredicate().getURI();
             if (predicate.endsWith("#denotedBy")) {
                 String object = "";
                 if (statement.getObject().isLiteral()) {
@@ -752,6 +777,13 @@ public class JsonFromRdf {
                 jsonClassesObject.append("mentions", getMentionObjectFromMentionURI(object));
             }
         }
+        /*try {
+            jsonClassesObject.get("mentions");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.out.println("No mentions for predicate = "+predicate);
+
+        }*/
         return jsonClassesObject;
     }
 
@@ -1185,6 +1217,12 @@ static JSONObject getTopicsJSONObjectFromInstanceStatement (ArrayList<Statement>
         else if (value.indexOf("/non-entities/") > -1) {
             property = "ne";
         }
+        else if (value.indexOf("/eurovoc.europa.eu/") > -1) {
+            property = "eurovoc";
+        }
+        else {
+           // System.out.println("value = " + value);
+        }
         return property;
     }
 
@@ -1202,6 +1240,12 @@ static JSONObject getTopicsJSONObjectFromInstanceStatement (ArrayList<Statement>
                 return predicate;
             }
         }
+    }
+
+    static public boolean tooTinyValue (String predicate) {
+        if (predicate.length()>3) return true;
+        else if (!predicate.toLowerCase().equals(predicate)) return true;
+        return false;
     }
 
     static public String getValueWithoutFrame (String predicate) {

@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created by filipilievski on 2/16/16.
@@ -72,16 +73,22 @@ public class GetNAF {
 
     public static ArrayList<KafWordForm> getNafWordFormsFile(String stringUrl) throws Exception {
         //stringUrl = "https://knowledgestore2.fbk.eu/nwr/cars3/files?id=%3Chttp%3A%2F%2Fwww.newsreader-project.eu%2Fdata%2Fcars%2F2004%2F10%2F18%2F4DKT-30W0-00S0-W39B.xml.naf%3E";
+        KafSaxParser kafSaxParser = new KafSaxParser();
 
         URL url = new URL(stringUrl);
         HttpURLConnection connection =
                 (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
       // connection.setRequestProperty("Accept", "application/xml");
-        connection.setRequestProperty("Accept", "application/octet-stream");
+/*        connection.setRequestProperty("Accept", "application/octet-stream");
         InputStream xml = connection.getInputStream();
-        KafSaxParser kafSaxParser = new KafSaxParser();
-        kafSaxParser.parseFile(xml);
+        kafSaxParser.parseFile(xml);*/
+
+        connection.setRequestProperty("Accept-Encoding", "gzip");  /// gets gzipped NAF
+        InputStream xml = connection.getInputStream();
+        InputStream gzipStream = new GZIPInputStream(xml);
+        kafSaxParser.parseFile(gzipStream);
+        System.out.println(gzipStream);
         return kafSaxParser.kafWordFormList;
     }
 

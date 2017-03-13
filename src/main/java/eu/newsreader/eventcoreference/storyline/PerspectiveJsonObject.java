@@ -8,6 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by piek on 14/04/16.
  */
+@Deprecated
 public class PerspectiveJsonObject {
 
     private String event = "";
@@ -72,6 +73,10 @@ public class PerspectiveJsonObject {
     }
 
     public String getAuthor() {
+        if (!author.isEmpty()) {
+            int idx = author.lastIndexOf("/");
+            if (idx > -1) { author =  author.substring(idx + 1); }
+        }
         return author;
     }
 
@@ -80,6 +85,10 @@ public class PerspectiveJsonObject {
     }
 
     public String getCite() {
+        if (!cite.isEmpty()) {
+            int idx = cite.lastIndexOf("/");
+            if (idx > -1) { cite = cite.substring(idx + 1); }
+        }
         return cite;
     }
 
@@ -198,6 +207,7 @@ public class PerspectiveJsonObject {
         }
         return object;
     }
+
     public void setDefaultPerspectiveValue () {
         attribution.add("certain");
         attribution.add("confirm");
@@ -208,7 +218,11 @@ public class PerspectiveJsonObject {
         ArrayList<String> normValues = new ArrayList<String>();
         String normValue = "";
 
-        // if (!value.equals("u_u_u") && !value.equals("CERTAIN_NON_FUTURE_POS")) {
+/*
+         if (value.equals("u_u_u") || value.equals("CERTAIN_NON_FUTURE_POS")) {
+             return normValues;
+         }
+*/
 
         //System.out.println("value = " + value);
         if (value.toLowerCase().equals("u_u_u") || (value.equals("u_u_u_u"))) {
@@ -316,4 +330,19 @@ public class PerspectiveJsonObject {
      62878       <factVal resource="nwr:attributionTense" value="NON_FUTURE"/>
      74938       <factVal resource="nwr:attributionTense" value="UNDERSPECIFIED"/>
      */
+
+
+    static public ArrayList<PerspectiveJsonObject> keepNonDefaultPerspectives (ArrayList<PerspectiveJsonObject> perspectiveJsonObjects) {
+        ArrayList<PerspectiveJsonObject> newObjects = new ArrayList<PerspectiveJsonObject>();
+        for (int i = 0; i < perspectiveJsonObjects.size(); i++) {
+            PerspectiveJsonObject perspectiveJsonObject = perspectiveJsonObjects.get(i);
+            if (perspectiveJsonObject.getAttribution().contains("uncertain") ||
+                perspectiveJsonObject.getAttribution().contains("negative") ||
+                perspectiveJsonObject.getAttribution().contains("future") ||
+                perspectiveJsonObject.getAttribution().contains("deny")) {
+                newObjects.add(perspectiveJsonObject);
+            }
+        }
+        return newObjects;
+    }
 }

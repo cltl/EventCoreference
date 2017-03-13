@@ -4,33 +4,36 @@ import eu.newsreader.eventcoreference.input.EsoReader;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.TreeStaticHtml;
 import org.apache.tools.bzip2.CBZip2InputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
+import static eu.newsreader.eventcoreference.output.DataSetEntityHierarchy.cntPhrases;
+import static eu.newsreader.eventcoreference.output.DataSetEntityHierarchy.totalPhrases;
+
 /**
  * Created by piek on 15/04/16.
  */
+@Deprecated
 public class DataSetEventHierarchy {
 
 
 
     static public void main (String[] args) {
         String esoPath = "";
-        String cntPath = "";
         String eventPath = "";
         String title = "";
+        String querypath = "";
         esoPath = "/Users/piek/Desktop/NWR/eso/ESO.v2/ESO_V2_Final.owl";
-
-        cntPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.eso.xls";
         eventPath = "/Users/piek/Desktop/NWR-INC/dasym/stats/dump.topic.trig.event.xls";
         title = "PostNL ESO ontology events";
 
-        cntPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.eso.xls";
-        eventPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.event.xls";
-        title = "Brexit ESO ontology events";
+       // eventPath = "/Users/piek/Desktop/NWR-INC/financialtimes/stats/brexit4-ne.event.xls";
+       // title = "Brexit ESO ontology events";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--eso") && args.length>(i+1)) {
@@ -39,50 +42,53 @@ public class DataSetEventHierarchy {
             else if (arg.equals("--event") && args.length>(i+1)) {
                 eventPath = args[i+1];
             }
-            else if (arg.equals("--cnt") && args.length>(i+1)) {
-                cntPath = args[i+1];
-            }
             else if (arg.equals("--title") && args.length>(i+1)) {
                 title = args[i+1];
             }
+            else if (arg.equals("--path") && args.length>(i+1)) {
+                querypath = args[i+1];
+            }
         }
+        System.out.println("esoPath = " + esoPath);
+        System.out.println("counts for eventPath = " + eventPath);
+        System.out.println("title = " + title);
         EsoReader esoReader = new EsoReader();
         esoReader.parseFile(esoPath);
-        HashMap<String, Integer> cnt = readEventCountTsv(cntPath, "eso");
         HashMap<String, ArrayList<PhraseCount>> cntPredicates = readEventCountTypeTsv (eventPath, "eso");
+        HashMap<String, ArrayList<String>> cntIli = readTypeEventCountTsv (eventPath, "ili");
+        HashMap<String, Integer> cnt = cntPhrases(cntPredicates);
         System.out.println("cntPredicates.size() = " + cntPredicates.size());
+        System.out.println("Cumulating scores");
         ArrayList<String> tops = esoReader.simpleTaxonomy.getTops();
         esoReader.simpleTaxonomy.cumulateScores("eso:", tops, cnt);
        // int maxDepth = esoReader.simpleTaxonomy.getMaxDepth(tops, 1);
-        String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
-        str += "<div id=\"container\">\n";
-        //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
-        str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt, cntPredicates);
-        str += "</div>\n";
-        str += TreeStaticHtml.bodyEnd;
-        //System.out.println(str);
-        //esoReader.printTree(tops, 0, cnt);
+
 
         try {
-            OutputStream fos = new FileOutputStream(cntPath+".words.html");
+            OutputStream fos = new FileOutputStream(eventPath+".words.html");
+            int nPhrases = totalPhrases(cntPredicates);
+            //String scripts = TreeStaticHtml.makeScripts();
+            String str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.makeBodyStart(title,querypath, 0, 0, 0, 0);
+            str += "<div id=\"Events\" class=\"tabcontent\">\n";
+            str += "<div id=\"container\">\n";
+            fos.write(str.getBytes());
+            //str += esoReader.htmlTableTree("eso:",tops, 1, cnt, maxDepth);
+            esoReader.simpleTaxonomy.htmlTableTree(fos, "event", "eso:",tops, 1, cnt, cntPredicates, cntIli);
+            str = "</div></div>\n";
+            str += TreeStaticHtml.formEnd;
+            str += TreeStaticHtml.bodyEnd;
             fos.write(str.getBytes());
             fos.close();
+            OutputStream jsonOut = new FileOutputStream(eventPath+".words.json");
+            JSONObject tree = new JSONObject();
+            esoReader.simpleTaxonomy.jsonTree(tree, "event", "eso:",tops, 1, cnt, cntPredicates, cntIli);
+            //jsonOut.write(tree.toString().getBytes());
+
+            jsonOut.write(tree.toString(0).getBytes());
+            jsonOut.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        str = TreeStaticHtml.makeHeader(title)+ TreeStaticHtml.bodyStart;
-        str += "<div id=\"container\">\n";
-        str += esoReader.simpleTaxonomy.htmlTableTree("eso:",tops, 1, cnt);
-        str += "</div>\n";
-        str += TreeStaticHtml.bodyEnd;
-        //System.out.println(str);
-        //esoReader.printTree(tops, 0, cnt);
-
-        try {
-            OutputStream fos = new FileOutputStream(cntPath+".overview.html");
-            fos.write(str.getBytes());
-            fos.close();
-        } catch (IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -203,8 +209,63 @@ public class DataSetEventHierarchy {
                                         map.put(field, phrases);
                                     }
                                 }
-
                             }
+                        }
+
+                    }
+                }
+            }
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
+        return map;
+    }
+
+    static public HashMap<String, ArrayList<String>> readTypeEventCountTsv (String filePath, String prefix) {
+        HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+        try {
+            InputStreamReader isr = null;
+            if (filePath.toLowerCase().endsWith(".gz")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (filePath.toLowerCase().endsWith(".bz2")) {
+                try {
+                    InputStream fileStream = new FileInputStream(filePath);
+                    InputStream gzipStream = new CBZip2InputStream(fileStream);
+                    isr = new InputStreamReader(gzipStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                FileInputStream fis = new FileInputStream(filePath);
+                isr = new InputStreamReader(fis);
+            }
+            if (isr!=null) {
+                BufferedReader in = new BufferedReader(isr);
+                String inputLine;
+                while (in.ready() && (inputLine = in.readLine()) != null) {
+                    // System.out.println(inputLine);
+                    inputLine = inputLine.trim();
+                    if (inputLine.trim().length() > 0) {
+                        String[] fields = inputLine.split("\t");
+                        if (fields.length > 2) {
+                            String f1 = fields[0];
+                            ArrayList<String> types = new ArrayList<String>();
+                            for (int i = 2; i < fields.length; i++) {
+                                String field = fields[i];
+                                if (field.startsWith(prefix) && !types.contains(field)) {
+                                    types.add(field);
+                                }
+                            }
+                           // System.out.println("types.toString() = " + types.toString());
+                            map.put(f1, types);
                         }
 
                     }

@@ -8,6 +8,7 @@ import eu.newsreader.eventcoreference.input.TrigTripleData;
 import eu.newsreader.eventcoreference.naf.CreateMicrostory;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.util.EuroVoc;
+import eu.newsreader.eventcoreference.util.Util;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ import static eu.newsreader.eventcoreference.input.TrigKSTripleReader.makeTriple
 /**
  * Created by piek on 17/02/16.
  */
+@Deprecated
 public class JsonStoryUtil {
 
     static public int nMergedEvents = 0;
@@ -160,11 +162,18 @@ public class JsonStoryUtil {
                 }
             }
         }
-        System.out.println("Nr. of perspective generatedBy Events skipped = " + nSkip);
+       // System.out.println("Nr. of perspective generatedBy Events skipped = " + nSkip);
         return jsonObjectArrayList;
     }
 
-
+    /**
+     * Removes actors that are below the frequency threshold
+     * @param events
+     * @param entityFilter
+     * @param actorThreshold
+     * @return
+     * @throws JSONException
+     */
     static ArrayList<JSONObject> filterEventsForActors(ArrayList<JSONObject> events,
                                                        String entityFilter,
                                                        int actorThreshold) throws JSONException {
@@ -204,6 +213,7 @@ public class JsonStoryUtil {
                                 }
                             }
                             else {
+                                /// removes too short words
                                 oActorObject.remove(oKey);
                             }
                         }
@@ -230,6 +240,40 @@ public class JsonStoryUtil {
             }
         }
         return jsonObjectArrayList;
+    }
+
+    static void removeTinyActors(ArrayList<JSONObject> events) throws JSONException {
+        /*
+        "actors":{"pb/A0":["http://www.newsreader-project.eu/data/timeline/non-entities/to_a_single_defense_contractor"]}
+         */
+        for (int i = 0; i < events.size(); i++) {
+            JSONObject oEvent = events.get(i);
+            JSONObject oActorObject = null;
+            try {
+                oActorObject = oEvent.getJSONObject("actors");
+                Iterator oKeys = oActorObject.sortedKeys();
+                while (oKeys.hasNext()) {
+                    String oKey = oKeys.next().toString();
+                    try {
+                        JSONArray actors = oActorObject.getJSONArray(oKey);
+                        JSONArray filteredActors = new JSONArray();
+                        for (int j = 0; j < actors.length(); j++) {
+                            String actor = actors.getString(j);
+                            actor = actor.substring(actor.lastIndexOf("/") + 1);
+                            if ((actor.length()<8) && actor.toLowerCase().equals(actor)) {
+                                /// removes too short words
+                                oActorObject.remove(oKey);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                oEvent.put("actors", oActorObject);
+            } catch (JSONException e) {
+                // e.printStackTrace();
+            }
+        }
     }
 
     static ArrayList<JSONObject> filterEventsForBlackList(ArrayList<JSONObject> events, ArrayList<String> blacklist) throws JSONException {
@@ -287,7 +331,7 @@ public class JsonStoryUtil {
             JSONObject jsonObject = sortedObjects.next();
             selectedEvents.add(jsonObject);
         }
-        System.out.println("Events above climax threshold = " + climaxObjects.size());
+      //  System.out.println("Events above climax threshold = " + climaxObjects.size());
         sortedObjects = climaxObjects.iterator();
         ArrayList<String> coveredEvents = new ArrayList<String>();
         int eventCounter = 0;
@@ -358,17 +402,17 @@ public class JsonStoryUtil {
                     if (topicThreshold>0) {
                         bridgedEvents = intersectEventObjects(coevents, topicevents);
                         if (bridgedEvents.size() > 5) {
-                            System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
+                           // System.out.println("intersection co-participating events and topical events = " + bridgedEvents.size());
                             int prop = (100*coveredEvents.size())/climaxObjects.size();
-                            System.out.println("covered Events = " + prop +"%");
+                          //  System.out.println("covered Events = " + prop +"%");
                         }
                     }
                     else {
                         bridgedEvents = coevents;
                         if (bridgedEvents.size() > 5) {
-                            System.out.println("intersection co-participating events = " + bridgedEvents.size());
+                          //  System.out.println("intersection co-participating events = " + bridgedEvents.size());
                             int prop = (100*coveredEvents.size())/climaxObjects.size();
-                            System.out.println("covered Events = " + prop +"%");
+                         //   System.out.println("covered Events = " + prop +"%");
                         }
                     }
 
@@ -428,7 +472,7 @@ public class JsonStoryUtil {
         } // end of while objects in sorted climaxObjects
 
         //// now we handle the singleton events
- /*       storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
+        storyObjects = new ArrayList<JSONObject>(); /// initialise the ArrayList for the story events
         String group = "001:unrelated events";
         String groupName = "unrelated events";
         String groupScore = "001";
@@ -446,14 +490,14 @@ public class JsonStoryUtil {
                     2,
                     climaxThreshold);
         }
-        System.out.println("groupedObjects.size() = " + groupedObjects.size());
-        System.out.println("singleObjects.size() = " + storyObjects.size());
+      //  System.out.println("groupedObjects.size() = " + groupedObjects.size());
+      //  System.out.println("singleObjects.size() = " + storyObjects.size());
         //// we add the singleton events to the other grouped events
         for (int i = 0; i < storyObjects.size(); i++) {
             JSONObject object = storyObjects.get(i);
             groupedObjects.add(object);
-        }*/
-        System.out.println("eventCounter = " + eventCounter);
+        }
+       // System.out.println("eventCounter = " + eventCounter);
         return groupedObjects;
     }
 
@@ -808,7 +852,7 @@ public class JsonStoryUtil {
                 JSONArray mentions = jsonObject.getJSONArray("mentions");
                 nMentions+=mentions.length();
             } catch (JSONException e) {
-                e.printStackTrace();
+              //  e.printStackTrace();
             }
         }
         return nMentions;
@@ -1016,11 +1060,13 @@ public class JsonStoryUtil {
                         ArrayList<String> givenTopics = storyTopicMap.get(groupName);
                         for (int j = 0; j < topics.length(); j++) {
                             String topic = topics.get(j).toString();
-                            if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
-                                count(totalTopicCount, topic);
-                                givenTopics.add(topic);
-                            } else {
-                                System.out.println("blacklist topic = " + topic);
+                            if (!eurovocBlackList.startsWith(topic)) {
+                                if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
+                                    count(totalTopicCount, topic);
+                                    givenTopics.add(topic);
+                                } else {
+                                 //   System.out.println("blacklist topic = " + topic);
+                                }
                             }
                         }
                         storyTopicMap.put(groupName, givenTopics);
@@ -1028,15 +1074,18 @@ public class JsonStoryUtil {
                         ArrayList<String> givenTopics = new ArrayList<String>();
                         for (int j = 0; j < topics.length(); j++) {
                             String topic = topics.get(j).toString();
-                            if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
-                                count(totalTopicCount, topic);
-                                givenTopics.add(topic);
-                            } else {
-                                System.out.println("blacklist topic = " + topic);
+                            if (!eurovocBlackList.startsWith(topic)) {
+                                if (!eurovocBlackList.uriLabelMap.containsKey(topic)) {
+                                    count(totalTopicCount, topic);
+                                    givenTopics.add(topic);
+                                } else {
+                                 //   System.out.println("blacklist topic = " + topic);
+                                }
                             }
                         }
                         storyTopicMap.put(groupName, givenTopics);
                     }
+                   // System.out.println("groupName = " + groupName);
                 }
             } catch (JSONException e) {
               //  e.printStackTrace();
@@ -1117,7 +1166,7 @@ public class JsonStoryUtil {
                     }
                 }
                 else {
-                    System.out.println("groupName did not got a topic to rename = " + groupName);
+                 //   System.out.println("groupName did not got a topic to rename = " + groupName);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1827,6 +1876,7 @@ public class JsonStoryUtil {
         PerspectiveJsonObject perspectiveJsonObject = new PerspectiveJsonObject();
         String author = "";
         String cite = "";
+       // System.out.println("Start");
         ArrayList<String> perspectives = new ArrayList<String>();
         if (trigTripleData.tripleMapGrasp.containsKey(mentionUri)) {
             ArrayList<Statement> perspectiveTriples = trigTripleData.tripleMapGrasp.get(mentionUri);
@@ -1855,7 +1905,7 @@ public class JsonStoryUtil {
                                         if (idx > -1) {
                                             author = author.substring(idx + 1);
                                         }
-                                        //  System.out.println("author source = " + source);
+                                     //   System.out.println("author source = " + author);
                                     }
                                 } else {
                                     //// it is not the document so a cited source
@@ -1910,6 +1960,7 @@ public class JsonStoryUtil {
             }
 
             if (perspectives.size() > 0) {
+              //  System.out.println("final author = " + author);
                 perspectiveJsonObject = new PerspectiveJsonObject(perspectives, author, cite, "", "", "", mentionUri, null);
             }
         }
@@ -1956,6 +2007,77 @@ public class JsonStoryUtil {
         return realEvents;
     }
 
+    static public void addPerspectiveToMention (JSONObject mentionObject, PerspectiveJsonObject perspectiveJsonObject) throws JSONException {
+        if (perspectiveJsonObject!=null) {
+            String source = perspectiveJsonObject.getCite();
+            if (!source.isEmpty()) {
+                if (source.toLowerCase().equals(source)) {
+                    //// no uppercase characters
+                    source = "cite:someone";
+                }
+                else {
+                    source = JsonStoryUtil.normalizeSourceValue(source);
+                    source = JsonStoryUtil.cleanCite(source);
+                    source = "cite:"+source;
+                }
+                JSONObject perspective = new JSONObject();
+                JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                perspective.put("attribution", attribution);
+                perspective.put("source", source);
+                //System.out.println("source = " + source);
+                mentionObject.append("perspective", perspective);
+            }
+            else {
+                source = perspectiveJsonObject.getAuthor();
+                if (!source.isEmpty()) {
+                    ArrayList<String> authorAnd = Util.splitSubstring(source, "+and+");
+                    for (int l = 0; l < authorAnd.size(); l++) {
+                        String subauthor = authorAnd.get(l);
+                        ArrayList<String> subauthorfields = Util.splitSubstring(subauthor, "%2C+");
+                        for (int x = 0; x < subauthorfields.size(); x++) {
+                            String subfield = subauthorfields.get(x);
+                            // System.out.println("subfield = " + subfield);
+                            //// Financial Times hack
+/*                            if (!subfield.toLowerCase().endsWith("correspondent")
+                                    && !subfield.toLowerCase().endsWith("reporter")
+                                    && !subfield.toLowerCase().endsWith("editor")
+                                    && !subfield.toLowerCase().startsWith("in+")
+                                    ) {
+                                String author = JsonStoryUtil.normalizeSourceValue(subfield);
+                                author = "author:" + JsonStoryUtil.cleanAuthor(author);
+                                JSONObject perspective = new JSONObject();
+                                JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                                perspective.put("attribution", attribution);
+                                perspective.put("source", author);
+                                //  System.out.println("source = " + source);
+                                mentionObject.append("perspective", perspective);
+                            }*/
+                            String author = JsonStoryUtil.normalizeSourceValue(subfield);
+                            author = "author:" + JsonStoryUtil.cleanAuthor(author);
+                            JSONObject perspective = new JSONObject();
+                            JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                            perspective.put("attribution", attribution);
+                            perspective.put("source", author);
+                            //  System.out.println("source = " + source);
+                            mentionObject.append("perspective", perspective);
+                        }
+                    }
+                }
+                else {
+                    //// no cited source and no author source
+                    String author =  "author:" + "unknown";
+                    JSONObject perspective = new JSONObject();
+                    JSONObject attribution = perspectiveJsonObject.getJSONObject();
+                    perspective.put("attribution", attribution);
+                    perspective.put("source", author);
+                    //  System.out.println("source = " + source);
+                    mentionObject.append("perspective", perspective);
+
+                }
+            }
+        }
+    }
+
     static void integratePerspectivesInEventObjects (TrigTripleData trigTripleData, ArrayList<JSONObject> targetEvents, String meta) {
         for (int i = 0; i < targetEvents.size(); i++) {
             JSONObject mEvent = targetEvents.get(i);
@@ -1973,55 +2095,20 @@ public class JsonStoryUtil {
                         String mention = JsonStoryUtil.getStringValueforMention(uriString, offsetArray);
                         PerspectiveJsonObject perspectiveJsonObject = getPerspectiveObjectForEvent(trigTripleData, mention, meta);
 
-                        //System.out.println("mention event = " + mention);
-                        if (perspectiveJsonObject!=null) {
-                            String source = JsonStoryUtil.normalizeSourceValue(perspectiveJsonObject.getSource());
-                            if (!source.isEmpty()) {
-                                if (source.indexOf("_and_")>-1) {
-                                    ArrayList<String> authors = JsonStoryUtil.splitAuthors(source);
-                                    for (int j = 0; j < authors.size(); j++) {
-                                        String author = authors.get(j);
-                                        JSONObject perspective = new JSONObject();
-                                        JSONObject attribution = perspectiveJsonObject.getJSONObject();
-/*                                        for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
-                                            String a = perspectiveJsonObject.getAttribution().get(n);
-                                            //  System.out.println("a = " + a);
-                                            perspective.append("attribution", a);
-                                        }*/
-                                        perspective.put("attribution", attribution);
-                                        perspective.put("source", author);
-                                        //  System.out.println("source = " + source);
-                                        mentionObject.append("perspective", perspective);
-
-                                    }
-                                }
-                                else {
-                                    JSONObject perspective = new JSONObject();
-                                    JSONObject attribution = perspectiveJsonObject.getJSONObject();
-                                    perspective.put("attribution", attribution);
-
-/*                                    for (int n = 0; n < perspectiveJsonObject.getAttribution().size(); n++) {
-                                        String a = perspectiveJsonObject.getAttribution().get(n);
-                                        //  System.out.println("a = " + a);
-                                        perspective.append("attribution", a);
-                                    }*/
-
-                                    if (source.startsWith("author:")) {
-                                        source = cleanAuthor(source);
-                                        perspective.put("source", source);
-                                        //  System.out.println("source = " + source);
-                                        mentionObject.append("perspective", perspective);
-                                    }
-                                    else {
-                                        ///citation
-                                        perspective.put("source", source);
-                                       // System.out.println("source = " + source);
-                                        mentionObject.append("perspective", perspective);
-                                    }
-                                }
-                            }
+                        if (perspectiveJsonObject != null) {
+                            addPerspectiveToMention(mentionObject, perspectiveJsonObject);
+                        } else {
 
                         }
+
+/*                        if (perspectiveJsonObject.getAttribution().size()>0) {
+                            //System.out.println("mention event = " + mention);
+                            if (perspectiveJsonObject != null) {
+                                addPerspectiveToMention(mentionObject, perspectiveJsonObject);
+                            } else {
+
+                            }
+                        }*/
                     } catch (JSONException e) {
                         // e.printStackTrace();
                     }
@@ -2361,17 +2448,37 @@ public class JsonStoryUtil {
         return authors;
     }
 
+
     public static String cleanAuthor(String author) {
         String cleanAuthor = author;
         int idx = author.indexOf("_in_");
         if (idx>-1) {
             cleanAuthor = author.substring(0, idx);
         }
+        idx = cleanAuthor.indexOf("_at_");
+        if (idx>-1) {
+            cleanAuthor = cleanAuthor.substring(0, idx);
+        }
         idx = cleanAuthor.indexOf("?_");
         if (idx>-1) {
             cleanAuthor = cleanAuthor.substring(0, idx);
         }
         return cleanAuthor;
+    }
+
+    public static String cleanCite(String cite) {
+        String cleanCite = cite;
+        if (cite.startsWith("Mrs")) {
+            cleanCite = cite.substring(3);
+        }
+        else if (cite.startsWith("Mr")) {
+            cleanCite = cite.substring(2);
+        }
+        else if (cite.startsWith("Ms")) {
+            cleanCite = cite.substring(2);
+        }
+
+        return cleanCite;
     }
 
     static public String normalizeSourceValue (String value) {
@@ -2389,7 +2496,10 @@ public class JsonStoryUtil {
         if (idx>-1) {
             normValue = normValue.substring(0, idx).trim();
         }
-        if (normValue.startsWith("By_")) {
+        if (normValue.toLowerCase().startsWith("review_by_")) {
+            normValue = normValue.substring(10);
+        }
+        if (normValue.toLowerCase().startsWith("by_")) {
             normValue = normValue.substring(3);
         }
         idx = normValue.indexOf(":By_");

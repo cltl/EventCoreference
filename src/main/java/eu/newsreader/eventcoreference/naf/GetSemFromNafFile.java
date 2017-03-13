@@ -5,13 +5,11 @@ import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.FrameTypes;
-import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.atlas.logging.Log;
 import org.apache.tools.bzip2.CBZip2InputStream;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -23,7 +21,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class GetSemFromNafFile {
 
-    static public Vector<String> sourceVector = null;
+/*    static public Vector<String> sourceVector = null;
     static public Vector<String> grammaticalVector = null;
     static public Vector<String> contextualVector = null;
     static public int TIMEEXPRESSIONMAX = 0;
@@ -36,6 +34,10 @@ public class GetSemFromNafFile {
     static boolean DOCTIME = true;
     static boolean CONTEXTTIME = true;
 
+    static boolean NOMCOREF = true;
+    static boolean EVENTCOREF = true;*/
+
+
 
     static final String USAGE = "This program processes a single NAF file and generates SEM RDF-TRiG results" +
             "The program has the following arguments:\n" +
@@ -47,24 +49,23 @@ public class GetSemFromNafFile {
             "--grammatical-frames   <path>   <Path to a file with the FrameNet frames considered grammatical>" +
             "--time-max   <string int>   <Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5" +
             "--ili                  <(OPTIONAL) Path to ILI.ttl file to convert wordnet-synsets identifiers to ILI identifiers>\n" +
-            "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
-            "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n"
+            "--ili-uri              <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
+            "--verbose              <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n" +
+            "--no-nomcoref          <(OPTIONAL) nominal coreference layer is ignored\n" +
+            "--no-eventcoref          <(OPTIONAL) event coreference layer is ignored\n"
     ;
 
     static public void main(String[] args) {
         Log.setLog4j("jena-log4j.properties");
+        //// TAKE THIS OUT FOR RUNNING WITH REAL SETTINGS!!!!!!
+        boolean TEST = false;
         String pathToNafFile = "";
-        //"/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-naf2sem_v4_2015/test/4KJ5-2R90-TX51-F3C4.xml.1a0sdakjs.xml";
-        ALL = true;
-        pathToNafFile = "/Users/piek/Desktop/NWR/Wikinews/Cross-lingual-pip3/spanish-wikinews/corpus_apple/58772_Apple_Inc._doubled_its_profits.xml.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.gold/29/29_10ecb.xml.naf.fix.coref";
-        pathToNafFile = "/Users/piek/Desktop/nl.naf.xml";
-        pathToNafFile = "/Users/piek/Desktop/short_text.out.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR/benchmark/ecb/nwr/data/ecb_pip.v6/45/45_1ecb.xml.naf.fix.xml.newpred.coref";
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/100095.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dump.naf.sample/118719.naf";
-        pathToNafFile = "/Users/piek/Desktop/NWR-INC/financialtimes/data/brexit6-SAMPLE/0a22a1be-f246-11e3-ac7a-00144feabdc0.naf";
-        //pathToNafFile = "/Users/piek/Desktop/ISO-WG5/more-than-two_sentences.out.naf.xml";
+        pathToNafFile = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample/425051_relink_dominant.naf";
+        pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/16#New_York_Magazine#2015-03-02.naf";
+        pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#ANSA.it#20161010T000000.naf";
+        pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/8#Centers_for_Disease_Control_and_Prevention#2015-01-23.naf";
+        //pathToNafFile = "/Users/piek/Desktop/1996_-_Wikipedia.0.naf";
+        //pathToNafFile = "/Users/piek/Desktop/Vaccins/naf/9##20161111T000000.naf";
         String sourceFrameFile = "";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source-nl.txt";
         sourceFrameFile = "/Code/vu/newsreader/vua-resources/source.txt";
@@ -73,77 +74,24 @@ public class GetSemFromNafFile {
         grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical-nl.txt";
         grammaticalFrameFile = "/Code/vu/newsreader/vua-resources/grammatical.txt";
         String project = "";
+        project = "test";
+        String eurovoctestfile = "/Code/vu/newsreader/vua-resources/mapping_eurovoc_skos.label.concept.gz";
+        GetSemFromNaf.initEurovoc(eurovoctestfile, "en");
+        NafSemParameters nafSemParameters = new NafSemParameters(args);
+        /// Put here settings for testing
+        if (TEST) {
+            System.out.println("WARNING!!!!!!!!!!!!!!!");
+            System.out.println("RUNNING IN TEST MODE! RECOMPILE WITHOUT TEST SETTINGS!!!!");
+            nafSemParameters.setPERSPECTIVE(true);
+            nafSemParameters.setPROJECT("test");
+            nafSemParameters.readSourceVector(sourceFrameFile);
+        }
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-file") && args.length > (i + 1)) {
                 pathToNafFile = args[i + 1];
-            } else if (arg.equals("--project") && args.length > (i + 1)) {
-                project = args[i + 1];
-            }
-            else if (arg.equals("--non-entities")) {
-                NONENTITIES = true;
-            }
-            else if (arg.equals("--verbose")) {
-                VERBOSE = true;
-            }
-            else if (arg.equals("--all")) {
-                ALL = true;
-            }
-
-            else if (arg.equals("--perspective")) {
-                PERSPECTIVE = true;
-            }
-            else if (arg.equals("--ili") && args.length > (i + 1)) {
-                String pathToILIFile = args[i+1];
-                JenaSerialization.initILI(pathToILIFile);
-            }
-            else if (arg.equals("--eurovoc-en") && args.length > (i + 1)) {
-                String pathToEurovocFile = args[i+1];
-                GetSemFromNaf.initEurovoc(pathToEurovocFile, "en");
-            }
-            else if (arg.equals("--eurovoc-nl") && args.length > (i + 1)) {
-                String pathToEurovocFile = args[i+1];
-                GetSemFromNaf.initEurovoc(pathToEurovocFile, "nl");
-            }
-            else if (arg.equals("--eurovoc-es") && args.length > (i + 1)) {
-                String pathToEurovocFile = args[i+1];
-                GetSemFromNaf.initEurovoc(pathToEurovocFile, "es");
-            }
-            else if (arg.equals("--eurovoc-it") && args.length > (i + 1)) {
-                String pathToEurovocFile = args[i+1];
-                GetSemFromNaf.initEurovoc(pathToEurovocFile, "it");
-            }
-            else if (arg.equals("--ili-uri")) {
-                ILIURI = true;
-            }
-
-            else if (arg.equals("--no-doc-time")) {
-                DOCTIME = false;
-            }
-            else if (arg.equals("--no-context-time")) {
-                CONTEXTTIME = false;
-            }
-            else if (arg.equals("--time-max")  && args.length > (i + 1)) {
-                try {
-                    TIMEEXPRESSIONMAX = Integer.parseInt(args[i+1]);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-            else if (arg.equals("--source-frames") && args.length>(i+1)) {
-                sourceFrameFile = args[i+1];
-            }
-            else if (arg.equals("--grammatical-frames") && args.length>(i+1)) {
-                grammaticalFrameFile = args[i+1];
-            }
-            else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
-                contextualFrameFile = args[i+1];
             }
         }
-      //  System.out.println("pathToNafFile = " + pathToNafFile);
-        sourceVector = Util.ReadFileToStringVector(sourceFrameFile);
-        grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
-        contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
 
         ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
@@ -177,8 +125,8 @@ public class GetSemFromNafFile {
             kafSaxParser.getKafMetaData().setUrl(new File (pathToNafFile).getName());
             System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
         }
-        GetSemFromNaf.processNafFile(project, kafSaxParser, semEvents, semActors, semTimes,
-                semRelations, NONENTITIES, DOCTIME, CONTEXTTIME);
+        GetSemFromNaf.processNafFile(nafSemParameters, kafSaxParser, semEvents, semActors, semTimes,
+                semRelations);
         try {
            // System.out.println("semEvents = " + semEvents.size());
            // System.out.println("semActors = " + semActors.size());
@@ -203,9 +151,9 @@ public class GetSemFromNafFile {
                 ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
               //  System.out.println("myActors = " + myActors.size());
                 CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
-                if (myTimes.size()<=ClusterEventObjects.TIMEEXPRESSIONMAX || ALL) {
-                    if (compositeEvent.isValid() || ALL) {
-                        FrameTypes.setEventTypeString(compositeEvent.getEvent(),contextualVector, sourceVector, grammaticalVector);
+                if (myTimes.size()<=nafSemParameters.getTIMEEXPRESSIONMAX() || nafSemParameters.isALL()) {
+                    if (compositeEvent.isValid() || nafSemParameters.isALL()) {
+                        FrameTypes.setEventTypeString(compositeEvent.getEvent(),nafSemParameters);
                         compositeEventArraylist.add(compositeEvent);
                     }
                     else {
@@ -224,20 +172,17 @@ public class GetSemFromNafFile {
             }
             String pathToTrigFile = pathToNafFile + ".trig";
             OutputStream fos = new FileOutputStream(pathToTrigFile);
-            if (!PERSPECTIVE) {
-                JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, ILIURI, VERBOSE);
+            if (!nafSemParameters.isPERSPECTIVE()) {
+                JenaSerialization.serializeJenaCompositeEvents(fos, compositeEventArraylist, null, nafSemParameters.isILIURI(), nafSemParameters.isVERBOSE());
             }
             else {
                 ArrayList<PerspectiveObject> sourcePerspectives = GetPerspectiveRelations.getSourcePerspectives(kafSaxParser,
-                        project,
                         semActors,
                         semEvents,
-                        contextualVector,
-                        sourceVector,
-                        grammaticalVector);
+                        nafSemParameters);
                 ArrayList<PerspectiveObject> documentPerspectives = GetPerspectiveRelations.getAuthorPerspectives(
-                        kafSaxParser, project, sourcePerspectives, semEvents);
-                JenaSerialization.serializeJenaCompositeEventsAndPerspective(fos, compositeEventArraylist, kafSaxParser, sourcePerspectives, documentPerspectives);
+                        kafSaxParser, project, sourcePerspectives);
+                JenaSerialization.serializeJenaCompositeEventsAndPerspective(fos, compositeEventArraylist, kafSaxParser, nafSemParameters.getPROJECT(), sourcePerspectives, documentPerspectives);
             }
             fos.close();
         } catch (IOException e) {

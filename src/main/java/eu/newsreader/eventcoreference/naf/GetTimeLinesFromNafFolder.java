@@ -17,6 +17,7 @@ import java.util.*;
 /**
  * Created by piek on 10/22/14.
  */
+@Deprecated
 public class GetTimeLinesFromNafFolder {
     //NEEDS TO BE REBUILT. GETSEMFROMNAF IS OUT OF DATE
 
@@ -32,14 +33,9 @@ public class GetTimeLinesFromNafFolder {
     static final public String URI_SEPARATOR = "_";
     static HashMap<String, EntityTimeLine> entitiesTimeLineHashMap;
     static HashMap<String, EntityTimeLine> entityTimeLineHashMap;
-    static Vector<String> communicationVector = null;
-    static Vector<String> grammaticalVector = null;
-    static Vector<String> contextualVector = null;
-
-    static boolean DOCTIME = true;
-    static boolean CONTEXTTIME = true;
-
+    static NafSemParameters nafSemParameters = new NafSemParameters();
     static public void main (String [] args) {
+        nafSemParameters = new NafSemParameters(args);
         String processType = "";
         processType = "event";
        // processType = "entity";
@@ -48,16 +44,9 @@ public class GetTimeLinesFromNafFolder {
         String query = "apple";
         String extension = ".naf";
         String eventType = "CONTEXTUAL";
-        String project = "semeval-timeline";
-        String comFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/communication.txt";
-        String contextualFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/contextual.txt";
-        String grammaticalFrameFile = "/Code/vu/newsreader/EventCoreference/newsreader-vm/vua-eventcoreference_v2_2014/resources/grammatical.txt";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.equals("--project") && args.length>(i+1)) {
-                project = args[i+1];
-            }
-            else if (arg.equals("--folder") && args.length>(i+1)) {
+            if (arg.equals("--folder") && args.length>(i+1)) {
                 pathToFolder = args[i+1];
             }
             else if (arg.equals("--extension") && args.length>(i+1)) {
@@ -69,27 +58,7 @@ public class GetTimeLinesFromNafFolder {
             else if (arg.equals("--event-type") && args.length>(i+1)) {
                 eventType = args[i+1];
             }
-            else if (arg.equals("--communication-frames") && args.length>(i+1)) {
-                comFrameFile = args[i+1];
-            }
-            else if (arg.equals("--grammatical-frames") && args.length>(i+1)) {
-                grammaticalFrameFile = args[i+1];
-            }
-            else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
-                contextualFrameFile = args[i+1];
-            }
-            else if (arg.equals("--no-doc-time")) {
-                DOCTIME = false;
-            }
-            else if (arg.equals("--no-context-time")) {
-                CONTEXTTIME = false;
-            }
         }
-
-        //// read resources
-        communicationVector = Util.ReadFileToStringVector(comFrameFile);
-        grammaticalVector = Util.ReadFileToStringVector(grammaticalFrameFile);
-        contextualVector = Util.ReadFileToStringVector(contextualFrameFile);
 
         if (!pathToFolder.isEmpty()) {
             entityTimeLineHashMap = new HashMap<String, EntityTimeLine>();
@@ -165,13 +134,13 @@ public class GetTimeLinesFromNafFolder {
             KafSense kafSense = semEvent.getConcepts().get(k);
             if (kafSense.getResource().equalsIgnoreCase("framenet")) {
                 //eventTypes += "fn:"+kafSense.getSensecode()+";";
-                if (communicationVector!=null && communicationVector.contains(kafSense.getSensecode().toLowerCase())) {
+                if (nafSemParameters.getSourceVector()!=null && nafSemParameters.getSourceVector().contains(kafSense.getSensecode().toLowerCase())) {
                     eventTypes+="fn:communication@"+kafSense.getSensecode()+";";
                 }
-                else if (grammaticalVector!=null && grammaticalVector.contains(kafSense.getSensecode().toLowerCase())) {
+                else if (nafSemParameters.getGrammaticalVector()!=null && nafSemParameters.getGrammaticalVector().contains(kafSense.getSensecode().toLowerCase())) {
                     eventTypes+="fn:grammatical@"+kafSense.getSensecode()+";";
                 }
-                if (contextualVector!=null && contextualVector.contains(kafSense.getSensecode().toLowerCase())) {
+                if (nafSemParameters.getContextualVector()!=null && nafSemParameters.getContextualVector().contains(kafSense.getSensecode().toLowerCase())) {
                     eventTypes+="fn:contextual@"+kafSense.getSensecode()+";";
                 }
             }
@@ -199,15 +168,12 @@ public class GetTimeLinesFromNafFolder {
         ArrayList<SemObject> semActors = new ArrayList<SemObject>();
         ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         ArrayList<SemRelation> semRelations = new ArrayList<SemRelation>();
-        GetSemFromNaf.processNafFile(project,
+        GetSemFromNaf.processNafFile(nafSemParameters,
                 kafSaxParser,
                 semEvents,
                 semActors,
                 semTimes,
-                semRelations,
-                true,
-                DOCTIME,
-                CONTEXTTIME);
+                semRelations);
 
         try {
             OutputStream fos = new FileOutputStream(file.getAbsolutePath()+".trg");
