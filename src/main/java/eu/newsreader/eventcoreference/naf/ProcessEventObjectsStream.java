@@ -92,7 +92,7 @@ public class ProcessEventObjectsStream {
     static public String done = "";
 
 //    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/cars2/sparql";
-    final static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/aitor/sparql";
+    public static String serviceEndpoint = "https://knowledgestore2.fbk.eu/nwr/aitor/sparql";
     public static String user = "nwr_partner";
     public static String pass = "ks=2014!";
     public static String authStr = user + ":" + pass;
@@ -220,7 +220,14 @@ public class ProcessEventObjectsStream {
                 FUTURELCS = true;
             } else if (arg.equals("--recent-span")) {
                 recentDays = Integer.parseInt(args[i + 1]);
+            } else if (arg.equals("--ks")) {
+                serviceEndpoint = args[i + 1];
+            } else if (arg.equals("--user")) {
+                user = args[i + 1];
+            } else if (arg.equals("--passw")) {
+                pass = args[i + 1];
             }
+
         }
 
 
