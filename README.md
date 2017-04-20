@@ -109,7 +109,7 @@ These parameters are explained in the usage documentation.
 
 2.2 Single document conversion
 
-* Note: Make sure that you have your KnowledgeStore (KS) docker set up prior to running this. You can get the docker from https://github.com/dkmfbk/knowledgestore-docker/. Once your KS docker is running, update the script with the correct KS endpoint for NAF2SEM, following the pattern: $YOUR_SERVER_URL/custom/naf2sem . *
+** Note: Make sure that you have your KnowledgeStore (KS) docker set up prior to running this. You can get the docker from https://github.com/dkmfbk/knowledgestore-docker/. Once your KS docker is running, update the script with the correct KS endpoint for NAF2SEM, following the pattern: $YOUR_SERVER_URL/custom/naf2sem . **
 
 Instead of cross-document extraction, there is also a function that takes a single NAF input stream or file and directly creates the SEM instance and GRaSP perspective representations. 
 For each input stream an output stream is generates in RDF-TRiG format (similar for single files)
