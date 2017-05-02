@@ -7,6 +7,18 @@ import java.security.MessageDigest;
 
 public class MD5Checksum {
 
+    public static String getMD5ChecksumFromString(String text) throws Exception {
+        MessageDigest complete = MessageDigest.getInstance("MD5");
+        byte[] b =  complete.digest(text.getBytes());
+
+        String result = "";
+        for (int i = 0; i < b.length; i++) {
+            result +=
+                    Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return result;
+    }
+
     public static byte[] createChecksumFromStream(InputStream fis) throws
             Exception {
         byte[] buffer = new byte[1024];
