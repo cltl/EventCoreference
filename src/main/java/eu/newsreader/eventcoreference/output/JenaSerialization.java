@@ -738,6 +738,8 @@ doc-uri
             if (!docId.toLowerCase().startsWith("http")) {
                 docId = ResourcesUri.nwrdata + project + "/" + docId;
             }
+        System.err.println("docId = " + docId);
+        System.err.println("kafSaxParser = " + kafSaxParser.getKafMetaData().getUrl();
             addDocMetaData(docId, kafSaxParser, project);
 
             String attrBase = docId+"/"+"source_attribution/";
