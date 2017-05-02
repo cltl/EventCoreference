@@ -68,7 +68,7 @@ public class ResourcesUri {
         model.setNsPrefix("owl", ResourcesUri.owl);
         model.setNsPrefix("time", ResourcesUri.owltime);
         model.setNsPrefix("skos", ResourcesUri.skos);
-        model.setNsPrefix("eurovoc", ResourcesUri.eurovoc);
+      //  model.setNsPrefix("eurovoc", ResourcesUri.eurovoc);
         model.setNsPrefix("rdf", ResourcesUri.rdf);
         model.setNsPrefix("rdfs", ResourcesUri.rdfs);
     }

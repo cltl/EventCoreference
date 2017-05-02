@@ -56,10 +56,10 @@ public class GetSemFromNafStream {
         KafSaxParser kafSaxParser = new KafSaxParser();
         kafSaxParser.parseFile(System.in);
         if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
-            System.out.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
+            System.err.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
             try {
                 String checkSum = MD5Checksum.getMD5ChecksumFromStream(System.in);
-                System.out.println("checkSum = " + checkSum);
+                System.err.println("checkSum = " + checkSum);
                 kafSaxParser.getKafMetaData().setUrl(checkSum);
             } catch (Exception e) {
                 e.printStackTrace();
