@@ -318,6 +318,43 @@ public class SemRelation implements Serializable {
 
         }
     }
+    public void addToJenaDataSetSimple (Dataset ds) {
+
+        Model relationModel = ds.getNamedModel(this.id);
+
+        Resource subject = relationModel.createResource(this.getSubject());
+        Resource object = relationModel.createResource(this.getObject());
+
+
+        /// since we no longer distinguish places from actors, we now check the predicates for propbank AM-LOC
+        /// if so we use sem:hasPlace otherwise we take the semType value from the hassem predicate
+        Property semProperty = null;
+        for (int i = 0; i < predicates.size(); i++) {
+            String predicate = predicates.get(i);
+            if (predicate.equalsIgnoreCase("hasFactBankValue")) {
+                Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue + predicate);
+                subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
+            }else {
+                semProperty = getSemRelationProperty(predicate);
+                if (isTemporalSemRelationProperty(predicate)) {
+                        subject.addProperty(semProperty, object);
+                        subject.addProperty(Sem.hasTime, object); /// additional hasTime relation to generalize
+                }
+                else {
+                    if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
+                        !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
+                        predicate = getRoleRelation(predicate);
+                        if (!predicate.isEmpty()) {
+                            Property srlProperty = relationModel.createProperty(predicate);
+                            subject.addProperty(srlProperty, object);
+                        }
+                    }
+                }
+
+            }
+        }
+
+    }
 
     public void addToJenaDataSet (Dataset ds, Model provenanceModel,
                                   HashMap<String, SourceMeta> sourceMetaHashMap) {

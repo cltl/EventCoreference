@@ -753,7 +753,7 @@ doc-uri
         //  System.out.println("ACTORS");
         for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
             SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
-            semActor.addToJenaModel(instanceModel, Sem.Actor, false);
+            semActor.addToJenaSimpleModel(instanceModel, Sem.Actor);
         }
 
 
@@ -785,7 +785,7 @@ doc-uri
 
         for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
             SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
-                semRelation.addToJenaDataSet(ds, provenanceModel);
+                semRelation.addToJenaDataSetSimple(ds);
         }
     }
 

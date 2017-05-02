@@ -676,8 +676,8 @@ public class SemObject implements Serializable {
         //// Top phrase
         String topLabel = this.getTopPhraseAsLabel();
         if (!topLabel.isEmpty()) {
-            Property property = model.createProperty(ResourcesUri.skos+SKOS.PREF_LABEL.getLocalName());
-            resource.addProperty(property, model.createLiteral(this.getTopPhraseAsLabel()));
+            //Property property = model.createProperty(ResourcesUri.skos+SKOS.PREF_LABEL.getLocalName());
+            //resource.addProperty(property, model.createLiteral(this.getTopPhraseAsLabel()));
             //// instead of
             for (int i = 0; i < phraseCounts.size(); i++) {
                 PhraseCount phraseCount = phraseCounts.get(i);
