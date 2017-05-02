@@ -5,6 +5,7 @@ import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.FrameTypes;
+import eu.newsreader.eventcoreference.util.MD5Checksum;
 import org.apache.jena.atlas.logging.Log;
 
 import java.util.ArrayList;
@@ -56,7 +57,12 @@ public class GetSemFromNafStream {
         kafSaxParser.parseFile(System.in);
         if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
             System.out.println("ERROR! Empty url in header NAF. Cannot create unique URIs! Aborting");
-            return;
+            try {
+                String checkSum = MD5Checksum.getMD5ChecksumFromStream(System.in);
+                kafSaxParser.getKafMetaData().setUrl(checkSum);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         GetSemFromNaf.processNafFile(nafSemParameters, kafSaxParser, semEvents, semActors, semTimes, semRelations );
         ArrayList<CompositeEvent> compositeEventArraylist = new ArrayList<CompositeEvent>();
