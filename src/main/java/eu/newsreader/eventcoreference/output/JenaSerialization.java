@@ -738,13 +738,13 @@ doc-uri
             if (!docId.toLowerCase().startsWith("http")) {
                 docId = ResourcesUri.nwrdata + project + "/" + docId;
             }
-        System.err.println("docId = " + docId);
-        System.err.println("kafSaxParser = " + kafSaxParser.getKafMetaData().getUrl());
+      //  System.err.println("docId = " + docId);
+      //  System.err.println("kafSaxParser = " + kafSaxParser.getKafMetaData().getUrl());
             addDocMetaData(docId, kafSaxParser, project);
 
             String attrBase = docId+"/"+"source_attribution/";
             addJenaPerspectiveObjects(attrBase, ResourcesUri.grasp, "wasAttributedTo",sourcePerspectiveObjects, 1);
-            attrBase = kafSaxParser.getKafMetaData().getUrl()+"/"+"doc_attribution/";
+            attrBase = docId+"/"+"doc_attribution/";
             addJenaPerspectiveObjects(attrBase, ResourcesUri.prov, "wasDerivedFrom", authorPerspectiveObjects, sourcePerspectiveObjects.size()+1);
         try {
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
