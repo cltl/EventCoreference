@@ -62,7 +62,7 @@ public class GetSemFromNafStream {
                 System.out.println("checkSum = " + checkSum);
                 kafSaxParser.getKafMetaData().setUrl(checkSum);
             } catch (Exception e) {
-              //  e.printStackTrace();
+                e.printStackTrace();
             }
         }
         GetSemFromNaf.processNafFile(nafSemParameters, kafSaxParser, semEvents, semActors, semTimes, semRelations );
