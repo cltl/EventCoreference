@@ -253,6 +253,19 @@ public class SemRelation implements Serializable {
         return rel;
     }
 
+    public String getFramenetRoleRelation (String role) {
+        String  rel = "";
+        String [] fields = role.split(":");
+        if (fields.length==2) {
+            String source = fields[0].trim();
+            String value = fields[1].trim();
+            if (source.equalsIgnoreCase("framenet")) {
+                rel = ResourcesUri.fn+value;
+            }
+        }
+        return rel;
+    }
+
     public void addToJenaDataSet (Dataset ds, Model provenanceModel) {
 
         Model relationModel = ds.getNamedModel(this.id);
@@ -338,12 +351,11 @@ public class SemRelation implements Serializable {
                 semProperty = getSemRelationProperty(predicate);
                 if (isTemporalSemRelationProperty(predicate)) {
                         subject.addProperty(semProperty, object);
-                        subject.addProperty(Sem.hasTime, object); /// additional hasTime relation to generalize
                 }
                 else {
                     if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
                         !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
-                        predicate = getRoleRelation(predicate);
+                        predicate = getFramenetRoleRelation(predicate);
                         if (!predicate.isEmpty()) {
                             Property srlProperty = relationModel.createProperty(predicate);
                             subject.addProperty(srlProperty, object);
