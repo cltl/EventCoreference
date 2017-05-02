@@ -620,8 +620,6 @@ public class SemObject implements Serializable {
 
     public void addToJenaModel(Model model, Resource type, boolean VERBOSE_MENTION) {
         Resource resource = model.createResource(this.getURI());
-
-
         //// Top phrase
         String topLabel = this.getTopPhraseAsLabel();
         if (!topLabel.isEmpty()) {
@@ -671,6 +669,31 @@ public class SemObject implements Serializable {
             }
             resource.addProperty(property, targetResource);
         }
+    }
+
+    public void addToJenaSimpleModel(Model model, Resource type) {
+        Resource resource = model.createResource(this.getURI());
+        //// Top phrase
+        String topLabel = this.getTopPhraseAsLabel();
+        if (!topLabel.isEmpty()) {
+            Property property = model.createProperty(ResourcesUri.skos+SKOS.PREF_LABEL.getLocalName());
+            resource.addProperty(property, model.createLiteral(this.getTopPhraseAsLabel()));
+            //// instead of
+            for (int i = 0; i < phraseCounts.size(); i++) {
+                PhraseCount phraseCount = phraseCounts.get(i);
+                // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
+/*                if (!phraseCount.getPhrase().equalsIgnoreCase(getTopPhraseAsLabel()) && goodPhrase(phraseCount)) {
+                    resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+                }*/
+                if (goodPhrase(phraseCount)) {
+                    resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+                }
+            }
+        }
+
+        addConceptsToResource(resource, model);
+
+
     }
 
     void addConceptsToResource (Resource resource, Model model) {

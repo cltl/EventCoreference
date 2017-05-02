@@ -47,6 +47,14 @@ public class JenaSerialization {
         prefixModels();
     }
 
+    static public void createSimpleModels () {
+        ds = TDBFactory.createDataset();
+        graspModel = ds.getNamedModel(ResourcesUri.nwr + "grasp");
+        provenanceModel = ds.getNamedModel(ResourcesUri.nwr + "provenance");
+        instanceModel = ds.getNamedModel(ResourcesUri.nwr+"instances");
+        prefixSimpleModels();
+    }
+
 
     static void prefixModels () {
         Model defaultModel = ds.getDefaultModel();
@@ -57,6 +65,20 @@ public class JenaSerialization {
         ResourcesUri.prefixModelGaf(provenanceModel);
 
         ResourcesUri.prefixModel(instanceModel);
+        ResourcesUri.prefixModelNwr(instanceModel);
+        ResourcesUri.prefixModelGaf(instanceModel);
+
+    }
+
+    static void prefixSimpleModels () {
+        Model defaultModel = ds.getDefaultModel();
+        ResourcesUri.prefixSimpleModel(defaultModel);
+        ResourcesUri.prefixModelNwr(defaultModel);
+        ResourcesUri.prefixModelGaf(defaultModel);
+
+        ResourcesUri.prefixModelGaf(provenanceModel);
+
+        ResourcesUri.prefixSimpleModel(instanceModel);
         ResourcesUri.prefixModelNwr(instanceModel);
         ResourcesUri.prefixModelGaf(instanceModel);
 
@@ -697,6 +719,73 @@ doc-uri
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
         } catch (Exception e) {
            // e.printStackTrace();
+        }
+    }
+
+    static public void serializeJenaSimpleCompositeEvents (OutputStream stream,
+                                                     ArrayList<CompositeEvent> compositeEvents) {
+
+
+
+
+        createSimpleModels();
+        for (int c = 0; c < compositeEvents.size(); c++) {
+            CompositeEvent compositeEvent = compositeEvents.get(c);
+            addJenaSimpleCompositeEvent(compositeEvent);
+        }
+        try {
+            RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        } catch (Exception e) {
+          //  e.printStackTrace();
+        }
+
+
+    }
+
+
+
+    static public void addJenaSimpleCompositeEvent (
+            CompositeEvent compositeEvent) {
+
+
+        compositeEvent.getEvent().addToJenaSimpleModel(instanceModel, Sem.Event);
+
+        //  System.out.println("ACTORS");
+        for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
+            SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
+            semActor.addToJenaModel(instanceModel, Sem.Actor, false);
+        }
+
+
+        // System.out.println("TIMES");
+        // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
+        for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
+            SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
+            //semTime.addToJenaModelTimeInterval(instanceModel);
+            if (semTime.getType().equalsIgnoreCase(TimeTypes.YEAR)) {
+                semTime.addToJenaModelDocTimeInstant(instanceModel);
+                //OR
+                // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            }
+            else if (semTime.getType().equalsIgnoreCase(TimeTypes.QUARTER)) {
+                semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            }
+            else if (semTime.getType().equalsIgnoreCase(TimeTypes.MONTH)) {
+                semTime.addToJenaModelDocTimeInstant(instanceModel);
+                //OR
+                // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            }
+            else if (semTime.getType().equalsIgnoreCase(TimeTypes.DURATION)) {
+                semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
+            }
+            else  { /// DATE
+                semTime.addToJenaModelDocTimeInstant(instanceModel);
+            }
+        }
+
+        for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
+            SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
+                semRelation.addToJenaDataSet(ds, provenanceModel);
         }
     }
 

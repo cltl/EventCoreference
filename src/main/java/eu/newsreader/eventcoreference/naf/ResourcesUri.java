@@ -68,7 +68,26 @@ public class ResourcesUri {
         model.setNsPrefix("owl", ResourcesUri.owl);
         model.setNsPrefix("time", ResourcesUri.owltime);
         model.setNsPrefix("skos", ResourcesUri.skos);
-      //  model.setNsPrefix("eurovoc", ResourcesUri.eurovoc);
+       /* REMOVED DUE TO PROBLEMS WITH SESAME
+        model.setNsPrefix("eurovoc", ResourcesUri.eurovoc);
+        */
+        model.setNsPrefix("rdf", ResourcesUri.rdf);
+        model.setNsPrefix("rdfs", ResourcesUri.rdfs);
+    }
+
+    static public void prefixSimpleModel (Model model) {
+        model.setNsPrefix("wn", ResourcesUri.wn);
+        model.setNsPrefix("ili", ResourcesUri.ili);
+        model.setNsPrefix("fn", ResourcesUri.fn);
+        model.setNsPrefix("nwrdata", ResourcesUri.nwrdata);
+        model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
+        model.setNsPrefix("eso", ResourcesUri.eso);
+        model.setNsPrefix("pb", ResourcesUri.pb);
+        model.setNsPrefix("gaf", ResourcesUri.gaf);
+        model.setNsPrefix("sem", ResourcesUri.sem);
+        model.setNsPrefix("owl", ResourcesUri.owl);
+        model.setNsPrefix("time", ResourcesUri.owltime);
+        model.setNsPrefix("skos", ResourcesUri.skos);
         model.setNsPrefix("rdf", ResourcesUri.rdf);
         model.setNsPrefix("rdfs", ResourcesUri.rdfs);
     }
