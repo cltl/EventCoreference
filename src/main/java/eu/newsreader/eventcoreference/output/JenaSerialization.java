@@ -761,26 +761,7 @@ doc-uri
         // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
         for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
             SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
-            //semTime.addToJenaModelTimeInterval(instanceModel);
-            if (semTime.getType().equalsIgnoreCase(TimeTypes.YEAR)) {
-                semTime.addToJenaModelDocTimeInstant(instanceModel);
-                //OR
-                // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
-            }
-            else if (semTime.getType().equalsIgnoreCase(TimeTypes.QUARTER)) {
-                semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
-            }
-            else if (semTime.getType().equalsIgnoreCase(TimeTypes.MONTH)) {
-                semTime.addToJenaModelDocTimeInstant(instanceModel);
-                //OR
-                // semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
-            }
-            else if (semTime.getType().equalsIgnoreCase(TimeTypes.DURATION)) {
-                semTime.addToJenaModelTimeIntervalCondensed(instanceModel);
-            }
-            else  { /// DATE
-                semTime.addToJenaModelDocTimeInstant(instanceModel);
-            }
+            semTime.addToJenaModelSimpleDocTimeInstant(instanceModel);
         }
 
         for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {

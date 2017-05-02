@@ -137,6 +137,25 @@ public class SemTime extends SemObject implements Serializable {
 
         }
     }
+    public void addToJenaModelSimpleDocTimeInstant(Model model) {
+
+        this.getOwlTime().addToJenaModelOwlTimeInstant(model);
+
+        Resource resource = model.createResource(this.getURI());
+        if (!this.getTopPhraseAsLabel().isEmpty()) {
+            resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
+        }
+
+        //resource.addProperty(RDF.type, Sem.Time);
+        // System.out.println("this.getOwlTime().toString() = " + this.getOwlTime().toString());
+        Resource interval = model.createResource(ResourcesUri.owltime + "Instant");
+        resource.addProperty(RDF.type, interval);
+
+        Resource value = model.createResource(this.getOwlTime().getDateStringURI());
+        Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
+        resource.addProperty(property, value);
+
+    }
 
     public void addToJenaModelTimeInterval(Model model) {
         this.getOwlTime().addToJenaModelOwlTimeInstant(model);
