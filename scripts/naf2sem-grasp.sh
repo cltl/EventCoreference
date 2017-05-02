@@ -8,4 +8,4 @@ RESOURCES="$( cd $ROOT && cd .. && pwd)"/vua-resources
 # git clone https://github.com/cltl/vua-resources.git
 #
 
-java -Xmx2000m -cp "$LIB/EventCoreference-v3.1.2-jar-with-dependencies.jar" eu.newsreader.eventcoreference.naf.GetSemFromNafStream --non-entities --project wikinews --all --ili "$RESOURCES/ili.ttl.gz" --perspective --eurovoc-en "$RESOURCES/mapping_eurovoc_skos.label.concept.gz" --source-frames "$RESOURCES/source.txt"
+java -Xmx2000m -cp "$LIB/EventCoreference-v3.1.2-jar-with-dependencies.jar" eu.newsreader.eventcoreference.naf.GetSemFromNafStream --non-entities --project test --all --ili "$RESOURCES/ili.ttl.gz" --perspective --eurovoc-en "$RESOURCES/mapping_eurovoc_skos.label.concept.gz" --source-frames "$RESOURCES/source.txt"
