@@ -691,7 +691,7 @@ public class SemObject implements Serializable {
             }
         }
 
-        addConceptsToResource(resource, model);
+        addSimpleConceptsToResource(resource, model);
 
 
     }

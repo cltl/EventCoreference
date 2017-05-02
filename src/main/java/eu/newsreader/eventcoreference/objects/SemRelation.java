@@ -344,25 +344,20 @@ public class SemRelation implements Serializable {
         Property semProperty = null;
         for (int i = 0; i < predicates.size(); i++) {
             String predicate = predicates.get(i);
-            if (predicate.equalsIgnoreCase("hasFactBankValue")) {
-                Property factProperty = relationModel.createProperty(ResourcesUri.nwrvalue + predicate);
-                subject.addProperty(factProperty, this.getObject()); /// creates the literal as value
-            }else {
-                semProperty = getSemRelationProperty(predicate);
-                if (isTemporalSemRelationProperty(predicate)) {
-                        subject.addProperty(semProperty, object);
-                }
-                else {
-                    if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
-                        !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
-                        predicate = getFramenetRoleRelation(predicate);
-                        if (!predicate.isEmpty()) {
-                            Property srlProperty = relationModel.createProperty(predicate);
-                            subject.addProperty(srlProperty, object);
-                        }
+
+            semProperty = getSemRelationProperty(predicate);
+            if (isTemporalSemRelationProperty(predicate)) {
+                    subject.addProperty(semProperty, object);
+            }
+            else {
+                if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
+                    !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
+                    predicate = getFramenetRoleRelation(predicate);
+                    if (!predicate.isEmpty()) {
+                        Property srlProperty = relationModel.createProperty(predicate);
+                        subject.addProperty(srlProperty, object);
                     }
                 }
-
             }
         }
 
