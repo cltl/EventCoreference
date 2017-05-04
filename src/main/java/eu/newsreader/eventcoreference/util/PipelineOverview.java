@@ -137,17 +137,20 @@ public class PipelineOverview {
             html += makeRow(textFile, innafFile, nafFile, trigFile, ttlFile);
         }
         html += "</div>\n";
-        html += "<div>\n";
-        html += "<div> \n" +
+        html += "</div>\n";
+
+        html += "<table style=\"width:100%\">\n";
+        html += "<tr> \n" +
+                "<td>\n" +
                 "<h1>English pipeline and NAF layers</h1>\n" +
-                "<img src=\"EnglishPipeline.png\" width=\"600\" height=\"600\">\n" +
-                "</div>\n" +
-                "<div>\n" +
+                "<img src=\"EnglishPipeline.png\" width=\"500\" height=\"500\">\n" +
+                "</td>\n" +
+                "<td>\n" +
                 "<h1>Dutch pipeline</h1>\n" +
-                "<img src=\"DutchPipeline.png\" width=\"600\" height=\"600\">\n" +
-                "</div>";
-        html += "</div>\n";
-        html += "</div>\n";
+                "<img src=\"DutchPipeline.png\" width=\"500\" height=\"500\">\n" +
+                "</td>\n"+
+                "</tr>\n";
+        html += "</table>\n";
         html += "</body>\n";
         return html;
     }

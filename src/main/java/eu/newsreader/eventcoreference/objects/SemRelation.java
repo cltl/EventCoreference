@@ -369,18 +369,19 @@ public class SemRelation implements Serializable {
             else {
                 if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
                     !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
-                    predicate = getFramenetRoleRelation(predicates.get(i));
+                    predicate = getRoleRelation(predicate);
+                    //predicate = getFramenetRoleRelation(predicates.get(i));
                     if (!predicate.isEmpty()) {
                         Property srlProperty = relationModel.createProperty(predicate);
                         subject.addProperty(srlProperty, object);
                     }
-                    else {
+                    /*else {
                         predicate = getPropBankRoleRelation(predicates.get(i));
                         if (!predicate.isEmpty()) {
                             Property srlProperty = relationModel.createProperty(predicate);
                             subject.addProperty(srlProperty, object);
                         }
-                    }
+                    }*/
                 }
             }
         }
