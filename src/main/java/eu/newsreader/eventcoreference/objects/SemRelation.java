@@ -361,7 +361,6 @@ public class SemRelation implements Serializable {
         Property semProperty = null;
         for (int i = 0; i < predicates.size(); i++) {
             String predicate = predicates.get(i);
-            System.err.println("predicate:"+predicate);
             semProperty = getSemRelationProperty(predicate);
             if (isTemporalSemRelationProperty(predicate)) {
                     subject.addProperty(semProperty, object);
@@ -370,6 +369,7 @@ public class SemRelation implements Serializable {
                 if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
                     !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
                     predicate = getRoleRelation(predicate);
+                    System.err.println("predicate:"+predicate);
                     //predicate = getFramenetRoleRelation(predicates.get(i));
                     if (!predicate.isEmpty()) {
                         Property srlProperty = relationModel.createProperty(predicate);
