@@ -89,16 +89,16 @@ public class PipelineOverview {
                 "<div class=\"divTableBody\">\n";
                 html += "<div class=\"divTableRow\">\n" +
                         "<div class=\"divTableCell\">Text</div>\n" +
-                        "<div class=\"divTableCell\">Size</div>\n" +
+                        "<div class=\"divTableCell\">Kb size</div>\n" +
                         "<div class=\"divTableCell\">Date</div>\n" +
                         "<div class=\"divTableCell\">NAF</a></div>\n" +
                         "<div class=\"divTableCell\">Size</div>\n" +
                         "<div class=\"divTableCell\">Date</div>\n" +
                         "<div class=\"divTableCell\">TRiG</div>\n" +
-                        "<div class=\"divTableCell\">Size</div>\n" +
+                        "<div class=\"divTableCell\">Kb size</div>\n" +
                         "<div class=\"divTableCell\">Date</div>\n" +
                         "<div class=\"divTableCell\">TTL</div>\n" +
-                        "<div class=\"divTableCell\">Size</div>\n" +
+                        "<div class=\"divTableCell\">Kb size</div>\n" +
                         "<div class=\"divTableCell\">Date</div>\n" +
                         "</div>\n";
         for (int i = 0; i < textFiles.size(); i++) {
@@ -146,9 +146,9 @@ public class PipelineOverview {
     static String makeHref (File file) {
         String href = "";
         if (file == null) {
-            href ="<div class=\"divTableCell\">"+"no file"+"</div>+\n" +
-                    "<div class=\"divTableCell\">"+"</div>\n" +
-                    "<div class=\"divTableCell\">"+"</div>\n";
+            href ="<div class=\"divTableCell\">"+"no file"+"</div>\n" +
+                    "<div class=\"divTableCell\"/>\n" +
+                    "<div class=\"divTableCell\"/>\n";
         }
         else {
             try {
