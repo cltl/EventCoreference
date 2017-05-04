@@ -24,12 +24,13 @@ public class PipelineOverview {
             path = args[0];
         }
         ArrayList<File> textFiles = Util.makeFlatFileList(new File(path), ".txt");
+        ArrayList<File> innafFiles = Util.makeFlatFileList(new File(path), ".in.naf");
         ArrayList<File> nafFiles = Util.makeFlatFileList(new File(path), ".out.naf");
         ArrayList<File> trigFiles = Util.makeFlatFileList(new File(path), ".trig");
         ArrayList<File> ttlFiles = Util.makeFlatFileList(new File(path), ".ttl");
         try {
             OutputStream fos = new FileOutputStream(path+"/"+"index.html");
-            String str = makeHtml(textFiles, nafFiles, trigFiles, ttlFiles);
+            String str = makeHtml(textFiles, innafFiles, nafFiles, trigFiles, ttlFiles);
             fos.write(str.getBytes());
             fos.close();
         } catch (IOException e) {
@@ -68,7 +69,7 @@ public class PipelineOverview {
             "\tdisplay: table-row-group;\n" +
             "}\n</style>\n";
 
-    static String makeHtml (ArrayList<File> textFiles, ArrayList<File> nafFiles, ArrayList<File> trigFiles, ArrayList<File> ttlFiles) {
+    static String makeHtml (ArrayList<File> textFiles, ArrayList<File> innafFiles, ArrayList<File> nafFiles, ArrayList<File> trigFiles, ArrayList<File> ttlFiles) {
         String html =
                 "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n" +
                         "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
@@ -86,7 +87,10 @@ public class PipelineOverview {
                         "<div class=\"divTableCell\">Text</div>\n" +
                         "<div class=\"divTableCell\">Kb size</div>\n" +
                         "<div class=\"divTableCell\">Date</div>\n" +
-                        "<div class=\"divTableCell\">NAF</a></div>\n" +
+                        "<div class=\"divTableCell\">In NAF</a></div>\n" +
+                        "<div class=\"divTableCell\">Size</div>\n" +
+                        "<div class=\"divTableCell\">Date</div>\n" +
+                        "<div class=\"divTableCell\">Out NAF</a></div>\n" +
                         "<div class=\"divTableCell\">Size</div>\n" +
                         "<div class=\"divTableCell\">Date</div>\n" +
                         "<div class=\"divTableCell\">TRiG</div>\n" +
@@ -99,8 +103,16 @@ public class PipelineOverview {
         for (int i = 0; i < textFiles.size(); i++) {
             File textFile = textFiles.get(i);
             File trigFile = null;
+            File innafFile = null;
             File nafFile = null;
             File ttlFile = null;
+            for (int j = 0; j < innafFiles.size(); j++) {
+                File file = innafFiles.get(j);
+                if (file.getName().startsWith(textFile.getName())) {
+                    innafFile = file;
+                    break;
+                }
+            }
             for (int j = 0; j < nafFiles.size(); j++) {
                 File file = nafFiles.get(j);
                 if (file.getName().startsWith(textFile.getName())) {
@@ -122,14 +134,14 @@ public class PipelineOverview {
                     break;
                 }
             }
-            html += makeRow(textFile, nafFile, trigFile, ttlFile);
+            html += makeRow(textFile, innafFile, nafFile, trigFile, ttlFile);
         }
         html += "</div>\n"+ "</div>\n";
         html += "</body>\n";
         return html;
     }
 
-    static String makeRow (File file1, File file2, File file3, File file4) {
+    static String makeRow (File file1, File file2, File file3, File file4, File file5) {
         String row = " <div class=\"divTableRow\">\n"
                 + makeHref(file1)
                 + makeHref(file2)
