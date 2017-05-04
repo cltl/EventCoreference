@@ -16,24 +16,14 @@ public class PipelineOverview {
 
 
     static public void main (String [] args) {
-        String pathToNaf = "";
-        String pathToTtl = "";
+        String path = "";
 
-        if (args.length == 0) {
-            pathToNaf = ".";
-            pathToTtl = ".";
-        }
-        else {
-            pathToNaf = args[0];
-            pathToTtl = args[1];
-        }
-
-        ArrayList<File> textFiles = Util.makeFlatFileList(new File(pathToNaf), ".txt");
-        ArrayList<File> nafFiles = Util.makeFlatFileList(new File(pathToNaf), ".out.naf");
-        ArrayList<File> trigFiles = Util.makeFlatFileList(new File(pathToNaf), ".trig");
-        ArrayList<File> ttlFiles = Util.makeFlatFileList(new File(pathToTtl), ".ttl");
+        ArrayList<File> textFiles = Util.makeFlatFileList(new File(path), ".txt");
+        ArrayList<File> nafFiles = Util.makeFlatFileList(new File(path), ".out.naf");
+        ArrayList<File> trigFiles = Util.makeFlatFileList(new File(path), ".trig");
+        ArrayList<File> ttlFiles = Util.makeFlatFileList(new File(path), ".ttl");
         try {
-            OutputStream fos = new FileOutputStream(pathToTtl+"/"+"index.html");
+            OutputStream fos = new FileOutputStream(path+"/"+"index.html");
             String str = makeHtml(textFiles, nafFiles, trigFiles, ttlFiles);
             fos.write(str.getBytes());
             fos.close();
