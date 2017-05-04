@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -100,6 +101,7 @@ public class PipelineOverview {
                         "<div class=\"divTableCell\">Kb size</div>\n" +
                         "<div class=\"divTableCell\">Date</div>\n" +
                         "</div>\n";
+        Collections.sort(textFiles);
         for (int i = 0; i < textFiles.size(); i++) {
             File textFile = textFiles.get(i);
             File trigFile = null;
