@@ -138,8 +138,14 @@ public class PipelineOverview {
         }
         html += "</div>\n";
         html += "<div>\n";
-        html += "<img src=\"EnglishPipeline.png\" width=\"300\" height=\"300\">\n";
-        html += "<img src=\"DutchPipeline.png\" width=\"300\" height=\"300\">\n";
+        html += "<div> \n" +
+                "<h1>English pipeline and NAF layers</h1>\n" +
+                "<img src=\"EnglishPipeline.png\" width=\"600\" height=\"600\">\n" +
+                "</div>\n" +
+                "<div>\n" +
+                "<h1>Dutch pipeline</h1>\n" +
+                "<img src=\"DutchPipeline.png\" width=\"600\" height=\"600\">\n" +
+                "</div>";
         html += "</div>\n";
         html += "</div>\n";
         html += "</body>\n";

@@ -361,7 +361,7 @@ public class SemRelation implements Serializable {
         Property semProperty = null;
         for (int i = 0; i < predicates.size(); i++) {
             String predicate = predicates.get(i);
-
+            System.err.println("predicate:"+predicate);
             semProperty = getSemRelationProperty(predicate);
             if (isTemporalSemRelationProperty(predicate)) {
                     subject.addProperty(semProperty, object);
