@@ -143,8 +143,8 @@ public class PipelineOverview {
         String href = "";
         if (file == null) {
             href ="<div class=\"divTableCell\">"+"no file"+"</div>\n" +
-                    "<div class=\"divTableCell\"/>\n" +
-                    "<div class=\"divTableCell\"/>\n";
+                    "<div class=\"divTableCell\">"+"</div>\n" +
+                    "<div class=\"divTableCell\">"+"</div>\n";
         }
         else {
                 String path = "http://kyoto.let.vu.nl/~vossen/nwr/pipelinedemo/"+file.getName();
