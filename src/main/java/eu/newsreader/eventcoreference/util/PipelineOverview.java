@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by piek on 04/05/2017.
@@ -67,12 +70,28 @@ public class PipelineOverview {
                         "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
                         "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" +
                         "<head>\n" +
-                        "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" +
-                        "<title/>";
-                 html += css;
+                        //"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" +
+                        "<title>NewsReader pipeline results</title>\n";
+        html += css;
                  html += "</head>\n";
-                html+="<body><div class=\"divTable\" style=\"width: 100%;border: 1px solid #000;\" >\n" +
+                html+="<body>\n" +
+                        "<h1>Results of the NewsReader pipeline</h1>\n"+
+                        "<div class=\"divTable\" style=\"width: 100%;border: 1px solid #000;\">\n" +
                 "<div class=\"divTableBody\">\n";
+                html += "<div class=\"divTableRow\">\n" +
+                        "<div class=\"divTableCell\">Text</div>\n" +
+                        "<div class=\"divTableCell\">Size</div>\n" +
+                        "<div class=\"divTableCell\">Date</div>\n" +
+                        "<div class=\"divTableCell\">NAF</a></div>\n" +
+                        "<div class=\"divTableCell\">Size</div>\n" +
+                        "<div class=\"divTableCell\">Date</div>\n" +
+                        "<div class=\"divTableCell\">TRiG</div>\n" +
+                        "<div class=\"divTableCell\">Size</div>\n" +
+                        "<div class=\"divTableCell\">Date</div>\n" +
+                        "<div class=\"divTableCell\">TTL</div>\n" +
+                        "<div class=\"divTableCell\">Size</div>\n" +
+                        "<div class=\"divTableCell\">Date</div>\n" +
+                        "</div>\n";
         for (int i = 0; i < textFiles.size(); i++) {
             File textFile = textFiles.get(i);
             File trigFile = null;
@@ -101,9 +120,7 @@ public class PipelineOverview {
             }
             html += makeRow(textFile, nafFile, trigFile, ttlFile);
         }
-        html +=
-                "</div>\n" +
-                "</div>\n";
+        html += "</div>\n"+ "</div>\n";
         return html;
     }
 
@@ -122,12 +139,20 @@ public class PipelineOverview {
         if (file == null) {
             href ="<div class=\"divTableCell\">"+"no file"+"</div>+\n" +
                     "<div class=\"divTableCell\">"+"</div>\n" +
-                    "<div class=\"divTableCell\">"+"</div>+n";
+                    "<div class=\"divTableCell\">"+"</div>\n";
         }
         else {
-            href ="<div class=\"divTableCell\">"+"<a href=\""+file.getAbsolutePath()+"\">"+file.getName()+"</a>"+"</div>\n" +
-                   "<div class=\"divTableCell\">"+file.getTotalSpace()+"</div>\n" +
-                   "<div class=\"divTableCell\">"+file.lastModified()+"</div>\n";
+            try {
+                Date date = new Date(file.lastModified());
+                String format = "dd/MM/yyyy";
+                Locale locale = Locale.ENGLISH;
+                String formattedDateString = new SimpleDateFormat(format, locale).format(date);
+                href ="<div class=\"divTableCell\">"+"<a href=\""+file.getCanonicalPath()+"\">"+file.getName()+"</a>"+"</div>\n" +
+                       "<div class=\"divTableCell\">"+file.length()/1000+"</div>\n" +
+                       "<div class=\"divTableCell\">"+formattedDateString+"</div>\n";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return href;
     }
