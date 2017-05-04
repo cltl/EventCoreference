@@ -136,7 +136,12 @@ public class PipelineOverview {
             }
             html += makeRow(textFile, innafFile, nafFile, trigFile, ttlFile);
         }
-        html += "</div>\n"+ "</div>\n";
+        html += "</div>\n";
+        html += "<div>\n";
+        html += "<img src=\"EnglishPipeline.png\" width=\"300\" height=\"300\">\n";
+        html += "<img src=\"DutchPipeline.png\" width=\"300\" height=\"300\">\n";
+        html += "</div>\n";
+        html += "</div>\n";
         html += "</body>\n";
         return html;
     }
