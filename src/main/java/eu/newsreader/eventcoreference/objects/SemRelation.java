@@ -266,6 +266,23 @@ public class SemRelation implements Serializable {
         return rel;
     }
 
+    public String getPropBankRoleRelation (String role) {
+        String  rel = "";
+        String [] fields = role.split(":");
+        if (fields.length==2) {
+            String source = fields[0].trim();
+            String value = fields[1].trim();
+            if (source.equalsIgnoreCase("propbank")) {
+                if (value.indexOf("@")==-1) {
+                    /// skipping propbank/say.01@1
+                    rel = ResourcesUri.pb + value;
+                }
+            }
+        }
+        return rel;
+    }
+
+
     public void addToJenaDataSet (Dataset ds, Model provenanceModel) {
 
         Model relationModel = ds.getNamedModel(this.id);
@@ -352,10 +369,17 @@ public class SemRelation implements Serializable {
             else {
                 if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
                     !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
-                    predicate = getFramenetRoleRelation(predicate);
+                    predicate = getFramenetRoleRelation(predicates.get(i));
                     if (!predicate.isEmpty()) {
                         Property srlProperty = relationModel.createProperty(predicate);
                         subject.addProperty(srlProperty, object);
+                    }
+                    else {
+                        predicate = getPropBankRoleRelation(predicates.get(i));
+                        if (!predicate.isEmpty()) {
+                            Property srlProperty = relationModel.createProperty(predicate);
+                            subject.addProperty(srlProperty, object);
+                        }
                     }
                 }
             }
