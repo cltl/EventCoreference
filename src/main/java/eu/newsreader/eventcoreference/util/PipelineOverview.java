@@ -16,8 +16,17 @@ public class PipelineOverview {
 
 
     static public void main (String [] args) {
-        String pathToNaf = args[0];
-        String pathToTtl = args[1];
+        String pathToNaf = "";
+        String pathToTtl = "";
+
+        if (args.length == 0) {
+            pathToNaf = ".";
+            pathToTtl = ".";
+        }
+        else {
+            pathToNaf = args[0];
+            pathToTtl = args[1];
+        }
 
         ArrayList<File> textFiles = Util.makeFlatFileList(new File(pathToNaf), ".txt");
         ArrayList<File> nafFiles = Util.makeFlatFileList(new File(pathToNaf), ".out.naf");
@@ -34,7 +43,7 @@ public class PipelineOverview {
 
     }
 
-    static String css = ".divTable{\n" +
+    static String css = "<style>\n.divTable{\n" +
             "\tdisplay: table;\n" +
             "\twidth: 100%;\n" +
             "}\n" +
@@ -62,7 +71,7 @@ public class PipelineOverview {
             "}\n" +
             ".divTableBody {\n" +
             "\tdisplay: table-row-group;\n" +
-            "}";
+            "}\n</style>\n";
 
     static String makeHtml (ArrayList<File> textFiles, ArrayList<File> nafFiles, ArrayList<File> trigFiles, ArrayList<File> ttlFiles) {
         String html =
@@ -144,7 +153,7 @@ public class PipelineOverview {
         else {
             try {
                 Date date = new Date(file.lastModified());
-                String format = "yyyy/MM/ddTHH:mm:ss";
+                String format = "yyyy/MM/dd/HH:mm:ss";
                 Locale locale = Locale.ENGLISH;
                 String formattedDateString = new SimpleDateFormat(format, locale).format(date);
                 href ="<div class=\"divTableCell\">"+"<a href=\""+file.getCanonicalPath()+"\">"+file.getName()+"</a>"+"</div>\n" +
