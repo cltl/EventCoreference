@@ -17,7 +17,12 @@ public class PipelineOverview {
 
     static public void main (String [] args) {
         String path = "";
-        path = args[0];
+        if (args.length==0) {
+            path = ".";
+        }
+        else {
+            path = args[0];
+        }
         ArrayList<File> textFiles = Util.makeFlatFileList(new File(path), ".txt");
         ArrayList<File> nafFiles = Util.makeFlatFileList(new File(path), ".out.naf");
         ArrayList<File> trigFiles = Util.makeFlatFileList(new File(path), ".trig");
@@ -120,6 +125,7 @@ public class PipelineOverview {
             html += makeRow(textFile, nafFile, trigFile, ttlFile);
         }
         html += "</div>\n"+ "</div>\n";
+        html += "</body>\n";
         return html;
     }
 
@@ -146,7 +152,7 @@ public class PipelineOverview {
                 String format = "yyyy/MM/dd/HH:mm:ss";
                 Locale locale = Locale.ENGLISH;
                 String formattedDateString = new SimpleDateFormat(format, locale).format(date);
-                href ="<div class=\"divTableCell\">"+"<a href=\""+path+"\">"+file.getName()+"</a>"+"</div>\n" +
+                href ="<div class=\"divTableCell\">"+"<a href=\""+path+"\" target=\"_blank\">"+file.getName()+"</a>"+"</div>\n" +
                        "<div class=\"divTableCell\">"+file.length()+"</div>\n" +
                        "<div class=\"divTableCell\">"+formattedDateString+"</div>\n";
 
