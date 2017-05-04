@@ -141,17 +141,15 @@ public class PipelineOverview {
                     "<div class=\"divTableCell\"/>\n";
         }
         else {
-            try {
+                String path = "http://kyoto.let.vu.nl/~vossen/nwr/pipelinedemo/"+file.getName();
                 Date date = new Date(file.lastModified());
                 String format = "yyyy/MM/dd/HH:mm:ss";
                 Locale locale = Locale.ENGLISH;
                 String formattedDateString = new SimpleDateFormat(format, locale).format(date);
-                href ="<div class=\"divTableCell\">"+"<a href=\""+file.getCanonicalPath()+"\">"+file.getName()+"</a>"+"</div>\n" +
+                href ="<div class=\"divTableCell\">"+"<a href=\""+path+"\">"+file.getName()+"</a>"+"</div>\n" +
                        "<div class=\"divTableCell\">"+file.length()+"</div>\n" +
                        "<div class=\"divTableCell\">"+formattedDateString+"</div>\n";
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
         return href;
     }
