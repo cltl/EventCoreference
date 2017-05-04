@@ -14,7 +14,7 @@ public class PipelineOverview {
 
     static public void main (String [] args) {
         String pathToNaf = args[0];
-        String pathToTtl = args[0];
+        String pathToTtl = args[1];
 
         ArrayList<File> textFiles = Util.makeFlatFileList(new File(pathToNaf), ".txt");
         ArrayList<File> nafFiles = Util.makeFlatFileList(new File(pathToNaf), ".out.naf");
