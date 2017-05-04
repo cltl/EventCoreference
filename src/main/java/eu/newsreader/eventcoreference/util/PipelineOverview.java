@@ -144,11 +144,11 @@ public class PipelineOverview {
         else {
             try {
                 Date date = new Date(file.lastModified());
-                String format = "dd/MM/yyyy";
+                String format = "yyyy/MM/ddTHH:mm:ss";
                 Locale locale = Locale.ENGLISH;
                 String formattedDateString = new SimpleDateFormat(format, locale).format(date);
                 href ="<div class=\"divTableCell\">"+"<a href=\""+file.getCanonicalPath()+"\">"+file.getName()+"</a>"+"</div>\n" +
-                       "<div class=\"divTableCell\">"+file.length()/1000+"</div>\n" +
+                       "<div class=\"divTableCell\">"+file.length()+"</div>\n" +
                        "<div class=\"divTableCell\">"+formattedDateString+"</div>\n";
             } catch (IOException e) {
                 e.printStackTrace();
