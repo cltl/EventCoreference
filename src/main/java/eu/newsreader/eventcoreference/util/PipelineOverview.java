@@ -108,7 +108,7 @@ public class PipelineOverview {
     }
 
     static String makeRow (File file1, File file2, File file3, File file4) {
-        String row = " \"<div class=\\\"divTableRow\\\">\\n\" +\n"
+        String row = " <div class=\"divTableRow\">\n"
                 + makeHref(file1)
                 + makeHref(file2)
                 + makeHref(file3)
@@ -120,14 +120,14 @@ public class PipelineOverview {
     static String makeHref (File file) {
         String href = "";
         if (file == null) {
-            href ="<div class=\\\"divTableCell\\\">"+"no file"+"</div>+\n" +
-                    "<div class=\\\"divTableCell\\\">"+"</div>\n" +
-                    "<div class=\\\"divTableCell\\\">"+"</div>+n";
+            href ="<div class=\"divTableCell\">"+"no file"+"</div>+\n" +
+                    "<div class=\"divTableCell\">"+"</div>\n" +
+                    "<div class=\"divTableCell\">"+"</div>+n";
         }
         else {
-            href ="<div class=\\\"divTableCell\\\">"+"<a href=\"\"+file.getAbsolutePath()+\"\\\">\"+file.getName()+\"</a>"+"</div>\n" +
-                   "<div class=\\\"divTableCell\\\">"+file.getTotalSpace()+"</div>\n" +
-                   "<div class=\\\"divTableCell\\\">"+file.lastModified()+"</div>\n";
+            href ="<div class=\"divTableCell\">"+"<a href=\""+file.getAbsolutePath()+"\">"+file.getName()+"</a>"+"</div>\n" +
+                   "<div class=\"divTableCell\">"+file.getTotalSpace()+"</div>\n" +
+                   "<div class=\"divTableCell\">"+file.lastModified()+"</div>\n";
         }
         return href;
     }
