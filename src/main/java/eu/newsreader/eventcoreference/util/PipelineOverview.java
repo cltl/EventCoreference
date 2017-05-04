@@ -147,6 +147,7 @@ public class PipelineOverview {
                 + makeHref(file2)
                 + makeHref(file3)
                 + makeHref(file4)
+                + makeHref(file5)
                 +"</div>\n";
         return row;
     }
