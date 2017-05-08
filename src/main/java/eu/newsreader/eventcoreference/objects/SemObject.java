@@ -679,6 +679,8 @@ public class SemObject implements Serializable {
             //Property property = model.createProperty(ResourcesUri.skos+SKOS.PREF_LABEL.getLocalName());
             //resource.addProperty(property, model.createLiteral(this.getTopPhraseAsLabel()));
             //// instead of
+
+            resource = model.createResource(this.getURI()+"_"+topLabel);
             for (int i = 0; i < phraseCounts.size(); i++) {
                 PhraseCount phraseCount = phraseCounts.get(i);
                 // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
