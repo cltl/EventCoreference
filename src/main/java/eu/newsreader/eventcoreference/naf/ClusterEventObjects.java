@@ -60,6 +60,7 @@ public class ClusterEventObjects {
     static public Integer SENTENCERANGE = 0;
     static public boolean BRIDGING = false;
     static public boolean FIXCOREF = false;
+    static public boolean DEBUG = false;
     static public String done = "";
     static public boolean RAWTEXTINDEX = false;
     static public String TIME = "";
@@ -129,6 +130,9 @@ public class ClusterEventObjects {
             }
             else if (arg.equals("--rename") && args.length>(i+1)) {
                 done = args[i+1];
+            }
+            else if (arg.equals("--debug")) {
+                DEBUG = true;
             }
         }
 
@@ -205,7 +209,7 @@ public class ClusterEventObjects {
 
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
-           // System.out.println("file.getName() = " + file.getName());
+            if (DEBUG)  System.out.println("file.getName() = " + file.getName());
 /*            if (!file.getName().startsWith("7YXG-CS51-2RYC-J2CN.xml")) {
                      continue;
             }*/
@@ -284,17 +288,24 @@ public class ClusterEventObjects {
       //  System.out.println("nafFileName = " + nafFileName);
         GetSemFromNaf.processNafFile(nafSemParameters, kafSaxParser, semEvents, semActors, semTimes,
                 semRelations);
-
+         if (DEBUG) {
+             nafSemParameters.printSettings();
+             System.out.println("semEvents.size() = " + semEvents.size());
+             System.out.println("semActors.size() = " + semActors.size());
+             System.out.println("semTimes.size() = " + semTimes.size());
+         }
 
         // We need to create output objects that are more informative than the Trig output and store these in files per date
         //System.out.println("semTimes = " + semTimes.size());
         for (int j = 0; j < semEvents.size(); j++) {
             SemEvent mySemEvent = (SemEvent) semEvents.get(j);
             ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
-            //   System.out.println("myTimes.size() = " + myTimes.size());
+            if (DEBUG) System.out.println("myTimes.size() = " + myTimes.size());
             ArrayList<SemActor> myActors =ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
+            if (DEBUG) System.out.println("myActors.size() = " + myActors.size());
             ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
-           // ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
+            if (DEBUG) System.out.println("myRelations.size() = " + myRelations.size());
+                // ArrayList<SemRelation> myFacts = ComponentMatch.getMySemRelations(mySemEvent, factRelations);
             CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
             if (!compositeEvent.isValid() && !nafSemParameters.isALL()) {
                 continue;

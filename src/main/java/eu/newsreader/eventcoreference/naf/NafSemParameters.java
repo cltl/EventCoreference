@@ -46,7 +46,7 @@ public class NafSemParameters {
     private String PROJECT = "";
     private boolean DOCTIME = true;
     private boolean CONTEXTTIME = true;
-    private boolean ADDITIONALROLES;
+    private boolean ADDITIONALROLES = true;
     private boolean NOMCOREF = true;
     private boolean EVENTCOREF = true;
 
@@ -59,7 +59,6 @@ public class NafSemParameters {
     }
 
     void init () {
-
         Vector<String> sourceVector = null;
         Vector<String> grammaticalVector = null;
         Vector<String> contextualVector = null;
@@ -299,5 +298,21 @@ public class NafSemParameters {
 
     }
 
-
+    public void printSettings() {
+        System.out.println("sourceVector = " + sourceVector.toString());
+        System.out.println("grammaticalVector = " + grammaticalVector.toString());
+        System.out.println("grammaticalVector = " + grammaticalVector.toString());
+        System.out.println("TIMEEXPRESSIONMAX = " + TIMEEXPRESSIONMAX);
+        System.out.println("ALL = " + ALL);
+        System.out.println("NONENTITIES = " + NONENTITIES);
+        System.out.println("ILIURI = " + ILIURI);
+        System.out.println("VERBOSE = " + VERBOSE);
+        System.out.println("PERSPECTIVE = " + PERSPECTIVE);
+        System.out.println("PROJECT = " + PROJECT);
+        System.out.println("DOCTIME = " + DOCTIME);
+        System.out.println("CONTEXTTIME = " + CONTEXTTIME);
+        System.out.println("ADDITIONALROLES = " + ADDITIONALROLES);
+        System.out.println("NOMCOREF = " + NOMCOREF);
+        System.out.println("EVENTCOREF = " + EVENTCOREF);
+    }
 }
