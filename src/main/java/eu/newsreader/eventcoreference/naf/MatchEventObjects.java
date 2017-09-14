@@ -490,6 +490,8 @@ public class MatchEventObjects {
         if (DEBUG==2) System.out.println("eventFolders.size() = " + eventFolders.size());
         for (int f = 0; f < eventFolders.size(); f++) {
             File nextEventFolder =  eventFolders.get(f);
+            if (DEBUG==2) System.out.println("nextEventFolder = " + nextEventFolder.getName());
+
             try {
                 if (DEBUG==1) {
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
