@@ -79,7 +79,14 @@ The scripts can be adapted to run the functions with different settings by setti
 2. Conversion from NAF to SEM-GRaSP RDF-TRiG and cross-document event-coreference
 
 Another set of functions reads the NAF files and creates SEM-GRasSP TRiG files (RDF format). 
-While doing this it converts the mention-based representations in NAF into instance-based representations. There are two sets of functions:
+While doing this it converts the mention-based representations in NAF into instance-based representations.
+The input NAF files minimally need the following layers:
+- tokens, terms, entities, coreference for events, srl, timeExpressions
+
+If any of these layers is absent or empty, the RDF-TRiG files will be empty.
+To create an event coreference layer, use the event-coreference scripts described above.
+
+There are two sets of functions:
 
 2.1 Multiple NAF document conversion
 
