@@ -4,6 +4,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import eu.newsreader.eventcoreference.input.TrigTripleData;
 import eu.newsreader.eventcoreference.input.TrigTripleReader;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
+import eu.newsreader.eventcoreference.pwn.ILIReader;
 import eu.newsreader.eventcoreference.storyline.JsonFromRdf;
 import eu.newsreader.eventcoreference.storyline.JsonStoryUtil;
 import eu.newsreader.eventcoreference.util.Util;
@@ -19,12 +20,12 @@ import static eu.newsreader.eventcoreference.storyline.JsonFromRdf.getValue;
 /**
  * Created by piek on 12/05/16.
  */
-@Deprecated
 public class TrigStats {
 
     static public String STAT = "";
 
     static HashMap<String, PhraseCount> dbpMap = new HashMap<String, PhraseCount>();
+    static HashMap<String, PhraseCount> evMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> enMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> neMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> topicMap = new HashMap<String, PhraseCount>();
@@ -34,13 +35,18 @@ public class TrigStats {
     static HashMap<String, PhraseCount> eventLabelWithoutESOMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> eventLabelWithoutFNMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> eventLabelWithoutILIMap = new HashMap<String, PhraseCount>();
-    static HashMap<String, ArrayList<String>> eventMap = new HashMap<String, ArrayList<String>>();
+    static HashMap<String, ArrayList<String>> eventTypeMap = new HashMap<String, ArrayList<String>>();
     static HashMap<String, ArrayList<String>> lightEntityMap = new HashMap<String, ArrayList<String>>();
     static HashMap<String, ArrayList<String>> darkEntityMap = new HashMap<String, ArrayList<String>>();
-    static HashMap<String, ArrayList<PhraseCount>> nonEntityMap = new HashMap<String, ArrayList<PhraseCount>>();
+    static HashMap<String, ArrayList<PhraseCount>> lightEntityPhraseCountMap = new HashMap<String, ArrayList<PhraseCount>>();
+    static HashMap<String, ArrayList<PhraseCount>> darkEntityPhraseCountMap = new HashMap<String, ArrayList<PhraseCount>>();
+    static HashMap<String, ArrayList<PhraseCount>> nonEntityPhraseCountMap = new HashMap<String, ArrayList<PhraseCount>>();
+    static HashMap<String, ArrayList<PhraseCount>> eventPhraseCountMap = new HashMap<String, ArrayList<PhraseCount>>();
     static HashMap<String, PhraseCount> esoMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> fnMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> iliMap = new HashMap<String, PhraseCount>();
+
+    static public ILIReader iliReader = null;
 
     static void updateMap (String key, int nr, HashMap<String, PhraseCount> map) {
         if (map.containsKey(key)) {
@@ -75,21 +81,22 @@ public class TrigStats {
             ArrayList<PhraseCount> mMentions = map.get(key);
             for (int i = 0; i < mentions.size(); i++) {
                 String mention = mentions.get(i);
+                PhraseCount mentionCount = mentionStringToPhraseCount(mention);
                 boolean match = false;
                 for (int j = 0; j < mMentions.size(); j++) {
                     PhraseCount phraseCount = mMentions.get(j);
                   //  System.out.println("phraseCount.getPhrase() = " + phraseCount.getPhrase());
                   //  System.out.println("mention = " + mention);
-                    if (phraseCount.getPhrase().equals(mention)) {
-                        phraseCount.incrementCount();
+                    if (phraseCount.getPhrase().equals(mentionCount.getPhrase())) {
+                        phraseCount.addCount(mentionCount.getCount());
                      //   System.out.println("phraseCount.getPhraseCount() = " + phraseCount.getPhraseCount());
                         match = true;
                         break;
                     }
                 }
                 if (!match) {
-                    PhraseCount phraseCount = new PhraseCount(mention, 1);
-                    mMentions.add(phraseCount);
+                 //   PhraseCount phraseCount = new PhraseCount(mention, 1);
+                    mMentions.add(mentionCount);
                 }
             }
             map.put(key, mMentions);
@@ -98,18 +105,19 @@ public class TrigStats {
             ArrayList<PhraseCount> mMentions = new ArrayList<PhraseCount>();
             for (int i = 0; i < mentions.size(); i++) {
                 String mention = mentions.get(i);
+                PhraseCount mentionCount = mentionStringToPhraseCount(mention);
                 boolean match = false;
                 for (int j = 0; j < mMentions.size(); j++) {
                     PhraseCount phraseCount = mMentions.get(j);
-                    if (phraseCount.getPhrase().equals(mention)) {
-                        phraseCount.incrementCount();
+                    if (phraseCount.getPhrase().equals(mentionCount.getPhrase())) {
+                        phraseCount.addCount(mentionCount.getCount());
                         match = true;
                         break;
                     }
                 }
                 if (!match) {
-                    PhraseCount phraseCount = new PhraseCount(mention, 1);
-                    mMentions.add(phraseCount);
+                   // PhraseCount phraseCount = new PhraseCount(mention, 1);
+                    mMentions.add(mentionCount);
                 }
             }
             map.put(key, mMentions);
@@ -117,18 +125,25 @@ public class TrigStats {
     }
 
     static void dumpSortedMap (HashMap<String, PhraseCount> map, String outputPath) {
-        SortedSet<PhraseCount> treeSet = new TreeSet<PhraseCount>(new PhraseCount.Compare());
-        Set keySet = map.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            PhraseCount cnt = map.get(key);
-            treeSet.add(cnt);
-        }
+        SortedSet<PhraseCount> treeSet = freqSortPhraseCountMap(map);
         try {
             OutputStream fos = new FileOutputStream(outputPath);
             for (PhraseCount pcount : treeSet) {
-                String str = pcount.getPhrase()+"\t"+pcount.getCount()+"\n";
+                String str = "";
+                String instanceId = pcount.getPhrase();
+                String docId = pcount.getPhrase();
+                int idx = instanceId.indexOf("---");
+                if (idx>-1) {
+                    instanceId = instanceId.substring(0, idx);
+                    int idx_s = instanceId.lastIndexOf("/");
+                    if (idx_s>-1) instanceId = instanceId.substring(idx_s);
+                    docId = docId.substring(idx+3);
+                    str = instanceId+"\t"+docId + "\t" + pcount.getCount()+"\n"; /// sum of all phrases
+
+                }
+                else {
+                    str = "\t"+pcount.getPhrase() + "\t" + pcount.getCount()+"\n"; /// sum of all phrases
+                }
                 fos.write(str.getBytes());
             }
             fos.close();
@@ -138,14 +153,7 @@ public class TrigStats {
     }
 
     static void dumpSortedMap (HashMap<String, ArrayList<String>> mentionMap, HashMap<String, PhraseCount> map, String outputPath) {
-        SortedSet<PhraseCount> treeSet = new TreeSet<PhraseCount>(new PhraseCount.Compare());
-        Set keySet = map.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            PhraseCount cnt = map.get(key);
-            treeSet.add(cnt);
-        }
+        SortedSet<PhraseCount> treeSet = freqSortPhraseCountMap(map);
         try {
             OutputStream fos = new FileOutputStream(outputPath);
             for (PhraseCount pcount : treeSet) {
@@ -166,25 +174,33 @@ public class TrigStats {
         }
     }
 
+
+
     static void dumpSortedCountMap (HashMap<String, ArrayList<PhraseCount>> mentionMap, HashMap<String, PhraseCount> map, String outputPath) {
-        SortedSet<PhraseCount> treeSet = new TreeSet<PhraseCount>(new PhraseCount.Compare());
-        Set keySet = map.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            PhraseCount cnt = map.get(key);
-            treeSet.add(cnt);
-        }
+        SortedSet<PhraseCount> treeSet = freqSortPhraseCountMap(map);
         try {
             OutputStream fos = new FileOutputStream(outputPath);
             for (PhraseCount pcount : treeSet) {
-                String str = pcount.getPhrase()+"\t"+pcount.getCount();
+                String str = "";
+                String instanceId = pcount.getPhrase();
+                String docId = pcount.getPhrase();
+                int idx = instanceId.indexOf("---");
+                if (idx>-1) {
+                    instanceId = instanceId.substring(0, idx);
+                    int idx_s = instanceId.lastIndexOf("/");
+                    if (idx_s>-1) instanceId = instanceId.substring(idx_s);
+                    docId = docId.substring(idx+3);
+                    str = instanceId+"\t"+docId + "\t" + pcount.getCount(); /// sum of all phrases
+
+                }
+                else {
+                    str = "\t"+pcount.getPhrase() + "\t" + pcount.getCount(); /// sum of all phrases
+                }
                 if (mentionMap.containsKey(pcount.getPhrase())) {
                     ArrayList<PhraseCount> mentions = mentionMap.get(pcount.getPhrase());
-                    for (int i = 0; i < mentions.size(); i++) {
-                        PhraseCount mention = mentions.get(i);
-                        //str += "\t"+mention.getPhrase()+":"+mention.getCount();
-                        str += "\t"+mention.getPhrase();
+                    SortedSet<PhraseCount> mentionSet = freqSortPhraseCountArrayList(mentions);
+                    for (PhraseCount cumMention : mentionSet) {
+                        str += "\t"+cumMention.getPhraseCount();
                     }
                 }
                 str +="\n";
@@ -195,6 +211,7 @@ public class TrigStats {
             e.printStackTrace();
         }
     }
+
 
     static void dumpTypeMap (HashMap<String, ArrayList<String>> map, HashMap<String, PhraseCount> mentionMap, String outputPath) {
         try {
@@ -224,6 +241,104 @@ public class TrigStats {
         }
     }
 
+
+    static void dumpEventCountTypeMap (HashMap<String, ArrayList<String>> typemap,
+                                       HashMap<String, ArrayList<PhraseCount>> instancePhraseMap,
+                                       HashMap<String, PhraseCount> countMap, String outputPath) {
+        SortedSet<PhraseCount> treeSet = new TreeSet<PhraseCount>(new PhraseCount.Compare());
+        Set keySet = countMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            PhraseCount cnt = countMap.get(key);
+            treeSet.add(cnt);
+        }
+        try {
+            OutputStream fos = new FileOutputStream(outputPath);
+            for (PhraseCount pcount : treeSet) {
+                String str = "";
+                String instanceId = pcount.getPhrase();
+                String docId = pcount.getPhrase();
+                int idx = instanceId.indexOf("---");
+                if (idx>-1) {
+
+                    instanceId = instanceId.substring(0, idx);
+                    int idx_s = instanceId.lastIndexOf("/");
+                    if (idx_s>-1) instanceId = instanceId.substring(idx_s);
+                    docId = docId.substring(idx+3);
+                    str = instanceId+"\t"+docId + "\t" + pcount.getCount() + "\t"; /// sum of all phrases
+
+                }
+                else {
+                    str = "\t"+pcount.getPhrase() + "\t" + pcount.getCount() + "\t"; /// sum of all phrases
+                }
+                // get all phrases
+                if (instancePhraseMap.containsKey(pcount.getPhrase())) {
+                    ArrayList<PhraseCount> mentions = instancePhraseMap.get(pcount.getPhrase());
+                    SortedSet<PhraseCount> mentionSet =  freqSortPhraseCountArrayList(mentions);
+                    for (PhraseCount mcount : mentionSet) {
+                        str += mcount.getPhraseCount()+";";
+                    }
+                }
+                String synString = "";
+                str += "\t";
+                if (typemap.containsKey(pcount.getPhrase())) {
+                    ArrayList<String> types = typemap.get(pcount.getPhrase());
+                    String iliString = "";
+
+                    //we get the synonym counts
+                    HashMap<String, PhraseCount> synMap = new HashMap<String, PhraseCount>();
+                    for (int i = 0; i < types.size(); i++) {
+                        String type = types.get(i);
+                        if (type.startsWith("ili:")) {
+                            iliString += type+";";
+                            if (iliReader!=null) {
+                                String iliId = type;
+                                int idxNS = type.lastIndexOf(":");
+                                if (idxNS>-1) {
+                                    iliId = type.substring(idxNS+1);
+                                    if (iliId.startsWith(":")) System.out.println("iliId = " + iliId);
+                                }
+                                if (iliReader.iliToSynsetMap.containsKey(iliId)) {
+                                    String wnSynset = iliReader.iliToSynsetMap.get(iliId);
+                                    if (iliReader.synsetToSynonymMap.containsKey(wnSynset)) {
+                                        ArrayList<String> wnSynArray = iliReader.synsetToSynonymMap.get(wnSynset);
+                                        for (int j = 0; j < wnSynArray.size(); j++) {
+                                            String s = wnSynArray.get(j).trim();
+                                            updateMap(s, 1, synMap);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    SortedSet<PhraseCount> sortedSynonyms = freqSortPhraseCountMap(synMap);
+                    for (PhraseCount phraseCount : sortedSynonyms) {
+                        str += phraseCount.getPhraseCount()+";";
+                    }
+                    str += "\t";
+                    for (int i = 0; i < types.size(); i++) {
+                        String type = types.get(i);
+                        if (type.startsWith("eso:")) str += type+";";
+
+                    }
+                    str += "\t";
+                    for (int i = 0; i < types.size(); i++) {
+                        String type = types.get(i);
+                        if (type.startsWith("fn:")) str += type+";";
+
+                    }
+                    str += "\t"+iliString;
+                }
+                str +="\n";
+                fos.write(str.getBytes());
+            }
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     static public void main (String[] args) {
         String folderpath = "";
         String type = "instance";
@@ -238,6 +353,12 @@ public class TrigStats {
             }
             else if (arg.equals("--stat") && args.length>(i+1)) {
                 STAT = args[i+1];
+            }
+
+            else if (arg.equals("--ili") && args.length > (i + 1)) {
+                String pathToILIFile = args[i+1];
+                iliReader = new ILIReader();
+                iliReader.readILIFile(pathToILIFile);
             }
         }
         File inputFolder = new File(folderpath);
@@ -263,27 +384,33 @@ public class TrigStats {
                 if (type.equalsIgnoreCase("dbp") || type.toLowerCase().endsWith(".dbp")) {
                     updateMap(key, m, dbpMap);
                     ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
-                    updateMentionMap(key, lightEntityMap, mentionLabels);
+                    //updateMentionMap(key, lightEntityMap, mentionLabels);
+                    updateCountMap(key, lightEntityPhraseCountMap, mentionLabels);
+
                 }
             }
-            else if (STAT.isEmpty() || STAT.equals("en")) {
+            if (STAT.isEmpty() || STAT.equals("en")) {
                 if (type.equalsIgnoreCase("en")) {
                     updateMap(key, m, enMap);
                     ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
-                    updateMentionMap(key, darkEntityMap, mentionLabels);
+                    //updateMentionMap(key, darkEntityMap, mentionLabels);
+                    updateCountMap(key, darkEntityPhraseCountMap, mentionLabels);
+
                 }
             }
 
-            else if (STAT.isEmpty() || STAT.equals("ne")) {
+            if (STAT.isEmpty() || STAT.equals("ne")) {
                 if (type.equalsIgnoreCase("ne")) {
                     updateMap(key, m, neMap);
-                    ArrayList<String> types = getSkosRelatedValuesFromInstanceStatement(instanceTriples);
-                    updateCountMap(key, nonEntityMap, types);
+                   // ArrayList<String> types = getSkosRelatedValuesFromInstanceStatement(instanceTriples);
+                   // updateCountMap(key, nonEntityPhraseCountMap, types);
+                    ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    updateCountMap(key, nonEntityPhraseCountMap, mentionLabels);
                 }
             }
-            else if (STAT.isEmpty() || STAT.equals("event")) {
+            if (STAT.isEmpty() || STAT.equals("event")) {
                 if (key.indexOf("#ev") > -1) {
-                    ///this is an event
+                    // counting types
                     ArrayList<String> eso = getTypeValuesFromInstanceStatement(instanceTriples, "eso");
                     for (int i = 0; i < eso.size(); i++) {
                         String s = eso.get(i);
@@ -300,6 +427,13 @@ public class TrigStats {
                         updateMap(s, m, iliMap);
                     }
                     ArrayList<String> labels = getLabelsFromInstanceStatement(instanceTriples);
+                    /// we first build the data for each event instance
+                    ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    updateCountMap(key, eventPhraseCountMap, mentionLabels);
+                    updateMap(key, m, evMap);
+
+
+                    /// now we get the data for labels and types
                     for (int i = 0; i < labels.size(); i++) {
                         String s = labels.get(i);
                         updateMap(s, m, eventLabelMap);
@@ -313,9 +447,10 @@ public class TrigStats {
                             updateMap(s, m, eventLabelWithoutFNMap);
                         }
                         ArrayList<String> types = new ArrayList<String>();
-                        if (eventMap.containsKey(s)) {
-                            types = eventMap.get(s);
+                        if (eventTypeMap.containsKey(s)) {
+                            types = eventTypeMap.get(s);
                         }
+                        //// add the types in order
                         for (int j = 0; j < ili.size(); j++) {
                             String s1 = ili.get(j);
                             if (!types.contains(s1)) {
@@ -334,11 +469,12 @@ public class TrigStats {
                                 types.add(s1);
                             }
                         }
-                        eventMap.put(s, types);
+                        Collections.sort(types);
+                        eventTypeMap.put(key, types);
                     }
                 }
             }
-            else if (STAT.isEmpty() || STAT.equals("topic")) {
+            if (STAT.isEmpty() || STAT.equals("topic")) {
                 if (key.indexOf("#ev") > -1) {
                     ///this is an event
                     ArrayList<String> skos = getSkosValuesFromInstanceStatement(instanceTriples);
@@ -354,15 +490,18 @@ public class TrigStats {
 
         if (STAT.isEmpty() || STAT.equals("en")) {
             outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".entities.xls";
-            dumpSortedMap(darkEntityMap, enMap, outputFile);
+           // dumpSortedMap(darkEntityMap, enMap, outputFile);
+            dumpSortedCountMap(darkEntityPhraseCountMap, enMap, outputFile);
+
         }
         if (STAT.isEmpty() || STAT.equals("ne")) {
             outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".nonentities.xls";
-            dumpSortedCountMap(nonEntityMap, neMap, outputFile);
+            dumpSortedCountMap(nonEntityPhraseCountMap, neMap, outputFile);
         }
         if (STAT.isEmpty() || STAT.equals("dbp")) {
             outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".dbp.xls";
-            dumpSortedMap(lightEntityMap, dbpMap, outputFile);
+         //   dumpSortedMap(lightEntityMap, dbpMap, outputFile);
+            dumpSortedCountMap(lightEntityPhraseCountMap, dbpMap, outputFile);
         }
         if (STAT.isEmpty() || STAT.equals("event")) {
             outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventlabels.xls";
@@ -380,12 +519,75 @@ public class TrigStats {
             outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".ili.xls";
             dumpSortedMap(iliMap, outputFile);
             outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event.xls";
-            dumpTypeMap(eventMap, eventLabelMap, outputFile);
+            dumpEventCountTypeMap(eventTypeMap, eventPhraseCountMap, evMap, outputFile);
+
+           // outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventInstancelabels.xls";
+           // dumpSortedCountMap(eventPhraseCountMap, eventTypeMap, outputFile);
+
         }
         if (STAT.isEmpty() || STAT.equals("topic")) {
             outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".topics.xls";
             dumpSortedMap(topicMap, outputFile);
         }
+    }
+
+
+    static SortedSet<PhraseCount> freqSortPhraseCountArrayList(ArrayList<PhraseCount> counts) {
+        SortedSet<PhraseCount> treeSet = new TreeSet<PhraseCount>(new PhraseCount.Compare());
+        for (PhraseCount phraseCount : counts) {
+            boolean match = false;
+            for (PhraseCount cumMention : treeSet) {
+                if (phraseCount.getPhrase().equals(cumMention.getPhrase())) {
+                    cumMention.addCount(phraseCount.getCount());
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                treeSet.add(phraseCount);
+            }
+        }
+        return treeSet;
+    }
+
+    static SortedSet<PhraseCount> freqSortPhraseCountMap(HashMap<String, PhraseCount> countMap) {
+        SortedSet<PhraseCount> treeSet = new TreeSet<PhraseCount>(new PhraseCount.Compare());
+        Set keySet = countMap.keySet();
+        Iterator<String> keys = keySet.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            PhraseCount cnt = countMap.get(key);
+            boolean match = false;
+            for (PhraseCount phraseCount : treeSet) {
+                if (phraseCount.getPhrase().equals(cnt.getPhrase())) {
+                    phraseCount.addCount(cnt.getCount());
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                treeSet.add(cnt);
+            }
+        }
+        return treeSet;
+    }
+
+    static PhraseCount mentionStringToPhraseCount (String mentionString) {
+        PhraseCount p = new PhraseCount(mentionString, 1);
+        int idx = mentionString.lastIndexOf(":");
+        if (idx>-1) {
+            String nr = mentionString.substring(idx+1);
+            Integer cnt = null;
+            try {
+                cnt = Integer.parseInt(nr);
+                p.setPhrase(mentionString.substring(0, idx));
+                p.setCount(cnt);
+            } catch (NumberFormatException e) {
+                System.out.println("mentionString = " + mentionString);
+                // e.printStackTrace();
+            }
+        }
+        return p;
     }
 
     static void processGrasp (File inputFolder, ArrayList<File> files) {

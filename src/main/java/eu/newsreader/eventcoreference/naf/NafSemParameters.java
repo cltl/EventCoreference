@@ -47,6 +47,7 @@ public class NafSemParameters {
     private boolean DOCTIME = true;
     private boolean CONTEXTTIME = true;
     private boolean ADDITIONALROLES = true;
+    private boolean LOCALCONTEXT = false;
     private boolean NOMCOREF = true;
     private boolean EVENTCOREF = true;
 
@@ -74,6 +75,7 @@ public class NafSemParameters {
         NOMCOREF = true;
         EVENTCOREF = true;
         ADDITIONALROLES = true;
+        LOCALCONTEXT = false;
     }
 
     public NafSemParameters (String [] args) {
@@ -205,6 +207,14 @@ public class NafSemParameters {
         this.ADDITIONALROLES = ADDITIONALROLES;
     }
 
+    public boolean isLOCALCONTEXT() {
+        return LOCALCONTEXT;
+    }
+
+    public void setLOCALCONTEXT(boolean LOCALCONTEXT) {
+        this.LOCALCONTEXT = LOCALCONTEXT;
+    }
+
     public void readParameters (String [] args) {
         String sourceFrameFile = "";
         String contextualFrameFile = "";
@@ -233,6 +243,9 @@ public class NafSemParameters {
             }
             else if (arg.equals("--no-eventcoref")) {
                 EVENTCOREF = false;
+            }
+            else if (arg.equals("--local-context")) {
+                LOCALCONTEXT = true;
             }
             else if (arg.equals("--no-additional-roles")) {
                 ADDITIONALROLES = false;
@@ -314,5 +327,6 @@ public class NafSemParameters {
         System.out.println("ADDITIONALROLES = " + ADDITIONALROLES);
         System.out.println("NOMCOREF = " + NOMCOREF);
         System.out.println("EVENTCOREF = " + EVENTCOREF);
+        System.out.println("LOCALCONTEXT = " + LOCALCONTEXT);
     }
 }

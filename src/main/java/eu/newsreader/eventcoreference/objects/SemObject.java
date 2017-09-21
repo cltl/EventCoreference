@@ -633,7 +633,8 @@ public class SemObject implements Serializable {
                     resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
                 }*/
                 if (goodPhrase(phraseCount)) {
-                    resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+                  //  resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
+                    resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
                 }
             }
         }
@@ -671,7 +672,7 @@ public class SemObject implements Serializable {
         }
     }
 
-    public void addToJenaSimpleModel(Model model, Resource type) {
+    public void addToJenaSimpleModel(HashMap<String, String> rename, Model model, Resource type) {
         Resource resource = model.createResource(this.getURI());
         //// Top phrase
         String topLabel = this.getTopPhraseAsLabel();
@@ -680,7 +681,10 @@ public class SemObject implements Serializable {
             //resource.addProperty(property, model.createLiteral(this.getTopPhraseAsLabel()));
             //// instead of
 
-            if (type.equals(Sem.Event) ) resource = model.createResource(this.getURI()+"_"+topLabel);
+            if (type.equals(Sem.Event) ) {
+                resource = model.createResource(this.getURI() + "_" + topLabel);
+                rename.put(this.getURI(), this.getURI() + "_" + topLabel);
+            }
             for (int i = 0; i < phraseCounts.size(); i++) {
                 PhraseCount phraseCount = phraseCounts.get(i);
                 // resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));

@@ -35,6 +35,7 @@ public class StructuredEventObjects {
             "                                 The output structure is event/other, event/grammatical and event/speech.>\n" +
             "--extension            <string> <File extension to select the NAF files .>\n" +
             "--project              <string> <The name of the project for creating URIs>\n" +
+            "--local-context                 <Dark entities and non-entities have local context semantics>\n" +
             "--non-entities                  <If used, additional FrameNet roles and non-entity phrases are included>\n" +
             "--contextual-frames    <path>   <Path to a file with the FrameNet frames considered contextual>\n" +
             "--communication-frames <path>   <Path to a file with the FrameNet frames considered source>\n" +
@@ -178,8 +179,10 @@ public class StructuredEventObjects {
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
                 System.out.println("file.getName() = " + file.getName());
                 kafSaxParser.getKafMetaData().setUrl(file.getName());
+                kafSaxParser.fileName = file.getName();
                 System.out.println("WARNING! Replacing empty url in header NAF with the file name!");
             }
+           // System.out.println("kafSaxParser URL = " + kafSaxParser.getKafMetaData().getUrl());
             if (FIXCOREF) {
                 //// NEED A FIX
                 Util.fixSourceEventCoreferenceSets(kafSaxParser, nafSemParameters);
@@ -206,9 +209,6 @@ public class StructuredEventObjects {
                 File doneFile = new File(file.getAbsolutePath() + done);
                 file.renameTo(doneFile);
             }
-
-
-
         }
 
     }

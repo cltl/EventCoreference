@@ -348,10 +348,11 @@ public class SemRelation implements Serializable {
 
         }
     }
-    public void addToJenaDataSetSimple (Dataset ds) {
+    public void addToJenaDataSetSimple (HashMap<String, String> rename, Dataset ds) {
 
         Model relationModel = ds.getNamedModel(this.id);
-
+        if (rename.containsKey(this.getSubject())) { this.setSubject(rename.get(this.getSubject())); }
+        if (rename.containsKey(this.getObject())) { this.setObject(rename.get(this.getObject())); }
         Resource subject = relationModel.createResource(this.getSubject());
         Resource object = relationModel.createResource(this.getObject());
 

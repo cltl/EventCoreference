@@ -748,25 +748,26 @@ doc-uri
             CompositeEvent compositeEvent) {
 
 
-        compositeEvent.getEvent().addToJenaSimpleModel(instanceModel, Sem.Event);
+        HashMap<String, String> rename = new HashMap<String, String>();
+        compositeEvent.getEvent().addToJenaSimpleModel(rename, instanceModel, Sem.Event);
 
         //  System.out.println("ACTORS");
         for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
-            SemActor semActor = (SemActor) compositeEvent.getMySemActors().get(i);
-            semActor.addToJenaSimpleModel(instanceModel, Sem.Actor);
+            SemActor semActor =  compositeEvent.getMySemActors().get(i);
+            semActor.addToJenaSimpleModel(rename, instanceModel, Sem.Actor);
         }
 
 
         // System.out.println("TIMES");
         // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
         for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
-            SemTime semTime = (SemTime) compositeEvent.getMySemTimes().get(i);
+            SemTime semTime = compositeEvent.getMySemTimes().get(i);
             semTime.addToJenaModelSimpleDocTimeInstant(instanceModel);
         }
 
         for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
             SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
-                semRelation.addToJenaDataSetSimple(ds);
+                semRelation.addToJenaDataSetSimple(rename, ds);
         }
     }
 

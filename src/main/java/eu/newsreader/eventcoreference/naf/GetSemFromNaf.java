@@ -67,14 +67,20 @@ public class GetSemFromNaf {
         /// if CROSSLINGUAL
         //useEnglishExternalReferences(kafSaxParser);
 
-
+        //nafSemParameters.printSettings();
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH") + ID_SEPARATOR;
         String entityUri = ResourcesUri.nwrdata + nafSemParameters.getPROJECT() + "/entities/";
+
         if (!baseUrl.toLowerCase().startsWith("http")) {
            //  System.out.println("baseUrl = " + baseUrl);
             baseUrl = ResourcesUri.nwrdata + nafSemParameters.getPROJECT() + "/" + kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH") + ID_SEPARATOR;
         }
+
+        if (nafSemParameters.isLOCALCONTEXT()) {
+            entityUri = baseUrl;
+        }
+
         processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         if (nafSemParameters.isADDITIONALROLES()) {
             processSrlForRemainingFramenetRoles(nafSemParameters.getPROJECT(), kafSaxParser, semActors);
@@ -450,9 +456,26 @@ public class GetSemFromNaf {
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentionMap = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
         String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
         if (!baseUrl.toLowerCase().startsWith("http")) {
-            baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
+            if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
+                if (kafSaxParser.fileName.isEmpty()) {
+                    baseUrl = ResourcesUri.nwrdata + project  + ID_SEPARATOR;
+
+                } else  {
+                     baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.fileName + ID_SEPARATOR;
+                }
+            }
+            else {
+                baseUrl = ResourcesUri.nwrdata + project + "/" + kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
+            }
+        }
+        else {
+           // System.out.println("baseUrl = " + baseUrl);
         }
         String entityUri = ResourcesUri.nwrdata + project + "/non-entities/";
+        if (nafSemParameters.isLOCALCONTEXT()) {
+            entityUri = baseUrl + "/non-entities/";
+          //  System.out.println("baseUrl based entityUri = " + entityUri);
+        }
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
             for (int k = 0; k < kafEvent.getParticipants().size(); k++) {

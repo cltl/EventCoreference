@@ -521,121 +521,119 @@ public class MatchEventObjects {
                 }
                 if (DEBUG==1)
                     System.out.println("files.size() = " + files.size());
-                if (DEBUG==1) {
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                    Date date = new Date();
-                    System.out.println("Before reading object files:" + dateFormat.format(date));
-                }
-                for (int i = 0; i < files.size(); i++) {
-                    File file = files.get(i);
-                    if (DEBUG==2) System.out.println("file.getName() = " + file.getName());
-                    readCompositeEventArrayListFromObjectFile(file, allCompositeEvents);
-                    if (DEBUG==2) System.out.println("events.size() = " + allCompositeEvents.size());
-                }
-                /// we create an ArrayList with the event ids so that we can call the recursive chaining function
-                ArrayList<String> eventIds = new ArrayList<String>();
-                Set keySet = allCompositeEvents.keySet();
-                Iterator<String> keys = keySet.iterator();
-                while (keys.hasNext()) {
-                    String id = keys.next();
-                    eventIds.add(id);
-                }
+                if (files.size()>0) {
+                    if (DEBUG == 1) {
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Date date = new Date();
+                        System.out.println("Before reading object files:" + dateFormat.format(date));
+                    }
+                    for (int i = 0; i < files.size(); i++) {
+                        File file = files.get(i);
+                        if (DEBUG == 2) System.out.println("file.getName() = " + file.getName());
+                        readCompositeEventArrayListFromObjectFile(file, allCompositeEvents);
+                        if (DEBUG == 2) System.out.println("events.size() = " + allCompositeEvents.size());
+                    }
+                    /// we create an ArrayList with the event ids so that we can call the recursive chaining function
+                    ArrayList<String> eventIds = new ArrayList<String>();
+                    Set keySet = allCompositeEvents.keySet();
+                    Iterator<String> keys = keySet.iterator();
+                    while (keys.hasNext()) {
+                        String id = keys.next();
+                        eventIds.add(id);
+                    }
 
-                if (DEBUG==1) {
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                    Date date = new Date();
-                    System.out.println("End reading object files:" + dateFormat.format(date));
-                }
+                    if (DEBUG == 1) {
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Date date = new Date();
+                        System.out.println("End reading object files:" + dateFormat.format(date));
+                    }
 
-                if (DEBUG==1) System.out.println("events before chaining = " + allCompositeEvents.size());
-                if (CHAINING.equals("1")) {
-                    chaining1(allCompositeEvents, eventIds,
-                            phraseMatchThreshold,
-                            conceptMatchThreshold,
-                            roleNeededArrayList);
-                }
-                else if (CHAINING.equals("2")) {
-                    chaining2(allCompositeEvents, eventIds, eventIds,
-                                            phraseMatchThreshold,
-                                            conceptMatchThreshold,
-                                            roleNeededArrayList);
-                }
-                else if (CHAINING.equals("3")) {
-                    /**
-                     * We first build a map from each sense code to the event identifiers that have this sense code
-                     * This maps determines what events are compared with what other events
-                     * The map contains sense codes and lemmas. The sense code can be based on the ILI references or the LCS references or the HYPERNYMS depending on the setting
-                     */
-                    HashMap<String, ArrayList<String>> conceptEventMap = buildConceptEventMap(allCompositeEvents);
-                    if (DEBUG==2) System.out.println("conceptEventMap.size() = " + conceptEventMap.size());
+                    if (DEBUG == 1) System.out.println("events before chaining = " + allCompositeEvents.size());
+                    if (CHAINING.equals("1")) {
+                        chaining1(allCompositeEvents, eventIds,
+                                phraseMatchThreshold,
+                                conceptMatchThreshold,
+                                roleNeededArrayList);
+                    } else if (CHAINING.equals("2")) {
+                        chaining2(allCompositeEvents, eventIds, eventIds,
+                                phraseMatchThreshold,
+                                conceptMatchThreshold,
+                                roleNeededArrayList);
+                    } else if (CHAINING.equals("3")) {
+                        /**
+                         * We first build a map from each sense code to the event identifiers that have this sense code
+                         * This maps determines what events are compared with what other events
+                         * The map contains sense codes and lemmas. The sense code can be based on the ILI references or the LCS references or the HYPERNYMS depending on the setting
+                         */
+                        HashMap<String, ArrayList<String>> conceptEventMap = buildConceptEventMap(allCompositeEvents);
+                        if (DEBUG == 2) System.out.println("conceptEventMap.size() = " + conceptEventMap.size());
 
-                    chaining3(allCompositeEvents, conceptEventMap, eventIds,
-                                            phraseMatchThreshold,
-                                            conceptMatchThreshold,
-                                            roleNeededArrayList);
-                    if (CROSSDOC) {
-                        for (int i = 0; i < crossDocCorefSet.size(); i++) {
-                            String s = crossDocCorefSet.get(i);
-                            if (allCompositeEvents.containsKey(s)) {
-                                CompositeEvent compositeEvent = allCompositeEvents.get(s);
-                                crossDocEvents.put(s, compositeEvent);
+                        chaining3(allCompositeEvents, conceptEventMap, eventIds,
+                                phraseMatchThreshold,
+                                conceptMatchThreshold,
+                                roleNeededArrayList);
+                        if (CROSSDOC) {
+                            for (int i = 0; i < crossDocCorefSet.size(); i++) {
+                                String s = crossDocCorefSet.get(i);
+                                if (allCompositeEvents.containsKey(s)) {
+                                    CompositeEvent compositeEvent = allCompositeEvents.get(s);
+                                    crossDocEvents.put(s, compositeEvent);
+                                }
+
                             }
+                        }
+                    } else if (CHAINING.equals("4")) {
+                        /**
+                         * We first build a map from each sense code to the event identifiers that have this sense code
+                         * This maps determines what events are compared with what other events
+                         * The map contains sense codes and lemmas. The sense code can be based on the ILI references or the LCS references or the HYPERNYMS depending on the setting
+                         */
+                        HashMap<String, ArrayList<String>> conceptEventMap = buildConceptEventMap(allCompositeEvents);
+                        if (DEBUG == 2) System.out.println("conceptEventMap.size() = " + conceptEventMap.size());
 
+                        chaining4(allCompositeEvents, conceptEventMap, eventIds,
+                                phraseMatchThreshold,
+                                conceptMatchThreshold,
+                                roleNeededArrayList);
+                        if (CROSSDOC) {
+                            for (int i = 0; i < crossDocCorefSet.size(); i++) {
+                                String s = crossDocCorefSet.get(i);
+                                if (allCompositeEvents.containsKey(s)) {
+                                    CompositeEvent compositeEvent = allCompositeEvents.get(s);
+                                    crossDocEvents.put(s, compositeEvent);
+                                }
+
+                            }
                         }
                     }
-                }
-                else if (CHAINING.equals("4")) {
-                    /**
-                     * We first build a map from each sense code to the event identifiers that have this sense code
-                     * This maps determines what events are compared with what other events
-                     * The map contains sense codes and lemmas. The sense code can be based on the ILI references or the LCS references or the HYPERNYMS depending on the setting
-                     */
-                    HashMap<String, ArrayList<String>> conceptEventMap = buildConceptEventMap(allCompositeEvents);
-                    if (DEBUG==2) System.out.println("conceptEventMap.size() = " + conceptEventMap.size());
-
-                    chaining4(allCompositeEvents, conceptEventMap, eventIds,
-                                            phraseMatchThreshold,
-                                            conceptMatchThreshold,
-                                            roleNeededArrayList);
-                    if (CROSSDOC) {
-                        for (int i = 0; i < crossDocCorefSet.size(); i++) {
-                            String s = crossDocCorefSet.get(i);
-                            if (allCompositeEvents.containsKey(s)) {
-                                CompositeEvent compositeEvent = allCompositeEvents.get(s);
-                                crossDocEvents.put(s, compositeEvent);
-                            }
-
-                        }
+                    if (DEBUG == 1) {
+                        System.out.println("events after chaining = " + allCompositeEvents.size());
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Date date = new Date();
+                        System.out.println("End chaining:" + dateFormat.format(date));
                     }
-                }
-                if (DEBUG==1) {
-                    System.out.println("events after chaining = " + allCompositeEvents.size());
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                    Date date = new Date();
-                    System.out.println("End chaining:" + dateFormat.format(date));
-                }
 
-                if (CROSSDOC) {
-                    JenaSerialization.serializeJenaSingleCompositeEvents(fos,
-                            crossDocEvents,
-                            sourceMetaHashMap,
-                            ILIURI,
-                            VERBOSEMENTIONS);
-                }
-                else {
+                    if (CROSSDOC) {
+                        JenaSerialization.serializeJenaSingleCompositeEvents(fos,
+                                crossDocEvents,
+                                sourceMetaHashMap,
+                                ILIURI,
+                                VERBOSEMENTIONS);
+                    } else {
 
-                    JenaSerialization.serializeJenaSingleCompositeEvents(fos,
-                            allCompositeEvents,
-                            sourceMetaHashMap,
-                            ILIURI,
-                            VERBOSEMENTIONS);
+                        JenaSerialization.serializeJenaSingleCompositeEvents(fos,
+                                allCompositeEvents,
+                                sourceMetaHashMap,
+                                ILIURI,
+                                VERBOSEMENTIONS);
+                    }
+                    if (DEBUG == 1) {
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Date date = new Date();
+                        System.out.println("End writing sem.trig:" + dateFormat.format(date));
+                    }
+                    fos.close();
                 }
-                if (DEBUG==1) {
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                    Date date = new Date();
-                    System.out.println("End writing sem.trig:" + dateFormat.format(date));
-                }
-                fos.close();
             } catch (IOException e) {
                // e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
