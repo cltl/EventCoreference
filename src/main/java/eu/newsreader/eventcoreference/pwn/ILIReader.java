@@ -13,16 +13,19 @@ import java.util.zip.GZIPInputStream;
 public class ILIReader {
     public HashMap<String, String> synsetToILIMap;
     public HashMap<String, String> iliToSynsetMap;
+    public HashMap<String, String> iliToGlossMap;
     public HashMap<String, ArrayList<String>> synsetToSynonymMap;
 
     public ILIReader() {
 
+        iliToGlossMap = new HashMap<String, String>();
         synsetToILIMap = new HashMap<String, String>();
         iliToSynsetMap = new HashMap<String, String>();
         synsetToSynonymMap = new HashMap<String, ArrayList<String>>();
     }
 
     public void readILIFile (String pathToILIfile) {
+        iliToGlossMap = new HashMap<String, String>();
         synsetToILIMap = new HashMap<String, String>();
         iliToSynsetMap = new HashMap<String, String>();
         synsetToSynonymMap = new HashMap<String, ArrayList<String>>();
@@ -57,6 +60,7 @@ public class ILIReader {
                 String ili = "";
                 String target = "";
                 String synonyms = "";
+                String gloss = "";
                 /*
                 <i29>	a	<Concept> ;
         owl:sameAs	pwn30:eng-00006336-a ; # absorbent, absorptive
@@ -74,7 +78,16 @@ public class ILIReader {
                                 ili = inputLine.substring(1, idx);
                             }
                             // System.out.println("ili = " + ili);
-                        } else if (inputLine.trim().indexOf("owl:sameAs") > -1) {
+                        }
+
+                        else if (inputLine.indexOf(":definition")>-1) {
+                            //System.out.println("inputLine = " + inputLine);
+                            //	skos:definition	"sparing in consumption of especially food and drink"@en ;
+                            int idx_s = inputLine.indexOf("\"");
+                            int idx_e = inputLine.lastIndexOf("\"");
+                            gloss = inputLine.substring(idx_s+1, idx_e);
+                        }
+                        else if (inputLine.trim().indexOf("owl:sameAs") > -1) {
                             //	owl:sameAs	pwn30:eng-00009618-s ; # ascetic, ascetical, austere, spartan
                             //  System.out.println("inputLine = " + inputLine);
                             String[] fields = inputLine.trim().split("\t");
@@ -108,6 +121,9 @@ public class ILIReader {
                                 if (!synArray.isEmpty()) {
                                     synsetToSynonymMap.put(target, synArray);
                                 }
+                               // System.out.println("gloss = " + gloss);
+                                iliToGlossMap.put(ili, gloss);
+                                gloss = "";
                                 synArray = new ArrayList<String>();
                                 target = "";
                                 ili = "";

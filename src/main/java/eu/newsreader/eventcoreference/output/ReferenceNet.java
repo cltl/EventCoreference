@@ -1,6 +1,7 @@
-package eu.newsreader.eventcoreference.util;
+package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.objects.PhraseCount;
+import eu.newsreader.eventcoreference.pwn.ILIReader;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -231,6 +232,18 @@ public class ReferenceNet {
             return ilis;
         }
 
+        public boolean isMostFrequentPhrase (String phrase) {
+            SortedSet<PhraseCount> sortedSet = sortPhraseCounts(labels);
+            for (PhraseCount phraseCount : sortedSet) {
+                if (phraseCount.getPhrase().equals(phrase)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            return false;
+        }
+
         public void setIlis(ArrayList<PhraseCount> ilis) {
             this.ilis = ilis;
         }
@@ -249,33 +262,69 @@ public class ReferenceNet {
 
             }
             str += "\t";
+            str += synonyms.size()+":";
+            int cnt = 0;
             sortedSet = sortPhraseCounts(synonyms);
             for (PhraseCount phraseCount : sortedSet) {
+                cnt++;
+                if (cnt==10) break;
                 str += phraseCount.getPhraseCount()+";";
 
             }
             str += "\t";
+            str += esoTypes.size()+":";
+            cnt = 0;
             sortedSet = sortPhraseCounts(esoTypes);
             for (PhraseCount phraseCount : sortedSet) {
+                cnt++;
+                if (cnt==10) break;
                 str += phraseCount.getPhraseCount()+";";
 
             }
             str += "\t";
+            str += fnTypes.size()+":";
+            cnt = 0;
             sortedSet = sortPhraseCounts(fnTypes);
             for (PhraseCount phraseCount : sortedSet) {
+                cnt++;
+                if (cnt==10) break;
                 str += phraseCount.getPhraseCount()+";";
 
             }
             str += "\t";
+            str += ilis.size()+":";
+            cnt = 0;
             sortedSet = sortPhraseCounts(ilis);
             for (PhraseCount phraseCount : sortedSet) {
-                try {
-                    String iliData = getText(phraseCount.getPhrase());
-                    System.out.println("iliData = " + iliData);
+/*                try {
+
+                    //getText(phraseCount.getPhrase());
                 } catch (Exception e) {
                     e.printStackTrace();
+                }*/
+                str += phraseCount.getPhraseCount();
+                cnt++;
+                if (cnt==10) break;
+                String iliGloss = "";
+                String iliSynset = "";
+                String iliSynonym = "";
+                String iliId = phraseCount.getPhrase().substring(4);
+                if (iliReader.iliToGlossMap.containsKey(iliId)) {
+                    iliGloss = iliReader.iliToGlossMap.get(iliId);
                 }
-                str += phraseCount.getPhraseCount()+";";
+                if (iliReader.iliToSynsetMap.containsKey(iliId)) {
+                    iliSynset = iliReader.iliToSynsetMap.get(iliId);
+                    if (iliReader.synsetToSynonymMap.containsKey(iliSynset)) {
+                        ArrayList<String> syns = iliReader.synsetToSynonymMap.get(iliSynset);
+                        for (int i = 0; i < syns.size(); i++) {
+                            String s = syns.get(i);
+                            iliSynonym+= s+",";
+                        }
+                    }
+
+                }
+                str += "["+iliSynset+":"+iliSynonym+":"+iliGloss+"]";
+                str +=";";
 
             }
             str += "\n";
@@ -363,13 +412,17 @@ public class ReferenceNet {
             return response.toString();
         }
     }
+    static ILIReader iliReader = new ILIReader();
 
 
     static public void main (String[] args) {
         String filePath = "/Users/piek/Desktop/SemEval2018/sim2wsd8/2-events-loose-global/events.event.xls";
         String esoFilter = "eso:Killing;eso:Damaging;eso:Destroying";
         String fnFilter = "fn:Killing;fn:Cause_harm;fn:Use_firearm;fn:Shoot_projectiles;fn:Hit_target;fn:Attack;fn:Death;fn:Firing;fn:Destroying;fn:Committing_crime;fn:Damaging;fn:Dodging";
+        String iliFile = "/Code/vu/newsreader/vua-resources/ili.ttl.gz";
         Integer threshold = 50;
+        iliReader = new ILIReader();
+        iliReader.readILIFile(iliFile);
         ArrayList<ReferenceData> data = readCSVfile(filePath, esoFilter, fnFilter, threshold);
        // ArrayList<ReferenceData> mergedData = merge(data, threshold);
         HashMap<String, ReferenceData> dictionary = getReferenceDataDictionary(data);
@@ -548,8 +601,10 @@ public class ReferenceNet {
         }
         for (PhraseCount pcount : treeSet) {
             ReferenceData referenceData = dic.get(pcount.getPhrase());
-            str = pcount.getPhrase()+"\t"+pcount.getCount()+"\t"+referenceData.toCsvString();
-            fos.write(str.getBytes());
+            if (referenceData.isMostFrequentPhrase(pcount.getPhrase())) {
+                str = pcount.getPhrase() + "\t" + pcount.getCount() + "\t" + referenceData.toCsvString();
+                fos.write(str.getBytes());
+            }
         }
         fos.close();
     }
