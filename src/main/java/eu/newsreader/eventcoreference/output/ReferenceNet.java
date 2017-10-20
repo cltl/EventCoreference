@@ -2,6 +2,7 @@ package eu.newsreader.eventcoreference.output;
 
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.pwn.ILIReader;
+import vu.wntools.util.Util;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -324,7 +325,7 @@ public class ReferenceNet {
 
                 }
                 str += "["+iliSynset+":"+iliSynonym+":"+iliGloss+"]";
-                str +=";";
+                str +="\t";
 
             }
             str += "\n";
@@ -416,13 +417,53 @@ public class ReferenceNet {
 
 
     static public void main (String[] args) {
-        String filePath = "/Users/piek/Desktop/SemEval2018/sim2wsd8/2-events-loose-global/events.event.xls";
+        //String filePath = "/Users/piek/Desktop/SemEval2018/sim15wsd6/events.event.xls";
+        String filePath = "/Users/piek/Desktop/SemEval2018/sim1wsd5/events.event.xls";
+        //String filePath = "/Users/piek/Desktop/SemEval2018/sim2wsd8/2-events-loose-global/events.event.xls";
+        String esoFilterFile = "";
+        String fnFilterFile = "";
         String esoFilter = "eso:Killing;eso:Damaging;eso:Destroying";
         String fnFilter = "fn:Killing;fn:Cause_harm;fn:Use_firearm;fn:Shoot_projectiles;fn:Hit_target;fn:Attack;fn:Death;fn:Firing;fn:Destroying;fn:Committing_crime;fn:Damaging;fn:Dodging";
         String iliFile = "/Code/vu/newsreader/vua-resources/ili.ttl.gz";
         Integer threshold = 50;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equals("--ili") && args.length>i+1) {
+                iliFile = args[i+1];
+            }
+            else if (arg.equals("--threshold") && args.length>i+1) {
+                try {
+                    threshold = Integer.parseInt(args[i+1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (arg.equals("--eso-filter") && args.length>i+1) {
+                esoFilterFile = args[i+1];
+            }
+            else if (arg.equals("--fn-filter") && args.length>i+1) {
+                fnFilterFile = args[i+1];
+            }
+            else if (arg.equals("--file") && args.length>i+1) {
+                filePath = args[i+1];
+            }
+        }
         iliReader = new ILIReader();
         iliReader.readILIFile(iliFile);
+        if (!esoFilterFile.isEmpty()) {
+            ArrayList<String> array = Util.readTextToWordArray(esoFilterFile);
+            for (int i = 0; i < array.size(); i++) {
+                String s = array.get(i);
+                esoFilter+=s+";";
+            }
+        }
+        if (!fnFilterFile.isEmpty()) {
+            ArrayList<String> array = Util.readTextToWordArray(esoFilterFile);
+            for (int i = 0; i < array.size(); i++) {
+                String s = array.get(i);
+                fnFilter+=s+";";
+            }
+        }
         ArrayList<ReferenceData> data = readCSVfile(filePath, esoFilter, fnFilter, threshold);
        // ArrayList<ReferenceData> mergedData = merge(data, threshold);
         HashMap<String, ReferenceData> dictionary = getReferenceDataDictionary(data);

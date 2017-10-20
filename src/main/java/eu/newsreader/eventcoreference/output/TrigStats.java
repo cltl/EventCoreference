@@ -280,7 +280,6 @@ public class TrigStats {
                         str += mcount.getPhraseCount()+";";
                     }
                 }
-                String synString = "";
                 str += "\t";
                 if (typemap.containsKey(pcount.getPhrase())) {
                     ArrayList<String> types = typemap.get(pcount.getPhrase());
@@ -339,6 +338,334 @@ public class TrigStats {
         }
     }
 
+    static Integer countPhrases(ArrayList<PhraseCount> phrases) {
+        Integer count = 0;
+        for (int i = 0; i < phrases.size(); i++) {
+            PhraseCount phraseCount = phrases.get(i);
+            count += phraseCount.getCount();
+        }
+        return count;
+    }
+
+    static void dumpLemmaLexiconMap (HashMap<String, ArrayList<String>> typemap,
+                                       HashMap<String, ArrayList<PhraseCount>> instancePhraseMap, String outputPath) {
+        HashMap<String, ArrayList<String>> lemmaToInstance = new HashMap<String, ArrayList<String>>();
+        for (String instance : instancePhraseMap.keySet()) {
+            ArrayList<PhraseCount> phrases = instancePhraseMap.get(instance);
+            for (int i = 0; i < phrases.size(); i++) {
+                PhraseCount phraseCount = phrases.get(i);
+                if (lemmaToInstance.containsKey(phraseCount.getPhrase())) {
+                    ArrayList<String> instances = lemmaToInstance.get(phraseCount.getPhrase());
+                    instances.add(instance);
+                    lemmaToInstance.put(phraseCount.getPhrase(), instances);
+                }
+                else {
+                    ArrayList<String> instances = new ArrayList<String>();
+                    instances.add(instance);
+                    lemmaToInstance.put(phraseCount.getPhrase(), instances);
+                }
+            }
+        }
+        try {
+            OutputStream fos = new FileOutputStream(outputPath);
+            String str = "lemma\tnr. mentions\tlabels\tsupersynset\teso\tframenet\tsynsets\n";
+            fos.write(str.getBytes());
+            for (String lemma : lemmaToInstance.keySet()) {
+                str = lemma+"\t";
+                ArrayList<String>  instances = lemmaToInstance.get(lemma);
+                ArrayList<PhraseCount> instancePhrases = new ArrayList<PhraseCount>();
+                ArrayList<String> instanceTypes = new ArrayList<String>();
+                for (int in = 0; in < instances.size(); in++) {
+                    String instance = instances.get(in);
+                    ArrayList<PhraseCount> phrases = instancePhraseMap.get(instance);
+                    instancePhrases.addAll(phrases);
+                    ArrayList<String> types = typemap.get(instance);
+                    instanceTypes.addAll(types);
+                }
+                Integer mentionCount = countPhrases(instancePhrases);
+                str += mentionCount+"\t";
+                SortedSet<PhraseCount> mentionSet =  freqSortPhraseCountArrayList(instancePhrases);
+                for (PhraseCount mcount : mentionSet) {
+                    str += mcount.getPhraseCount()+";";
+                }
+                str += "\t";
+                 //we get the synonym counts
+                HashMap<String, PhraseCount> synMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> iliMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> esoMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> fnMap = new HashMap<String, PhraseCount>();
+                for (int i = 0; i < instanceTypes.size(); i++) {
+                    String type = instanceTypes.get(i);
+                    if (type.startsWith("ili:")) {
+                        updateMap(type, 1, iliMap);
+                        if (iliReader != null) {
+                            String iliId = type;
+                            int idxNS = type.lastIndexOf(":");
+                            if (idxNS > -1) {
+                                iliId = type.substring(idxNS + 1);
+                                if (iliId.startsWith(":")) System.out.println("iliId = " + iliId);
+                            }
+                            if (iliReader.iliToSynsetMap.containsKey(iliId)) {
+                                String wnSynset = iliReader.iliToSynsetMap.get(iliId);
+                                if (iliReader.synsetToSynonymMap.containsKey(wnSynset)) {
+                                    ArrayList<String> wnSynArray = iliReader.synsetToSynonymMap.get(wnSynset);
+                                    for (int j = 0; j < wnSynArray.size(); j++) {
+                                        String s = wnSynArray.get(j).trim();
+                                        updateMap(s, 1, synMap);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (type.startsWith("eso:")) {
+                        updateMap(type, 1, esoMap);
+                    }
+                    else if (type.startsWith("fn:")) {
+                        updateMap(type, 1, fnMap);
+                    }
+                }
+                SortedSet<PhraseCount> sortedSynonyms = freqSortPhraseCountMap(synMap);
+                for (PhraseCount phraseCount : sortedSynonyms) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedEso = freqSortPhraseCountMap(esoMap);
+                for (PhraseCount phraseCount : sortedEso) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedFn = freqSortPhraseCountMap(fnMap);
+                for (PhraseCount phraseCount : sortedFn) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedIli = freqSortPhraseCountMap(iliMap);
+                for (PhraseCount phraseCount : sortedIli) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str +="\n";
+                fos.write(str.getBytes());
+            }
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void dumpFnLexiconMap (HashMap<String, ArrayList<String>> typemap,
+                                       HashMap<String, ArrayList<PhraseCount>> instancePhraseMap, String outputPath) {
+        HashMap<String, ArrayList<String>> fnToInstance = new HashMap<String, ArrayList<String>>();
+        for (String instance : typemap.keySet()) {
+            ArrayList<String> types = typemap.get(instance);
+            for (int i = 0; i < types.size(); i++) {
+                String type = types.get(i);
+                if (type.startsWith("fn:")) {
+                    if (fnToInstance.containsKey(type)) {
+                        ArrayList<String> instances = fnToInstance.get(type);
+                        instances.add(instance);
+                        fnToInstance.put(type, instances);
+                    }
+                    else {
+                        ArrayList<String> instances = new ArrayList<String>();
+                        instances.add(instance);
+                        fnToInstance.put(type, instances);
+                    }
+                }
+            }
+        }
+        try {
+            OutputStream fos = new FileOutputStream(outputPath);
+            String str = "frame\tnr. mentions\tlabels\tsupersynset\teso\tframenet\tsynsets\n";
+            fos.write(str.getBytes());
+            for (String lemma : fnToInstance.keySet()) {
+                str = lemma+"\t";
+                ArrayList<String>  instances = fnToInstance.get(lemma);
+                ArrayList<PhraseCount> instancePhrases = new ArrayList<PhraseCount>();
+                ArrayList<String> instanceTypes = new ArrayList<String>();
+                for (int in = 0; in < instances.size(); in++) {
+                    String instance = instances.get(in);
+                    ArrayList<PhraseCount> phrases = instancePhraseMap.get(instance);
+                    instancePhrases.addAll(phrases);
+                    ArrayList<String> types = typemap.get(instance);
+                    instanceTypes.addAll(types);
+                }
+                Integer mentionCount = countPhrases(instancePhrases);
+                str += mentionCount+"\t";
+                SortedSet<PhraseCount> mentionSet =  freqSortPhraseCountArrayList(instancePhrases);
+                for (PhraseCount mcount : mentionSet) {
+                    str += mcount.getPhraseCount()+";";
+                }
+                str += "\t";
+                 //we get the synonym counts
+                HashMap<String, PhraseCount> synMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> iliMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> esoMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> fnMap = new HashMap<String, PhraseCount>();
+                for (int i = 0; i < instanceTypes.size(); i++) {
+                    String type = instanceTypes.get(i);
+                    if (type.startsWith("ili:")) {
+                        updateMap(type, 1, iliMap);
+                        if (iliReader != null) {
+                            String iliId = type;
+                            int idxNS = type.lastIndexOf(":");
+                            if (idxNS > -1) {
+                                iliId = type.substring(idxNS + 1);
+                                if (iliId.startsWith(":")) System.out.println("iliId = " + iliId);
+                            }
+                            if (iliReader.iliToSynsetMap.containsKey(iliId)) {
+                                String wnSynset = iliReader.iliToSynsetMap.get(iliId);
+                                if (iliReader.synsetToSynonymMap.containsKey(wnSynset)) {
+                                    ArrayList<String> wnSynArray = iliReader.synsetToSynonymMap.get(wnSynset);
+                                    for (int j = 0; j < wnSynArray.size(); j++) {
+                                        String s = wnSynArray.get(j).trim();
+                                        updateMap(s, 1, synMap);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (type.startsWith("eso:")) {
+                        updateMap(type, 1, esoMap);
+                    }
+                    else if (type.startsWith("fn:")) {
+                        updateMap(type, 1, fnMap);
+                    }
+                }
+                SortedSet<PhraseCount> sortedSynonyms = freqSortPhraseCountMap(synMap);
+                for (PhraseCount phraseCount : sortedSynonyms) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedEso = freqSortPhraseCountMap(esoMap);
+                for (PhraseCount phraseCount : sortedEso) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedFn = freqSortPhraseCountMap(fnMap);
+                for (PhraseCount phraseCount : sortedFn) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedIli = freqSortPhraseCountMap(iliMap);
+                for (PhraseCount phraseCount : sortedIli) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str +="\n";
+                fos.write(str.getBytes());
+            }
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void dumpEsoLexiconMap (HashMap<String, ArrayList<String>> typemap,
+                                       HashMap<String, ArrayList<PhraseCount>> instancePhraseMap, String outputPath) {
+        HashMap<String, ArrayList<String>> fnToInstance = new HashMap<String, ArrayList<String>>();
+        for (String instance : typemap.keySet()) {
+            ArrayList<String> types = typemap.get(instance);
+            for (int i = 0; i < types.size(); i++) {
+                String type = types.get(i);
+                if (type.startsWith("eso:")) {
+                    if (fnToInstance.containsKey(type)) {
+                        ArrayList<String> instances = fnToInstance.get(type);
+                        instances.add(instance);
+                        fnToInstance.put(type, instances);
+                    }
+                    else {
+                        ArrayList<String> instances = new ArrayList<String>();
+                        instances.add(instance);
+                        fnToInstance.put(type, instances);
+                    }
+                }
+            }
+        }
+        try {
+            OutputStream fos = new FileOutputStream(outputPath);
+            String str = "frame\tnr. mentions\tlabels\tsupersynset\teso\tframenet\tsynsets\n";
+            fos.write(str.getBytes());
+            for (String lemma : fnToInstance.keySet()) {
+                str = lemma+"\t";
+                ArrayList<String>  instances = fnToInstance.get(lemma);
+                ArrayList<PhraseCount> instancePhrases = new ArrayList<PhraseCount>();
+                ArrayList<String> instanceTypes = new ArrayList<String>();
+                for (int in = 0; in < instances.size(); in++) {
+                    String instance = instances.get(in);
+                    ArrayList<PhraseCount> phrases = instancePhraseMap.get(instance);
+                    instancePhrases.addAll(phrases);
+                    ArrayList<String> types = typemap.get(instance);
+                    instanceTypes.addAll(types);
+                }
+                Integer mentionCount = countPhrases(instancePhrases);
+                str += mentionCount+"\t";
+                SortedSet<PhraseCount> mentionSet =  freqSortPhraseCountArrayList(instancePhrases);
+                for (PhraseCount mcount : mentionSet) {
+                    str += mcount.getPhraseCount()+";";
+                }
+                str += "\t";
+                 //we get the synonym counts
+                HashMap<String, PhraseCount> synMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> iliMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> esoMap = new HashMap<String, PhraseCount>();
+                HashMap<String, PhraseCount> fnMap = new HashMap<String, PhraseCount>();
+                for (int i = 0; i < instanceTypes.size(); i++) {
+                    String type = instanceTypes.get(i);
+                    if (type.startsWith("ili:")) {
+                        updateMap(type, 1, iliMap);
+                        if (iliReader != null) {
+                            String iliId = type;
+                            int idxNS = type.lastIndexOf(":");
+                            if (idxNS > -1) {
+                                iliId = type.substring(idxNS + 1);
+                                if (iliId.startsWith(":")) System.out.println("iliId = " + iliId);
+                            }
+                            if (iliReader.iliToSynsetMap.containsKey(iliId)) {
+                                String wnSynset = iliReader.iliToSynsetMap.get(iliId);
+                                if (iliReader.synsetToSynonymMap.containsKey(wnSynset)) {
+                                    ArrayList<String> wnSynArray = iliReader.synsetToSynonymMap.get(wnSynset);
+                                    for (int j = 0; j < wnSynArray.size(); j++) {
+                                        String s = wnSynArray.get(j).trim();
+                                        updateMap(s, 1, synMap);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (type.startsWith("eso:")) {
+                        updateMap(type, 1, esoMap);
+                    }
+                    else if (type.startsWith("fn:")) {
+                        updateMap(type, 1, fnMap);
+                    }
+                }
+                SortedSet<PhraseCount> sortedSynonyms = freqSortPhraseCountMap(synMap);
+                for (PhraseCount phraseCount : sortedSynonyms) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedEso = freqSortPhraseCountMap(esoMap);
+                for (PhraseCount phraseCount : sortedEso) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedFn = freqSortPhraseCountMap(fnMap);
+                for (PhraseCount phraseCount : sortedFn) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str += "\t";
+                SortedSet<PhraseCount> sortedIli = freqSortPhraseCountMap(iliMap);
+                for (PhraseCount phraseCount : sortedIli) {
+                    str += phraseCount.getPhraseCount()+";";
+                }
+                str +="\n";
+                fos.write(str.getBytes());
+            }
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     static public void main (String[] args) {
         String folderpath = "";
         String type = "instance";
@@ -365,9 +692,65 @@ public class TrigStats {
         System.out.println("inputFolder = " + inputFolder);
         ArrayList<File> files = Util.makeRecursiveFileList(inputFolder, ".trig");
         System.out.println(".trig files size() = " + files.size());
-        if (type.equals("instance")) processInstances(inputFolder, files);
+        if (type.equals("instance")) {
+            processInstances(inputFolder, files);
+            outputInstances(inputFolder);
+        }
         if (type.equals("grasp")) processGrasp(inputFolder, files);
 
+    }
+
+    static void outputInstances (File inputFolder) {
+        File folderParent = inputFolder.getParentFile();
+        String outputFile = "";
+
+        if (STAT.isEmpty() || STAT.equals("en")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".entities.xls";
+            // dumpSortedMap(darkEntityMap, enMap, outputFile);
+            dumpSortedCountMap(darkEntityPhraseCountMap, enMap, outputFile);
+
+        }
+        if (STAT.isEmpty() || STAT.equals("ne")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".nonentities.xls";
+            dumpSortedCountMap(nonEntityPhraseCountMap, neMap, outputFile);
+        }
+        if (STAT.isEmpty() || STAT.equals("dbp")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".dbp.xls";
+            //   dumpSortedMap(lightEntityMap, dbpMap, outputFile);
+            dumpSortedCountMap(lightEntityPhraseCountMap, dbpMap, outputFile);
+        }
+        if (STAT.isEmpty() || STAT.equals("event")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventlabels.xls";
+            dumpSortedMap(eventLabelMap, outputFile);
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventlabelsNOeso.xls";
+            dumpSortedMap(eventLabelWithoutESOMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOfn.xls";
+            dumpSortedMap(eventLabelWithoutFNMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOili.xls";
+            dumpSortedMap(eventLabelWithoutILIMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eso.xls";
+            dumpSortedMap(esoMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".fn.xls";
+            dumpSortedMap(fnMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".ili.xls";
+            dumpSortedMap(iliMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event.xls";
+            dumpEventCountTypeMap(eventTypeMap, eventPhraseCountMap, evMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event-lemma-lex.xls";
+            dumpLemmaLexiconMap(eventTypeMap, eventPhraseCountMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event-frame-lex.xls";
+            dumpFnLexiconMap(eventTypeMap, eventPhraseCountMap, outputFile);
+            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event-eso-lex.xls";
+            dumpEsoLexiconMap(eventTypeMap, eventPhraseCountMap, outputFile);
+
+            // outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventInstancelabels.xls";
+            // dumpSortedCountMap(eventPhraseCountMap, eventTypeMap, outputFile);
+
+        }
+        if (STAT.isEmpty() || STAT.equals("topic")) {
+            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".topics.xls";
+            dumpSortedMap(topicMap, outputFile);
+        }
     }
 
     static void processInstances (File inputFolder, ArrayList<File> files) {
@@ -484,50 +867,6 @@ public class TrigStats {
                     }
                 }
             }
-        }
-        File folderParent = inputFolder.getParentFile();
-        String outputFile = "";
-
-        if (STAT.isEmpty() || STAT.equals("en")) {
-            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".entities.xls";
-           // dumpSortedMap(darkEntityMap, enMap, outputFile);
-            dumpSortedCountMap(darkEntityPhraseCountMap, enMap, outputFile);
-
-        }
-        if (STAT.isEmpty() || STAT.equals("ne")) {
-            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".nonentities.xls";
-            dumpSortedCountMap(nonEntityPhraseCountMap, neMap, outputFile);
-        }
-        if (STAT.isEmpty() || STAT.equals("dbp")) {
-            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".dbp.xls";
-         //   dumpSortedMap(lightEntityMap, dbpMap, outputFile);
-            dumpSortedCountMap(lightEntityPhraseCountMap, dbpMap, outputFile);
-        }
-        if (STAT.isEmpty() || STAT.equals("event")) {
-            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventlabels.xls";
-            dumpSortedMap(eventLabelMap, outputFile);
-            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventlabelsNOeso.xls";
-            dumpSortedMap(eventLabelWithoutESOMap, outputFile);
-            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOfn.xls";
-            dumpSortedMap(eventLabelWithoutFNMap, outputFile);
-            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eventlabelsNOili.xls";
-            dumpSortedMap(eventLabelWithoutILIMap, outputFile);
-            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".eso.xls";
-            dumpSortedMap(esoMap, outputFile);
-            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".fn.xls";
-            dumpSortedMap(fnMap, outputFile);
-            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".ili.xls";
-            dumpSortedMap(iliMap, outputFile);
-            outputFile = folderParent.getAbsolutePath()+"/"+inputFolder.getName()+".event.xls";
-            dumpEventCountTypeMap(eventTypeMap, eventPhraseCountMap, evMap, outputFile);
-
-           // outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".eventInstancelabels.xls";
-           // dumpSortedCountMap(eventPhraseCountMap, eventTypeMap, outputFile);
-
-        }
-        if (STAT.isEmpty() || STAT.equals("topic")) {
-            outputFile = folderParent.getAbsolutePath() + "/" + inputFolder.getName() + ".topics.xls";
-            dumpSortedMap(topicMap, outputFile);
         }
     }
 

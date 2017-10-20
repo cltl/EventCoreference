@@ -28,9 +28,10 @@ public class GetJsonTimeLinesFromNaf {
     static Vector<String> communicationVector = null;
     static Vector<String> grammaticalVector = null;
     static Vector<String> contextualVector = null;
+    static NafSemParameters nafSemParameters = new NafSemParameters();
 
     static public void main (String [] args) {
-        //String pathToNafFile = args[0];
+        nafSemParameters = new NafSemParameters(args);
         String pathToNafFile = "";
         // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/naf_file_raw_out-2/17174-Apple_executive_leaves.xml.naf";
         // pathToNafFile = "/Users/piek/Desktop/NWR/timeline/1514-trialNWR20.naf";
@@ -68,15 +69,6 @@ public class GetJsonTimeLinesFromNaf {
             }
             else if (arg.equals("--event-type") && args.length>(i+1)) {
                 eventType = args[i+1];
-            }
-            else if (arg.equals("--communication-frames") && args.length>(i+1)) {
-                comFrameFile = args[i+1];
-            }
-            else if (arg.equals("--grammatical-frames") && args.length>(i+1)) {
-                grammaticalFrameFile = args[i+1];
-            }
-            else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
-                contextualFrameFile = args[i+1];
             }
         }
 
@@ -814,7 +806,7 @@ public class GetJsonTimeLinesFromNaf {
                     if (!RoleLabels.validRole(kafParticipant.getRole())) {
                         continue;
                     }
-                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors, nafSemParameters);
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
                         if (semObject!=null) {
@@ -845,7 +837,7 @@ public class GetJsonTimeLinesFromNaf {
                             semRelations.add(semRelation);
                         }
                     }
-                    semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semPlaces);
+                    semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semPlaces, nafSemParameters);
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
                         if (semObject!=null) {

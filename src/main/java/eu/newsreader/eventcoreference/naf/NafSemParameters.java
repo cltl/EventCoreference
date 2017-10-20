@@ -24,6 +24,9 @@ public class NafSemParameters {
             "--ili-uri              <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
             "--verbose              <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n" +
             "--no-additional-role   <(OPTIONAL) only roles for entities are extracted" +
+            "--max-time-span        <(OPTIONAL) set maximal nr of sentences to look for time expressions: default = 5" +
+            "--max-role-phrases     <(OPTIONAL) set maximal nr of words for participant roles" +
+            "--min-role-phrases     <(OPTIONAL) set minimal nr of words for participant roles" +
             "--no-nomcoref          <(OPTIONAL) nominal coreference layer is ignored\n" +
             "--no-eventcoref        <(OPTIONAL) event coreference layer is ignored\n" +
             "--no-doc-time          <(OPTIONAL) document creation time is not considered\n" +
@@ -50,7 +53,13 @@ public class NafSemParameters {
     private boolean LOCALCONTEXT = false;
     private boolean NOMCOREF = true;
     private boolean EVENTCOREF = true;
-
+    private  int SPANMATCHTHRESHOLD = 50;
+    private int SPANMAXTIME = 10;
+    private int SPANMAXLOCATION= 10;
+    private int SPANMINLOCATION = 2;
+    private int SPANMAXPARTICIPANT = 6;
+    private int SPANMINPARTICIPANT = 2;
+    private int SPANMAXCOREFERENTSET = 5;
 
     static public void main (String[] args) {
         System.out.println("USAGE = " + USAGE);
@@ -213,6 +222,62 @@ public class NafSemParameters {
 
     public void setLOCALCONTEXT(boolean LOCALCONTEXT) {
         this.LOCALCONTEXT = LOCALCONTEXT;
+    }
+
+    public int getSPANMATCHTHRESHOLD() {
+        return SPANMATCHTHRESHOLD;
+    }
+
+    public void setSPANMATCHTHRESHOLD(int SPANMATCHTHRESHOLD) {
+        this.SPANMATCHTHRESHOLD = SPANMATCHTHRESHOLD;
+    }
+
+    public int getSPANMAXTIME() {
+        return SPANMAXTIME;
+    }
+
+    public void setSPANMAXTIME(int SPANMAXTIME) {
+        this.SPANMAXTIME = SPANMAXTIME;
+    }
+
+    public int getSPANMAXLOCATION() {
+        return SPANMAXLOCATION;
+    }
+
+    public void setSPANMAXLOCATION(int SPANMAXLOCATION) {
+        this.SPANMAXLOCATION = SPANMAXLOCATION;
+    }
+
+    public int getSPANMINLOCATION() {
+        return SPANMINLOCATION;
+    }
+
+    public void setSPANMINLOCATION(int SPANMINLOCATION) {
+        this.SPANMINLOCATION = SPANMINLOCATION;
+    }
+
+    public int getSPANMAXPARTICIPANT() {
+        return SPANMAXPARTICIPANT;
+    }
+
+    public void setSPANMAXPARTICIPANT(int SPANMAXPARTICIPANT) {
+        this.SPANMAXPARTICIPANT = SPANMAXPARTICIPANT;
+    }
+
+    public int getSPANMINPARTICIPANT() {
+        return SPANMINPARTICIPANT;
+    }
+
+    public void setSPANMINPARTICIPANT(int SPANMINPARTICIPANT) {
+        this.SPANMINPARTICIPANT = SPANMINPARTICIPANT;
+    }
+
+    public int getSPANMAXCOREFERENTSET() {
+        return SPANMAXCOREFERENTSET;
+    }
+
+    public void setSPANMAXCOREFERENTSET(int SPANMAXCOREFERENTSET) {
+        this.SPANMAXCOREFERENTSET = SPANMAXCOREFERENTSET;
     }
 
     public void readParameters (String [] args) {

@@ -574,7 +574,7 @@ public class GetTimeLinesFromNafFolder {
                     if (!RoleLabels.validRole(kafParticipant.getRole())) {
                         continue;
                     }
-                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors, nafSemParameters);
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
                         if (semObject!=null) {
@@ -605,7 +605,7 @@ public class GetTimeLinesFromNafFolder {
                             semRelations.add(semRelation);
                         }
                     }
-                    semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semPlaces);
+                    semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semPlaces, nafSemParameters);
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
                         if (semObject!=null) {

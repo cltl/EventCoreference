@@ -34,7 +34,8 @@ public class EsoReader extends DefaultHandler {
         String esoPath = "";
       //  esoPath = "/Users/piek/Desktop/NWR/NWR-ontology/version-0.6/ESO_version_0.6.owl";
        // esoPath = "/Users/piek/Desktop/ESO_extended_June17.owl";
-        esoPath = "/Users/piek/Desktop/NWR/eso/ESO.v2/ESO_V2_Final.owl";
+        //esoPath = "/Users/piek/Desktop/NWR/eso/ESO.v2/ESO_V2_Final.owl";
+        esoPath = "/Code/vu/eso-and-ceo/CEO_version_07.owl";
         EsoReader esoReader = new EsoReader();
         esoReader.parseFile(esoPath);
 /*
@@ -49,6 +50,7 @@ public class EsoReader extends DefaultHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        esoReader.simpleTaxonomy.printTree();
     }
 
     /**
@@ -72,302 +74,6 @@ public class EsoReader extends DefaultHandler {
     public EsoReader () {
         init();
     }
-
-/*    public ArrayList<String> getTops () {
-        ArrayList<String> tops = new ArrayList<String>();
-        Set keySet = simpleTaxonomy.superToSub.keySet();
-        Iterator<String> keys = keySet.iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            if (!key.equals("eso:SituationRuleAssertion")) {
-                if (!simpleTaxonomy.subToSuper.containsKey(key)) {
-                    if (!tops.contains(key)) tops.add(key);
-                }
-            }
-        }
-        return tops;
-    }
-
-
-
-    public void getParentChain (String c, ArrayList<String> parents) {
-        if (subToSuper.containsKey(c)) {
-            String p = subToSuper.get(c);
-            if (!parents.contains(p)) {
-                parents.add(p);
-                getParentChain(p, parents);
-            }
-        }
-    }
-
-
-    public void getDescendants (String c, ArrayList<String> decendants) {
-        if (superToSub.containsKey(c)) {
-            ArrayList<String> subs = superToSub.get(c);
-            for (int i = 0; i < subs.size(); i++) {
-                String sub = subs.get(i);
-                if (!decendants.contains(sub)) {
-                    decendants.add(sub);
-                    getDescendants(sub, decendants);
-                }
-            }
-        }
-    }
-
-    public void printTree (ArrayList<String> tops, int level) {
-        level++;
-        for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            String str = "";
-            for (int j = 0; j < level; j++) {
-                str += "  ";
-
-            }
-            if (superToSub.containsKey(top)) {
-                ArrayList<String> children = superToSub.get(top);
-                str += top + ":" + children.size();
-                System.out.println(str);
-                printTree(children, level);
-            }
-            else {
-                str += top;
-                System.out.println(str);
-            }
-        }
-    }
-
-    public void printTree (ArrayList<String> tops, int level, HashMap<String, Integer> eventCounts) {
-        level++;
-        for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            Integer cnt = 0;
-            if (eventCounts.containsKey(top)) {
-                cnt = eventCounts.get(top);
-            }
-            String str = "";
-            for (int j = 0; j < level; j++) {
-                str += "  ";
-
-            }
-            if (superToSub.containsKey(top)) {
-                ArrayList<String> children = superToSub.get(top);
-                str += top + ":" + cnt;
-                System.out.println(str);
-                printTree(children, level, eventCounts);
-            }
-            else {
-                str += top;
-                System.out.println(str);
-            }
-        }
-    }*/
-
-
-    /*
-    <div class="Row">
-        <div class="Cell">
-            <p>Row 1 Column 1</p>
-        </div>
-        <div class="Cell">
-            <p>Row 1 Column 2</p>
-        </div>
-        <div class="Cell">
-            <p>Row 1 Column 3</p>
-        </div>
-    </div>
-     */
- /*   public String  htmlTableTree (String ns, ArrayList<String> tops,
-                                  int level,
-                                  HashMap<String, Integer> eventCounts,
-                                  int maxDepth) {
-        String str = "";
-        level++;
-        for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            if (top.startsWith(ns)) {
-                str += "<div id=\"row\">";
-                Integer cnt = 0;
-                if (eventCounts.containsKey(top)) {
-                    cnt = eventCounts.get(top);
-                }
-                for (int j = 2; j < level; j++) {
-                    str += "<div id=\"cell\"></div>";
-
-                }
-                if (cnt > 0) {
-                    str += "<div id=\"cell\"><p>" + top + ":" + cnt + "</p></div>";
-                } else {
-                    str += "<div id=\"cell\"><p>" + top + "</p></div>";
-
-                    //str += "<div id=\"cell\">" + "</div>";
-                }*//*
-                for (int j = level; j < maxDepth; j++) {
-                    str += "<div id=\"cell\"></div>";
-
-                }*//*
-                str += "</div>\n";
-                if (superToSub.containsKey(top)) {
-                    ArrayList<String> children = superToSub.get(top);
-                    str += htmlTableTree(ns, children, level, eventCounts, maxDepth);
-                }
-            }
-        }
-        return str;
-    }*/
-
-/*    public String  htmlTableTree (String ns, ArrayList<String> tops,
-                                  int level,
-                                  HashMap<String, Integer> eventCounts,
-                                  HashMap<String, ArrayList<PhraseCount>> phrases,
-                                  int maxDepth) {
-        String str = "";
-        level++;
-        for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            if (top.startsWith(ns)) {
-                str += "<div id=\"row\">";
-                Integer cnt = 0;
-                if (eventCounts.containsKey(top)) {
-                    cnt = eventCounts.get(top);
-                }
-                for (int j = 2; j < level; j++) {
-                    str += "<div id=\"cell\"></div>";
-
-                }
-                if (cnt > 0) {
-                    str += "<div id=\"cell\"><p>" + top + ":" + cnt + "</p></div>";
-                } else {
-                    str += "<div id=\"cell\"><p>" + top + "</p></div>";
-
-                    //str += "<div id=\"cell\">" + "</div>";
-                }
-*//*
-                for (int j = level; j < maxDepth; j++) {
-                    str += "<div id=\"cell\"></div>";
-
-                }
-*//*
-                str += "</div>\n";
-                str += "<div id=\"row\">";
-                for (int j = 2; j < level; j++) {
-                    str += "<div id=\"cell\"></div>";
-
-                }
-                System.out.println("top = " + top);
-                if (phrases.containsKey(top)) {
-                    ArrayList<PhraseCount> phraseCounts = phrases.get(top);
-                    for (int j = 0; j < phraseCounts.size(); j++) {
-                        PhraseCount phraseCount = phraseCounts.get(j);
-                        System.out.println("phraseCount.toString() = " + phraseCount.toString());
-                    }
-                    System.out.println("phraseCounts.toString() = " + phraseCounts.toString());
-                    str += "<div id=\"cell\"><p>" + phraseCounts.toString()+ "</p></div>";
-
-                }
-                str += "</div>\n";
-                if (superToSub.containsKey(top)) {
-                    ArrayList<String> children = superToSub.get(top);
-                    str += htmlTableTree(ns, children, level, eventCounts, phrases, maxDepth);
-                }
-            }
-        }
-        return str;
-    }*/
-
-/*    public void cumulateScores (String ns, ArrayList<String> tops,
-                                  HashMap<String, Integer> eventCounts ) {
-        for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            if (top.startsWith(ns)) {
-                if (superToSub.containsKey(top)) {
-                    ArrayList<String> children = superToSub.get(top);
-                    cumulateScores(ns, children, eventCounts);
-                    int cCount = 0;
-                    for (int j = 0; j < children.size(); j++) {
-                        String child =  children.get(j);
-                        if (eventCounts.containsKey(child)) {
-                            cCount += eventCounts.get(child);
-                        }
-                    }
-                    if (eventCounts.containsKey(top)) {
-                        Integer cnt = eventCounts.get(top);
-                        cnt+= cCount;
-                        eventCounts.put(top, cnt);
-                    }
-                    else {
-                        eventCounts.put(top, cCount);
-                    }
-                }
-            }
-        }
-    }*/
-
-/*    public void cumulateScores (String ns, ArrayList<String> tops,
-                                  HashMap<String, ArrayList<PhraseCount>> eventCounts ) {
-        for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            if (top.startsWith(ns)) {
-                if (superToSub.containsKey(top)) {
-                    ArrayList<String> children = superToSub.get(top);
-                    cumulateScores(ns, children, eventCounts);
-                    int cCount = 0;
-                    for (int j = 0; j < children.size(); j++) {
-                        String child =  children.get(j);
-                        if (eventCounts.containsKey(child)) {
-                            ArrayList<PhraseCount> phrases = eventCounts.get(child);
-                            for (int k = 0; k < phrases.size(); k++) {
-                                PhraseCount phraseCount = phrases.get(k);
-                                cCount += phraseCount.getCount();
-                            }
-                        }
-                    }
-                    if (eventCounts.containsKey(top)) {
-                        Integer cnt = eventCounts.get(top);
-                        cnt+= cCount;
-                        eventCounts.put(top, cnt);
-                    }
-                    else {
-                        eventCounts.put(top, cCount);
-                    }
-                }
-            }
-        }
-    }*/
-
-/*    public int getMaxDepth (ArrayList<String> tops, int level) {
-        int maxDepth = 0;
-        level++;
-        maxDepth = level;
-        for (int i = 0; i < tops.size(); i++) {
-            String top = tops.get(i);
-            if (superToSub.containsKey(top)) {
-                ArrayList<String> children = superToSub.get(top);
-                int depth = getMaxDepth(children, level);
-                if (depth>maxDepth) {
-                    maxDepth = depth;
-                }
-            }
-        }
-        return maxDepth;
-    }*/
-
-    /*
-    <div class="Table">
-    <div class="Title">
-        <p>This is a Table</p>
-    </div>
-    <div class="Heading">
-        <div class="Cell">
-            <p>Heading 1</p>
-        </div>
-        <div class="Cell">
-            <p>Heading 2</p>
-        </div>
-        <div class="Cell">
-            <p>Heading 3</p>
-        </div>
-    </div>
-     */
 
 
     public void parseFile(String filePath) {
@@ -474,7 +180,6 @@ public class EsoReader extends DefaultHandler {
     </owl:Class>
          */
          if (qName.equalsIgnoreCase("correspondToFrameNetFrame_relatedMatch") ||
-              //  qName.equalsIgnoreCase("correspondToSUMOClass_broadMatch")  ||
                 qName.equalsIgnoreCase("correspondToFrameNetFrame_closeMatch")
                 ) {
              String valueName = "fn:"+value;
@@ -496,6 +201,118 @@ public class EsoReader extends DefaultHandler {
                 simpleTaxonomy.superToSub.put(subClass, subs);
             }
         }
+        else if (qName.equalsIgnoreCase("correspondToFrameNetFrame_broadMatch")
+                ) {
+             String valueName = "fn-broad:"+value;
+             int idx = value.lastIndexOf("#");
+             if (idx>-1) {
+                 valueName = "fn-broad:"+value.substring(idx+1);
+             }
+
+             simpleTaxonomy.subToSuper.put(valueName, subClass);
+             if (simpleTaxonomy.superToSub.containsKey(subClass)) {
+                 ArrayList<String> subs = simpleTaxonomy.superToSub.get(subClass);
+                 if (!subs.contains(valueName)) {
+                     subs.add(valueName);
+                     simpleTaxonomy.superToSub.put(subClass, subs);
+                 }
+             }
+             else {
+                 ArrayList<String> subs = new ArrayList<String>();
+                 subs.add(valueName);
+                 simpleTaxonomy.superToSub.put(subClass, subs);
+             }
+        }
+        /*
+        else if (qName.equalsIgnoreCase("correspondToFrameNetFrame_broadMatch")
+                ) {
+             String valueName = "fn:"+value;
+             int idx = value.lastIndexOf("#");
+             if (idx>-1) {
+                 valueName = "fn:"+value.substring(idx+1);
+             }
+             simpleTaxonomy.subToSuper.put(subClass, valueName);
+            if (simpleTaxonomy.superToSub.containsKey(valueName)) {
+                ArrayList<String> subs = simpleTaxonomy.superToSub.get(valueName);
+                if (!subs.contains(subClass)) {
+                    subs.add(valueName);
+                    simpleTaxonomy.superToSub.put(valueName, subs);
+                }
+            }
+            else {
+                ArrayList<String> subs = new ArrayList<String>();
+                subs.add(subClass);
+                simpleTaxonomy.superToSub.put(valueName, subs);
+            }
+        }*/
+        else if (
+                qName.equalsIgnoreCase("correspondToSUMOClass_relatedMatch")  ||
+                qName.equalsIgnoreCase("correspondToSUMOClass_closeMatch")
+                ) {
+             String valueName = "sumo:"+value;
+             int idx = value.lastIndexOf("#");
+             if (idx>-1) {
+                 valueName = "sumo:"+value.substring(idx+1);
+             }
+             simpleTaxonomy.subToSuper.put(valueName, subClass);
+            if (simpleTaxonomy.superToSub.containsKey(subClass)) {
+                ArrayList<String> subs = simpleTaxonomy.superToSub.get(subClass);
+                if (!subs.contains(valueName)) {
+                    subs.add(valueName);
+                    simpleTaxonomy.superToSub.put(subClass, subs);
+                }
+            }
+            else {
+                ArrayList<String> subs = new ArrayList<String>();
+                subs.add(valueName);
+                simpleTaxonomy.superToSub.put(subClass, subs);
+            }
+        }/*
+        else if (
+                qName.equalsIgnoreCase("correspondToSUMOClass_broadMatch")
+                ) {
+             String valueName = "sumo:"+value;
+             int idx = value.lastIndexOf("#");
+             if (idx>-1) {
+                 valueName = "sumo:"+value.substring(idx+1);
+             }
+             simpleTaxonomy.subToSuper.put(subClass, valueName);
+            if (simpleTaxonomy.superToSub.containsKey(valueName)) {
+                ArrayList<String> subs = simpleTaxonomy.superToSub.get(valueName);
+                if (!subs.contains(subClass)) {
+                    subs.add(valueName);
+                    simpleTaxonomy.superToSub.put(valueName, subs);
+                }
+            }
+            else {
+                ArrayList<String> subs = new ArrayList<String>();
+                subs.add(subClass);
+                simpleTaxonomy.superToSub.put(valueName, subs);
+            }
+        }*/
+         else if (
+                 qName.equalsIgnoreCase("correspondToSUMOClass_broadMatch")
+                 ) {
+             String valueName = "sumo-broad:"+value;
+             int idx = value.lastIndexOf("#");
+             if (idx>-1) {
+                 valueName = "sumo-broad:"+value.substring(idx+1);
+             }
+
+             simpleTaxonomy.subToSuper.put(valueName, subClass);
+             if (simpleTaxonomy.superToSub.containsKey(subClass)) {
+                 ArrayList<String> subs = simpleTaxonomy.superToSub.get(subClass);
+                 if (!subs.contains(valueName)) {
+                     subs.add(valueName);
+                     simpleTaxonomy.superToSub.put(subClass, subs);
+                 }
+             }
+             else {
+                 ArrayList<String> subs = new ArrayList<String>();
+                 subs.add(valueName);
+                 simpleTaxonomy.superToSub.put(subClass, subs);
+             }
+         }
     }
 
     public void characters(char ch[], int start, int length)

@@ -40,7 +40,7 @@ public class GetTimeLinesFromNaf {
     static Vector<String> contextualVector = null;
     static boolean NOENTITYCOREF = false;
     static boolean NOEVENTCOREF = false;
-
+    static NafSemParameters nafSemParameters = new NafSemParameters();
 
     static void reduceSentenceIdentifiers (KafSaxParser kafSaxParser) {
         for (int i = 0; i < kafSaxParser.getKafWordFormList().size(); i++) {
@@ -52,6 +52,7 @@ public class GetTimeLinesFromNaf {
     }
 
     static public void main (String [] args) {
+        nafSemParameters = new NafSemParameters(args);
         //String pathToNafFile = args[0];
         String pathToNafFile = "";
         String processType = "";
@@ -106,21 +107,6 @@ public class GetTimeLinesFromNaf {
             }
             else if (arg.equals("--process-type") && args.length>(i+1)) {
                 processType = args[i+1];
-            }
-            else if (arg.equals("--communication-frames") && args.length>(i+1)) {
-                comFrameFile = args[i+1];
-            }
-            else if (arg.equals("--grammatical-frames") && args.length>(i+1)) {
-                grammaticalFrameFile = args[i+1];
-            }
-            else if (arg.equals("--contextual-frames") && args.length>(i+1)) {
-                contextualFrameFile = args[i+1];
-            }
-            else if (arg.equals("--noentity-coref")) {
-                NOENTITYCOREF = true;
-            }
-            else if (arg.equals("--noevent-coref")) {
-                NOEVENTCOREF = true;
             }
         }
 
@@ -791,7 +777,7 @@ public class GetTimeLinesFromNaf {
                     if (!RoleLabels.validRole(kafParticipant.getRole())) {
                         continue;
                     }
-                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors);
+                    ArrayList<SemObject> semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semActors, nafSemParameters);
 /*
                     if (kafEvent.getId().equals("pr1")) {
                         System.out.println("kafParticipant = " + kafParticipant.getId());
@@ -828,7 +814,7 @@ public class GetTimeLinesFromNaf {
                             semRelations.add(semRelation);
                         }
                     }
-                    semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semPlaces);
+                    semObjects = Util.getAllMatchingObject(kafSaxParser, kafParticipant, semPlaces, nafSemParameters);
                     for (int l = 0; l < semObjects.size(); l++) {
                         SemObject semObject = semObjects.get(l);
                         if (semObject!=null) {

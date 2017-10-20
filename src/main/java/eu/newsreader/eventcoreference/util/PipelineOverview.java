@@ -12,6 +12,7 @@ import java.util.Locale;
 
 /**
  * Created by piek on 04/05/2017.
+ * GENERATES OVERVIEW TABLE FROM NWEWSREADER PIPELINE OUTPUT
  */
 public class PipelineOverview {
 
@@ -30,6 +31,7 @@ public class PipelineOverview {
         ArrayList<File> trigFiles = Util.makeFlatFileList(new File(path), ".trig");
         ArrayList<File> ttlFiles = Util.makeFlatFileList(new File(path), ".ttl");
         ArrayList<File> svgFiles = Util.makeFlatFileList(new File(path), ".svg");
+       // File allTrig = new File(path+"/"+"all.trig");
         try {
             OutputStream fos = new FileOutputStream(path+"/"+"index.html");
             String str = makeHtml(textFiles, innafFiles, nafFiles, trigFiles, ttlFiles, svgFiles);
@@ -38,7 +40,6 @@ public class PipelineOverview {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     static String css = "<style>\n.divTable{\n" +

@@ -16,13 +16,13 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Util {
-    static final int SPANMATCHTHRESHOLD = 50;
+/*    static final int SPANMATCHTHRESHOLD = 50;
     static public final int SPANMAXTIME = 10;
     static public final int SPANMAXLOCATION= 10;
     static public final int SPANMINLOCATION = 2;
     static public final int SPANMAXPARTICIPANT = 6;
     static public final int SPANMINPARTICIPANT = 2;
-    static public final int SPANMAXCOREFERENTSET = 5;
+    static public final int SPANMAXCOREFERENTSET = 5;*/
 
     static public void addRelation(ArrayList<SemRelation> relations, SemRelation semRelation) {
         boolean HAS = false;
@@ -716,14 +716,14 @@ public class Util {
      * @param kafSaxParser
      * @return
      */
-    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getTimeMentionsHashMapFromSrl (KafSaxParser kafSaxParser, OwlTime docOwlTime) {
+    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getTimeMentionsHashMapFromSrl (KafSaxParser kafSaxParser, OwlTime docOwlTime, NafSemParameters nafSemParameters) {
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentions = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
 
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
             KafEvent kafEvent = kafSaxParser.getKafEventArrayList().get(i);
             for (int j = 0; j < kafEvent.getParticipants().size(); j++) {
                 KafParticipant kafParticipant =  kafEvent.getParticipants().get(j);
-                if (kafParticipant.getSpans().size()>SPANMAXTIME) {
+                if (nafSemParameters.getSPANMAXTIME()>0 && kafParticipant.getSpans().size()>nafSemParameters.getSPANMAXTIME()) {
                     continue;
                 }
                 if (RoleLabels.isTIME(kafParticipant.getRole())) {
@@ -746,7 +746,7 @@ public class Util {
     /**
 
      */
-    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getLocationMentionsHashMapFromSrl (KafSaxParser kafSaxParser) {
+    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getLocationMentionsHashMapFromSrl (KafSaxParser kafSaxParser, NafSemParameters nafSemParameters) {
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentions = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
 
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
@@ -758,10 +758,10 @@ public class Util {
                     continue;
                 }
                 //// SKIP LARGE PHRASES
-                if (kafParticipant.getSpans().size()>SPANMAXLOCATION) {
+                if (nafSemParameters.getSPANMAXLOCATION()>0 && kafParticipant.getSpans().size()>nafSemParameters.getSPANMAXLOCATION()) {
                     continue;
                 }
-                if (kafParticipant.getSpans().size()<SPANMINLOCATION) {
+                if (nafSemParameters.getSPANMINLOCATION()>0 && kafParticipant.getSpans().size()<nafSemParameters.getSPANMINLOCATION()) {
                     continue;
                 }
                 if (RoleLabels.isLOCATION(kafParticipant.getRole())) {
@@ -796,7 +796,7 @@ public class Util {
      * @param kafSaxParser
      * @return
      */
-    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getActorCoreftargetSetsHashMapFromSrl(KafSaxParser kafSaxParser) {
+    static public HashMap<String, ArrayList<ArrayList<CorefTarget>>> getActorCoreftargetSetsHashMapFromSrl(KafSaxParser kafSaxParser, NafSemParameters nafSemParameters) {
         HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentions = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
 
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {
@@ -808,10 +808,10 @@ public class Util {
                     continue;
                 }
                 //// SKIP LARGE PHRASES
-                if (kafParticipant.getSpans().size()>SPANMAXPARTICIPANT) {
+                if (nafSemParameters.getSPANMAXPARTICIPANT()>0 && kafParticipant.getSpans().size()>nafSemParameters.getSPANMAXPARTICIPANT()) {
                     continue;
                 }
-                if (kafParticipant.getSpans().size()<SPANMINPARTICIPANT) {
+                if (nafSemParameters.getSPANMINPARTICIPANT()>0 && kafParticipant.getSpans().size()<nafSemParameters.getSPANMINPARTICIPANT()) {
                     continue;
                 }
                 if (RoleLabels.isPARTICIPANT(kafParticipant.getRole())) {
@@ -859,17 +859,18 @@ public class Util {
      * @return
      */
     static public ArrayList<ArrayList<CorefTarget>> getCorefTargetSetsForEntitySpans(ArrayList<ArrayList<CorefTarget>> entitySpans,
-                                                                                     ArrayList<KafCoreferenceSet> coreferenceSets) {
+                                                                                     ArrayList<KafCoreferenceSet> coreferenceSets,
+                                                                                     NafSemParameters nafSemParameters) {
         ArrayList<ArrayList<CorefTarget>> corefSet = new ArrayList<ArrayList<CorefTarget>>();
         for (int i = 0; i < entitySpans.size(); i++) {
             ArrayList<CorefTarget> corefTargets = entitySpans.get(i);
             corefSet.add(corefTargets);
             for (int j = 0; j < coreferenceSets.size(); j++){
                 KafCoreferenceSet kafCoreferenceSet = coreferenceSets.get(j);
-                if (intersectingWithAtLeastOneSetOfSpans(corefTargets, kafCoreferenceSet.getSetsOfSpans())) {
+                if (intersectingWithAtLeastOneSetOfSpans(corefTargets, kafCoreferenceSet.getSetsOfSpans(), nafSemParameters)) {
                     for (int k = 0; k < kafCoreferenceSet.getSetsOfSpans().size(); k++) {
                         ArrayList<CorefTarget> targets = kafCoreferenceSet.getSetsOfSpans().get(k);
-                        if (targets.size()<=SPANMAXCOREFERENTSET) {
+                        if (nafSemParameters.getSPANMAXCOREFERENTSET()<=0 || targets.size()<=nafSemParameters.getSPANMAXCOREFERENTSET()) {
                             //// WE SKIP ABSURD SPANS FOR COREFERENCE
                             if (!hasCorefTargetArrayList(targets, corefSet)) {
                                 corefSet.add(targets);
@@ -984,11 +985,11 @@ public class Util {
      * @param spans2
      * @return
      */
-    static public boolean intersectingWithAtLeastOneSetOfSpans (ArrayList<CorefTarget> corefTargets1, ArrayList<ArrayList<CorefTarget>> spans2) {
+    static public boolean intersectingWithAtLeastOneSetOfSpans (ArrayList<CorefTarget> corefTargets1, ArrayList<ArrayList<CorefTarget>> spans2, NafSemParameters nafSemParameters) {
         for (int k = 0; k < spans2.size(); k++) {
             ArrayList<CorefTarget> corefTargets2 = spans2.get(k);
             //// for each set we check if there is a sufficient match
-            if (intersectingThresholdSpans(corefTargets1, corefTargets2)) {
+            if (intersectingThresholdSpans(corefTargets1, corefTargets2, nafSemParameters)) {
                 return true;
             }
         }
@@ -1047,7 +1048,7 @@ public class Util {
     }
 
 
-    static public boolean intersectingThresholdSpans(ArrayList<CorefTarget> spans1, ArrayList<CorefTarget> spans2) {
+    static public boolean intersectingThresholdSpans(ArrayList<CorefTarget> spans1, ArrayList<CorefTarget> spans2, NafSemParameters nafSemParameters) {
         int matchCount = 0;
         for (int i = 0; i < spans1.size(); i++) {
             CorefTarget span1 = spans1.get(i);
@@ -1062,7 +1063,7 @@ public class Util {
         int span1MatchScore = ((matchCount * 100) / spans1.size());
         int span2MatchScore = ((matchCount * 100) / spans2.size());
         int matchScoreAverage = (span1MatchScore + span2MatchScore) / 2;
-        if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
+        if (nafSemParameters.getSPANMATCHTHRESHOLD()<=0 || matchScoreAverage >= nafSemParameters.getSPANMATCHTHRESHOLD()) {
             return true;
         }
         return false;
@@ -1414,7 +1415,7 @@ public class Util {
      */
     static public SemObject getBestMatchingObject(KafSaxParser kafSaxParser,
                                                   KafParticipant kafParticipant,
-                                                  ArrayList<SemObject> semObjects) {
+                                                  ArrayList<SemObject> semObjects, NafSemParameters nafSemParameters) {
 
         boolean DEBUG = false;
         SemObject topObject = null;
@@ -1451,7 +1452,7 @@ public class Util {
                         System.out.println("matchScoreAverage = " + matchScoreAverage);
                         System.out.println("semObject = " + semObject.getTopPhraseAsLabel());
                         System.out.println("kafParticipant = " + kafParticipant.getTokenString());*/
-                        if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
+                        if (matchScoreAverage >= nafSemParameters.getSPANMATCHTHRESHOLD()) {
                             if (matchScoreAverage > topScore) {
                                 topScore = matchScoreAverage;
                                 topObject = semObject;
@@ -1531,7 +1532,7 @@ public class Util {
 
     static public ArrayList<SemObject> getAllMatchingObject(KafSaxParser kafSaxParser,
                                                   KafParticipant kafParticipant,
-                                                  ArrayList<SemObject> semObjects) {
+                                                  ArrayList<SemObject> semObjects, NafSemParameters nafSemParameters) {
 
         ArrayList<SemObject> topObjects = new ArrayList<SemObject>();
         int nContentWordsKafParticipant = kafSaxParser.getNumberContentWords(kafParticipant.getSpanIds());
@@ -1561,7 +1562,7 @@ public class Util {
                         System.out.println("matchScoreAverage = " + matchScoreAverage);
                         System.out.println("semObject = " + semObject.getTopPhraseAsLabel());
                         System.out.println("kafParticipant = " + kafParticipant.getTokenString());*/
-                        if (matchScoreAverage >= SPANMATCHTHRESHOLD) {
+                        if (matchScoreAverage >= nafSemParameters.getSPANMATCHTHRESHOLD()) {
                             topObjects.add(semObject);
                         }
                     }
@@ -2039,12 +2040,12 @@ public class Util {
 
     static public ArrayList<NafMention> getNafMentionArrayListFromEntitiesAndCoreferences (String baseUri,
                                                                                            KafSaxParser kafSaxParser,
-                                                                                           ArrayList<KafEntity> kafEntities) {
+                                                                                           ArrayList<KafEntity> kafEntities, NafSemParameters nafSemParameters) {
         ArrayList<NafMention> mentionURIs = new ArrayList<NafMention>();
         for (int i = 0; i < kafEntities.size(); i++) {
             KafEntity kafEntity = kafEntities.get(i);
             ArrayList<ArrayList<CorefTarget>> corefTargetSets = kafEntity.getSetsOfSpans();
-            ArrayList<ArrayList<CorefTarget>> sets = getCorefTargetSetsForEntitySpans(corefTargetSets, kafSaxParser.kafCorefenceArrayList);
+            ArrayList<ArrayList<CorefTarget>> sets = getCorefTargetSetsForEntitySpans(corefTargetSets, kafSaxParser.kafCorefenceArrayList, nafSemParameters);
             for (int j = 0; j < sets.size(); j++) {
                 ArrayList<CorefTarget> corefTargets = sets.get(j);
                 NafMention mention = getNafMentionForCorefTargets(baseUri, kafSaxParser, corefTargets);
