@@ -1,6 +1,7 @@
 package eu.newsreader.eventcoreference.objects;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
@@ -94,6 +95,27 @@ public class PhraseCount  implements Serializable {
         this.phrase = phrase;
     }
 
+    public boolean isInArrayList(ArrayList<PhraseCount> phraseCountArrayList) {
+        for (int i = 0; i < phraseCountArrayList.size(); i++) {
+            PhraseCount phraseCount = phraseCountArrayList.get(i);
+            if (phraseCount.getPhrase().equals(this.getPhrase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addToArrayList(ArrayList<PhraseCount> phraseCountArrayList) {
+        boolean added = false;
+        for (int i = 0; i < phraseCountArrayList.size(); i++) {
+            PhraseCount phraseCount = phraseCountArrayList.get(i);
+            if (phraseCount.getPhrase().equals(this.getPhrase())) {
+                phraseCount.addCount(this.getCount());
+                added = true;
+            }
+        }
+        if (!added) phraseCountArrayList.add(this);
+    }
 
     static public class Compare implements Comparator {
         public int compare (Object aa, Object bb) {
@@ -108,6 +130,15 @@ public class PhraseCount  implements Serializable {
             else {
                 return a.getPhrase().compareTo(b.getPhrase());
             }
+        }
+    }
+
+    static public class ComparePhrase implements Comparator {
+        public int compare (Object aa, Object bb) {
+            PhraseCount a = (PhraseCount) aa;
+            PhraseCount b = (PhraseCount) bb;
+
+            return a.getPhrase().compareTo(b.getPhrase());
         }
     }
 }
