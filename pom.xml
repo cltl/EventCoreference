@@ -106,7 +106,31 @@
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
-
+<!--        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.6.0</version>
+        </dependency>-->
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.8.0</version>
+            <classifier>models</classifier>
+            <!--<classifier>models</classifier> Arabic, Chinese, German, or Spanish-->
+<!--
+            <classifier>models</classifier>
+-->
+        </dependency>
+<!--        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.0.2</version>
+        </dependency>-->
     </dependencies>
 
     <repositories>
