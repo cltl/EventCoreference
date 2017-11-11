@@ -747,6 +747,7 @@ public class ReferenceNet {
         }
         fos.close();
     }
+
     static void saveDic(String filePath, HashMap<String, ReferenceData> dic, Integer incidents, String wordFilter) throws IOException {
         OutputStream fos = new FileOutputStream(filePath);
         String str = new File (filePath).getName()+"\n";
