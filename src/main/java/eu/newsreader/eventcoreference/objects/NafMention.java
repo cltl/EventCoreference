@@ -25,6 +25,7 @@ public class NafMention implements Serializable {
     private ArrayList<String> termsIds;
     private ArrayList<KafFactuality> factualities;
     private ArrayList<KafOpinion> opinions;
+    private String paragraph;
 
 
     public NafMention(String baseUri) {
@@ -32,6 +33,7 @@ public class NafMention implements Serializable {
         this.phrase = "";
         this.offSetStart = "";
         this.offSetEnd = "";
+        this.paragraph = "";
         this.sentence = "";
         this.sentenceText = "";
         this.tokensIds = new ArrayList<String>();
@@ -45,6 +47,7 @@ public class NafMention implements Serializable {
         this.phrase = "";
         this.offSetStart = "";
         this.offSetEnd = "";
+        this.paragraph = "";
         this.sentence = "";
         this.sentenceText = "";
         this.tokensIds = new ArrayList<String>();
@@ -88,6 +91,18 @@ public class NafMention implements Serializable {
             if (kafWordForm!=null) {
                 //System.out.println(kafWordForm.getSent()+" = " + kafWordForm.getWf());
                 sentence = kafWordForm.getSent();
+                break;
+            }
+        }
+    }
+
+    public void setParagraph(KafSaxParser kafSaxParser) {
+        for (int i = 0; i < tokensIds.size(); i++) {
+            String s = tokensIds.get(i);
+            KafWordForm kafWordForm = kafSaxParser.getWordForm(s);
+            if (kafWordForm!=null) {
+                //System.out.println(kafWordForm.getSent()+" = " + kafWordForm.getWf());
+                paragraph = kafWordForm.getPara();
                 break;
             }
         }
@@ -649,6 +664,9 @@ public class NafMention implements Serializable {
         }
         if (!sentence.isEmpty())  {
             str += "&sentence="+sentence;
+        }
+        if (!paragraph.isEmpty())  {
+            str += "&paragraph="+paragraph;
         }
         return str;
     }

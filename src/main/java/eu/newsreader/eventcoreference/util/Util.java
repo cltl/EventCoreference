@@ -2177,6 +2177,7 @@ public class Util {
             mention.setOffSetStart(new Integer (firstOffSet).toString());
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
+        mention.setParagraph(kafSaxParser);
         mention.setSentence(kafSaxParser);
         mention.setSentenceText(kafSaxParser);
         mention.setPhraseFromMention(kafSaxParser);
@@ -2230,6 +2231,7 @@ public class Util {
             mention.setOffSetStart(new Integer (firstOffSet).toString());
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
+        mention.setParagraph(kafSaxParser);
         mention.setSentence(kafSaxParser);
         mention.setSentenceText(kafSaxParser);
         mention.setPhraseFromMention(kafSaxParser);
@@ -2289,6 +2291,7 @@ public class Util {
             mention.setOffSetStart(new Integer (firstOffSet).toString());
             mention.setOffSetEnd(new Integer(end_offset).toString());
         }
+        mention.setParagraph(kafSaxParser);
         mention.setSentence(kafSaxParser);
         mention.setSentenceText(kafSaxParser);
         mention.setPhraseFromMention(kafSaxParser);
