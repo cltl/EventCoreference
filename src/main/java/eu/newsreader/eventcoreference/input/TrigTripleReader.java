@@ -125,7 +125,7 @@ public class TrigTripleReader {
         return trigTripleData;
     }
 
-    static public TrigTripleData readInstanceTripleFromTrigFiles (ArrayList<File> trigFiles) {
+    static public TrigTripleData readInstanceTripleFromTrigFiles (String STAT, ArrayList<File> trigFiles) {
         TrigTripleData trigTripleData = new TrigTripleData();
         Dataset dataset = TDBFactory.createDataset();
 
@@ -144,14 +144,68 @@ public class TrigTripleReader {
                 while (siter.hasNext()) {
                     Statement s = siter.nextStatement();
                     String subject = s.getSubject().getURI();
-                    if (trigTripleData.tripleMapInstances.containsKey(subject)) {
-                        ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(subject);
-                        triples.add(s);
-                        trigTripleData.tripleMapInstances.put(subject, triples);
-                    } else {
-                        ArrayList<Statement> triples = new ArrayList<Statement>();
-                        triples.add(s);
-                        trigTripleData.tripleMapInstances.put(subject, triples);
+                    if (STAT.isEmpty()) {
+                        if (trigTripleData.tripleMapInstances.containsKey(subject)) {
+                            ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(subject);
+                            triples.add(s);
+                            trigTripleData.tripleMapInstances.put(subject, triples);
+                        } else {
+                            ArrayList<Statement> triples = new ArrayList<Statement>();
+                            triples.add(s);
+                            trigTripleData.tripleMapInstances.put(subject, triples);
+                        }
+                    }
+                    else if (STAT.equals("dbp")) {
+                        if (subject.indexOf("dbpedia") >-1) {
+                            if (trigTripleData.tripleMapInstances.containsKey(subject)) {
+                                ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(subject);
+                                triples.add(s);
+                                trigTripleData.tripleMapInstances.put(subject, triples);
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                triples.add(s);
+                                trigTripleData.tripleMapInstances.put(subject, triples);
+                            }
+                        }
+                    }
+                    else if (STAT.equals("en")) {
+                        if (subject.indexOf("/entities/") >-1) {
+                            if (trigTripleData.tripleMapInstances.containsKey(subject)) {
+                                ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(subject);
+                                triples.add(s);
+                                trigTripleData.tripleMapInstances.put(subject, triples);
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                triples.add(s);
+                                trigTripleData.tripleMapInstances.put(subject, triples);
+                            }
+                        }
+                    }
+                    else if (STAT.equals("ne")) {
+                        if (subject.indexOf("/non-entities/") >-1) {
+                            if (trigTripleData.tripleMapInstances.containsKey(subject)) {
+                                ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(subject);
+                                triples.add(s);
+                                trigTripleData.tripleMapInstances.put(subject, triples);
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                triples.add(s);
+                                trigTripleData.tripleMapInstances.put(subject, triples);
+                            }
+                        }
+                    }
+                    else if (STAT.equals("event")) {
+                        if (subject.indexOf("#ev") >-1) {
+                            if (trigTripleData.tripleMapInstances.containsKey(subject)) {
+                                ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(subject);
+                                triples.add(s);
+                                trigTripleData.tripleMapInstances.put(subject, triples);
+                            } else {
+                                ArrayList<Statement> triples = new ArrayList<Statement>();
+                                triples.add(s);
+                                trigTripleData.tripleMapInstances.put(subject, triples);
+                            }
+                        }
                     }
                 }
                 dataset.close();

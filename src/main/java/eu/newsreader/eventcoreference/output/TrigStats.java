@@ -669,7 +669,8 @@ public class TrigStats {
     static public void main (String[] args) {
         String folderpath = "";
         String type = "instance";
-        folderpath = "/Users/piek/Desktop/NWR-INC/dasym/dasym_sample_grasp";
+        STAT= "dbp";
+        folderpath = "/Users/piek/Desktop/CLTL-onderwijs/EnvironmentalAndDigitalHumanities/london/example/trig";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
@@ -754,7 +755,7 @@ public class TrigStats {
     }
 
     static void processInstances (File inputFolder, ArrayList<File> files) {
-        TrigTripleData trigTripleData = TrigTripleReader.readInstanceTripleFromTrigFiles(files);
+        TrigTripleData trigTripleData = TrigTripleReader.readInstanceTripleFromTrigFiles(STAT, files);
         Set keySet = trigTripleData.tripleMapInstances.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -1043,6 +1044,29 @@ public class TrigStats {
 
     static ArrayList<String>  getLabelsFromInstanceStatement (ArrayList<Statement> statements) {
             ArrayList<String> result = new ArrayList<String>();
+            int countMentions = 0;
+            for (int i = 0; i < statements.size(); i++) {
+                Statement statement = statements.get(i);
+
+                String predicate = statement.getPredicate().getLocalName();
+                if (predicate.equals("denotedBy")) {
+                    countMentions ++;
+/*
+                    String object = "";
+                    if (statement.getObject().isLiteral()) {
+                        object = statement.getObject().asLiteral().toString();
+                    } else if (statement.getObject().isURIResource()) {
+                        object = statement.getObject().asResource().getURI();
+                    }
+                    System.out.println("object = " + object);
+                    String [] values = object.split(",");
+                    for (int j = 0; j < values.length; j++) {
+                        String value = values[j];
+                        System.out.println("value = " + value);
+
+                    }*/
+                }
+            }
             for (int i = 0; i < statements.size(); i++) {
                 Statement statement = statements.get(i);
 
@@ -1057,6 +1081,7 @@ public class TrigStats {
                     String [] values = object.split(",");
                     for (int j = 0; j < values.length; j++) {
                         String value = values[j];
+                        if (value.indexOf(":")==-1) value +=":"+countMentions; /// make it backward compatible
                         if (!result.contains(value)) {
                             result.add(value);
                         }
