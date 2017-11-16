@@ -1044,29 +1044,14 @@ public class TrigStats {
 
     static ArrayList<String>  getLabelsFromInstanceStatement (ArrayList<Statement> statements) {
             ArrayList<String> result = new ArrayList<String>();
-            int countMentions = 0;
+/*            int countMentions = 0;
             for (int i = 0; i < statements.size(); i++) {
                 Statement statement = statements.get(i);
-
                 String predicate = statement.getPredicate().getLocalName();
                 if (predicate.equals("denotedBy")) {
                     countMentions ++;
-/*
-                    String object = "";
-                    if (statement.getObject().isLiteral()) {
-                        object = statement.getObject().asLiteral().toString();
-                    } else if (statement.getObject().isURIResource()) {
-                        object = statement.getObject().asResource().getURI();
-                    }
-                    System.out.println("object = " + object);
-                    String [] values = object.split(",");
-                    for (int j = 0; j < values.length; j++) {
-                        String value = values[j];
-                        System.out.println("value = " + value);
-
-                    }*/
                 }
-            }
+            }*/
             for (int i = 0; i < statements.size(); i++) {
                 Statement statement = statements.get(i);
 
@@ -1081,7 +1066,7 @@ public class TrigStats {
                     String [] values = object.split(",");
                     for (int j = 0; j < values.length; j++) {
                         String value = values[j];
-                        if (value.indexOf(":")==-1) value +=":"+countMentions; /// make it backward compatible
+                        //if (value.indexOf(":")==-1) value +=":"+countMentions; /// make it backward compatible
                         if (!result.contains(value)) {
                             result.add(value);
                         }
