@@ -670,6 +670,7 @@ public class TrigStats {
         String folderpath = "";
         String type = "instance";
         STAT= "dbp";
+        int n = 0;
         folderpath = "/Users/piek/Desktop/CLTL-onderwijs/EnvironmentalAndDigitalHumanities/london/example/trig";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -678,6 +679,9 @@ public class TrigStats {
             }
             else if (arg.equals("--type") && args.length>(i+1)) {
                 type = args[i+1];
+            }
+            else if (arg.equals("--n") && args.length>(i+1)) {
+                n = Integer.parseInt(args[i+1]);
             }
             else if (arg.equals("--stat") && args.length>(i+1)) {
                 STAT = args[i+1];
@@ -694,7 +698,7 @@ public class TrigStats {
         ArrayList<File> files = Util.makeRecursiveFileList(inputFolder, ".trig");
         System.out.println(".trig files size() = " + files.size());
         if (type.equals("instance")) {
-            processInstances(inputFolder, files);
+            processInstances(inputFolder, files, n);
             outputInstances(inputFolder);
         }
         if (type.equals("grasp")) processGrasp(inputFolder, files);
@@ -754,8 +758,9 @@ public class TrigStats {
         }
     }
 
-    static void processInstances (File inputFolder, ArrayList<File> files) {
-        TrigTripleData trigTripleData = TrigTripleReader.readInstanceTripleFromTrigFiles(STAT, files);
+    static void processInstances (File inputFolder, ArrayList<File> files, int n) {
+
+        TrigTripleData trigTripleData = TrigTripleReader.readInstanceTripleFromTrigFiles(STAT, files, n);
         Set keySet = trigTripleData.tripleMapInstances.keySet();
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
@@ -796,16 +801,16 @@ public class TrigStats {
                 if (key.indexOf("#ev") > -1) {
                     // counting types
                     ArrayList<String> eso = getTypeValuesFromInstanceStatement(instanceTriples, "eso");
+                    ArrayList<String> fn = getTypeValuesFromInstanceStatement(instanceTriples, "fn");
+                    ArrayList<String> ili = getTypeValuesFromInstanceStatement(instanceTriples, "ili");
                     for (int i = 0; i < eso.size(); i++) {
                         String s = eso.get(i);
                         updateMap(s, m, esoMap);
                     }
-                    ArrayList<String> fn = getTypeValuesFromInstanceStatement(instanceTriples, "fn");
                     for (int i = 0; i < fn.size(); i++) {
                         String s = fn.get(i);
                         updateMap(s, m, fnMap);
                     }
-                    ArrayList<String> ili = getTypeValuesFromInstanceStatement(instanceTriples, "ili");
                     for (int i = 0; i < ili.size(); i++) {
                         String s = ili.get(i);
                         updateMap(s, m, iliMap);

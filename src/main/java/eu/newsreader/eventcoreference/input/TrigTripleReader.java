@@ -125,7 +125,7 @@ public class TrigTripleReader {
         return trigTripleData;
     }
 
-    static public TrigTripleData readInstanceTripleFromTrigFiles (String STAT, ArrayList<File> trigFiles) {
+    static public TrigTripleData readInstanceTripleFromTrigFiles (String STAT, ArrayList<File> trigFiles, int n) {
         TrigTripleData trigTripleData = new TrigTripleData();
         Dataset dataset = TDBFactory.createDataset();
 
@@ -135,6 +135,9 @@ public class TrigTripleReader {
             //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
             if (i%500==0) {
                 System.out.println("i = " + i);
+            }
+            if (n>0 && i==n) {
+                break;
             }
            // System.out.println("file.getName() = " + file.getName());
             try {
