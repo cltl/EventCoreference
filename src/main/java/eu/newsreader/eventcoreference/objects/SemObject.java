@@ -634,7 +634,13 @@ public class SemObject implements Serializable {
                 }*/
                 if (goodPhrase(phraseCount)) {
                   //  resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhrase()));
-                    resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
+                   //resource.addProperty(RDFS.label, model.createLiteral(phraseCount.getPhraseCount()));
+                    Resource countResource = model.createResource(this.getURI()+"#"+i);
+                    countResource.addProperty(RDFS.label, phraseCount.getPhrase());
+                    Property count = model.createProperty(ResourcesUri.nwr+"count");
+                    countResource.addLiteral(count, phraseCount.getCount());
+                    Property countProperty = model.createProperty(ResourcesUri.nwr+"phrasecount");
+                    resource.addProperty(countProperty, countResource);
                 }
             }
         }

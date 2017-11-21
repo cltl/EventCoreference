@@ -23,6 +23,7 @@ import static eu.newsreader.eventcoreference.storyline.JsonFromRdf.getValue;
 public class TrigStats {
 
     static public String STAT = "";
+    static public boolean uselocalurl = false;
 
     static HashMap<String, PhraseCount> dbpMap = new HashMap<String, PhraseCount>();
     static HashMap<String, PhraseCount> evMap = new HashMap<String, PhraseCount>();
@@ -260,8 +261,10 @@ public class TrigStats {
                 String instanceId = pcount.getPhrase();
                 String docId = pcount.getPhrase();
                 int idx = instanceId.indexOf("---");
+                if (pcount.getPhrase().isEmpty()) {
+                    continue;
+                }
                 if (idx>-1) {
-
                     instanceId = instanceId.substring(0, idx);
                     int idx_s = instanceId.lastIndexOf("/");
                     if (idx_s>-1) instanceId = instanceId.substring(idx_s);
@@ -276,9 +279,15 @@ public class TrigStats {
                 if (instancePhraseMap.containsKey(pcount.getPhrase())) {
                     ArrayList<PhraseCount> mentions = instancePhraseMap.get(pcount.getPhrase());
                     SortedSet<PhraseCount> mentionSet =  freqSortPhraseCountArrayList(mentions);
+                    if (mentionSet.size()==0) {
+                        continue;
+                    }
                     for (PhraseCount mcount : mentionSet) {
                         str += mcount.getPhraseCount()+";";
                     }
+                }
+                else {
+                    continue;
                 }
                 str += "\t";
                 if (typemap.containsKey(pcount.getPhrase())) {
@@ -824,42 +833,44 @@ public class TrigStats {
 
                     /// now we get the data for labels and types
                     for (int i = 0; i < labels.size(); i++) {
-                        String s = labels.get(i);
-                        updateMap(s, m, eventLabelMap);
-                        if (ili.size() == 0) {
-                            updateMap(s, m, eventLabelWithoutILIMap);
-                        }
-                        if (eso.size() == 0) {
-                            updateMap(s, m, eventLabelWithoutESOMap);
-                        }
-                        if (fn.size() == 0) {
-                            updateMap(s, m, eventLabelWithoutFNMap);
-                        }
-                        ArrayList<String> types = new ArrayList<String>();
-                        if (eventTypeMap.containsKey(s)) {
-                            types = eventTypeMap.get(s);
-                        }
-                        //// add the types in order
-                        for (int j = 0; j < ili.size(); j++) {
-                            String s1 = ili.get(j);
-                            if (!types.contains(s1)) {
-                                types.add(s1);
+                        String s = labels.get(i).trim();
+                        if (!s.isEmpty()) {
+                            updateMap(s, m, eventLabelMap);
+                            if (ili.size() == 0) {
+                                updateMap(s, m, eventLabelWithoutILIMap);
                             }
-                        }
-                        for (int j = 0; j < eso.size(); j++) {
-                            String s1 = eso.get(j);
-                            if (!types.contains(s1)) {
-                                types.add(s1);
+                            if (eso.size() == 0) {
+                                updateMap(s, m, eventLabelWithoutESOMap);
                             }
-                        }
-                        for (int j = 0; j < fn.size(); j++) {
-                            String s1 = fn.get(j);
-                            if (!types.contains(s1)) {
-                                types.add(s1);
+                            if (fn.size() == 0) {
+                                updateMap(s, m, eventLabelWithoutFNMap);
                             }
+                            ArrayList<String> types = new ArrayList<String>();
+                            if (eventTypeMap.containsKey(s)) {
+                                types = eventTypeMap.get(s);
+                            }
+                            //// add the types in order
+                            for (int j = 0; j < ili.size(); j++) {
+                                String s1 = ili.get(j);
+                                if (!types.contains(s1)) {
+                                    types.add(s1);
+                                }
+                            }
+                            for (int j = 0; j < eso.size(); j++) {
+                                String s1 = eso.get(j);
+                                if (!types.contains(s1)) {
+                                    types.add(s1);
+                                }
+                            }
+                            for (int j = 0; j < fn.size(); j++) {
+                                String s1 = fn.get(j);
+                                if (!types.contains(s1)) {
+                                    types.add(s1);
+                                }
+                            }
+                            Collections.sort(types);
+                            eventTypeMap.put(key, types);
                         }
-                        Collections.sort(types);
-                        eventTypeMap.put(key, types);
                     }
                 }
             }
@@ -1070,10 +1081,12 @@ public class TrigStats {
                     }
                     String [] values = object.split(",");
                     for (int j = 0; j < values.length; j++) {
-                        String value = values[j];
-                        //if (value.indexOf(":")==-1) value +=":"+countMentions; /// make it backward compatible
-                        if (!result.contains(value)) {
-                            result.add(value);
+                        String value = values[j].trim();
+                        if (!value.isEmpty()) {
+                            //if (value.indexOf(":")==-1) value +=":"+countMentions; /// make it backward compatible
+                            if (!result.contains(value)) {
+                                result.add(value);
+                            }
                         }
                     }
                 }

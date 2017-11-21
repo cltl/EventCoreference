@@ -30,6 +30,7 @@ public class NafSemParameters {
             "--no-nomcoref          <(OPTIONAL) nominal coreference layer is ignored\n" +
             "--no-eventcoref        <(OPTIONAL) event coreference layer is ignored\n" +
             "--no-doc-time          <(OPTIONAL) document creation time is not considered\n" +
+            "--local-context        <(OPTIONAL) Default is false. Using this option sets local context to true which means that entities without external reference URI such as DBpedia are made unique per NAF input file\n" +
             "--no-context-time      <(OPTIONAL) time expressions of preceding and following sentences are not associated with events\n"+
             "--all                  <(OPTIONAL) All events are extracted, including events without time and without participants>\n" +
             "--eurovoc-en, --eurovoc-nl, --eurovoc-es, --eurovoc_es" +
