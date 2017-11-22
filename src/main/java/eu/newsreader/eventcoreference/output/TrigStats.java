@@ -678,9 +678,9 @@ public class TrigStats {
     static public void main (String[] args) {
         String folderpath = "";
         String type = "instance";
-        STAT= "dbp";
-        int n = 0;
-        folderpath = "/Users/piek/Desktop/CLTL-onderwijs/EnvironmentalAndDigitalHumanities/london/example/trig";
+        STAT= "event";
+        int n = 200;
+        folderpath = "/Users/piek/Desktop/CLTL-onderwijs/EnvironmentalAndDigitalHumanities/london/ob.trig";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
@@ -781,7 +781,8 @@ public class TrigStats {
             if (STAT.isEmpty() || STAT.equals("dbp")) {
                 if (type.equalsIgnoreCase("dbp") || type.toLowerCase().endsWith(".dbp")) {
                     updateMap(key, m, dbpMap);
-                    ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    //ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    ArrayList<String> mentionLabels = getPhraseCountFromInstanceStatement(instanceTriples, trigTripleData);
                     //updateMentionMap(key, lightEntityMap, mentionLabels);
                     updateCountMap(key, lightEntityPhraseCountMap, mentionLabels);
 
@@ -790,7 +791,8 @@ public class TrigStats {
             if (STAT.isEmpty() || STAT.equals("en")) {
                 if (type.equalsIgnoreCase("en")) {
                     updateMap(key, m, enMap);
-                    ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    //ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    ArrayList<String> mentionLabels = getPhraseCountFromInstanceStatement(instanceTriples, trigTripleData);
                     //updateMentionMap(key, darkEntityMap, mentionLabels);
                     updateCountMap(key, darkEntityPhraseCountMap, mentionLabels);
 
@@ -802,7 +804,8 @@ public class TrigStats {
                     updateMap(key, m, neMap);
                    // ArrayList<String> types = getSkosRelatedValuesFromInstanceStatement(instanceTriples);
                    // updateCountMap(key, nonEntityPhraseCountMap, types);
-                    ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    //ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    ArrayList<String> mentionLabels = getPhraseCountFromInstanceStatement(instanceTriples, trigTripleData);
                     updateCountMap(key, nonEntityPhraseCountMap, mentionLabels);
                 }
             }
@@ -824,9 +827,10 @@ public class TrigStats {
                         String s = ili.get(i);
                         updateMap(s, m, iliMap);
                     }
-                    ArrayList<String> labels = getLabelsFromInstanceStatement(instanceTriples);
+                    ArrayList<String> labels = getLabelsFromInstanceStatement(instanceTriples,trigTripleData);
                     /// we first build the data for each event instance
-                    ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                   // ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    ArrayList<String> mentionLabels = getPhraseCountFromInstanceStatement(instanceTriples, trigTripleData);
                     updateCountMap(key, eventPhraseCountMap, mentionLabels);
                     updateMap(key, m, evMap);
 
@@ -1058,16 +1062,171 @@ public class TrigStats {
             return result;
     }
 
-    static ArrayList<String>  getLabelsFromInstanceStatement (ArrayList<Statement> statements) {
+
+    /**
+     *     <http://cltl.nl/old_bailey/sessionpaper/t19130304-29#ev1>
+     a                  sem:Event , nwrontology:sourceEvent , ili:i25498 , ili:i26089 , ili:i26660 , ili:i25493 , fn:Request ;
+     gaf:denotedBy      <http://cltl.nl/old_bailey/sessionpaper/t19130304-29#char=32,39> ;
+     nwr:phrasecount    <http://cltl.nl/old_bailey/sessionpaper/t19130304-29#ev1#0> ;
+     skos:prefLabel     "plead" ;
+     skos:relatedMatch  <http://eurovoc.europa.eu/1474> , <http://eurovoc.europa.eu/1810> , <http://eurovoc.europa.eu/1460> , <http://eurovoc.europa.eu/5138> , <http://eurovoc.europa.eu/3821> , <http://eurovoc.europa.eu/2734> .
+
+     <http://cltl.nl/old_bailey/sessionpaper/t19130304-29#ev1#0>
+     rdfs:label  "plead" ;
+     nwr:count   1 .
+     *
+     *
+     * @param statements
+     * @return
+     */
+    static ArrayList<String>  getLabelsFromInstanceStatement (ArrayList<Statement> statements, TrigTripleData trigTripleData) {
             ArrayList<String> result = new ArrayList<String>();
-/*            int countMentions = 0;
+            ArrayList<String> phraseCountObjects = new ArrayList<String>();
             for (int i = 0; i < statements.size(); i++) {
                 Statement statement = statements.get(i);
                 String predicate = statement.getPredicate().getLocalName();
-                if (predicate.equals("denotedBy")) {
-                    countMentions ++;
+                if (predicate.equals("phrasecount")) {
+                    String object = "";
+                    //System.out.println("statement = " + statement.toString());
+                    if (statement.getObject().isLiteral()) {
+                        object = statement.getObject().asLiteral().toString();
+                    } else if (statement.getObject().isURIResource()) {
+                        object = statement.getObject().asResource().getURI();
+                    }
+                    String [] values = object.split(",");
+                    for (int j = 0; j < values.length; j++) {
+                        String value = values[j].trim();
+                        if (!value.isEmpty()) {
+                            if (!phraseCountObjects.contains(value)) {
+                                phraseCountObjects.add(value);
+                            }
+                        }
+                    }
                 }
-            }*/
+            }
+      //  System.out.println("phraseCountObjects.toString() = " + phraseCountObjects.toString());
+        for (int p = 0; p < phraseCountObjects.size(); p++) {
+            String s = phraseCountObjects.get(p);
+            String label = "";
+            if (trigTripleData.tripleMapLabels.containsKey(s)) {
+                ArrayList<Statement> phraseCountTriples = trigTripleData.tripleMapLabels.get(s);
+                for (int i = 0; i < phraseCountTriples.size(); i++) {
+                    Statement statement = phraseCountTriples.get(i);
+                    String predicate = statement.getPredicate().getLocalName();
+                    if (predicate.equals("label")) {
+                        String object = "";
+                        if (statement.getObject().isLiteral()) {
+                            object = statement.getObject().asLiteral().toString();
+                        } else if (statement.getObject().isURIResource()) {
+                            object = statement.getObject().asResource().getURI();
+                        }
+                        String[] values = object.split(",");
+                        for (int j = 0; j < values.length; j++) {
+                            String value = values[j].trim();
+                            if (!value.isEmpty()) {
+                                label = value;
+                            }
+                        }
+                    }
+                }
+                if (!label.isEmpty()) {
+                        result.add(label);
+                }
+            }
+            else {
+               // System.out.println("cannot find s = " + s);
+            }
+        }
+        return result;
+    }
+
+    static ArrayList<String>  getPhraseCountFromInstanceStatement (ArrayList<Statement> statements, TrigTripleData trigTripleData) {
+            ArrayList<String> result = new ArrayList<String>();
+            ArrayList<String> phraseCountObjects = new ArrayList<String>();
+            for (int i = 0; i < statements.size(); i++) {
+                Statement statement = statements.get(i);
+                String predicate = statement.getPredicate().getLocalName();
+                if (predicate.equals("phrasecount")) {
+                    String object = "";
+                    //System.out.println("statement = " + statement.toString());
+                    if (statement.getObject().isLiteral()) {
+                        object = statement.getObject().asLiteral().toString();
+                    } else if (statement.getObject().isURIResource()) {
+                        object = statement.getObject().asResource().getURI();
+                    }
+                    String [] values = object.split(",");
+                    for (int j = 0; j < values.length; j++) {
+                        String value = values[j].trim();
+                        if (!value.isEmpty()) {
+                            if (!phraseCountObjects.contains(value)) {
+                                phraseCountObjects.add(value);
+                            }
+                        }
+                    }
+                }
+            }
+      //  System.out.println("phraseCountObjects.toString() = " + phraseCountObjects.toString());
+        for (int p = 0; p < phraseCountObjects.size(); p++) {
+            String s = phraseCountObjects.get(p);
+            String label = "";
+            String count = "";
+            if (trigTripleData.tripleMapLabels.containsKey(s)) {
+                ArrayList<Statement> phraseCountTriples = trigTripleData.tripleMapLabels.get(s);
+                for (int i = 0; i < phraseCountTriples.size(); i++) {
+                    Statement statement = phraseCountTriples.get(i);
+                    String predicate = statement.getPredicate().getLocalName();
+                    if (predicate.equals("label")) {
+                        String object = "";
+                        if (statement.getObject().isLiteral()) {
+                            object = statement.getObject().asLiteral().toString();
+                        } else if (statement.getObject().isURIResource()) {
+                            object = statement.getObject().asResource().getURI();
+                        }
+                        String[] values = object.split(",");
+                        for (int j = 0; j < values.length; j++) {
+                            String value = values[j].trim();
+                            if (!value.isEmpty()) {
+                                label = value;
+                            }
+                        }
+                    }
+                    else if (predicate.equals("count")) {
+                        String object = "";
+                        if (statement.getObject().isLiteral()) {
+                            object = statement.getObject().asLiteral().toString();
+                        } else if (statement.getObject().isURIResource()) {
+                            object = statement.getObject().asResource().getURI();
+                        }
+                        String[] values = object.split(",");
+                        for (int j = 0; j < values.length; j++) {
+                            String value = values[j].trim();
+                            if (!value.isEmpty()) {
+                                int idx = value.indexOf("^^");
+                                count = value.substring(0, idx);
+                            }
+                        }
+                    }
+                }
+                if (!label.isEmpty()) {
+                    if (!count.isEmpty()) {
+                        label += ":"+count;
+                        result.add(label);
+                    }
+                    else {
+                        label += ":"+"0";
+                        result.add(label);
+                    }
+                }
+            }
+            else {
+               // System.out.println("cannot find s = " + s);
+            }
+        }
+        return result;
+    }
+
+    static ArrayList<String>  getLabelsFromInstanceStatement (ArrayList<Statement> statements) {
+            ArrayList<String> result = new ArrayList<String>();
             for (int i = 0; i < statements.size(); i++) {
                 Statement statement = statements.get(i);
 

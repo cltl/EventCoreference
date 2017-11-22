@@ -17,11 +17,13 @@ public class TrigTripleData {
     static final public String graspGraph = "http://www.newsreader-project.eu/grasp";
     public HashMap<String, ArrayList<Statement>> tripleMapGrasp = new HashMap<String, ArrayList<Statement>>();
     public HashMap<String, ArrayList<Statement>> tripleMapProvenance = new HashMap<String, ArrayList<Statement>>();
+    public HashMap<String, ArrayList<Statement>> tripleMapLabels = new HashMap<String, ArrayList<Statement>>();
     public HashMap<String, ArrayList<Statement>> tripleMapInstances = new HashMap<String, ArrayList<Statement>>();
     public HashMap<String, ArrayList<Statement>> tripleMapOthers = new HashMap<String, ArrayList<Statement>>();
     public Vector<String> perspectiveMentions = new Vector<String>();
 
     public TrigTripleData() {
+        tripleMapLabels = new HashMap<String, ArrayList<Statement>>();
         tripleMapGrasp = new HashMap<String, ArrayList<Statement>>();
         tripleMapProvenance = new HashMap<String, ArrayList<Statement>>();
         tripleMapInstances = new HashMap<String, ArrayList<Statement>>();

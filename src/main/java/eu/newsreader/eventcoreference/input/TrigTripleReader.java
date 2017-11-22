@@ -147,7 +147,21 @@ public class TrigTripleReader {
                 while (siter.hasNext()) {
                     Statement s = siter.nextStatement();
                     String subject = s.getSubject().getURI();
-                    if (STAT.isEmpty()) {
+                    //// store all label info
+                    if (s.getPredicate().getLocalName().equals("label") ||
+                        s.getPredicate().getLocalName().equals("count")
+                            ){
+                        if (trigTripleData.tripleMapLabels.containsKey(subject)) {
+                            ArrayList<Statement> triples = trigTripleData.tripleMapLabels.get(subject);
+                            triples.add(s);
+                            trigTripleData.tripleMapLabels.put(subject, triples);
+                        } else {
+                            ArrayList<Statement> triples = new ArrayList<Statement>();
+                            triples.add(s);
+                            trigTripleData.tripleMapLabels.put(subject, triples);
+                        }
+                    }
+                    else if (STAT.isEmpty()) {
                         if (trigTripleData.tripleMapInstances.containsKey(subject)) {
                             ArrayList<Statement> triples = trigTripleData.tripleMapInstances.get(subject);
                             triples.add(s);
@@ -219,6 +233,7 @@ public class TrigTripleReader {
 
 
         }
+        System.out.println("trigTripleData labels = " + trigTripleData.tripleMapLabels.size());
         System.out.println("trigTripleData instances = " + trigTripleData.tripleMapInstances.size());
         return trigTripleData;
     }
