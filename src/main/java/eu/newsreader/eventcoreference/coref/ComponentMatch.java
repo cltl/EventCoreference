@@ -292,6 +292,7 @@ public class ComponentMatch {
         if (minimallyRequiredRoles.size()>0
                 && !minimallyRequiredRoles.contains("none")
                 && !minimallyRequiredRoles.contains("anyrole")
+                && !minimallyRequiredRoles.contains("any")
                 ) {
             for (int i = 0; i < minimallyRequiredRoles.size(); i++) {
                 String requiredRole = minimallyRequiredRoles.get(i);
@@ -313,7 +314,8 @@ public class ComponentMatch {
                 return false;
             }
         }
-        else if (minimallyRequiredRoles.contains("anyrole")) {
+        else if (minimallyRequiredRoles.contains("anyrole") ||
+                 minimallyRequiredRoles.contains("any")) {
             /// IF NO SPECIFIC ROLES NEED TO BE PRESENT, WE GET ALL ROLES EXCEPT TIME AND CHECK IF THERE IS ANY MATCH
             ArrayList<String> roleObjects1 = Util.getObjectsForPredicate(compositeEvent1.getMySemRelations());
             ArrayList<String> roleObjects2 = Util.getObjectsForPredicate(compositeEvent2.getMySemRelations());

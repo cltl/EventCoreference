@@ -679,7 +679,7 @@ public class TrigStats {
         String folderpath = "";
         String type = "instance";
         STAT= "event";
-        int n = 200;
+        int n = 0;
         folderpath = "/Users/piek/Desktop/CLTL-onderwijs/EnvironmentalAndDigitalHumanities/london/ob.trig";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
