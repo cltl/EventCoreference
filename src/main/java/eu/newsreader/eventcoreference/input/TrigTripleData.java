@@ -44,4 +44,32 @@ public class TrigTripleData {
             }
         }
     }
+
+    public void dumpInstanceTriples (OutputStream fos) throws IOException {
+        Set keyset = tripleMapInstances.keySet();
+        Iterator<String> keys = keyset.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<Statement> statements = tripleMapInstances.get(key);
+            for (int i = 0; i < statements.size(); i++) {
+                Statement statement = statements.get(i);
+                String str = statement.toString()+"\n";
+                fos.write(str.getBytes());
+            }
+        }
+    }
+
+    public void dumpOtherTriples (OutputStream fos) throws IOException {
+        Set keyset = tripleMapOthers.keySet();
+        Iterator<String> keys = keyset.iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            ArrayList<Statement> statements = tripleMapOthers.get(key);
+            for (int i = 0; i < statements.size(); i++) {
+                Statement statement = statements.get(i);
+                String str = statement.toString()+"\n";
+                fos.write(str.getBytes());
+            }
+        }
+    }
 }

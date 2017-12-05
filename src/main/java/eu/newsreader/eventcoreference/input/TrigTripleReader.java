@@ -357,7 +357,7 @@ public class TrigTripleReader {
                 }
             }
             dataset.close();
-            dataset = null;
+            //dataset = null;
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -10,6 +10,7 @@ public class ResourcesUri {
     final static public String eurovoc = "http://eurovoc.europa.eu/";
     final static public String skos = "http://www.w3.org/2004/02/skos/core#";
     final static public String nwr = "http://www.newsreader-project.eu/";
+    final static public String oldbaily = "http://cltl.nl/oldbailey";
     final static public String nwrproject = "http://www.newsreader-project.eu/project/";
     final static public String nwrtime = "http://www.newsreader-project.eu/time/";
     final static public String nwrdata = "http://www.newsreader-project.eu/data/";
