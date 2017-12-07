@@ -756,6 +756,7 @@ public class MatchEventObjects {
                 }
             }
             if (EVENTMATCH) {
+
                 if (roleNeededArrayList.contains("none") || roleNeededArrayList.size()==0) {
                     if (!TIME.isEmpty()) {
                         if (DEBUG>0) System.out.println("TIME = " + TIME);
@@ -786,9 +787,11 @@ public class MatchEventObjects {
                         break;
                     }
                 }
-                else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, targetEvent, roleNeededArrayList)) {
+                else  if (ComponentMatch.compareCompositeEvent(myCompositeEvent, targetEvent, roleNeededArrayList, DEBUG>0)) {
                     if (!TIME.isEmpty()) {
+                        if (DEBUG>0) System.out.println("MATCHED BY PARTICIPANT, NEXT MATCH BY TIME:"+TIME);
                         if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME)) {
+                            if (DEBUG>0) System.out.println("MATCHED BY TIME");
                             targetEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                             targetEvent.mergeObjects(myCompositeEvent);
                             targetEvent.mergeRelations(myCompositeEvent);
@@ -796,8 +799,13 @@ public class MatchEventObjects {
                             mergedEventId = targetEvent.getEvent().getId();
                             break;
                         }
+                        else {
+                            if (DEBUG>0) System.out.println("TIME MISMATCH");
+                        }
                     }
                     else {
+                        if (DEBUG>0) System.out.println("MATCHED BY PARTICIPANT");
+
                         targetEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                         targetEvent.mergeObjects(myCompositeEvent);
                         targetEvent.mergeRelations(myCompositeEvent);
@@ -899,7 +907,7 @@ public class MatchEventObjects {
                         swallowedEvents.add(targetEvent.getEvent().getId());
                     }
                 }
-                else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, targetEvent, roleNeededArrayList)) {
+                else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, targetEvent, roleNeededArrayList,DEBUG>0)) {
                     if (!TIME.isEmpty()) {
                         if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME)) {
                             myCompositeEvent.getEvent().mergeSemObject(targetEvent.getEvent());
@@ -1483,7 +1491,7 @@ public class MatchEventObjects {
                     }
                 }
                 if (EVENTMATCH) {
-                    if (ComponentMatch.compareCompositeEvent(myCompositeEvent, targetEvent, roleNeededArrayList)) {
+                    if (ComponentMatch.compareCompositeEvent(myCompositeEvent, targetEvent, roleNeededArrayList, DEBUG>0)) {
                         match = true;
                         targetEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                         targetEvent.mergeObjects(myCompositeEvent);

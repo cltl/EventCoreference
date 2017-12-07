@@ -218,13 +218,13 @@ public class ComponentMatch {
 
         ArrayList<String> neededRoles = new ArrayList<String>();
         if (EventTypes.isCONTEXTUAL(eventType)) {
-            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles);
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles, false);
         } else if (EventTypes.isCOMMUNICATION(eventType)) {
             neededRoles.add("a0");
-            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles);
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles, false);
         } else if (EventTypes.isGRAMMATICAL(eventType)) {
             neededRoles.add("a1");
-            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles);
+            return compareCompositeEvent(compositeEvent1, compositeEvent2, neededRoles, false);
         } else if (EventTypes.isFUTURE(eventType)) {
             ///// For FUTURE events we demand that all participants match except the temporal relations
             return compareCompositeEventToMatchAllProbBankRoles(compositeEvent1, compositeEvent2);
@@ -276,13 +276,18 @@ public class ComponentMatch {
      */
     public static boolean compareCompositeEvent(CompositeEvent compositeEvent1,
                                                 CompositeEvent compositeEvent2,
-                                                ArrayList<String> minimallyRequiredRoles) {
+                                                ArrayList<String> minimallyRequiredRoles, boolean DEBUG) {
 
-        if (minimallyRequiredRoles.contains("none") || minimallyRequiredRoles.size()==0) {
+        if (DEBUG) System.out.println("minimallyRequiredRoles = " + minimallyRequiredRoles.toString());
+        if (DEBUG) System.out.println("compositeEvent1.getMySemActors().size() = " + compositeEvent1.getMySemActors().size());
+        if (DEBUG) System.out.println("compositeEvent2.getMySemActors().size() = " + compositeEvent2.getMySemActors().size());
+            if (minimallyRequiredRoles.contains("none") || minimallyRequiredRoles.size()==0) {
+                if (DEBUG) System.out.println("NOTHING TO MATCH NOTHING TO MATCH");
             return true;
         }
         if (compositeEvent1.getMySemActors().size() == 0 || compositeEvent2.getMySemActors().size() == 0) {
-            return true;
+            if (DEBUG) System.out.println("ONE IS EMPTY NO MATCH");
+                return false;
         }
        // System.out.println("minimallyRequiredRoles = " + minimallyRequiredRoles.toString());
         if (minimallyRequiredRoles.contains("all")) {
@@ -302,13 +307,18 @@ public class ComponentMatch {
               //  System.out.println("roleObjects2 = " + roleObjects2.size());
                 if (!Collections.disjoint(roleObjects1, roleObjects2)) {
                     //// URI MATCH
+                    if (DEBUG) System.out.println("URI MATCH");
                     nMatches++;
                 } else if (compareActorPrefLabelReference(compositeEvent1, compositeEvent2, roleObjects1, roleObjects2)) {
+                    if (DEBUG) System.out.println("LABEL MATCH");
+
                     nMatches++;
                 }
             }
             if (nMatches == minimallyRequiredRoles.size()) {
                 /////  FOR ALL REQUIRED ROLES WE FOUND A MATCH
+                if (DEBUG) System.out.println("EACH TYPE OF ROLE HAS A MATCH");
+
                 return true;
             } else {
                 return false;
@@ -331,9 +341,11 @@ public class ComponentMatch {
                         System.out.println("s = " + s);
                     }
                 }*/
+                if (DEBUG) System.out.println("URI MATCH");
                 return true;
             }
             else if (compareActorPrefLabelReference(compositeEvent1, compositeEvent2, roleObjects1, roleObjects2)) {
+                if (DEBUG) System.out.println("LABEL MATCH");
                 /// PREF LABEL MATCH
                 return true;
             }
@@ -342,7 +354,9 @@ public class ComponentMatch {
             }
         }
         else {
-            return true;
+            /// should never occur
+            if (DEBUG) System.out.println("This should never happen minimallyRequiredRoles = " + minimallyRequiredRoles.toString());
+            return false;
         }
     }
 
