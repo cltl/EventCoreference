@@ -359,8 +359,13 @@ public class ComponentMatch {
                                                     String TIME
                                                     ) {
 
+           // System.out.println("compositeEvent1 = " + compositeEvent1.getEvent().getId());
+           // System.out.println("compositeEvent1.getMySemTimes().size() = " + compositeEvent1.getMySemTimes().size());
+           // System.out.println("compositeEvent2 = " + compositeEvent2.getEvent().getId());
+           // System.out.println("compositeEvent2.getMySemTimes().size() = " + compositeEvent2.getMySemTimes().size());
             //// if no time we do not know
             if (compositeEvent1.getMySemTimes().size() == 0 || compositeEvent2.getMySemTimes().size() == 0) {
+             //   System.out.println("NO TIME ASSOCIATED.");
                 return true;
             }
             if (TIME.equalsIgnoreCase("year")) {
@@ -374,6 +379,7 @@ public class ComponentMatch {
             }
             else {
                 /// no known TIME value
+              //  System.out.println("NO PROPER TIME PARAMATER:"+TIME);
                 return true;
             }
         }
@@ -542,6 +548,43 @@ public class ComponentMatch {
         return false;
     }
 
+    static boolean valueMatch(String value1, String value2) {
+        if (value1.equals(value2) && !value1.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Compares two time objects to determine if they exclude each other or not
+     *
+     * @param mySemTimes
+     * @param semTimes
+     * @return
+     */
+    public static boolean compareTimeYearOld(ArrayList<SemTime> mySemTimes,
+                                      ArrayList<SemTime> semTimes) {
+
+        for (int i = 0; i < mySemTimes.size(); i++) {
+            SemTime mySemTime = mySemTimes.get(i);
+            for (int j = 0; j < semTimes.size(); j++) {
+                SemTime semTime = semTimes.get(j);
+                if (mySemTime.getOwlTime().getYear().equals(semTime.getOwlTime().getYear())) {
+                    System.out.println("mySemTime.getOwlTime().getYear() = " + mySemTime.getOwlTime().getYear());
+                    System.out.println("semTime.getOwlTime().getYear() = " + semTime.getOwlTime().getYear());
+                    return true;
+                }
+                else if (mySemTime.getOwlTimeBegin().getYear().equals(semTime.getOwlTimeBegin().getYear())) {
+                    return true;
+                }
+                else if (mySemTime.getOwlTimeEnd().getYear().equals(semTime.getOwlTimeEnd().getYear())) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
     /**
      * Compares two time objects to determine if they exclude each other or not
      *
@@ -556,15 +599,18 @@ public class ComponentMatch {
             SemTime mySemTime = mySemTimes.get(i);
             for (int j = 0; j < semTimes.size(); j++) {
                 SemTime semTime = semTimes.get(j);
-                if (mySemTime.getOwlTime().getYear().equals(semTime.getOwlTime().getYear())) {
+                if (valueMatch(mySemTime.getOwlTime().getYear(), semTime.getOwlTime().getYear())) {
+                    System.out.println("mySemTime.getOwlTime().getYear() = " + mySemTime.getOwlTime().getYear());
+                    System.out.println("semTime.getOwlTime().getYear() = " + semTime.getOwlTime().getYear());
                     return true;
-                } else if (mySemTime.getOwlTimeBegin().getYear().equals(semTime.getOwlTimeBegin().getYear())) {
+                }
+                else if (valueMatch(mySemTime.getOwlTimeBegin().getYear(),semTime.getOwlTimeBegin().getYear())) {
                     return true;
-                } else if (mySemTime.getOwlTimeEnd().getYear().equals(semTime.getOwlTimeEnd().getYear())) {
+                }
+                else if (valueMatch(mySemTime.getOwlTimeEnd().getYear(), semTime.getOwlTimeEnd().getYear())) {
                     return true;
                 }
             }
-
         }
         return false;
     }
@@ -583,16 +629,16 @@ public class ComponentMatch {
             SemTime mySemTime = mySemTimes.get(i);
             for (int j = 0; j < semTimes.size(); j++) {
                 SemTime semTime = semTimes.get(j);
-                if (mySemTime.getOwlTime().getMonth().equals(semTime.getOwlTime().getMonth()) &&
-                    mySemTime.getOwlTime().getYear().equals(semTime.getOwlTime().getYear()))
+                if (valueMatch(mySemTime.getOwlTime().getMonth(),semTime.getOwlTime().getMonth()) &&
+                        valueMatch(mySemTime.getOwlTime().getYear(), semTime.getOwlTime().getYear()))
                     {
                     return true;
-                } else if (mySemTime.getOwlTimeBegin().getMonth().equals(semTime.getOwlTimeBegin().getMonth()) &&
-                           mySemTime.getOwlTimeBegin().getYear().equals(semTime.getOwlTimeBegin().getYear()))
+                } else if (valueMatch(mySemTime.getOwlTimeBegin().getMonth(), semTime.getOwlTimeBegin().getMonth()) &&
+                        valueMatch(mySemTime.getOwlTimeBegin().getYear(),semTime.getOwlTimeBegin().getYear()))
                     {
                     return true;
-                } else if (mySemTime.getOwlTimeEnd().getMonth().equals(semTime.getOwlTimeEnd().getMonth()) &&
-                           mySemTime.getOwlTimeEnd().getYear().equals(semTime.getOwlTimeEnd().getYear())) {
+                } else if (valueMatch(mySemTime.getOwlTimeEnd().getMonth(), semTime.getOwlTimeEnd().getMonth()) &&
+                        valueMatch(mySemTime.getOwlTimeEnd().getYear(), semTime.getOwlTimeEnd().getYear())) {
 
                     return true;
                 }
