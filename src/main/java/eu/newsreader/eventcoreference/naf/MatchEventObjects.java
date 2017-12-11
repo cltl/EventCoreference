@@ -620,6 +620,10 @@ public class MatchEventObjects {
                                 ILIURI,
                                 VERBOSEMENTIONS);
                     } else {
+                        if (DEBUG>1) {
+                            System.out.println("###################################");
+                            System.out.println("FINAL NUMBER OF EVENTS = " + allCompositeEvents.size());
+                        }
 
                         JenaSerialization.serializeJenaSingleCompositeEvents(fos,
                                 allCompositeEvents,
