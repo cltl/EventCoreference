@@ -453,7 +453,6 @@ public class GetSemFromNaf {
             - check all actors for span match or span head match
             - if none create a new actor or place
         */
-        HashMap<String, ArrayList<ArrayList<CorefTarget>>> mentionMap = new HashMap<String, ArrayList<ArrayList<CorefTarget>>>();
         String baseUrl = kafSaxParser.getKafMetaData().getUrl() + ID_SEPARATOR;
         if (!baseUrl.toLowerCase().startsWith("http")) {
             if (kafSaxParser.getKafMetaData().getUrl().isEmpty()) {
@@ -1000,7 +999,7 @@ public class GetSemFromNaf {
                     }
                 }
 
-                if (!timeAnchor) {
+                if (!timeAnchor && nafSemParameters.isPARAGRAPHTIME()) {
                     for (int l = 0; l < semTimes.size(); l++) {
                         SemTime semTime = (SemTime) semTimes.get(l);
                         if (semTime != null && semTime.getNafMentions() != null) {
@@ -1027,7 +1026,7 @@ public class GetSemFromNaf {
                         }
                     }
                 }
-                if (!timeAnchor) {
+                if (!timeAnchor  && nafSemParameters.isPARAGRAPHTIME()) {
                     for (int l = 0; l < semTimes.size(); l++) {
                         SemTime semTime = (SemTime) semTimes.get(l);
                         if (semTime != null && semTime.getNafMentions() != null) {

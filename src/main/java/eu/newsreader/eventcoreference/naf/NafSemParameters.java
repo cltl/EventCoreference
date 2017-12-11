@@ -50,6 +50,7 @@ public class NafSemParameters {
     private String PROJECT = "";
     private boolean DOCTIME = true;
     private boolean CONTEXTTIME = true;
+    private boolean PARAGRAPHTIME = true;
     private boolean ADDITIONALROLES = true;
     private boolean LOCALCONTEXT = false;
     private boolean NOMCOREF = true;
@@ -82,6 +83,7 @@ public class NafSemParameters {
         PERSPECTIVE = false;
         DOCTIME = true;
         CONTEXTTIME = true;
+        PARAGRAPHTIME = true;
         NOMCOREF = true;
         EVENTCOREF = true;
         ADDITIONALROLES = true;
@@ -167,6 +169,14 @@ public class NafSemParameters {
 
     public void setDOCTIME(boolean DOCTIME) {
         this.DOCTIME = DOCTIME;
+    }
+
+    public boolean isPARAGRAPHTIME() {
+        return PARAGRAPHTIME;
+    }
+
+    public void setPARAGRAPHTIME(boolean PARAGRAPHTIME) {
+        this.PARAGRAPHTIME = PARAGRAPHTIME;
     }
 
     public boolean isCONTEXTTIME() {
@@ -304,6 +314,9 @@ public class NafSemParameters {
             else if (arg.equals("--no-context-time")) {
                 CONTEXTTIME = false;
             }
+            else if (arg.equals("--no-paragraph-time")) {
+                PARAGRAPHTIME = false;
+            }
             else if (arg.equals("--no-nomcoref")) {
                 NOMCOREF = false;
             }
@@ -390,6 +403,7 @@ public class NafSemParameters {
         System.out.println("PROJECT = " + PROJECT);
         System.out.println("DOCTIME = " + DOCTIME);
         System.out.println("CONTEXTTIME = " + CONTEXTTIME);
+        System.out.println("PARAGRAPHTIME = " + PARAGRAPHTIME);
         System.out.println("ADDITIONALROLES = " + ADDITIONALROLES);
         System.out.println("NOMCOREF = " + NOMCOREF);
         System.out.println("EVENTCOREF = " + EVENTCOREF);
