@@ -27,7 +27,7 @@ import java.util.Set;
  * Created by piek on 9/25/14.
  */
 public class JenaSerialization {
-
+    static public boolean DEBUG = false;
     static Dataset ds = null;
     static Model graspModel = null;
     static Model provenanceModel = null;
@@ -710,6 +710,7 @@ doc-uri
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next();
+            if (DEBUG) System.out.println("key = " + key);
             CompositeEvent semEvent = semEvents.get(key);
             if (semEvent!=null) {
                 addJenaCompositeEvent(semEvent, sourceMetaHashMap, ILIURI, VERBOSE_MENTIONS);
