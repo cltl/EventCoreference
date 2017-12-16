@@ -848,10 +848,7 @@ public class SemObject implements Serializable {
 
     static public String getNameSpaceTypeReference(KafSense kafSense) {
         String ref = "";
-        if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
-            ref = ResourcesUri.vn + kafSense.getSensecode();
-        }
-        else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+        if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
             String senseCode = kafSense.getSensecode();
             if (senseCode.toLowerCase().startsWith("ili-30-")) {
                 senseCode = "eng"+senseCode.substring(6);
@@ -914,11 +911,27 @@ public class SemObject implements Serializable {
             ref = ResourcesUri.eso + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("eso-")) {
             ref = ResourcesUri.eso + kafSense.getSensecode();
-        } else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
-            ref = ResourcesUri.pb + kafSense.getSensecode();
+        }
+        else if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
+            //// removed because the senseCode results in illegal URI.
+           // ref = ResourcesUri.vn + kafSense.getSensecode();
+        }else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
+            //// removed because the senseCode results in illegal URI.
+           // ref = ResourcesUri.pb + kafSense.getSensecode();
         } else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
-            ref = ResourcesUri.nb + kafSense.getSensecode();
-        } else if (kafSense.getResource().toLowerCase().startsWith("spotlight") ||
+            //// removed because the senseCode results in illegal URI.
+            // We get errors here: <http://www.newsreader-project.eu/ontologies/nombank/>.01>
+            if (kafSense.getSensecode().indexOf(">")>-1 ||
+                kafSense.getSensecode().indexOf("<")>-1
+                    )
+            {
+
+            }
+            else {
+             //   ref = ResourcesUri.nb + kafSense.getSensecode();
+            }
+        }
+        else if (kafSense.getResource().toLowerCase().startsWith("spotlight") ||
                    kafSense.getSource().toLowerCase().startsWith("spotlight")
                    ||
                    kafSense.getResource().toLowerCase().startsWith("vua-type-reranker") ||
