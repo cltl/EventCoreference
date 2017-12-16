@@ -74,7 +74,7 @@ public class MatchEventObjects {
         int phraseMatchThreshold = 50;
         String pathToEventFolder = "";
         String pathToSourceDataFile = "";
-         args = testArguments.split(" ");
+        if (args.length==0) args = testArguments.split(" ");
         if (args.length==1 && args[0].equals("--help")) {
             System.out.println("usage = " + usage);
             return;
