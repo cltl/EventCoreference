@@ -64,7 +64,7 @@ public class MatchEventObjects {
             "--subfolder                <(OPTIONAL) Processes any subfolder>\n" +
             "--debug                    <(OPTIONAL) default=0, 1=minimal, 2=max>\n";
 
-    static String testArguments = " --event-folder /Users/piek/Desktop/Yassine/s1b2b/events/all --concept-match 80 --phrase-match 68 --ili /Code/vu/newsreader/vua-resources/ili.ttl.gz --hypers --lcs --chaining 3 --match-type ILILEMMA --verbose --debug 0 --time day --roles a0,a1,a2 --token-id /Users/piek/Desktop/Yassine/s1b2b.key.tokens";
+    static String testArguments = "--event-folder /Users/piek/Desktop/Yassine/s1b2b/events/all --concept-match 80 --phrase-match 68 --ili /Code/vu/newsreader/vua-resources/ili.ttl.gz --hypers --lcs --chaining 3 --match-type ILILEMMA --verbose --debug 0 --time day --roles a0,a1,a2 --token-id /Users/piek/Desktop/Yassine/s1b2b.key.tokens";
     static public void main (String [] args) {
         Log.setLog4j("jena-log4j.properties");
         ArrayList<String> roleNeededArrayList = new ArrayList<String>();

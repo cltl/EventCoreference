@@ -649,7 +649,7 @@ public class SemObject implements Serializable {
             resource.addProperty(RDF.type, type);
         }
 
-        addConceptsToResource(resource, model);
+        addConceptsToResource(resource, model, VERBOSE_MENTION);
 
         for (int i = 0; i < this.getTopics().size(); i++) {
             KafTopic kafTopic = this.getTopics().get(i);
@@ -708,49 +708,56 @@ public class SemObject implements Serializable {
 
     }
 
-    void addConceptsToResource (Resource resource, Model model) {
+    boolean reasonsToSkip (KafSense kafSense) {
+        boolean SKIP = false;
+        /// skipping conditions
+         if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
+             SKIP=true;
+         }
+         if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+             //SKIP=true;
+         }
+         if (kafSense.getResource().equalsIgnoreCase("propbank")) {
+             SKIP=true;
+         }
+         if (kafSense.getResource().equalsIgnoreCase("nombank")) {
+             SKIP=true;
+         }
+         if (this.getURI().indexOf("entities/")==-1) {
+             if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
+                 SKIP=true;
+             }
+             if (kafSense.getResource().toLowerCase().startsWith("doublelinkentities")) {
+                 SKIP=true;
+             }
+             if (kafSense.getResource().toLowerCase().startsWith("dominantentities")) {
+                 SKIP=true;
+             }
+             if (kafSense.getResource().isEmpty() && this.getURI().startsWith("http://dbpedia.org")) {
+                 SKIP=true;
+             }
+             if (kafSense.getResource().toLowerCase().startsWith("spotlight")) {
+             /*
+             (5) DBpedia resources are used as classes via rdf:type triples, while
+                 they should be treated as instances, by either:
+                 - using them as the subject of extracted triples (suggested), or
+                 - linking them to entity/event URIs using owl:sameAs triples
+              */
+/*                String nameSpaceType = getNameSpaceTypeReference(kafSense);
+             Resource conceptResource = model.createResource(nameSpaceType);
+             resource.addProperty(OWL.sameAs, conceptResource);*/
+                 /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
+                 SKIP=true;
+             }
+         }
+         return true;
+    }
+    void addConceptsToResource (Resource resource, Model model, boolean VERBOSE) {
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
 
-            /// skipping conditions
-            if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
+            if (!VERBOSE && reasonsToSkip(kafSense)) {
                 continue;
-            }
-            if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-              //  continue;
-            }
-            if (kafSense.getResource().equalsIgnoreCase("propbank")) {
-                continue;
-            }
-            if (kafSense.getResource().equalsIgnoreCase("nombank")) {
-                continue;
-            }
-            if (this.getURI().indexOf("entities/")==-1) {
-                if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
-                    continue;
-                }
-                if (kafSense.getResource().toLowerCase().startsWith("doublelinkentities")) {
-                    continue;
-                }
-                if (kafSense.getResource().toLowerCase().startsWith("dominantentities")) {
-                    continue;
-                }
-                if (kafSense.getResource().isEmpty() && this.getURI().startsWith("http://dbpedia.org")) {
-                    continue;
-                }
-                if (kafSense.getResource().toLowerCase().startsWith("spotlight")) {
-                /*
-                (5) DBpedia resources are used as classes via rdf:type triples, while
-                    they should be treated as instances, by either:
-                    - using them as the subject of extracted triples (suggested), or
-                    - linking them to entity/event URIs using owl:sameAs triples
-                 */
-/*                String nameSpaceType = getNameSpaceTypeReference(kafSense);
-                Resource conceptResource = model.createResource(nameSpaceType);
-                resource.addProperty(OWL.sameAs, conceptResource);*/
-                    /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
-                    continue;
-                }
             }
             String nameSpaceType = getNameSpaceTypeReference(kafSense);
             if (!nameSpaceType.isEmpty()) {
