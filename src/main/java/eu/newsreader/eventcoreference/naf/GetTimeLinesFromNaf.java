@@ -242,7 +242,7 @@ public class GetTimeLinesFromNaf {
         GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
 
         //GetSemFromNafFile.processNafFileForRemainingSrlActors(entityUri, baseUrl, kafSaxParser, semActors);
-        GetSemFromNaf.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
+        GetSemFromNaf.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes, nafSemParameters);
         if (NOEVENTCOREF) {
             GetSemFromNaf.processNafFileForEventWithoutCoreferenceSets(baseUrl, kafSaxParser, semEvents);
         }

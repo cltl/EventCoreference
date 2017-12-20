@@ -311,7 +311,7 @@ public class GetPerspectiveStatsFromNafFile {
 
         GetSemFromNaf.processNafFileForEntityCoreferenceSets(entityUri, baseUrl, kafSaxParser, semActors);
         GetSemFromNaf.processSrlForRemainingFramenetRoles(project, kafSaxParser, semActors);
-        GetSemFromNaf.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
+        GetSemFromNaf.processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes, nafSemParameters);
 
         GetSemFromNaf.processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
 

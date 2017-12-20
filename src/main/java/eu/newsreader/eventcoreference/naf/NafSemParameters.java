@@ -57,6 +57,8 @@ public class NafSemParameters {
     private boolean NOMCOREF = true;
     private boolean EVENTCOREF = true;
     private  int SPANMATCHTHRESHOLD = 50;
+    private int MAXYEAR = 0;
+    private int MINYEAR = 0;
     private int SPANMAXTIME = 10;
     private int SPANMAXLOCATION= 10;
     private int SPANMINLOCATION = 2;
@@ -90,11 +92,29 @@ public class NafSemParameters {
         EVENTCOREF = true;
         ADDITIONALROLES = true;
         LOCALCONTEXT = false;
+        MAXYEAR = 0;
+        MINYEAR = 0;
     }
 
     public NafSemParameters (String [] args) {
         init();
         readParameters(args);
+    }
+
+    public int getMAXYEAR() {
+        return MAXYEAR;
+    }
+
+    public void setMAXYEAR(int MAXYEAR) {
+        this.MAXYEAR = MAXYEAR;
+    }
+
+    public int getMINYEAR() {
+        return MINYEAR;
+    }
+
+    public void setMINYEAR(int MINYEAR) {
+        this.MINYEAR = MINYEAR;
     }
 
     public boolean isDOMINANTYEAR() {
@@ -374,6 +394,20 @@ public class NafSemParameters {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
+            }
+            else if (arg.equals("--min-year") && args.length > (i + 1)) {
+                try {
+                    MINYEAR = Integer.parseInt(args[i + 1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (arg.equals("--max-year") && args.length > (i + 1)) {
+                try {
+                    MAXYEAR = Integer.parseInt(args[i + 1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             } else if (arg.equals("--source-frames") && args.length > (i + 1)) {
                 sourceFrameFile = args[i + 1];
             } else if (arg.equals("--grammatical-frames") && args.length > (i + 1)) {
@@ -422,5 +456,7 @@ public class NafSemParameters {
         System.out.println("EVENTCOREF = " + EVENTCOREF);
         System.out.println("LOCALCONTEXT = " + LOCALCONTEXT);
         System.out.println("DOMINANTYEAR = " + DOMINANTYEAR);
+        System.out.println("MINYEAR = " + MINYEAR);
+        System.out.println("MAXYEAR = " + MAXYEAR);
     }
 }

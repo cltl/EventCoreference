@@ -53,6 +53,20 @@ public class SemTime extends SemObject implements Serializable {
         this.functionInDocument = functionInDocument;
     }
 
+    public Integer getYearFromOwlTime () {
+       Integer year = 0;
+       if (!owlTime.getYear().isEmpty()) {
+           year = Integer.parseInt(owlTime.getYear());
+       }
+       else if (!owlTimeBegin.getYear().isEmpty()) {
+           year = Integer.parseInt(owlTimeBegin.getYear());
+       }
+       else if (!owlTimeEnd.getYear().isEmpty()) {
+           year = Integer.parseInt(owlTimeEnd.getYear());
+       }
+       return year;
+    }
+
     public OwlTime getOwlTime() {
         return owlTime;
     }

@@ -86,7 +86,7 @@ public class GetSemFromNaf {
             processSrlForRemainingFramenetRoles(nafSemParameters.getPROJECT(), kafSaxParser, semActors);
         }
         //System.out.println("semActors = " + semActors.size());
-        processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes);
+        processNafFileForTimeInstances(baseUrl, kafSaxParser, semTimes, nafSemParameters);
         //System.out.println("semTimes = " + semTimes.size());
         if (nafSemParameters.isEVENTCOREF()) {
             processNafFileForEventCoreferenceSets(baseUrl, kafSaxParser, semEvents);
@@ -711,8 +711,9 @@ public class GetSemFromNaf {
      * @return
      */
     static void processNafFileForTimeInstances(String baseUrl, KafSaxParser kafSaxParser,
-                                                  ArrayList<SemTime> semTimes
-    ) {
+                                               ArrayList<SemTime> givenSemTimes ,
+                                               NafSemParameters nafSemParameters
+    ) {   ArrayList<SemTime> semTimes = new ArrayList<SemTime>();
         if (kafSaxParser.kafTimexLayer.size()>0) {
             for (int i = 0; i < kafSaxParser.kafTimexLayer.size(); i++) {
                 KafTimex timex = kafSaxParser.kafTimexLayer.get(i);
@@ -820,6 +821,14 @@ public class GetSemFromNaf {
                 System.out.println("semObject.getOwlTimeBegin().getDateLabel() = " + semObject.getOwlTimeBegin().getDateLabel());
                 System.out.println("semObject.getOwlTimeEnd().getDateLabel() = " + semObject.getOwlTimeEnd().getDateLabel());
             }*/
+            for (int i = 0; i < semTimes.size(); i++) {
+                SemTime semTime = semTimes.get(i);
+                if (nafSemParameters.getMINYEAR()==0 || semTime.getYearFromOwlTime()>=nafSemParameters.getMINYEAR()) {
+                    if (nafSemParameters.getMAXYEAR()==0 || semTime.getYearFromOwlTime()<=nafSemParameters.getMAXYEAR()) {
+                        givenSemTimes.add(semTime);
+                    }
+                }
+            }
         }
     }
 
@@ -840,24 +849,6 @@ public class GetSemFromNaf {
                                            ArrayList<SemTime> semTimes,
                                            ArrayList<SemRelation> semRelations
     ) {
-        ////@DEPRECATED factuality is now extracted through the perspective module separately
-        /*   We check the factuality of each event mention by checking NafMention against the span of
-             values in the factuality layer. The factuality layer version 1 uses tokens.
-             If we have a value,
-             we create a nwr:hasFactBankValue relation between the event and the value
-             The URI of the relation is made unique by using a counter, e.g. factValue1, factValue2
-         */
-
-       /* for (int i = 0; i < semEvents.size(); i++) {
-            SemObject semObject = semEvents.get(i);
-            for (int j = 0; j < semObject.getNafMentions().size(); j++) {
-                NafMention nafMention = semObject.getNafMentions().get(j);
-                if (!nafMention.getFactuality().getPrediction().isEmpty()) {
-                    Util.addMentionToFactRelations(nafMention, factRelations, nafMention.getFactuality().getPrediction(), baseUrl, semObject.getId());
-                }
-            }
-        }*/
-
         /*
           We create mappings between the SemTime objects and the events. SemTime objects come either from the TimeEx layer
           or from the SRL layer. If they come from the Timex layer we have no information on how they relate to the event.
@@ -1060,6 +1051,7 @@ public class GetSemFromNaf {
                module which creates the tmx0 for the default anchoring of the document
                
              */
+
             if (!timeAnchor && nafSemParameters.isDOCTIME()) {
                 /// timeless event
                 /// in all cases that there is no time relations we link it to the docTime
