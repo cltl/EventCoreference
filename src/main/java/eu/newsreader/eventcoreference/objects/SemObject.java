@@ -714,16 +714,28 @@ public class SemObject implements Serializable {
          if (kafSense.getResource().equalsIgnoreCase("verbnet")) {
              SKIP=true;
          }
-         if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
-             //SKIP=true;
+         else if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+             SKIP=false;
          }
-         if (kafSense.getResource().equalsIgnoreCase("propbank")) {
+         else if (kafSense.getResource().toLowerCase().startsWith("wordnet")) {
+             SKIP=false;
+         }
+         else if (kafSense.getResource().toLowerCase().startsWith("framenet")) {
+             SKIP=false;
+         }
+         else if (kafSense.getResource().toLowerCase().startsWith("eso")) {
+             SKIP=false;
+         }
+         else if (kafSense.getResource().toLowerCase().startsWith("wn30g.bin64")) {
+             SKIP=false;
+         }
+         else if (kafSense.getResource().equalsIgnoreCase("propbank")) {
              SKIP=true;
          }
-         if (kafSense.getResource().equalsIgnoreCase("nombank")) {
+         else if (kafSense.getResource().equalsIgnoreCase("nombank")) {
              SKIP=true;
          }
-         if (this.getURI().indexOf("entities/")==-1) {
+         else if (this.getURI().indexOf("entities/")==-1) {
              if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
                  SKIP=true;
              }
@@ -750,7 +762,8 @@ public class SemObject implements Serializable {
                  SKIP=true;
              }
          }
-         return true;
+         //System.out.println("kafSense = " + kafSense.getResource());
+         return SKIP;
     }
     void addConceptsToResource (Resource resource, Model model, boolean VERBOSE) {
         for (int i = 0; i < concepts.size(); i++) {
@@ -760,6 +773,7 @@ public class SemObject implements Serializable {
                 continue;
             }
             String nameSpaceType = getNameSpaceTypeReference(kafSense);
+           // System.out.println("nameSpaceType = " + nameSpaceType);
             if (!nameSpaceType.isEmpty()) {
                 if (type.equals(NONENTITY)) {
                      //  System.out.println("nameSpaceType = " + nameSpaceType);
@@ -848,7 +862,9 @@ public class SemObject implements Serializable {
 
     static public String getNameSpaceTypeReference(KafSense kafSense) {
         String ref = "";
-        if (kafSense.getResource().equalsIgnoreCase("wordnet")) {
+        if (kafSense.getResource().equalsIgnoreCase("wordnet") ||
+            kafSense.getResource().toLowerCase().startsWith("wordnet") ||
+            kafSense.getResource().toLowerCase().startsWith("wn30g.bin64")) {
             String senseCode = kafSense.getSensecode();
             if (senseCode.toLowerCase().startsWith("ili-30-")) {
                 senseCode = "eng"+senseCode.substring(6);
@@ -861,6 +877,9 @@ public class SemObject implements Serializable {
                     } else {
                         ref = ResourcesUri.wn + senseCode;
                     }
+            }
+            else {
+                ref = ResourcesUri.wn + senseCode;
             }
         }
         else if (kafSense.getSensecode().toLowerCase().startsWith("ili-30-")) {
@@ -987,12 +1006,20 @@ public class SemObject implements Serializable {
         }
         else {
             ///// WE DO NOT OUTPUT BECAUSE WE CANNOT TRUST THAT THE SENSECODE IS VALID AS A URI
-            //ref = ResourcesUri.nwrontology + kafSense.getSensecode();
+            if (!kafSense.getSensecode().endsWith(".")) {
+                ref = ResourcesUri.nwrontology + kafSense.getSensecode();
+            }
+            else {
+                ref = ResourcesUri.nwrontology + kafSense.getSensecode().substring(0, kafSense.getSensecode().length()-1);
+                System.out.println("kafSense.getSensecode() = " + kafSense.getSensecode());
+            }
         }
-       // System.out.println("ref = " + ref);
-
-
-        //System.out.println("ref = " + ref);
+        if (ref.isEmpty()) {
+/*
+            System.out.println("kafSenseResource = " + kafSense.getResource());
+            System.out.println("kafSenseCode = " + kafSense.getSensecode());
+*/
+        }
         return ref;
     }
 

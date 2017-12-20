@@ -370,7 +370,7 @@ public class ComponentMatch {
          */
         public static boolean compareTimeCompositeEvent(CompositeEvent compositeEvent1,
                                                     CompositeEvent compositeEvent2,
-                                                    String TIME
+                                                    String TIME, boolean DEBUG
                                                     ) {
 
            // System.out.println("compositeEvent1 = " + compositeEvent1.getEvent().getId());
@@ -383,7 +383,7 @@ public class ComponentMatch {
                 return true;
             }
             if (TIME.equalsIgnoreCase("year")) {
-                return compareTimeYear(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes());
+                return compareTimeYear(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes(), DEBUG);
             }
             else if (TIME.equalsIgnoreCase("month")) {
                 return compareTimeMonth(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes());
@@ -607,15 +607,17 @@ public class ComponentMatch {
      * @return
      */
     public static boolean compareTimeYear(ArrayList<SemTime> mySemTimes,
-                                      ArrayList<SemTime> semTimes) {
+                                      ArrayList<SemTime> semTimes, boolean DEBUG) {
 
         for (int i = 0; i < mySemTimes.size(); i++) {
             SemTime mySemTime = mySemTimes.get(i);
             for (int j = 0; j < semTimes.size(); j++) {
                 SemTime semTime = semTimes.get(j);
-                if (valueMatch(mySemTime.getOwlTime().getYear(), semTime.getOwlTime().getYear())) {
+                if (DEBUG) {
                     System.out.println("mySemTime.getOwlTime().getYear() = " + mySemTime.getOwlTime().getYear());
                     System.out.println("semTime.getOwlTime().getYear() = " + semTime.getOwlTime().getYear());
+                }
+                if (valueMatch(mySemTime.getOwlTime().getYear(), semTime.getOwlTime().getYear())) {
                     return true;
                 }
                 else if (valueMatch(mySemTime.getOwlTimeBegin().getYear(),semTime.getOwlTimeBegin().getYear())) {
@@ -623,6 +625,9 @@ public class ComponentMatch {
                 }
                 else if (valueMatch(mySemTime.getOwlTimeEnd().getYear(), semTime.getOwlTimeEnd().getYear())) {
                     return true;
+                }
+                else {
+
                 }
             }
         }
