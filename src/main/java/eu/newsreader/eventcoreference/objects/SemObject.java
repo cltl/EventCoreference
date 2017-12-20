@@ -1009,9 +1009,9 @@ public class SemObject implements Serializable {
             if (!kafSense.getSensecode().endsWith(".")) {
                 ref = ResourcesUri.nwrontology + kafSense.getSensecode();
             }
-            else {
+            else {// we chop off the period at the end
                 ref = ResourcesUri.nwrontology + kafSense.getSensecode().substring(0, kafSense.getSensecode().length()-1);
-                System.out.println("kafSense.getSensecode() = " + kafSense.getSensecode());
+               // System.out.println("kafSense.getSensecode() = " + kafSense.getSensecode());
             }
         }
         if (ref.isEmpty()) {

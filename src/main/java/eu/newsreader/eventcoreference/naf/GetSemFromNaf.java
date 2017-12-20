@@ -707,7 +707,7 @@ public class GetSemFromNaf {
      * We assume that the first SemTime object is tmx0, which represents the document creation time
      * @param baseUrl
      * @param kafSaxParser
-     * @param semTimes
+     * @param givenSemTimes
      * @return
      */
     static void processNafFileForTimeInstances(String baseUrl, KafSaxParser kafSaxParser,
@@ -821,6 +821,8 @@ public class GetSemFromNaf {
                 System.out.println("semObject.getOwlTimeBegin().getDateLabel() = " + semObject.getOwlTimeBegin().getDateLabel());
                 System.out.println("semObject.getOwlTimeEnd().getDateLabel() = " + semObject.getOwlTimeEnd().getDateLabel());
             }*/
+
+            /// we filter timeexpressions if they fall outside the year limits if set
             for (int i = 0; i < semTimes.size(); i++) {
                 SemTime semTime = semTimes.get(i);
                 if (nafSemParameters.getMINYEAR()==0 || semTime.getYearFromOwlTime()>=nafSemParameters.getMINYEAR()) {
