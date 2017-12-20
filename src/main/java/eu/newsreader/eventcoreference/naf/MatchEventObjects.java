@@ -39,6 +39,7 @@ public class MatchEventObjects {
     public static boolean HYPERS = false;
     public static boolean LCS = false;
     public static boolean ILIURI = false;
+    public static boolean DOMINANTYEAR = false;
     public static boolean VERBOSEMENTIONS = false;
     public static String CHAINING = "3";
     static ArrayList<String> crossDocCorefSet = new ArrayList<String>(); /// just for debugging
@@ -58,13 +59,14 @@ public class MatchEventObjects {
             "--ili                      <(OPTIONAL) Path to ILI.ttl file to convert wordnet-synsets identifiers to ILI identifiers>\n" +
             "--source-data   <path>     <(OPTIONAL, Deprecated) Path to LexisNexis meta data on owners and authors to enrich the provenance>\n" +
             "--roles  <string>          <String with PropbBank roles, separated by \",\" for which there minimally needs to be a match, e.g. \"a0,a1\". This is especially relevant for sourceEvent, grammaticalEvent. If value is \"all\", then all participants need to match. This can be used for futureEvent"+
+            "--dominant-year            \n"+
             "--verbose                  <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n"+
             "--time     <string>        <(OPTIONAL) year, month or day indicate granularity of temporal match. If empty time is not matched\n"+
             "--ili-uri                  <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
             "--subfolder                <(OPTIONAL) Processes any subfolder>\n" +
             "--debug                    <(OPTIONAL) default=0, 1=minimal, 2=max>\n";
 
-    static String testArguments = "--event-folder /Users/piek/Desktop/Yassine/s1b2b/events/all --concept-match 80 --phrase-match 68 --ili /Code/vu/newsreader/vua-resources/ili.ttl.gz --hypers --lcs --chaining 3 --match-type ILILEMMA --verbose --debug 1 --time year --token-id /Users/piek/Desktop/Yassine/s1b2b.key.tokens";
+    static String testArguments = "--dominant-year --event-folder /Users/piek/Desktop/Yassine/s1b2b/events/all --concept-match 80 --phrase-match 68 --ili /Code/vu/newsreader/vua-resources/ili.ttl.gz --hypers --lcs --chaining 3 --match-type ILILEMMA --verbose --debug 2 --time year --token-id /Users/piek/Desktop/Yassine/s1b2b.key.tokens";
     static public void main (String [] args) {
         Log.setLog4j("jena-log4j.properties");
         ArrayList<String> roleNeededArrayList = new ArrayList<String>();
@@ -104,6 +106,9 @@ public class MatchEventObjects {
                 String tokenidPath = args[i + 1];
                 tokenIds = Util.ReadFileToStringArrayList(tokenidPath);
                 System.out.println("tokenIds = " + tokenIds.size());
+            }
+            else if (arg.equals("--dominant-year")) {
+                DOMINANTYEAR = true;
             }
             else if (arg.equals("--subfolder")) {
                 SUBFOLDER = true;
@@ -704,7 +709,7 @@ public class MatchEventObjects {
                         if (DEBUG>1) System.out.println("compositeEvent1.getMySemTimes().size() = " + myCompositeEvent.getMySemTimes().size());
                         if (DEBUG>1) System.out.println("targetEvent = " + targetEvent.getEvent().getId());
                         if (DEBUG>1) System.out.println("targetEvent.getMySemTimes().size() = " + targetEvent.getMySemTimes().size());
-                        if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME, (DEBUG>0))) {
+                        if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME, DOMINANTYEAR, (DEBUG>0))) {
                             if (DEBUG>1) System.out.println("MATCHED BY TIME");
                             targetEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                             targetEvent.mergeObjects(myCompositeEvent);
@@ -731,7 +736,7 @@ public class MatchEventObjects {
                         if (DEBUG>1) System.out.println("MATCHED BY PARTICIPANT, NEXT MATCH BY TIME:"+TIME);
                         if (DEBUG>1) System.out.println("compositeEvent1.getMySemTimes().size() = " + myCompositeEvent.getMySemTimes().size());
                         if (DEBUG>1) System.out.println("targetEvent.getMySemTimes().size() = " + targetEvent.getMySemTimes().size());
-                        if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME,(DEBUG>0))) {
+                        if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME,DOMINANTYEAR, (DEBUG>0))) {
                             if (DEBUG>1) System.out.println("MATCHED BY TIME");
                             targetEvent.getEvent().mergeSemObject(myCompositeEvent.getEvent());
                             targetEvent.mergeObjects(myCompositeEvent);
@@ -830,7 +835,7 @@ public class MatchEventObjects {
             if (EVENTMATCH) {
                 if (roleNeededArrayList.contains("none") || roleNeededArrayList.size()==0) {
                     if (!TIME.isEmpty()) {
-                        if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME, (DEBUG>0))) {
+                        if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME, DOMINANTYEAR, (DEBUG>0))) {
 
                             myCompositeEvent.getEvent().mergeSemObject(targetEvent.getEvent());
                             myCompositeEvent.mergeObjects(targetEvent);
@@ -849,7 +854,7 @@ public class MatchEventObjects {
                 }
                 else if (ComponentMatch.compareCompositeEvent(myCompositeEvent, targetEvent, roleNeededArrayList,DEBUG>0)) {
                     if (!TIME.isEmpty()) {
-                        if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME,(DEBUG>0))) {
+                        if (ComponentMatch.compareTimeCompositeEvent(myCompositeEvent, targetEvent, TIME, DOMINANTYEAR, (DEBUG>0))) {
                             myCompositeEvent.getEvent().mergeSemObject(targetEvent.getEvent());
                             myCompositeEvent.mergeObjects(targetEvent);
                             myCompositeEvent.mergeRelations(targetEvent);

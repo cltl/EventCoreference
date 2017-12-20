@@ -42,6 +42,7 @@ public class NafSemParameters {
     private Vector<String> grammaticalVector = null;
     private Vector<String> contextualVector = null;
     private int TIMEEXPRESSIONMAX = 5;
+    private boolean DOMINANTYEAR = false;
     private boolean ALL = true;
     private boolean NONENTITIES = false;
     private boolean ILIURI = false;
@@ -76,6 +77,7 @@ public class NafSemParameters {
         Vector<String> contextualVector = null;
         ALL = true;
         PROJECT = "";
+        DOMINANTYEAR = false;
         TIMEEXPRESSIONMAX = 5;
         NONENTITIES = false;
         ILIURI = false;
@@ -93,6 +95,14 @@ public class NafSemParameters {
     public NafSemParameters (String [] args) {
         init();
         readParameters(args);
+    }
+
+    public boolean isDOMINANTYEAR() {
+        return DOMINANTYEAR;
+    }
+
+    public void setDOMINANTYEAR(boolean DOMINANTYEAR) {
+        this.DOMINANTYEAR = DOMINANTYEAR;
     }
 
     public static String getUSAGE() {
@@ -311,6 +321,9 @@ public class NafSemParameters {
             else if (arg.equals("--no-doc-time")) {
                 DOCTIME = false;
             }
+            else if (arg.equals("--dominant-year")) {
+                DOMINANTYEAR = true;
+            }
             else if (arg.equals("--no-context-time")) {
                 CONTEXTTIME = false;
             }
@@ -408,5 +421,6 @@ public class NafSemParameters {
         System.out.println("NOMCOREF = " + NOMCOREF);
         System.out.println("EVENTCOREF = " + EVENTCOREF);
         System.out.println("LOCALCONTEXT = " + LOCALCONTEXT);
+        System.out.println("DOMINANTYEAR = " + DOMINANTYEAR);
     }
 }

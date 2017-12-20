@@ -5,6 +5,7 @@ import eu.newsreader.eventcoreference.util.Util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by piek on 4/23/14.
@@ -62,6 +63,55 @@ public class CompositeEvent implements Serializable{
     }
 
 
+    public static  ArrayList<SemTime> getDominantYear ( ArrayList<SemTime> myTimes) {
+        ArrayList<SemTime> domYearTimes = new ArrayList<SemTime>();
+        HashMap<String, Integer> yearCount = new HashMap<String, Integer>();
+        HashMap<String, ArrayList<SemTime>> yearMap = new HashMap<String, ArrayList<SemTime>>();
+        Integer topYear = 0;
+        String topYearString = "";
+        for (int i = 0; i < myTimes.size(); i++) {
+            SemTime semTime = myTimes.get(i);
+            String year = semTime.getOwlTime().getYear();
+            if (year.isEmpty()) {
+                year = semTime.getOwlTimeBegin().getYear();
+            }
+            if (year.isEmpty()) {
+                year = semTime.getOwlTimeEnd().getYear();
+            }
+            if (!year.isEmpty()) {
+                if (yearMap.containsKey(year)) {
+                    ArrayList<SemTime> times = yearMap.get(year);
+                    times.add(semTime);
+                    yearMap.put(year, times);
+                }
+                else {
+                    ArrayList<SemTime> times = new ArrayList<SemTime>();
+                    times.add(semTime);
+                    yearMap.put(year, times);
+                }
+                if (yearCount.containsKey(year)) {
+                    Integer cnt = yearCount.get(year);
+                    cnt++;
+                    yearCount.put(year, cnt);
+                    if (cnt>topYear) {
+                        topYear = cnt;
+                        topYearString = year;
+                    }
+                }
+                else {
+                    yearCount.put(year, 1);
+                    if (topYear==0) {
+                        topYearString = year;
+                        topYear = 1;
+                    }
+                }
+            }
+        }
+        domYearTimes = yearMap.get(topYearString);
+        //System.out.println("topYearString = " + topYearString);
+        return domYearTimes;
+    }
+
     public SemObject getEvent() {
         return event;
     }
@@ -73,6 +123,12 @@ public class CompositeEvent implements Serializable{
     public ArrayList<SemTime> getMySemTimes() {
         return mySemTimes;
     }
+
+    public ArrayList<SemTime> getMyDominantSemTimes() {
+        return getDominantYear(mySemTimes);
+    }
+
+
 
     public void setMySemTimes(ArrayList<SemTime> mySemTimes) {
         this.mySemTimes = mySemTimes;

@@ -361,6 +361,7 @@ public class ComponentMatch {
     }
 
 
+
      /**
          * Compare time
          *
@@ -370,7 +371,7 @@ public class ComponentMatch {
          */
         public static boolean compareTimeCompositeEvent(CompositeEvent compositeEvent1,
                                                     CompositeEvent compositeEvent2,
-                                                    String TIME, boolean DEBUG
+                                                    String TIME, boolean DOMINANTTIME, boolean DEBUG
                                                     ) {
 
            // System.out.println("compositeEvent1 = " + compositeEvent1.getEvent().getId());
@@ -380,22 +381,37 @@ public class ComponentMatch {
             //// if no time we do not know
             if (compositeEvent1.getMySemTimes().size() == 0 || compositeEvent2.getMySemTimes().size() == 0) {
              //   System.out.println("NO TIME ASSOCIATED.");
-                return true;
+                return false;
             }
-            if (TIME.equalsIgnoreCase("year")) {
-                return compareTimeYear(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes(), DEBUG);
-            }
-            else if (TIME.equalsIgnoreCase("month")) {
-                return compareTimeMonth(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes());
-            }
-            else if (TIME.equalsIgnoreCase("day")) {
-                return compareTime(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes());
+            if (DOMINANTTIME) {
+                if (DEBUG) System.out.println("DOMINANT TIME");
+                if (TIME.equalsIgnoreCase("year")) {
+                    return compareTimeYear(compositeEvent1.getMyDominantSemTimes(), compositeEvent2.getMyDominantSemTimes(), DEBUG);
+                } else if (TIME.equalsIgnoreCase("month")) {
+                    return compareTimeMonth(compositeEvent1.getMyDominantSemTimes(), compositeEvent2.getMyDominantSemTimes());
+                } else if (TIME.equalsIgnoreCase("day")) {
+                    return compareTime(compositeEvent1.getMyDominantSemTimes(), compositeEvent2.getMyDominantSemTimes());
+                }
+                else { /// no known TIME value
+                       ///  System.out.println("NO PROPER TIME PARAMATER:"+TIME);
+                    return false;
+                }
             }
             else {
-                /// no known TIME value
-              //  System.out.println("NO PROPER TIME PARAMATER:"+TIME);
-                return true;
+                if (TIME.equalsIgnoreCase("year")) {
+                    return compareTimeYear(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes(), DEBUG);
+                } else if (TIME.equalsIgnoreCase("month")) {
+                    return compareTimeMonth(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes());
+                } else if (TIME.equalsIgnoreCase("day")) {
+                    return compareTime(compositeEvent1.getMySemTimes(), compositeEvent2.getMySemTimes());
+                }
+                else { /// no known TIME value
+                       ///  System.out.println("NO PROPER TIME PARAMATER:"+TIME);
+                    return false;
+                }
+
             }
+
         }
 
 
