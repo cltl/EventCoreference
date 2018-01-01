@@ -210,13 +210,11 @@ public class EventCorefSingletonBaseline {
             String strBeginDate = eu.kyotoproject.util.DateUtil.createTimestamp();
             String strEndDate = null;
 
-            int corefCounter = 0;
             for (int i = 0; i < kafSaxParser.kafEventArrayList.size(); i++) {
                 KafEvent kafEvent = kafSaxParser.kafEventArrayList.get(i);
                 kafEvent.addTermDataToSpans(kafSaxParser);
                 String lemma = getLemmaFromKafEvent(kafEvent);
                 makeKafCoreferenceSet(kafSaxParser, kafEvent, lemma, wordnetData, BESTSENSETHRESHOLD, WNSOURCETAG, WNPREFIX);
-
             }
 
             strEndDate = eu.kyotoproject.util.DateUtil.createTimestamp();
