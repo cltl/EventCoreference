@@ -4,22 +4,22 @@ package eu.newsreader.eventcoreference.naf;
  * Created by piek on 10/02/16.
  */
 
-    import eu.kyotoproject.kaf.*;
-    import eu.newsreader.eventcoreference.objects.CorefMatch;
-    import eu.newsreader.eventcoreference.objects.CorefResultSet;
-    import eu.newsreader.eventcoreference.util.FrameTypes;
-    import eu.newsreader.eventcoreference.util.Util;
-    import org.apache.tools.bzip2.CBZip2InputStream;
-    import vu.wntools.wnsimilarity.WordnetSimilarityApi;
-    import vu.wntools.wnsimilarity.measures.SimilarityPair;
-    import vu.wntools.wordnet.WordnetData;
-    import vu.wntools.wordnet.WordnetLmfSaxParser;
+import eu.kyotoproject.kaf.*;
+import eu.newsreader.eventcoreference.objects.CorefMatch;
+import eu.newsreader.eventcoreference.objects.CorefResultSet;
+import eu.newsreader.eventcoreference.util.FrameTypes;
+import eu.newsreader.eventcoreference.util.Util;
+import org.apache.tools.bzip2.CBZip2InputStream;
+import vu.wntools.wnsimilarity.WordnetSimilarityApi;
+import vu.wntools.wnsimilarity.measures.SimilarityPair;
+import vu.wntools.wordnet.WordnetData;
+import vu.wntools.wordnet.WordnetLmfSaxParser;
 
-    import java.io.*;
-    import java.net.InetAddress;
-    import java.net.UnknownHostException;
-    import java.util.*;
-    import java.util.zip.GZIPInputStream;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
 
 /**
      * Created with IntelliJ IDEA.
@@ -154,10 +154,16 @@ package eu.newsreader.eventcoreference.naf;
             }
 
             if (!pathToWNLMF.isEmpty()) {
-                WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
-                wordnetLmfSaxParser.setRelations(relations);
-                wordnetLmfSaxParser.parseFile(pathToWNLMF);
-                wordnetData = wordnetLmfSaxParser.wordnetData;
+                if (!new File(pathToWNLMF).exists()) {
+                    System.out.println("Cannot find the wordnet file pathToWNLMF = " + pathToWNLMF);
+                    return;
+                }
+                else {
+                    WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
+                    wordnetLmfSaxParser.setRelations(relations);
+                    wordnetLmfSaxParser.parseFile(pathToWNLMF);
+                    wordnetData = wordnetLmfSaxParser.wordnetData;
+                }
             }
         }
 
@@ -469,6 +475,39 @@ package eu.newsreader.eventcoreference.naf;
                 KafSaxParser kafSaxParser = new KafSaxParser();
                 kafSaxParser.parseFile(file);
                 processContextuals(kafSaxParser, USEWSD);
+
+/*                NumberFormat defaultFormat = NumberFormat.getPercentInstance();
+                defaultFormat.setMinimumFractionDigits(2);
+                for (int j = 0; j < kafSaxParser.kafCorefenceArrayList.size(); j++) {
+                    KafCoreferenceSet kafCoreferenceSet = kafSaxParser.kafCorefenceArrayList.get(j);
+                    if (kafCoreferenceSet.getType().equals("event")) {
+                        kafCoreferenceSet.setTokenStrings(kafSaxParser);
+
+                        String str = "" ;
+                        for (int k = 0; k < kafCoreferenceSet.getTokenStringArray().size(); k++) {
+                            String s = kafCoreferenceSet.getTokenStringArray().get(k);
+                            str += s+";";
+                        }
+                        str +="hypers=";
+                        for (int k = 0; k < kafCoreferenceSet.getHypernymFromExternalReferences().size(); k++) {
+                            KafSense kafSense = kafCoreferenceSet.getHypernymFromExternalReferences().get(k);
+                            str += kafSense.getSource()+":"+kafSense.getSensecode()+":" + defaultFormat.format(kafSense.getConfidence())+";";
+
+                        }
+                        str +="lcs=";
+                        for (int k = 0; k < kafCoreferenceSet.getLcsFromExternalReferences().size(); k++) {
+                            KafSense kafSense = kafCoreferenceSet.getLcsFromExternalReferences().get(k);
+                            str += kafSense.getSource()+":"+kafSense.getSensecode()+":" + defaultFormat.format(kafSense.getConfidence())+";";
+
+                        }
+                        str +="dom";
+                        for (int k = 0; k < kafCoreferenceSet.getDirectExternalReferences().size(); k++) {
+                            KafSense kafSense = kafCoreferenceSet.getDirectExternalReferences().get(k);
+                            str += kafSense.getSource()+":"+kafSense.getSensecode()+":" + defaultFormat.format(kafSense.getConfidence())+";";
+                        }
+                        System.out.println(str);
+                    }
+                }*/
 
                 try {
                     String filePath = file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf("."));

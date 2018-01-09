@@ -92,10 +92,16 @@ public class EventCorefSingletonBaseline {
                   }
 
                   if (!pathToWNLMF.isEmpty()) {
-                      WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
-                      wordnetLmfSaxParser.setRelations(relations);
-                      wordnetLmfSaxParser.parseFile(pathToWNLMF);
-                      wordnetData = wordnetLmfSaxParser.wordnetData;
+                      if (!new File(pathToWNLMF).exists()) {
+                         System.out.println("Cannot find the wordnet file pathToWNLMF = " + pathToWNLMF);
+                         return;
+                      }
+                     else {
+                          WordnetLmfSaxParser wordnetLmfSaxParser = new WordnetLmfSaxParser();
+                          wordnetLmfSaxParser.setRelations(relations);
+                          wordnetLmfSaxParser.parseFile(pathToWNLMF);
+                          wordnetData = wordnetLmfSaxParser.wordnetData;
+                      }
                   }
                   if (!folder.isEmpty()) {
                       processNafFolder (new File (folder), extension);
