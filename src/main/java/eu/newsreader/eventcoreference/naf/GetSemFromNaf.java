@@ -963,7 +963,7 @@ public class GetSemFromNaf {
                     }
                 }
             }
-            if (nafSemParameters.isCONTEXTTIME()) {
+            if (nafSemParameters.isCONTEXTTIME() || nafSemParameters.isPARAGRAPHTIME()) {
                 if (!timeAnchor) {
                     for (int l = 0; l < semTimes.size(); l++) {
                         SemTime semTime = (SemTime) semTimes.get(l);
@@ -992,7 +992,7 @@ public class GetSemFromNaf {
                     }
                 }
 
-                if (!timeAnchor && nafSemParameters.isPARAGRAPHTIME()) {
+                if (!timeAnchor && (nafSemParameters.isPARAGRAPHTIME())) {
                     for (int l = 0; l < semTimes.size(); l++) {
                         SemTime semTime = (SemTime) semTimes.get(l);
                         if (semTime != null && semTime.getNafMentions() != null) {
@@ -1019,7 +1019,7 @@ public class GetSemFromNaf {
                         }
                     }
                 }
-                if (!timeAnchor  && nafSemParameters.isPARAGRAPHTIME()) {
+                if (!timeAnchor  && (nafSemParameters.isPARAGRAPHTIME())) {
                     for (int l = 0; l < semTimes.size(); l++) {
                         SemTime semTime = (SemTime) semTimes.get(l);
                         if (semTime != null && semTime.getNafMentions() != null) {
