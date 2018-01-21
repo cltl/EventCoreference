@@ -296,7 +296,7 @@ public class CorefResultSet {
      * @param kafSaxParser
      * @param BESTSENSETHRESHOLD
      */
-    public void getBestSensesAfterCumulation (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD, String WNRESOURCE) {
+    public void getBestSensesAfterCumulation (KafSaxParser kafSaxParser, double BESTSENSETHRESHOLD, String WNRESOURCE, String WNPREFIX) {
         HashMap<String, ArrayList<KafSense>> resourceSenseMap = new HashMap<String, ArrayList<KafSense>>();
         HashMap<String, Double> resourceScoreMap = new HashMap<String, Double>();
         for (int i = 0; i < sources.size(); i++) {
@@ -416,6 +416,13 @@ public class CorefResultSet {
             }
             combinedScore = combinedScore/topScores.size();
             if (combinedScore>=BESTSENSETHRESHOLD) {
+                if (!WNPREFIX.isEmpty()) {
+                    int idx = key.indexOf("-");
+                    if (idx>-1) {
+                        key = WNPREFIX+key.substring(idx);
+                      //  System.out.println("senseString = " + senseString);
+                    }
+                }
                 KafSense kafSense = new KafSense();
                 kafSense.setSensecode(key);
                 kafSense.setConfidence(combinedScore);

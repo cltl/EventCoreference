@@ -245,7 +245,7 @@ public class EventCorefSingletonBaseline {
             ArrayList<CorefTarget> anEventCorefTargetList = aKafEvent.getSpans();
             CorefResultSet corefResultSet = new CorefResultSet(lemma,anEventCorefTargetList);
             //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-            corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
+            corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG, WNPREFIX);
             corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             KafCoreferenceSet kafCoreferenceSet = corefResultSet.castToKafCoreferenceSetResource(wordnetData);
             String corefId = "coevent" + (kafSaxParser.kafCorefenceArrayList.size() + 1);

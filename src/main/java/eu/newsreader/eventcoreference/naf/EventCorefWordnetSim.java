@@ -619,7 +619,7 @@ import java.util.zip.GZIPInputStream;
                     }
                     else {
                         //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                        corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
+                        corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG, WNPREFIX);
                     }
                     /// we determine the best senses for the lemma sets according to WSD
 
@@ -1082,7 +1082,7 @@ import java.util.zip.GZIPInputStream;
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG, WNPREFIX);
                 }
                 corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
@@ -1094,7 +1094,7 @@ import java.util.zip.GZIPInputStream;
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG, WNPREFIX);
                 }
                 corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
@@ -1106,7 +1106,7 @@ import java.util.zip.GZIPInputStream;
                 }
                 else {
                     //// NOW WE BUILD THE COREFSETS AND CONSIDER THE SENSES OF ALL THE TARGETS (sources) TO TAKE THE HIGHEST SCORING ONES
-                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG);
+                    corefResultSet.getBestSensesAfterCumulation(kafSaxParser, BESTSENSETHRESHOLD, WNSOURCETAG, WNPREFIX);
                 }
                 corefResultSet.addHypernyms(wordnetData, WNPREFIX);
             }
