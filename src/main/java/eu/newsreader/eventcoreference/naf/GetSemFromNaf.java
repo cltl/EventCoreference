@@ -133,7 +133,9 @@ public class GetSemFromNaf {
                         /*ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
                         semEvent.addNafMentions(mentionArrayList);*/
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
-                        semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
+                        if (nafSemParameters.isIGNORESRLCONCEPTS()) {
+                            semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
+                        }
                         semEvent.setTopics(kafSaxParser.kafTopicsArrayList); /// we assign all the topics (assigned to the document) to this event
                         semEvent.getUriForTopicLabel(eurovoc); /// we obtain the eurovoc URL for the topic label
                      //   semEvent.addConceptsExcept(event.getExternalReferences(), "WordNet");  /// these are concepts added by the SRL except for the WordNet references since we assume they come from the coreference sets

@@ -35,6 +35,7 @@ public class NafSemParameters {
             "--paragraph-time       <(OPTIONAL) time expressions in the same sentence and of preceding and following sentences are associated with events\n"+
             "--all                  <(OPTIONAL) All events are extracted, including events without time and without participants>\n" +
             "--eurovoc-en, --eurovoc-nl, --eurovoc-es, --eurovoc_es" +
+            "--ignore-srl-event-concepts <OPTIONAL> Surpresses concepts for events coming from the SRL layer as they are not based on WSD" +
             "                       <(OPTIONAL) Eurovoc resource to map topic labels to topic concept identifiers>\n"
     ;
 
@@ -45,6 +46,7 @@ public class NafSemParameters {
     private int TIMEEXPRESSIONMAX = 5;
     private boolean DOMINANTYEAR = false;
     private boolean ALL = true;
+    private boolean IGNORESRLCONCEPTS = false;
     private boolean NONENTITIES = false;
     private boolean ILIURI = false;
     private boolean VERBOSE = false;
@@ -81,6 +83,7 @@ public class NafSemParameters {
         ALL = true;
         PROJECT = "";
         DOMINANTYEAR = false;
+        IGNORESRLCONCEPTS = false;
         TIMEEXPRESSIONMAX = 5;
         NONENTITIES = false;
         ILIURI = false;
@@ -322,6 +325,14 @@ public class NafSemParameters {
         this.SPANMAXCOREFERENTSET = SPANMAXCOREFERENTSET;
     }
 
+    public boolean isIGNORESRLCONCEPTS() {
+        return IGNORESRLCONCEPTS;
+    }
+
+    public void setIGNORESRLCONCEPTS(boolean IGNORESRLCONCEPTS) {
+        this.IGNORESRLCONCEPTS = IGNORESRLCONCEPTS;
+    }
+
     public void readParameters (String [] args) {
         String sourceFrameFile = "";
         String contextualFrameFile = "";
@@ -335,6 +346,9 @@ public class NafSemParameters {
             }
             else if (arg.equals("--verbose")) {
                 VERBOSE = true;
+            }
+            else if (arg.equals("--ignore-srl-concepts")) {
+                IGNORESRLCONCEPTS = true;
             }
             else if (arg.equals("--perspective")) {
                 PERSPECTIVE = true;
@@ -451,6 +465,7 @@ public class NafSemParameters {
         System.out.println("PROJECT = " + PROJECT);
         System.out.println("DOCTIME = " + DOCTIME);
         System.out.println("CONTEXTTIME = " + CONTEXTTIME);
+        System.out.println("IGNORESRLCONCEPTS = " + IGNORESRLCONCEPTS);
         System.out.println("PARAGRAPHTIME = " + PARAGRAPHTIME);
         System.out.println("ADDITIONALROLES = " + ADDITIONALROLES);
         System.out.println("NOMCOREF = " + NOMCOREF);

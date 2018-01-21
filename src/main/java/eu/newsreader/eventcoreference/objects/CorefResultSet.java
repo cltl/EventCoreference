@@ -434,6 +434,7 @@ public class CorefResultSet {
                 int idx = senseString.indexOf("-");
                 if (idx>-1) {
                     senseString = WNPREFIX+senseString.substring(idx);
+                  //  System.out.println("senseString = " + senseString);
                 }
             }
             if (wordnetData.getHyperRelations().containsKey(senseString)) {
