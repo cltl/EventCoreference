@@ -133,6 +133,7 @@ public class PipelineOverview {
                 File file = ttlFiles.get(j);
                 if (file.getName().startsWith(textFile.getName())) {
                     ttlFile = file;
+                    ///http://cltl.nl/visualrdf/?url=http//kyoto.let.vu.nl/~vossen/nwr/pipelinedemo/nl.txt.ttl
                     break;
                 }
             }
@@ -161,11 +162,11 @@ public class PipelineOverview {
         html += "<tr> \n" +
                 "<td>\n" +
                 "<h1>English pipeline and NAF layers</h1>\n" +
-                "<img src=\"EnglishPipeline.png\" width=\"500\" height=\"500\">\n" +
+                "<img src=\"EnglishPipeline.png\" width=\"300\" height=\"300\">\n" +
                 "</td>\n" +
                 "<td>\n" +
                 "<h1>Dutch pipeline and NAF layers</h1>\n" +
-                "<img src=\"DutchPipeline.png\" width=\"500\" height=\"500\">\n" +
+                "<img src=\"DutchPipeline.png\" width=\"300\" height=\"300\">\n" +
                 "</td>\n"+
                 "</tr>\n";
         html += "</table>\n";
@@ -179,7 +180,8 @@ public class PipelineOverview {
                 + makeHref(file2)
                 + makeHref(file3)
                 + makeHref(file4)
-                + makeHref(file5)
+                //+ makeHref(file5)
+                + makeVisualRdf(file5)
                 + makeHref(file6)
                 +"</div>\n";
         return row;
@@ -205,4 +207,32 @@ public class PipelineOverview {
         }
         return href;
     }
+
+    static String makeVisualRdf (File file) {
+        String href = "";
+        if (file == null) {
+            href ="<div class=\"divTableCell\">"+"no file"+"</div>\n" +
+                    "<div class=\"divTableCell\">"+"</div>\n" +
+                    "<div class=\"divTableCell\">"+"</div>\n";
+        }
+        else {
+                String path = "http://kyoto.let.vu.nl/~vossen/nwr/pipelinedemo/"+file.getName();
+                String demo = "http://cltl.nl/visualrdf/?url="+path;
+                Date date = new Date(file.lastModified());
+                String format = "yyyy/MM/dd/HH:mm:ss";
+                Locale locale = Locale.ENGLISH;
+                String formattedDateString = new SimpleDateFormat(format, locale).format(date);
+                href ="<div class=\"divTableCell\">"
+                        +"<a href=\""+path+"\" target=\"_blank\">"+file.getName()+"</a>, "
+                        +"<a href=\""+demo+"\" target=\"_new\">"+"VRDF"+"</a> "
+                        +"</div>\n" +
+                       "<div class=\"divTableCell\">"+file.length()+"</div>\n" +
+                       "<div class=\"divTableCell\">"+formattedDateString+"</div>\n";
+
+        }
+        return href;
+    }
+
+   // http://cltl.nl/visualrdf/?url=http//kyoto.let.vu.nl/~vossen/nwr/pipelinedemo/
 }
+

@@ -18,7 +18,8 @@ INSTALLATION
 The install.sh will build the binary through apache-maven-3.x and the pom.xml and move it to the "lib" folder.
 
 REQUIREMENTS
-EventCoreference is developed in Java 1.6 and can run on any platform that supports Java 1.6
+EventCoreference is developed in Java 1.6 and can run on any platform that supports Java 1.6.
+You need to first install maven (version 3.x) to install EventCoreference: https://maven.apache.org/index.html.
 
 LICENSE
     EventCoreference is free software: you can redistribute it and/or modify
@@ -30,6 +31,8 @@ LICENSE
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
+USAGE
+To find out about the parameters that can be set for NAF2SEM you can run the naf2sem-usage.sh script.
 
 DESCRIPTION
 EventCoreference is a package that contain 3 main functionalities:
@@ -118,8 +121,8 @@ These parameters are explained in the usage documentation.
 **Note: Make sure that you have your KnowledgeStore (KS) docker set up prior to running the single document streaming mode. You can get the docker from https://github.com/dkmfbk/knowledgestore-docker/. Once your KS docker is running, update the script with the correct KS endpoint for NAF2SEM, following the pattern: $YOUR_SERVER_URL/custom/naf2sem .**
 
 Instead of cross-document extraction, there is also a function that takes a single NAF input stream or file and directly creates the SEM instance and GRaSP perspective representations. 
-For each input stream an output stream is generates in RDF-TRiG format (similar for single files)
-In a next step the RDF TRiG output stream can be send to a KnowledgeStore (direct population of the RDF-TRiG) and the KnowledgeStore is queried for similar events.
+For each input stream an output stream is generated in RDF-TRiG format (similar for single file input/output).
+In a next step the RDF TRiG output stream can be sent to a KnowledgeStore (direct population of the RDF-TRiG) and the KnowledgeStore is queried for similar events.
 For identical events owl:sameAs links are created that are also stored in the KnowledgeStore. This set up can be used for
 an end-to-end streaming set up. Scripts:
 

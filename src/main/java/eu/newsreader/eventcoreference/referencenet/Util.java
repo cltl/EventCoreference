@@ -1,11 +1,6 @@
 package eu.newsreader.eventcoreference.referencenet;
 
-import edu.stanford.nlp.coref.CorefCoreAnnotations;
-import edu.stanford.nlp.coref.data.CorefChain;
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.util.CoreMap;
+
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 
 import java.util.*;
@@ -60,7 +55,7 @@ public class Util {
         return treeSet;
     }
 
-    static void initStandfordCoreNLP (StanfordCoreNLP pipeline) {
+   /* static void initStandfordCoreNLP (StanfordCoreNLP pipeline) {
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos, lemma");
         //props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
@@ -100,7 +95,7 @@ public class Util {
         // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
         List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
 
-        /*for(CoreMap sentence: sentences) {
+        *//*for(CoreMap sentence: sentences) {
             // traversing the words in the current sentence
             // a CoreLabel is a CoreMap with additional token-specific methods
             for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
@@ -121,7 +116,7 @@ public class Util {
             // this is the Stanford dependency graph of the current sentence
             SemanticGraph dependencies = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
             System.out.println("dependency graph:\n" + dependencies);
-        }*/
+        }*//*
 
         // This is the coreference link graph
         // Each chain stores a set of mentions that link to each other,
@@ -130,5 +125,5 @@ public class Util {
         Map<Integer, CorefChain> graph =
                 document.get(CorefCoreAnnotations.CorefChainAnnotation.class);
 
-    }
+    }*/
 }

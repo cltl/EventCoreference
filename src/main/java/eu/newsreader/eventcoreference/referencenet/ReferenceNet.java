@@ -1,6 +1,5 @@
 package eu.newsreader.eventcoreference.referencenet;
 
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import eu.newsreader.eventcoreference.pwn.ILIReader;
 
@@ -519,7 +518,7 @@ public class ReferenceNet {
     }
     static ILIReader iliReader = new ILIReader();
 
-    static StanfordCoreNLP pipeline;
+    //static StanfordCoreNLP pipeline;
 
     static public void main (String[] args) {
         //String filePath = "/Users/piek/Desktop/SemEval2018/sim15wsd6/events.event.xls";
@@ -563,7 +562,7 @@ public class ReferenceNet {
         }
         iliReader = new ILIReader();
         iliReader.readILIFile(iliFile);
-        Util.initStandfordCoreNLP(pipeline);
+      //  Util.initStandfordCoreNLP(pipeline);
 
         /*if (!esoFilterFile.isEmpty()) {
             ArrayList<String> array = Util.readTextToWordArray(esoFilterFile);
@@ -618,7 +617,7 @@ public class ReferenceNet {
     // say:38;get:8;tell:8;work:7;want:6;bring:4;take:4;cover:3;need:3;statement:3;action:2;become:2;make:2;candidate:1;cause:1;deal:1;direct:1;director:1;needAWOL:1;state:1;
     // take:33;cover:23;get:19;make:17;do:13;direct:10;deal:9;need:7;have:6;want:6;work:6;say:5;tell:5;aim:4;bring:4;nominate:4;acquire:3;act:3;become:3;catch:3;come:3;director:3;manage:3;accept:2;assume:2;candidate:2;cause:2;choose:2;conduct:2;constitute:2;convey:2;covering:2;create:2;demand:2;earn:2;exercise:2;fix:2;go:2;handle:2;lead:2;make_out:2;name:2;occupy:2;perform:2;produce:2;read:2;require:2;serve:2;take_in:2;take_on:2;action:1;add_up:1;address:1;administer:1;admit:1;adopt:1;allege:1;allot:1;amount:1;answer:1;appoint:1;arrange:1;arrive:1;ask:1;assure:1;aver:1;back:1;behave:1;binding:1;blanket:1;book_binding:1;bring_in:1;build:1;calculate:1;call_for:1;campaigner:1;capture:1;care:1;carry:1;charter:1;claim:1;clear:1;coif:1;coiffe:1;coiffure:1;comprehend:1;concealment:1;consider:1;construct:1;consume:1;contend:1;continue:1;cook:1;cope:1;cover_up:1;covering_fire:1;covert:1;cross:1;cut_across:1;cut_through:1;deal_out:1;desire:1;develop:1;dish_out:1;dispense:1;distribute:1;do_work:1;dole_out:1;dress:1;drive:1;embrace:1;encompass:1;engage:1;enjoin:1;exact:1;execute:1;experience:1;extend:1;fare:1;fetch:1;fill:1;film:1;form:1;function:1;gain:1;garner:1;get_across:1;get_along:1;get_by:1;get_hold_of:1;get_over:1;grapple:1;grow:1;guide:1;hire:1;indigence:1;induce:1;ingest:1;insure:1;involve:1;learn:1;lease:1;let:1;look_at:1;lot:1;make_do:1;make_for:1;manager:1;managing_director:1;masking:1;mete_out:1;motivation:1;motive:1;move:1;narrate:1;natural_covering:1;necessitate:1;nominee:1;number:1;operate:1;opt:1;order:1;overlay:1;pack:1;parcel_out:1;pass_over:1;pauperism:1;pauperization:1;pay_back:1;pay_off:1;penury:1;pick_out:1;place:1;play:1;plow:1;point:1;postulate:1;practice:1;practise:1;prefer:1;prepare:1;propose:1;prospect:1;pull_in:1;put_forward:1;put_up:1;ready:1;realise:1;realize:1;receive:1;recite:1;recount:1;rent:1;report:1;run:1;screen:1;screening:1;select:1;sell:1;send:1;set:1;shell_out:1;shoot:1;spread_over:1;state:1;statement:1;stimulate:1;strike:1;study:1;submit:1;subscribe:1;subscribe_to:1;suffice:1;take_aim:1;take_up:1;target:1;theater_director:1;theatre_director:1;top:1;total:1;track:1;trade:1;train:1;traverse:1;treat:1;turn:1;underwrite:1;use_up:1;work_out:1;wrap_up:1;wreak:1;	eso:BeingEmployed;eso:Creating;eso:HavingAValue;eso:HavingInPossession;eso:Increasing;eso:IntentionalEvent;eso:Placing;eso:Transportation;eso:Working;	fn:Adorning;fn:Amounting_to;fn:Arriving;fn:Becoming;fn:Behind_the_scenes;fn:Being_employed;fn:Bringing;fn:Building;fn:Causation;fn:Cause_change;fn:Change_of_leadership;fn:Change_of_quantity_of_possession;fn:Choosing;fn:Conduct;fn:Cooking_creation;fn:Desiring;fn:Earnings_and_losses;fn:Eclipse;fn:Filling;fn:Getting;fn:Grasp;fn:Intentionally_act;fn:Intentionally_create;fn:Manufacturing;fn:Motion;fn:Needing;fn:Possession;fn:Removing;fn:Reporting;fn:Request;fn:Required_event;fn:Resolve_problem;fn:Self_motion;fn:Statement;fn:Taking;fn:Telling;fn:Text_creation;fn:Topic;fn:Work;fn:Working_a_post;	ili:i112940;ili:i113169;ili:i21819;ili:i21960;ili:i22011;ili:i22243;ili:i22276;ili:i22361;ili:i22363;ili:i22460;ili:i24334;ili:i24342;ili:i24531;ili:i24714;ili:i24760;ili:i24872;ili:i24934;ili:i25071;ili:i25092;ili:i25115;ili:i25251;ili:i25270;ili:i25370;ili:i25432;ili:i25444;ili:i25445;ili:i25476;ili:i25546;ili:i26017;ili:i26075;ili:i26226;ili:i26362;ili:i26365;ili:i26432;ili:i26433;ili:i26486;ili:i26598;ili:i26632;ili:i26659;ili:i26675;ili:i26709;ili:i26742;ili:i26918;ili:i27248;ili:i27365;ili:i27377;ili:i27379;ili:i27393;ili:i27410;ili:i27561;ili:i27563;ili:i27662;ili:i27693;ili:i27699;ili:i28269;ili:i28352;ili:i28369;ili:i28726;ili:i28864;ili:i28895;ili:i28899;ili:i29358;ili:i29849;ili:i29854;ili:i29865;ili:i29902;ili:i29966;ili:i30008;ili:i30054;ili:i30295;ili:i30309;ili:i30403;ili:i30518;ili:i30852;ili:i30918;ili:i30924;ili:i31275;ili:i31486;ili:i31647;ili:i31738;ili:i31766;ili:i32124;ili:i32134;ili:i32302;ili:i32306;ili:i32496;ili:i32759;ili:i32778;ili:i32785;ili:i32790;ili:i32791;ili:
 
-    static ReferenceData csvToData (StanfordCoreNLP pipeline, String line) {
+ /*   static ReferenceData csvToData (StanfordCoreNLP pipeline, String line) {
         ReferenceData referenceData = new ReferenceData();
         String [] fields = line.split("\t");
         if (fields.length==8) {
@@ -664,7 +663,7 @@ public class ReferenceNet {
           //  System.out.println("fields.length = " + fields.length);
         }
         return referenceData;
-    }
+    }*/
 
     static ArrayList<ReferenceData> readCSVfile (String filePath, String wordFilter, String esoFilter, String fnFilter, Integer threshold)  {
         ArrayList<ReferenceData> data = new ArrayList<ReferenceData>();
@@ -681,7 +680,8 @@ public class ReferenceNet {
                     //if (cnt==10) break;
                     //System.out.println(inputLine);
                     if (inputLine.trim().length()>0) {
-                        ReferenceData referenceData = csvToData(pipeline, inputLine.trim());
+                        ReferenceData referenceData = null;
+                        //ReferenceData referenceData = csvToData(pipeline, inputLine.trim());
                         if (wordFilter.isEmpty()) {
                             if (esoFilter.isEmpty() && fnFilter.isEmpty()) {
                                 data.add(referenceData);

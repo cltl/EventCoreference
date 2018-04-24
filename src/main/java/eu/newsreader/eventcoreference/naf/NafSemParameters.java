@@ -13,29 +13,32 @@ public class NafSemParameters {
 
     static final String USAGE = "The NAF2SEM functions processes NAF files and generate SEM RDF-TRiG results" +
             "The functions use the following arguments:\n" +
-            "--perspective          <(OPTIONAL) GRaSP layer is included in the output>\n" +
-            "--project              <The name of the project for creating project-specific URIs within the NewsReader domain>\n" +
-            "--non-entities         <(OPTIONAL) If used, additional FrameNet roles and non-entity phrases are included>\n" +
-            "--contextual-frames    <Path to a file with the FrameNet frames considered contextual>\n" +
-            "--communication-frames <Path to a file with the FrameNet frames considered source>\n" +
-            "--grammatical-frames   <Path to a file with the FrameNet frames considered grammatical>" +
-            "--time-max             <(OPTIONAL) Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5" +
-            "--ili                  <(OPTIONAL) Path to ILI.ttl file to convert wordnet-synsets identifiers to ILI identifiers>\n" +
-            "--ili-uri              <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>\n" +
-            "--verbose              <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number\n" +
-            "--no-additional-role   <(OPTIONAL) only roles for entities are extracted" +
-            "--max-time-span        <(OPTIONAL) set maximal nr of sentences to look for time expressions: default = 5" +
-            "--max-role-phrases     <(OPTIONAL) set maximal nr of words for participant roles" +
-            "--min-role-phrases     <(OPTIONAL) set minimal nr of words for participant roles" +
-            "--no-nomcoref          <(OPTIONAL) nominal coreference layer is ignored\n" +
-            "--no-eventcoref        <(OPTIONAL) event coreference layer is ignored\n" +
-            "--no-doc-time          <(OPTIONAL) document creation time is not considered\n" +
-            "--local-context        <(OPTIONAL) Default is false. Using this option sets local context to true which means that entities without external reference URI such as DBpedia are made unique per NAF input file\n" +
-            "--context-time         <(OPTIONAL) time expressions in the same sentence are associated with events\n"+
-            "--paragraph-time       <(OPTIONAL) time expressions in the same sentence and of preceding and following sentences are associated with events\n"+
-            "--all                  <(OPTIONAL) All events are extracted, including events without time and without participants>\n" +
-            "--eurovoc-en, --eurovoc-nl, --eurovoc-es, --eurovoc_es" +
-            "--ignore-srl-event-concepts <OPTIONAL> Surpresses concepts for events coming from the SRL layer as they are not based on WSD" +
+            "--perspective          <(OPTIONAL) GRaSP layer is included in the output>.\n" +
+            "--project              <The name of the project for creating project-specific URIs within the NewsReader domain>.\n" +
+            "--non-entities         <(OPTIONAL) If used, additional FrameNet roles and non-entity phrases are included>.\n" +
+            "--contextual-frames    <Path to a file with the FrameNet frames considered contextual>.\n" +
+            "--communication-frames <Path to a file with the FrameNet frames considered source>.\n" +
+            "--grammatical-frames   <Path to a file with the FrameNet frames considered grammatical>.\n" +
+            "--time-max             <(OPTIONAL) Maximum number of time-expressions allows for an event to be included in the output. Excessive time links are problematic. The defeault value is 5>.\n" +
+            "--min-year             <(OPTIONAL) sets a year limit to exclude events happening before this year>.\n"+
+            "--max-year             <(OPTIONAL) sets a year limit to exclude events happening after this year>.\n"+
+            "--ili                  <(OPTIONAL) Path to ILI.ttl file to convert wordnet-synsets identifiers to ILI identifiers>.\n" +
+            "--ili-uri              <(OPTIONAL) If used, the ILI-identifiers are used to represents events. This is necessary for cross-lingual extraction>.\n" +
+            "--verbose              <(OPTIONAL) representation of mentions is extended with token ids, terms ids and sentence number>.\n" +
+            "--no-additional-role   <(OPTIONAL) only roles for entities are extracted>.\n" +
+            "--max-time-span        <(OPTIONAL) set maximal nr of sentences to look for time expressions: default = 5>.\n" +
+            "--max-role-phrases     <(OPTIONAL) set maximal nr of words for participant roles>.\n" +
+            "--min-role-phrases     <(OPTIONAL) set minimal nr of words for participant roles>.\n" +
+            "--no-nomcoref          <(OPTIONAL) nominal coreference layer is ignored>.\n" +
+            "--no-eventcoref        <(OPTIONAL) event coreference layer is ignored>.\n" +
+            "--dominant-year        <(OPTIONAL) only select events associated with the dominant year>.\n"+
+            "--no-doc-time          <(OPTIONAL) document creation time is not considered>.\n" +
+            "--local-context        <(OPTIONAL) Default is false. Using this option sets local context to true which means that entities without external reference URI such as DBpedia are made unique per NAF input file>.\n" +
+            "--context-time         <(OPTIONAL) time expressions in the same sentence are associated with events>.\n"+
+            "--paragraph-time       <(OPTIONAL) time expressions in the same sentence and of preceding and following sentences are associated with events>.\n"+
+            "--all                  <(OPTIONAL) All events are extracted, including events without time and without participants>.\n" +
+            "--ignore-srl-concepts  <OPTIONAL> Surpresses concepts for events coming from the SRL layer as they are not based on WSD.>\n" +
+            "--eurovoc-en, --eurovoc-nl, --eurovoc-es, --eurovoc_es>\n" +
             "                       <(OPTIONAL) Eurovoc resource to map topic labels to topic concept identifiers>\n"
     ;
 
@@ -453,9 +456,9 @@ public class NafSemParameters {
     }
 
     public void printSettings() {
-        System.out.println("sourceVector = " + sourceVector.toString());
-        System.out.println("grammaticalVector = " + grammaticalVector.toString());
-        System.out.println("grammaticalVector = " + grammaticalVector.toString());
+        System.out.println("SOURCEVECTOR = " + sourceVector.toString());
+        System.out.println("GRAMMATICALVECTOR = " + grammaticalVector.toString());
+        System.out.println("CONTEXTUALVECTOR = " + contextualVector.toString());
         System.out.println("TIMEEXPRESSIONMAX = " + TIMEEXPRESSIONMAX);
         System.out.println("ALL = " + ALL);
         System.out.println("NONENTITIES = " + NONENTITIES);

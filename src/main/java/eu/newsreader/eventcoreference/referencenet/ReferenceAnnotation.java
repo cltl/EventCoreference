@@ -1,6 +1,6 @@
 package eu.newsreader.eventcoreference.referencenet;
 
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+//import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import eu.newsreader.eventcoreference.objects.PhraseCount;
 import vu.wntools.wnsimilarity.measures.SimilarityPair;
 import vu.wntools.wordnet.WordnetLmfSaxParser;
@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class ReferenceAnnotation {
     static WordnetLmfSaxParser wordnetLmfSaxParser;
-    static StanfordCoreNLP pipeline;
+  //  static StanfordCoreNLP pipeline;
     static DecimalFormat df = new DecimalFormat("#.00");
     static HashMap<String, ArrayList<PhraseCount>> typeLex = new HashMap<String, ArrayList<PhraseCount>>();
     static ArrayList<PhraseCount> dataLex = new ArrayList<PhraseCount>();
@@ -26,7 +26,7 @@ public class ReferenceAnnotation {
         wordnetLmfSaxParser = new WordnetLmfSaxParser();
         wordnetLmfSaxParser.parseFile(wnPath);
         //System.out.println("wordnetLmfSaxParser = " + wordnetLmfSaxParser.wordnetData.getHyperRelations().size());
-        Util.initStandfordCoreNLP(pipeline);
+       // Util.initStandfordCoreNLP(pipeline);
         File file = new File(filePath);
         readData(file);
     }
@@ -97,7 +97,8 @@ public class ReferenceAnnotation {
                         String [] mentions = mentionField.split(",");
                         ArrayList<PhraseCount> phraseCountArrayList = new ArrayList<PhraseCount>();
                         for (int j = 0; j < mentions.length; j++) {
-                            String lemma = Util.getLemmaCoreNLP(pipeline, mentions[j].toLowerCase());
+                            String lemma = "";
+                          //lemma = Util.getLemmaCoreNLP(pipeline, mentions[j].toLowerCase());
                             boolean match = false;
                             for (int k = 0; k < phraseCountArrayList.size(); k++) {
                                 PhraseCount phraseCount = phraseCountArrayList.get(k);

@@ -106,26 +106,51 @@
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>eu.fbk.knowledgestore</groupId>
+            <artifactId>ks-client</artifactId>
+            <version>1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.fbk.knowledgestore</groupId>
+            <artifactId>ks-core</artifactId>
+            <version>1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.fbk.rdfpro</groupId>
+            <artifactId>rdfpro-core</artifactId>
+            <version>0.6</version>
+        </dependency>
+         <!-- TEST DEPS -->
+         <dependency>
+             <groupId>eu.fbk.rdfpro</groupId>
+             <artifactId>rdfpro-tql</artifactId>
+             <version>0.6</version>
+         </dependency>
 <!--        <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
             <version>3.6.0</version>
         </dependency>-->
-        <dependency>
+  <!--      <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
             <version>3.8.0</version>
-        </dependency>
-        <dependency>
+        </dependency>-->
+<!--        <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
             <version>3.8.0</version>
-            <classifier>models</classifier>
+            <classifier>models</classifier>-->
             <!--<classifier>models</classifier> Arabic, Chinese, German, or Spanish-->
 <!--
             <classifier>models</classifier>
 -->
+<!--
         </dependency>
+-->
 <!--        <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
