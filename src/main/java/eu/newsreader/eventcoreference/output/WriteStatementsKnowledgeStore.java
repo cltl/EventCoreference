@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+@Deprecated
 public class WriteStatementsKnowledgeStore implements RDFProcessor {
 
     static boolean DEBUG = false;

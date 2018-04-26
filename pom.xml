@@ -43,8 +43,9 @@
         <dependency>
             <groupId>com.github.cltl</groupId>
             <artifactId>KafSaxParser</artifactId>
-            <version>v3.1.2</version>
-            <!-- TO USE THE LATEST COMMIT INSTREAD OF A TAGGED VERSION USE: -->
+            <version>master-SNAPSHOT</version>
+            <!-- <version>v3.1.2</version> -->
+            <!-- TO USE THE LATEST COMMIT INSTEAD OF A TAGGED VERSION USE: -->
 	 <!-- <version>master-SNAPSHOT</version>
 	  -->
         </dependency>
