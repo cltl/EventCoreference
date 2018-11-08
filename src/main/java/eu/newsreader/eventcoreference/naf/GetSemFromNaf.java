@@ -70,7 +70,7 @@ public class GetSemFromNaf {
         //nafSemParameters.printSettings();
         TimeLanguage.setLanguage(kafSaxParser.getLanguage());
         String baseUrl = kafSaxParser.getKafMetaData().getUrl().replaceAll("#", "HASH") + ID_SEPARATOR;
-        String entityUri = ResourcesUri.nwrdata + nafSemParameters.getPROJECT() + "/entities/";
+        String entityUri = ResourcesUri.nwrdata + nafSemParameters.getPROJECT() + "entities/";
 
         if (!baseUrl.toLowerCase().startsWith("http")) {
            //  System.out.println("baseUrl = " + baseUrl);
@@ -133,7 +133,7 @@ public class GetSemFromNaf {
                         /*ArrayList<NafMention> mentionArrayList = Util.getNafMentionArrayListFromPredicatesAndCoreferences(baseUrl, kafSaxParser, event);
                         semEvent.addNafMentions(mentionArrayList);*/
                         semEvent.addNafId(event.getId());/// needed to connect to timeAnchors that have predicate ids as spans
-                        if (nafSemParameters.isIGNORESRLCONCEPTS()) {
+                        if (!nafSemParameters.isIGNORESRLCONCEPTS()) {
                             semEvent.addConcepts(event.getExternalReferences());  /// these are all concepts added by the SRL
                         }
                         semEvent.setTopics(kafSaxParser.kafTopicsArrayList); /// we assign all the topics (assigned to the document) to this event
@@ -472,9 +472,9 @@ public class GetSemFromNaf {
         else {
            // System.out.println("baseUrl = " + baseUrl);
         }
-        String entityUri = ResourcesUri.nwrdata + project + "/non-entities/";
+        String entityUri = ResourcesUri.nwrdata + project + "non-entities/";
         if (nafSemParameters.isLOCALCONTEXT()) {
-            entityUri = baseUrl + "/non-entities/";
+            entityUri = baseUrl + "non-entities/";
           //  System.out.println("baseUrl based entityUri = " + entityUri);
         }
         for (int i = 0; i < kafSaxParser.getKafEventArrayList().size(); i++) {

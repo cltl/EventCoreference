@@ -758,7 +758,6 @@ doc-uri
             semActor.addToJenaSimpleModel(rename, instanceModel, Sem.Actor);
         }
 
-
         // System.out.println("TIMES");
         // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
         for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
@@ -768,7 +767,8 @@ doc-uri
 
         for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
             SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
-                semRelation.addToJenaDataSetSimple(rename, ds);
+               // semRelation.addToJenaDataSetSimple(rename, ds);
+                semRelation.addToJenaDataSetSimpleWithoutName(rename, instanceModel);
         }
     }
 

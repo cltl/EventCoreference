@@ -13,6 +13,8 @@ public class ResourcesUri {
     final static public String oldbaily = "http://cltl.nl/oldbailey";
     final static public String nwrproject = "http://www.newsreader-project.eu/project/";
     final static public String nwrtime = "http://www.newsreader-project.eu/time/";
+    final static public String nwrentities = "http://www.newsreader-project.eu/data/entities/";
+    final static public String nwrnonentities = "http://www.newsreader-project.eu/data/non-entities/";
     final static public String nwrdata = "http://www.newsreader-project.eu/data/";
     final static public String nwrauthor = "http://www.newsreader-project.eu/provenance/author/";
     final static public String nwrcite = "http://www.newsreader-project.eu/provenance/cite/";
@@ -53,6 +55,8 @@ public class ResourcesUri {
       //  model.setNsPrefix("cornetto", ResourcesUri.cornetto);
         model.setNsPrefix("fn", ResourcesUri.fn);
         model.setNsPrefix("nwrdata", ResourcesUri.nwrdata);
+        model.setNsPrefix("nwrentities", ResourcesUri.nwrentities);
+        model.setNsPrefix("nwrnon-entities", ResourcesUri.nwrnonentities);
         model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
         model.setNsPrefix("eso", ResourcesUri.eso);
         /// we need to take out the dbp ns because the URIs from dbp are not valid. They contain e.g. dots "Apple_Inc."
@@ -81,6 +85,8 @@ public class ResourcesUri {
         model.setNsPrefix("ili", ResourcesUri.ili);
         model.setNsPrefix("fn", ResourcesUri.fn);
         model.setNsPrefix("nwrdata", ResourcesUri.nwrdata);
+        model.setNsPrefix("nwrentities", ResourcesUri.nwrentities);
+        model.setNsPrefix("nwrnon-entities", ResourcesUri.nwrnonentities);
         model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
         model.setNsPrefix("eso", ResourcesUri.eso);
         model.setNsPrefix("pb", ResourcesUri.pb);

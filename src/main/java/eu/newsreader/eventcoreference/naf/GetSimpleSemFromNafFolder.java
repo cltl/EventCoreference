@@ -35,8 +35,8 @@ public class GetSimpleSemFromNafFolder {
         String pathToNafFolder = "";
         String extension = "";
 
-        pathToNafFolder = "/Users/piek/Desktop/NWR/timeline/demo/data/naf/";
-        extension = ".naf";
+        pathToNafFolder = "/Users/piek/Desktop/DigHum-2018/4775434/OBO_XML_7-2/sessions/naf-out/naf16/";
+        extension = ".dom";
 
 
         for (int i = 0; i < args.length; i++) {

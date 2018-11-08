@@ -546,7 +546,7 @@ public class SemObject implements Serializable {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = id.replaceAll("//", "/");
     }
 
     public String getLabel() {
@@ -703,7 +703,8 @@ public class SemObject implements Serializable {
             }
         }
 
-        addSimpleConceptsToResource(resource, model);
+       // addSimpleConceptsToResource(resource, model);
+        addAllConceptsToResource(resource, model);
 
 
     }
@@ -765,6 +766,7 @@ public class SemObject implements Serializable {
          //System.out.println("kafSense = " + kafSense.getResource());
          return SKIP;
     }
+
     void addConceptsToResource (Resource resource, Model model, boolean VERBOSE) {
         for (int i = 0; i < concepts.size(); i++) {
             KafSense kafSense = concepts.get(i);
@@ -856,6 +858,16 @@ public class SemObject implements Serializable {
                         resource.addProperty(RDF.type, conceptResource);
                     }
                 }
+            }
+        }
+    }
+    void addAllConceptsToResource (Resource resource, Model model) {
+        for (int i = 0; i < concepts.size(); i++) {
+            KafSense kafSense = concepts.get(i);
+            String nameSpaceType = getNameSpaceTypeReference(kafSense);
+            if (!nameSpaceType.isEmpty()) {
+                Resource conceptResource = model.createResource(nameSpaceType);
+                resource.addProperty(RDF.type, conceptResource);
             }
         }
     }
