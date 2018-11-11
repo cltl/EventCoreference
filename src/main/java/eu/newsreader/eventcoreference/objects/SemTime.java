@@ -151,11 +151,15 @@ public class SemTime extends SemObject implements Serializable {
 
         }
     }
-    public void addToJenaModelSimpleDocTimeInstant(Model model) {
+    public void addToJenaModelSimpleDocTimeInstant(Model model, SemObject semEvent) {
 
         this.getOwlTime().addToJenaModelOwlTimeInstant(model);
 
-        Resource resource = model.createResource(this.getURI());
+        Resource event = model.createResource(semEvent.getURI());
+        Resource resource = model.createResource(this.getOwlTime().getDateStringURI());
+        event.addProperty(Sem.hasTime, resource);
+
+       // Resource resource = model.createResource(this.getURI());
         if (!this.getTopPhraseAsLabel().isEmpty()) {
             resource.addProperty(RDFS.label, model.createLiteral(this.getTopPhraseAsLabel()));
         }
@@ -167,9 +171,11 @@ public class SemTime extends SemObject implements Serializable {
         resource.addProperty(RDF.type, interval);
 */
 
+/*
         Resource value = model.createResource(this.getOwlTime().getDateStringURI());
         Property property = model.createProperty(ResourcesUri.owltime + "inDateTime");
         resource.addProperty(property, value);
+*/
 
     }
 

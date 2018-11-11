@@ -3,7 +3,6 @@ package eu.newsreader.eventcoreference.naf;
 import eu.kyotoproject.kaf.KafSaxParser;
 import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.objects.*;
-import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.util.FrameTypes;
 import eu.newsreader.eventcoreference.util.MD5Checksum;
 import org.apache.jena.atlas.logging.Log;
@@ -90,6 +89,6 @@ public class GetSimpleSemFromNafStream {
 */
             }
         }
-        JenaSerialization.serializeJenaSimpleCompositeEvents(System.out, compositeEventArraylist);
+      //  JenaSerialization.serializeJenaSimpleCompositeEvents(System.out, compositeEventArraylist, rename);
     }
 }

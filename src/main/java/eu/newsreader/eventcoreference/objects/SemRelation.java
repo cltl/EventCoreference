@@ -252,6 +252,51 @@ public class SemRelation implements Serializable {
         }
         return rel;
     }
+    public String getSimpleRoleRelation (String role) {
+        String  rel = "";
+        String [] fields = role.split(":");
+        if (fields.length==2) {
+            String source = fields[0].trim();
+            String value = fields[1].trim();
+
+            if (source.isEmpty()) {
+                rel = ResourcesUri.pb+value;
+            }
+            else if (source.equalsIgnoreCase("propbank")) {
+                if (value.indexOf("@")==-1) {
+                    /// skipping propbank/say.01@1
+                    rel = ResourcesUri.pb + value;
+                }
+            }
+            else if (source.equalsIgnoreCase("framenet")) {
+                int idx = value.indexOf("@");
+                if (idx>-1) {
+                    value = value.substring(idx+1);
+                }
+                rel = ResourcesUri.fn+value;
+            }
+            else if (source.equalsIgnoreCase("verbnet")) {
+             //   rel = ResourcesUri.vn+value;
+            }
+            else if (source.equalsIgnoreCase("eso")) {
+                int idx = value.indexOf("@");
+                if (idx>-1) {
+                    value = value.substring(idx+1);
+                }
+                rel = ResourcesUri.eso+value;
+            }
+            else if (source.equalsIgnoreCase("nombank")) {
+             //   rel = ResourcesUri.nb+value;
+            }
+        }
+        else {
+            if (role.indexOf("@")==-1) {
+                /// skipping propbank/say.01@1
+                rel = ResourcesUri.pb + role;
+            }
+        }
+        return rel;
+    }
 
     public String getFramenetRoleRelation (String role) {
         String  rel = "";
@@ -370,7 +415,7 @@ public class SemRelation implements Serializable {
             else {
                 if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
                     !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
-                    predicate = getRoleRelation(predicate);
+                    predicate = getSimpleRoleRelation(predicate);
                     //System.err.println("predicate:"+predicate);
                     //predicate = getFramenetRoleRelation(predicates.get(i));
                     if (!predicate.isEmpty()) {
@@ -398,12 +443,12 @@ public class SemRelation implements Serializable {
             String predicate = predicates.get(i);
             semProperty = getSemRelationProperty(predicate);
             if (isTemporalSemRelationProperty(predicate)) {
-                    subject.addProperty(semProperty, object);
+                  //  subject.addProperty(semProperty, object);
             }
             else {
                 if (!semProperty.getLocalName().equals(Sem.hasActor.getLocalName()) &&
                     !semProperty.getLocalName().equals(Sem.hasPlace.getLocalName())) {
-                    predicate = getRoleRelation(predicate);
+                    predicate = getSimpleRoleRelation(predicate);
                     //System.err.println("predicate:"+predicate);
                     //predicate = getFramenetRoleRelation(predicates.get(i));
                     if (!predicate.isEmpty()) {

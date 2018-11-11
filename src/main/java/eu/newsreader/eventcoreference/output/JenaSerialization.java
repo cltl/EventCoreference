@@ -724,7 +724,7 @@ doc-uri
     }
 
     static public void serializeJenaSimpleCompositeEvents (OutputStream stream,
-                                                     ArrayList<CompositeEvent> compositeEvents) {
+                                                     ArrayList<CompositeEvent> compositeEvents,HashMap<String, String> rename) {
 
 
 
@@ -732,7 +732,7 @@ doc-uri
         createSimpleModels();
         for (int c = 0; c < compositeEvents.size(); c++) {
             CompositeEvent compositeEvent = compositeEvents.get(c);
-            addJenaSimpleCompositeEvent(compositeEvent);
+            addJenaSimpleCompositeEvent(compositeEvent, rename);
         }
         try {
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
@@ -746,10 +746,7 @@ doc-uri
 
 
     static public void addJenaSimpleCompositeEvent (
-            CompositeEvent compositeEvent) {
-
-
-        HashMap<String, String> rename = new HashMap<String, String>();
+            CompositeEvent compositeEvent,HashMap<String, String> rename) {
         compositeEvent.getEvent().addToJenaSimpleModel(rename, instanceModel, Sem.Event);
 
         //  System.out.println("ACTORS");
@@ -762,7 +759,7 @@ doc-uri
         // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
         for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
             SemTime semTime = compositeEvent.getMySemTimes().get(i);
-            semTime.addToJenaModelSimpleDocTimeInstant(instanceModel);
+            semTime.addToJenaModelSimpleDocTimeInstant(instanceModel, compositeEvent.getEvent());
         }
 
         for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {

@@ -166,6 +166,151 @@ public class SimpleTaxonomy {
         //printTree();
     }
 
+    /**
+      * Assume the following structure TAB separated structure with Parent TAB Child per line
+      * Parent   Child
+      * Parent   Child
+      * etc...
+      * @param filePath
+      */
+     public void readSimpleTaxonomyFromFile (String filePath) {
+         try {
+             System.out.println("filePath = " + filePath);
+             InputStreamReader isr = null;
+             if (filePath.toLowerCase().endsWith(".gz")) {
+                 try {
+                     InputStream fileStream = new FileInputStream(filePath);
+                     InputStream gzipStream = new GZIPInputStream(fileStream);
+                     isr = new InputStreamReader(gzipStream);
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+             else if (filePath.toLowerCase().endsWith(".bz2")) {
+                 try {
+                     InputStream fileStream = new FileInputStream(filePath);
+                     InputStream gzipStream = new CBZip2InputStream(fileStream);
+                     isr = new InputStreamReader(gzipStream);
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+             else {
+                 FileInputStream fis = new FileInputStream(filePath);
+                 isr = new InputStreamReader(fis);
+             }
+             if (isr!=null) {
+                 BufferedReader in = new BufferedReader(isr);
+                 String inputLine;
+                 while (in.ready() && (inputLine = in.readLine()) != null) {
+                     inputLine = inputLine.trim();
+                     System.out.println("inputLine = " + inputLine);
+                     if (inputLine.trim().length() > 0) {
+                         String[] fields = inputLine.split("\t");
+                         if (fields.length == 2) {
+                             String superClass = fields[1];
+                             String subClass = fields[0];
+                                // System.out.println("subClass = " + subClass);
+                                // System.out.println("superClass = " + superClass);
+                                 if (!subClass.equals(superClass)) {
+                                     subToSuper.put(subClass, superClass);
+                                     if (superToSub.containsKey(superClass)) {
+                                         ArrayList<String> subs = superToSub.get(superClass);
+                                         if (!subs.contains(subClass)) {
+                                             subs.add(subClass);
+                                             superToSub.put(superClass, subs);
+                                         }
+                                     }
+                                     else {
+                                         ArrayList<String> subs = new ArrayList<String>();
+                                         subs.add(subClass);
+                                         superToSub.put(superClass, subs);
+                                     }
+                                 }
+                         }
+                         else {
+                             System.out.println("Skipping line:"+inputLine);
+                         }
+                     }
+                 }
+             }
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+         //printTree();
+     }
+
+     public void readSimpleTaxonomyFromTtlFile (String filePath) {
+         try {
+             System.out.println("filePath = " + filePath);
+             InputStreamReader isr = null;
+             if (filePath.toLowerCase().endsWith(".gz")) {
+                 try {
+                     InputStream fileStream = new FileInputStream(filePath);
+                     InputStream gzipStream = new GZIPInputStream(fileStream);
+                     isr = new InputStreamReader(gzipStream);
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+             else if (filePath.toLowerCase().endsWith(".bz2")) {
+                 try {
+                     InputStream fileStream = new FileInputStream(filePath);
+                     InputStream gzipStream = new CBZip2InputStream(fileStream);
+                     isr = new InputStreamReader(gzipStream);
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+             else {
+                 FileInputStream fis = new FileInputStream(filePath);
+                 isr = new InputStreamReader(fis);
+             }
+             if (isr!=null) {
+                 BufferedReader in = new BufferedReader(isr);
+                 String inputLine;
+                 while (in.ready() && (inputLine = in.readLine()) != null) {
+                     inputLine = inputLine.trim();
+                    // System.out.println("inputLine = " + inputLine);
+                     //<http://dbpedia.org/resource/Aristotle> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Philosopher> .
+                     if (inputLine.trim().length() > 0) {
+                         String[] fields = inputLine.split(" ");
+                         if (fields.length == 4) {
+                             String superClass = fields[2];
+                             String subClass = fields[0];
+                           //  System.out.println("subClass = " + subClass);
+                           //  System.out.println("superClass = " + superClass);
+                             //http://dbpedia.org/resource/China
+                             if (!subClass.equals(superClass)) {
+                                 subToSuper.put(subClass, superClass);
+                                 // do not store reverse because
+                                 /*if (superToSub.containsKey(superClass)) {
+                                     ArrayList<String> subs = superToSub.get(superClass);
+                                     if (!subs.contains(subClass)) {
+                                         subs.add(subClass);
+                                         superToSub.put(superClass, subs);
+                                     }
+                                 }
+                                 else {
+                                     ArrayList<String> subs = new ArrayList<String>();
+                                     subs.add(subClass);
+                                     superToSub.put(superClass, subs);
+                                 }*/
+                             }
+                         }
+                         else {
+                             System.out.println("Skipping line:"+inputLine);
+                         }
+                     }
+                 }
+             }
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+         System.out.println("subToSuper = " + subToSuper.size());
+         //printTree();
+     }
+
     public void readSimpleTaxonomyFromDbpFile (String filePath) {
         try {
             InputStreamReader isr = null;

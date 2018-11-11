@@ -680,6 +680,9 @@ public class SemObject implements Serializable {
 
     public void addToJenaSimpleModel(HashMap<String, String> rename, Model model, Resource type) {
         Resource resource = model.createResource(this.getURI());
+        Resource conceptResource = model.createResource(ResourcesUri.nwrontology+this.type);
+        resource.addProperty(RDF.type, conceptResource);
+
         //// Top phrase
         String topLabel = this.getTopPhraseAsLabel();
         if (!topLabel.isEmpty()) {
@@ -687,7 +690,7 @@ public class SemObject implements Serializable {
             //resource.addProperty(property, model.createLiteral(this.getTopPhraseAsLabel()));
             //// instead of
 
-            if (type.equals(Sem.Event) ) {
+            if (type.equals(SemObject.EVENT) ) {
                 resource = model.createResource(this.getURI() + "_" + topLabel);
                 rename.put(this.getURI(), this.getURI() + "_" + topLabel);
             }
@@ -702,9 +705,7 @@ public class SemObject implements Serializable {
                 }
             }
         }
-
-       // addSimpleConceptsToResource(resource, model);
-        addAllConceptsToResource(resource, model);
+        addAllConceptsToResource(rename, resource, model);
 
 
     }
@@ -802,74 +803,55 @@ public class SemObject implements Serializable {
         }
     }
 
-    void addSimpleConceptsToResource (Resource resource, Model model) {
-        for (int i = 0; i < concepts.size(); i++) {
-            KafSense kafSense = concepts.get(i);
-
-            if (this.getURI().indexOf("entities/")==-1) {
-                if (kafSense.getResource().toLowerCase().startsWith("vua-type-reranker")) {
-                    continue;
-                }
-                if (kafSense.getResource().toLowerCase().startsWith("doublelinkentities")) {
-                    continue;
-                }
-                if (kafSense.getResource().toLowerCase().startsWith("dominantentities")) {
-                    continue;
-                }
-                if (kafSense.getResource().isEmpty() && this.getURI().startsWith("http://dbpedia.org")) {
-                    continue;
-                }
-                if (kafSense.getResource().toLowerCase().startsWith("spotlight")) {
-                /*
-                (5) DBpedia resources are used as classes via rdf:type triples, while
-                    they should be treated as instances, by either:
-                    - using them as the subject of extracted triples (suggested), or
-                    - linking them to entity/event URIs using owl:sameAs triples
-                 */
-/*                String nameSpaceType = getNameSpaceTypeReference(kafSense);
-                Resource conceptResource = model.createResource(nameSpaceType);
-                resource.addProperty(OWL.sameAs, conceptResource);*/
-                    /// we now use dbpedia to create the URI of the instance so we do not need to the sameAs mapping anymore
-                    continue;
-                }
-            }
-            String nameSpaceType = getNameSpaceTypeReference(kafSense);
-            if (!nameSpaceType.isEmpty()) {
-                if (type.equals(NONENTITY)) {
-                     //  System.out.println("nameSpaceType = " + nameSpaceType);
-                  //  Property property = model.createProperty(SKOS.RELATED_MATCH.getLocalName());
-                    Property property = model.createProperty(SKOS.RELATED_MATCH.toString());
-                    Resource conceptResource = model.createResource(nameSpaceType);
-                    resource.addProperty(property, conceptResource);
-                    conceptResource = model.createResource(ResourcesUri.nwrontology+SemObject.NONENTITY);
-                    resource.addProperty(RDF.type, conceptResource);
-
-                }
-                /*else if (type.equals(ENTITY)) {
-                    Property property = model.createProperty(SKOS.RELATED_MATCH.toString());
-                    Resource conceptResource = model.createResource(nameSpaceType);
-                    resource.addProperty(property, conceptResource);
-                    conceptResource = model.createResource(ResourcesUri.nwrontology+SemObject.ENTITY);
-                    resource.addProperty(RDF.type, conceptResource);
-                }*/
-                else {
-                    Resource conceptResource = model.createResource(nameSpaceType);
-                    if (conceptResource.getNameSpace().indexOf("framenet")>-1) {
-                        resource.addProperty(RDF.type, conceptResource);
-                    }
-                }
-            }
-        }
-    }
-    void addAllConceptsToResource (Resource resource, Model model) {
-        for (int i = 0; i < concepts.size(); i++) {
-            KafSense kafSense = concepts.get(i);
-            String nameSpaceType = getNameSpaceTypeReference(kafSense);
-            if (!nameSpaceType.isEmpty()) {
-                Resource conceptResource = model.createResource(nameSpaceType);
-                resource.addProperty(RDF.type, conceptResource);
-            }
-        }
+    void addAllConceptsToResource (HashMap<String, String> rename, Resource resource, Model model) {
+         //if (this.getURI().indexOf("/non-entities/")>-1) {
+         if (this.type.equals(SemObject.NONENTITY)) {
+             for (int i = 0; i < concepts.size(); i++) {
+                 KafSense kafSense = concepts.get(i);
+                 if (rename.containsKey(kafSense.getSensecode())) kafSense.setSensecode(rename.get(kafSense.getSensecode()));
+                 String nameSpaceType = getNameSpaceTypeReference(kafSense);
+                 if (!nameSpaceType.isEmpty()) {
+                     Resource conceptResource = model.createResource(kafSense.getSensecode());
+                     Property property = model.createProperty(SKOS.RELATED_MATCH.toString());
+                     resource.addProperty(property, conceptResource);
+                 }
+             }
+         }
+         //else if (this.getURI().indexOf("/entities/")>-1) {
+         else if (this.type.equals((SemObject.ENTITY))) {
+             for (int i = 0; i < concepts.size(); i++) {
+                  KafSense kafSense = concepts.get(i);
+                  if (rename.containsKey(kafSense.getSensecode())) kafSense.setSensecode(rename.get(kafSense.getSensecode()));
+                  String nameSpaceType = getNameSpaceTypeReference(kafSense);
+                  if (!nameSpaceType.isEmpty()) {
+                      Resource conceptResource = model.createResource(nameSpaceType);
+                      resource.addProperty(RDF.type, conceptResource);
+                  }
+              }
+         }
+         else if (this.type.equals((SemObject.EVENT))) {
+             for (int i = 0; i < concepts.size(); i++) {
+                 KafSense kafSense = concepts.get(i);
+                 if (rename.containsKey(kafSense.getSensecode())) kafSense.setSensecode(rename.get(kafSense.getSensecode()));
+                 String nameSpaceType = getNameSpaceTypeReference(kafSense);
+                 if (!nameSpaceType.isEmpty() && !nameSpaceType.startsWith(ResourcesUri.wn)) {
+                     Resource conceptResource = model.createResource(nameSpaceType);
+                     resource.addProperty(RDF.type, conceptResource);
+                 }
+             }
+         }
+         else {
+             System.out.println(this.type);
+             for (int i = 0; i < concepts.size(); i++) {
+                  KafSense kafSense = concepts.get(i);
+                  if (rename.containsKey(kafSense.getSensecode())) kafSense.setSensecode(rename.get(kafSense.getSensecode()));
+                  String nameSpaceType = getNameSpaceTypeReference(kafSense);
+                  if (!nameSpaceType.isEmpty() && !nameSpaceType.startsWith(ResourcesUri.wn)) {
+                      Resource conceptResource = model.createResource(nameSpaceType);
+                      resource.addProperty(RDF.type, conceptResource);
+                  }
+             }
+         }
     }
 
     static public String getNameSpaceTypeReference(KafSense kafSense) {
