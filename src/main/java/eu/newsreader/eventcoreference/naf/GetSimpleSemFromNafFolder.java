@@ -44,7 +44,7 @@ public class GetSimpleSemFromNafFolder {
 
         pathToNafFolder = "/Users/piek/Desktop/DigHum-2018/4775434/OBO_XML_7-2/sessions/naf-out/naf16/";
         extension = ".dom";
-        pathToNafFolder = "/Users/piek/Desktop/Dasym/wikinews-en/wikinews_english_pipelinev3_20150727/corpus_airbus/";
+        pathToNafFolder = "/Users/piek/Desktop/Dasym/wikinews-en/wikinews_english_pipelinev3_20150727/corpus_gm_chrysler_ford/";
         extension = ".naf";
         pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/dbpedia_nl_types.tsv.gz";   // Dutch
         pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/instance_types_en.ttl.gz";     // English
