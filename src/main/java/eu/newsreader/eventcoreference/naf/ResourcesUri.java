@@ -10,7 +10,7 @@ public class ResourcesUri {
     final static public String eurovoc = "http://eurovoc.europa.eu/";
     final static public String skos = "http://www.w3.org/2004/02/skos/core#";
     final static public String nwr = "http://www.newsreader-project.eu/";
-    final static public String oldbaily = "http://cltl.nl/oldbailey";
+    final static public String oldbaily = "http://cltl.nl/oldbailey/";
     final static public String nwrproject = "http://www.newsreader-project.eu/project/";
     final static public String nwrtime = "http://www.newsreader-project.eu/time/";
     final static public String nwrentities = "http://www.newsreader-project.eu/data/entities/";
@@ -24,7 +24,9 @@ public class ResourcesUri {
     final static public String nwrvalue = "http://www.newsreader-project.eu/ontologies/value#";
     final static public String nwrontology = "http://www.newsreader-project.eu/ontologies/";
     //final static public String eso = "http://www.newsreader-project.eu/ontologies/eso#";
-    final static public String eso = "http://www.newsreader-project.eu/domain-ontology#";
+    //final static public String ceo = "http://www.newsreader-project.eu/ontologies/ceo#";
+    final static public String ceo = "http://cltl.nl/ontology/ceo#";
+    final static public String eso = "http://cltl.nl/ontology/eso#";
     final static public String wn = "http://www.newsreader-project.eu/ontologies/pwn3.0/";
     final static public String ili = "http://globalwordnet.org/ili/";
     final static public String cornetto = "http://www.newsreader-project.eu/ontologies/cornetto2.1/";
@@ -39,7 +41,8 @@ public class ResourcesUri {
     final static public String graspAttribution = "http://groundedannotationframework.org/grasp/attribution#";
     final static public String graspSentiment = "http://groundedannotationframework.org/grasp/sentiment#";
     final static public String sem = "http://semanticweb.cs.vu.nl/2009/11/sem/";
-    final static public String dbp = "http://dbpedia.org/resource/";
+    final static public String dbpr = "http://dbpedia.org/resource/";
+    final static public String dbpo = "http://dbpedia.org/ontology/";
     final static public String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     final static public String rdfs= "http://www.w3.org/2000/01/rdf-schema#";
     final static public String tl = "http://purl.org/NET/c4dm/timeline.owl#";
@@ -58,9 +61,10 @@ public class ResourcesUri {
         model.setNsPrefix("nwrentities", ResourcesUri.nwrentities);
         model.setNsPrefix("nwrnon-entities", ResourcesUri.nwrnonentities);
         model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
+        model.setNsPrefix("ceo", ResourcesUri.ceo);
         model.setNsPrefix("eso", ResourcesUri.eso);
-        /// we need to take out the dbp ns because the URIs from dbp are not valid. They contain e.g. dots "Apple_Inc."
-      //  model.setNsPrefix("dbp", ResourcesUri.dbp);
+        model.setNsPrefix("dbpr", ResourcesUri.dbpr);
+        model.setNsPrefix("dbpo", ResourcesUri.dbpo);
         model.setNsPrefix("pb", ResourcesUri.pb);
 
 /*      //REMOVED DUE TO ILLEGAL CHARACTERS
@@ -88,7 +92,11 @@ public class ResourcesUri {
         model.setNsPrefix("nwrentities", ResourcesUri.nwrentities);
         model.setNsPrefix("nwrnon-entities", ResourcesUri.nwrnonentities);
         model.setNsPrefix("nwrontology", ResourcesUri.nwrontology);
+        model.setNsPrefix("oldbailey", ResourcesUri.oldbaily);
+        model.setNsPrefix("ceo", ResourcesUri.ceo);
         model.setNsPrefix("eso", ResourcesUri.eso);
+        model.setNsPrefix("dbpr", ResourcesUri.dbpr);
+        model.setNsPrefix("dbpo", ResourcesUri.dbpo);
         model.setNsPrefix("pb", ResourcesUri.pb);
         model.setNsPrefix("gaf", ResourcesUri.gaf);
         model.setNsPrefix("sem", ResourcesUri.sem);

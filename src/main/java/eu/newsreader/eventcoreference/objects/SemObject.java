@@ -705,9 +705,15 @@ public class SemObject implements Serializable {
                 }
             }
         }
+
         addAllConceptsToResource(rename, resource, model);
-
-
+        for (int i = 0; i < nafMentions.size(); i++) {
+           NafMention nafMention = nafMentions.get(i);
+           Property property = model.createProperty(ResourcesUri.gaf + "denotedBy");
+           Resource targetResource = null;
+           targetResource = model.createResource(nafMention.toStringFull());
+           resource.addProperty(property, targetResource);
+        }
     }
 
     boolean reasonsToSkip (KafSense kafSense) {
@@ -805,7 +811,8 @@ public class SemObject implements Serializable {
 
     void addAllConceptsToResource (HashMap<String, String> rename, Resource resource, Model model) {
          //if (this.getURI().indexOf("/non-entities/")>-1) {
-         if (this.type.equals(SemObject.NONENTITY)) {
+        //System.out.println("this.type = " + this.type);
+        if (this.type.equals(SemObject.NONENTITY)) {
              for (int i = 0; i < concepts.size(); i++) {
                  KafSense kafSense = concepts.get(i);
                  if (rename.containsKey(kafSense.getSensecode())) kafSense.setSensecode(rename.get(kafSense.getSensecode()));
@@ -834,6 +841,7 @@ public class SemObject implements Serializable {
                  KafSense kafSense = concepts.get(i);
                  if (rename.containsKey(kafSense.getSensecode())) kafSense.setSensecode(rename.get(kafSense.getSensecode()));
                  String nameSpaceType = getNameSpaceTypeReference(kafSense);
+                // System.out.println("nameSpaceType = " + nameSpaceType);
                  if (!nameSpaceType.isEmpty() && !nameSpaceType.startsWith(ResourcesUri.wn)) {
                      Resource conceptResource = model.createResource(nameSpaceType);
                      resource.addProperty(RDF.type, conceptResource);
@@ -962,6 +970,9 @@ public class SemObject implements Serializable {
         else if (kafSense.getSensecode().indexOf("dbpedia.org") > -1) {
             ref = kafSense.getSensecode(); /// keep it as it is since the dbpedia URL is complete as it comes from spotlight
           //ref =  Util.cleanDbpediaUri(kafSense.getSensecode(), ResourcesUri.dbp);
+        }
+        else if (kafSense.getResource().indexOf("OldBaileyAnnotation") > -1) {
+            ref = ResourcesUri.oldbaily+kafSense.getSensecode();
         }
         else if (kafSense.getSensecode().equalsIgnoreCase("source")) {
             ref = ResourcesUri.nwrontology + FrameTypes.SOURCE;

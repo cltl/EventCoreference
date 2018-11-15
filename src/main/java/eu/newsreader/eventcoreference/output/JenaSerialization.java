@@ -747,6 +747,7 @@ doc-uri
 
     static public void addJenaSimpleCompositeEvent (
             CompositeEvent compositeEvent,HashMap<String, String> rename) {
+
         compositeEvent.getEvent().addToJenaSimpleModel(rename, instanceModel, Sem.Event);
 
         //  System.out.println("ACTORS");

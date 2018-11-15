@@ -6,6 +6,7 @@ import eu.newsreader.eventcoreference.coref.ComponentMatch;
 import eu.newsreader.eventcoreference.objects.*;
 import eu.newsreader.eventcoreference.output.JenaSerialization;
 import eu.newsreader.eventcoreference.output.SimpleTaxonomy;
+import eu.newsreader.eventcoreference.util.EventTypes;
 import eu.newsreader.eventcoreference.util.Util;
 import org.apache.jena.atlas.logging.Log;
 import org.apache.tools.bzip2.CBZip2InputStream;
@@ -34,25 +35,35 @@ public class GetSimpleSemFromNafFolder {
     static public void main(String[] args) {
         HashMap<String, String> rename = new HashMap<String, String>();
         SimpleTaxonomy simpleTaxonomy = new SimpleTaxonomy();
+        Boolean perspective = false;
+        Boolean all = false;
 
         Log.setLog4j("jena-log4j.properties");
         NafSemParameters nafSemParameters = new NafSemParameters((args));
         String pathToNafFolder = "";
+        String pathToRdfFolder = "";
         String extension = "";
         String pathToHierarchyFile = "";
-        String pathToRenameFile = "/Code/vu/newsreader/vua-resources/NERC_DBpediaHierarchy_mapping.tsv";
+        String pathToRenameFile = "";
 
-        pathToNafFolder = "/Users/piek/Desktop/DigHum-2018/4775434/OBO_XML_7-2/sessions/naf-out/naf16/";
+        // pathToRenameFile = "/Code/vu/newsreader/vua-resources/NERC_DBpediaHierarchy_mapping.tsv";
+        pathToNafFolder = "/Users/piek/Desktop/DigHum-2018/4775434/OBO_XML_7-2/sessions/naf-out/naf19/";
+        pathToNafFolder = "/Users/piek/Desktop/DigHum-2018/4775434/OBO_XML_7-2/vu-ob-text-rdf/example/naf-dom";
+        pathToRdfFolder = "/Users/piek/Desktop/DigHum-2018/4775434/OBO_XML_7-2/vu-ob-text-rdf/example/nwr-rdf";
         extension = ".dom";
-        pathToNafFolder = "/Users/piek/Desktop/Dasym/wikinews-en/wikinews_english_pipelinev3_20150727/corpus_gm_chrysler_ford/";
-        extension = ".naf";
-        pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/dbpedia_nl_types.tsv.gz";   // Dutch
-        pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/instance_types_en.ttl.gz";     // English
+        all = true;
+       // pathToNafFolder = "/Users/piek/Desktop/Dasym/wikinews-en/wikinews_english_pipelinev3_20150727/corpus_gm_chrysler_ford/";
+       // extension = ".naf";
+       // pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/dbpedia_nl_types.tsv.gz";   // Dutch
+       // pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/instance_types_en.ttl.gz";     // English
         //<http://dbpedia.org/resource/Actrius> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Film> .
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--naf-folder") && args.length > (i + 1)) {
                 pathToNafFolder = args[i + 1];
+            }
+            else if (arg.equals("--rdf-folder") && args.length > (i + 1)) {
+                pathToRdfFolder = args[i + 1];
             }
             else if (arg.equals("--extension") && args.length > (i + 1)) {
                 extension = args[i + 1];
@@ -63,7 +74,38 @@ public class GetSimpleSemFromNafFolder {
             else if (arg.equals("--rename") && args.length > (i + 1)) {
                 pathToRenameFile = args[i + 1];
             }
+            else if (arg.equals("--all")) {
+                all = true;
+            }
+            else if (arg.equals("--perspective")) {
+                perspective = true;
+            }
         }
+
+        File rdfFolder = new File(pathToRdfFolder);
+        if (!rdfFolder.exists()) {
+            rdfFolder.mkdir();
+        }
+
+        if (!rdfFolder.exists()) {
+            System.out.println("rdfFolder = " + rdfFolder.exists());
+            System.out.println("rdfFolder.getAbsolutePath() = " + rdfFolder.getAbsolutePath());
+            return;
+        }
+
+        File nafFolder = new File(pathToNafFolder);
+        if (!nafFolder.exists()) {
+            System.out.println("nafFolder = " + nafFolder.exists());
+            System.out.println("nafFolder.getAbsolutePath() = " + nafFolder.getAbsolutePath());
+            return;
+        }
+
+        System.out.println("pathToHierarchyFile = " + pathToHierarchyFile);
+        System.out.println("pathToNafFolder = " + pathToNafFolder);
+        System.out.println("pathToRdfFolder = " + pathToRdfFolder);
+        System.out.println("extension = " + extension);
+
+
         if (!pathToRenameFile.isEmpty()) {
             rename = readRename(pathToRenameFile);
         }
@@ -73,10 +115,20 @@ public class GetSimpleSemFromNafFolder {
             /// if English
             simpleTaxonomy.readSimpleTaxonomyFromTtlFile(pathToHierarchyFile);
         }
-
-        ArrayList<File> files = Util.makeRecursiveFileList(new File(pathToNafFolder), extension);
+        int count = 0;
+        ArrayList<File> files = new ArrayList<File>();
+        files = Util.makeRecursiveFileList(new File(pathToNafFolder), extension);
+        System.out.println("input files.size() = " + files.size());
+       // files.add(new File ("/Users/piek/Desktop/DigHum-2018/4775434/OBO_XML_7-2/sessions/naf-out/naf16/1699-12-13_t16991213-9-verdict45.txt.naf.dom"));
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
+            count++;
+            if (files.size()<500) {
+                System.out.println("file.getName() = " + file.getName());
+            }
+            if (count%500==0) {
+                System.out.println("Nr. naf files processed = " + count+ " out of:"+files.size());
+            }
           //  String pathToNafFile = files.get(i).getAbsolutePath();
             ArrayList<SemObject> semEvents = new ArrayList<SemObject>();
             ArrayList<SemObject> semActors = new ArrayList<SemObject>();
@@ -122,39 +174,54 @@ public class GetSimpleSemFromNafFolder {
                 // System.out.println("semEvents = " + semEvents.size());
                 for (int j = 0; j < semEvents.size(); j++) {
                     SemEvent mySemEvent = (SemEvent) semEvents.get(j);
-                    mySemEvent.setType(SemObject.EVENT);
-                    ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
-                    ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
-                    for (int k = 0; k < myActors.size(); k++) {
-                        SemActor semActor = myActors.get(k);
-                        semActor.setConcept(new ArrayList<KafSense>());
-                        String uri = "<"+semActor.getURI()+">";
-                       // System.out.println("semActor.getURI() = " + semActor.getURI());
-                        if (simpleTaxonomy.subToSuper.containsKey(uri)) {
-                            String superSense = simpleTaxonomy.subToSuper.get(uri);
-                            superSense = superSense.substring(1, superSense.length()-1);
-                            KafSense kafSense = new KafSense();
-                            kafSense.setSensecode(superSense);
-                            semActor.addConcept(kafSense);
+                    if (all || isContextual(mySemEvent)) {
+                        mySemEvent.setType(SemObject.EVENT);
+                        ArrayList<SemTime> myTimes = ComponentMatch.getMySemTimes(mySemEvent, semRelations, semTimes);
+                        ArrayList<SemActor> myActors = ComponentMatch.getMySemActors(mySemEvent, semRelations, semActors);
+                        for (int k = 0; k < myActors.size(); k++) {
+                            SemActor semActor = myActors.get(k);
+                            ArrayList<KafSense> concepts = new ArrayList<KafSense>();
+                            String uri = "<" + semActor.getURI() + ">";
+                            // System.out.println("semActor.getURI() = " + semActor.getURI());
+                            if (simpleTaxonomy.subToSuper.containsKey(uri)) {
+                                String superSense = simpleTaxonomy.subToSuper.get(uri);
+                                superSense = superSense.substring(1, superSense.length() - 1);
+                                KafSense kafSense = new KafSense();
+                                kafSense.setSensecode(superSense);
+                                concepts.add(kafSense);
+                            }
+                            else if (semActor.getURI().startsWith("http://dbpedia")) {
+                                // System.out.println("semActor.getURI() = " + semActor.getURI());
+                            }
+                            else {
+
+                            }
+                            for (int l = 0; l < semActor.getConcepts().size(); l++) {
+                                KafSense kafSense = semActor.getConcepts().get(l);
+                                if (!kafSense.getSensecode().startsWith("http://dbpedia") || semActor.getType().equals(SemObject.NONENTITY)) {
+                                    concepts.add(kafSense);
+                                }
+                            }
+                            semActor.setConcept(new ArrayList<KafSense>());
+                            for (int l = 0; l < concepts.size(); l++) {
+                                KafSense kafSense = concepts.get(l);
+                                semActor.addConcept(kafSense);
+                            }
                         }
-                        else if (semActor.getURI().startsWith("http://dbpedia")) {
-                           // System.out.println("semActor.getURI() = " + semActor.getURI());
+                        ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
+                        CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
+                        if (compositeEvent.isValid() || nafSemParameters.isALL()) {
+                            compositeEventArraylist.add(compositeEvent);
+                        } else {
+                            System.out.println("Skipping EVENT due to no time anchor and/or no participant");
+                            System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
+                            System.out.println("myTimes = " + myTimes.size());
+                            System.out.println("myActors = " + myActors.size());
+                            System.out.println("myRelations = " + myRelations.size());
                         }
-                    }
-                    ArrayList<SemRelation> myRelations = ComponentMatch.getMySemRelations(mySemEvent, semRelations);
-                    CompositeEvent compositeEvent = new CompositeEvent(mySemEvent, myActors, myTimes, myRelations);
-                    if (compositeEvent.isValid() || nafSemParameters.isALL()) {
-                        compositeEventArraylist.add(compositeEvent);
-                    }
-                    else {
-                        System.out.println("Skipping EVENT due to no time anchor and/or no participant");
-                        System.out.println("compositeEvent = " + compositeEvent.getEvent().getURI());
-                        System.out.println("myTimes = " + myTimes.size());
-                        System.out.println("myActors = " + myActors.size());
-                        System.out.println("myRelations = " + myRelations.size());
                     }
                 }
-                String pathToTrigFile = file.getAbsolutePath() + ".trig";
+                String pathToTrigFile = rdfFolder.getAbsolutePath()+"/"+file.getName() + ".trig";
                 OutputStream fos = new FileOutputStream(pathToTrigFile);
                 JenaSerialization.serializeJenaSimpleCompositeEvents(fos, compositeEventArraylist, rename);
                 fos.close();
@@ -165,6 +232,16 @@ public class GetSimpleSemFromNafFolder {
 
 
 
+    }
+
+    static boolean isContextual (SemEvent semEvent) {
+        for (int i = 0; i < semEvent.getConcepts().size(); i++) {
+            KafSense kafSense = semEvent.getConcepts().get(i);
+            if (EventTypes.isCONTEXTUAL(kafSense.getSensecode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static HashMap<String, String> readRename (String filePath) {
