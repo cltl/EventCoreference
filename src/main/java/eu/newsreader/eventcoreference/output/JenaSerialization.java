@@ -724,7 +724,7 @@ doc-uri
     }
 
     static public void serializeJenaSimpleCompositeEvents (OutputStream stream,
-                                                     ArrayList<CompositeEvent> compositeEvents,HashMap<String, String> rename) {
+                                                     ArrayList<CompositeEvent> compositeEvents,SimpleTaxonomy simpleTaxonomy, HashMap<String, String> rename) {
 
 
 
@@ -732,7 +732,27 @@ doc-uri
         createSimpleModels();
         for (int c = 0; c < compositeEvents.size(); c++) {
             CompositeEvent compositeEvent = compositeEvents.get(c);
-            addJenaSimpleCompositeEvent(compositeEvent, rename);
+            addJenaSimpleCompositeEvent(compositeEvent, simpleTaxonomy,rename);
+        }
+        try {
+            RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
+        } catch (Exception e) {
+          //  e.printStackTrace();
+        }
+
+
+    }
+
+    static public void serializeJenaOldBaileySimpleCompositeEvents (OutputStream stream,
+                                                     ArrayList<CompositeEvent> compositeEvents,SimpleTaxonomy simpleTaxonomy, HashMap<String, String> rename) {
+
+
+
+
+        createSimpleModels();
+        for (int c = 0; c < compositeEvents.size(); c++) {
+            CompositeEvent compositeEvent = compositeEvents.get(c);
+            addJenaOldBaileySimpleCompositeEvent(compositeEvent, simpleTaxonomy, rename);
         }
         try {
             RDFDataMgr.write(stream, ds, RDFFormat.TRIG_PRETTY);
@@ -746,14 +766,39 @@ doc-uri
 
 
     static public void addJenaSimpleCompositeEvent (
-            CompositeEvent compositeEvent,HashMap<String, String> rename) {
+            CompositeEvent compositeEvent,SimpleTaxonomy simpleTaxonomy, HashMap<String, String> rename) {
 
-        compositeEvent.getEvent().addToJenaSimpleModel(rename, instanceModel, Sem.Event);
+        compositeEvent.getEvent().addToJenaSimpleModel(simpleTaxonomy, rename, instanceModel, Sem.Event);
 
         //  System.out.println("ACTORS");
         for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
             SemActor semActor =  compositeEvent.getMySemActors().get(i);
-            semActor.addToJenaSimpleModel(rename, instanceModel, Sem.Actor);
+            semActor.addToJenaSimpleModel(simpleTaxonomy, rename, instanceModel, Sem.Actor);
+        }
+
+        // System.out.println("TIMES");
+        // System.out.println("compositeEvent.getMySemTimes().size() = " + compositeEvent.getMySemTimes().size());
+        for (int i = 0; i < compositeEvent.getMySemTimes().size(); i++) {
+            SemTime semTime = compositeEvent.getMySemTimes().get(i);
+            semTime.addToJenaModelSimpleDocTimeInstant(instanceModel, compositeEvent.getEvent());
+        }
+
+        for (int j = 0; j < compositeEvent.getMySemRelations().size(); j++) {
+            SemRelation semRelation = compositeEvent.getMySemRelations().get(j);
+               // semRelation.addToJenaDataSetSimple(rename, ds);
+                semRelation.addToJenaDataSetSimpleWithoutName(rename, instanceModel);
+        }
+    }
+
+    static public void addJenaOldBaileySimpleCompositeEvent (
+            CompositeEvent compositeEvent,SimpleTaxonomy simpleTaxonomy, HashMap<String, String> rename) {
+
+        compositeEvent.getEvent().addToJenaSimpleModel(simpleTaxonomy, rename, instanceModel, Sem.Event);
+
+        //  System.out.println("ACTORS");
+        for (int  i = 0; i < compositeEvent.getMySemActors().size(); i++) {
+            SemActor semActor =  compositeEvent.getMySemActors().get(i);
+            semActor.addToJenaOldBaileySimpleModel(simpleTaxonomy, rename, instanceModel, Sem.Actor);
         }
 
         // System.out.println("TIMES");

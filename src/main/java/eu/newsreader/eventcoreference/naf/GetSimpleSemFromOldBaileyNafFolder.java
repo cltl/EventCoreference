@@ -22,7 +22,7 @@ import java.util.zip.GZIPInputStream;
  * Time: 7:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public class GetSimpleSemFromNafFolder {
+public class GetSimpleSemFromOldBaileyNafFolder {
 
     static final String USAGE = "This program processes a single NAF file and generates SEM RDF-TRiG results" +
             "The program has the following arguments:\n" +
@@ -46,9 +46,9 @@ public class GetSimpleSemFromNafFolder {
         String pathToRenameFile = "";
 
         // pathToRenameFile = "/Code/vu/newsreader/vua-resources/NERC_DBpediaHierarchy_mapping.tsv";
-        pathToNafFolder = "/Users/piek/Desktop/Deloitte/wikinews/";
+        //pathToNafFolder = "/Users/piek/Desktop/Deloitte/wikinews/";
        // pathToNafFolder = "/Users/piek/Desktop/DigHum-2018/4775434/OBO_XML_7-2/vu-ob-text-rdf/example/naf-dom";
-        pathToRdfFolder = "/Users/piek/Desktop/Deloitte/nwr-rdf";
+       // pathToRdfFolder = "/Users/piek/Desktop/Deloitte/nwr-rdf";
         extension = ".bz2";
         all = true;
        // pathToNafFolder = "/Users/piek/Desktop/Dasym/wikinews-en/wikinews_english_pipelinev3_20150727/corpus_gm_chrysler_ford/";
@@ -244,7 +244,7 @@ public class GetSimpleSemFromNafFolder {
                     }
                 }
                 OutputStream fos = new FileOutputStream(pathToTrigFile);
-                JenaSerialization.serializeJenaSimpleCompositeEvents(fos, compositeEventArraylist, simpleTaxonomy, rename);
+                JenaSerialization.serializeJenaOldBaileySimpleCompositeEvents(fos, compositeEventArraylist, simpleTaxonomy, rename);
                 fos.close();
             } catch (IOException e) {
                 e.printStackTrace();

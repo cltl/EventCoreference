@@ -14,7 +14,6 @@ import java.util.zip.GZIPInputStream;
 /**
  * Created by piek on 29/05/16.
  */
-@Deprecated
 public class SimpleTaxonomy {
     static final int colmax = 650;
     static final int colmaxevents = 150;
@@ -276,10 +275,10 @@ public class SimpleTaxonomy {
                      if (inputLine.trim().length() > 0) {
                          String[] fields = inputLine.split(" ");
                          if (fields.length == 4) {
-                             String superClass = fields[2];
-                             String subClass = fields[0];
-                           //  System.out.println("subClass = " + subClass);
-                           //  System.out.println("superClass = " + superClass);
+                             String superClass = fields[2].substring(1, fields[2].length()-1);
+                             String subClass = fields[0].substring(1, fields[0].length()-1);
+                             // System.out.println("subClass = " + subClass);
+                            // System.out.println("superClass = " + superClass);
                              //http://dbpedia.org/resource/China
                              if (!subClass.equals(superClass)) {
                                  subToSuper.put(subClass, superClass);
