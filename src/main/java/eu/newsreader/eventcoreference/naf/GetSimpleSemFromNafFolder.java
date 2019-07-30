@@ -54,7 +54,7 @@ public class GetSimpleSemFromNafFolder {
        // pathToNafFolder = "/Users/piek/Desktop/Dasym/wikinews-en/wikinews_english_pipelinev3_20150727/corpus_gm_chrysler_ford/";
        // extension = ".naf";
        // pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/dbpedia_nl_types.tsv.gz";   // Dutch
-       // pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/instance_types_en.ttl.gz";     // English
+        pathToHierarchyFile = "/Code/vu/newsreader/vua-resources/instance_types_en.ttl.gz";     // English
         //<http://dbpedia.org/resource/Actrius> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Film> .
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];

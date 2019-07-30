@@ -677,10 +677,11 @@ public class TrigStats {
 
     static public void main (String[] args) {
         String folderpath = "";
-        String type = "instance";
-        STAT= "event";
+        String type = ""; //"instance";
+        STAT= ""; //"event";
         int n = 0;
-        folderpath = "/Users/piek/Desktop/CLTL-onderwijs/EnvironmentalAndDigitalHumanities/london/ob.trig";
+        folderpath = "";
+                //"/Users/piek/Desktop/CLTL-onderwijs/EnvironmentalAndDigitalHumanities/london/ob.trig";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.equals("--trig-folder") && args.length>(i+1)) {
