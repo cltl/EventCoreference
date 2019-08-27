@@ -132,14 +132,14 @@ public class TrigTripleReader {
         for (int i = 0; i < trigFiles.size(); i++) {
            // if (i==200) break;
             File file = trigFiles.get(i);
-            //System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
+           // System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
             if (i%500==0) {
                 System.out.println("i = " + i);
             }
             if (n>0 && i==n) {
                 break;
             }
-           // System.out.println("file.getName() = " + file.getName());
+         //   System.out.println("file.getName() = " + file.getName());
             try {
                 dataset = RDFDataMgr.loadDataset(file.getAbsolutePath());
                 Model namedModel = dataset.getNamedModel(TrigTripleData.instanceGraph);

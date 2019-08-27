@@ -681,6 +681,9 @@ public class TrigStats {
         STAT= ""; //"event";
         int n = 0;
         folderpath = "";
+        folderpath="/Users/piek/Desktop/NNIP/2005-01-18/S-1/A/";
+        STAT="event";
+        type ="instance";
                 //"/Users/piek/Desktop/CLTL-onderwijs/EnvironmentalAndDigitalHumanities/london/ob.trig";
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -712,7 +715,6 @@ public class TrigStats {
             outputInstances(inputFolder);
         }
         if (type.equals("grasp")) processGrasp(inputFolder, files);
-
     }
 
     static void outputInstances (File inputFolder) {
@@ -772,6 +774,7 @@ public class TrigStats {
 
         TrigTripleData trigTripleData = TrigTripleReader.readInstanceTripleFromTrigFiles(STAT, files, n);
         Set keySet = trigTripleData.tripleMapInstances.keySet();
+        //System.out.println("trigTripleData.tripleMapInstances.size() = " + trigTripleData.tripleMapInstances.size());
         Iterator<String> keys = keySet.iterator();
         while (keys.hasNext()) {
             String key = keys.next(); //// this is the subject of the triple which should point to an event
@@ -829,12 +832,17 @@ public class TrigStats {
                         updateMap(s, m, iliMap);
                     }
                     ArrayList<String> labels = getLabelsFromInstanceStatement(instanceTriples,trigTripleData);
+                    if (labels.isEmpty()) {
+                        labels = getLabelsFromInstanceStatement(instanceTriples);
+                    }
                     /// we first build the data for each event instance
-                   // ArrayList<String> mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
                     ArrayList<String> mentionLabels = getPhraseCountFromInstanceStatement(instanceTriples, trigTripleData);
+                    if (mentionLabels.isEmpty()) {
+                       mentionLabels = getLabelsFromInstanceStatement(instanceTriples);
+                    }
                     updateCountMap(key, eventPhraseCountMap, mentionLabels);
                     updateMap(key, m, evMap);
-
+                   // System.out.println("mentionLabels.toString() = " + mentionLabels.toString());
 
                     /// now we get the data for labels and types
                     for (int i = 0; i < labels.size(); i++) {
@@ -1230,9 +1238,9 @@ public class TrigStats {
             ArrayList<String> result = new ArrayList<String>();
             for (int i = 0; i < statements.size(); i++) {
                 Statement statement = statements.get(i);
-
+                //System.out.println("statement = " + statement);
                 String predicate = statement.getPredicate().getURI();
-                if (predicate.endsWith("#label")) {
+                if (predicate.endsWith("#label") || predicate.endsWith("#prefLabel")) {
                     String object = "";
                     if (statement.getObject().isLiteral()) {
                         object = statement.getObject().asLiteral().toString();
