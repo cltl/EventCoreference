@@ -57,9 +57,9 @@
         <dependency>
             <groupId>com.github.cltl</groupId>
             <artifactId>WordnetTools</artifactId>
-            <version>master-SNAPSHOT</version>
-          <!--  <version>v3.0</version>
-            <scope>compile</scope>  -->
+            <!--  <version>master-SNAPSHOT</version>-->
+          <version>v3.0</version>
+            <!--  <scope>compile</scope>  -->
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
